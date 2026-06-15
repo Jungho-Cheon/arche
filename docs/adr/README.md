@@ -1,0 +1,90 @@
+# Architecture Decision Records (ADR)
+
+이 디렉토리는 Opentology 의 *주요 의사결정* 을 시간 순으로 기록한다. ADR 은 코드 자체에서 *읽어낼 수 없는* 정보 — **"왜 이렇게 만들었는가"** — 를 담는 단일 진실의 원천이다.
+
+처음 들어온 빌더/컨트리뷰터를 위한 가이드.
+
+---
+
+## ADR 이 무엇인가
+
+**ADR (Architecture Decision Record)** — 프로젝트의 중요한 의사결정 하나당 *한 파일* 로 기록한 문서. 각 ADR 은 다음을 담는다.
+
+- **Context** — 왜 이 결정이 필요했는가, 어떤 제약과 요구가 있었나.
+- **Decision** — 무엇을 선택했는가.
+- **Considered Options** — 다른 후보는 무엇이었고 왜 거부됐는가.
+- **Consequences** — 이 결정이 코드와 운영에 어떤 영향을 주는가.
+
+ADR 은 *불변에 가깝게* 다룬다. 결정이 바뀌면 *기존 ADR 을 수정* 하는 대신, *새 ADR 로 amend* 또는 *교체* 한다.
+
+---
+
+## 처음 들어왔다면 — 0001 부터 순서대로
+
+현재 ADR 6 개는 의도적으로 *순서대로 읽으면 한 묶음* 이 되도록 구성됐다. 0001 이 가설을 세우고, 0002 가 범위를 좁히고, 0003-0004 가 retrieval 기술 결정, 0005 가 가설 측정 방법, 0006 이 외부 표면 (MCP/REST) 의 모양을 정한다.
+
+| 순서 | ADR | 한 줄 |
+|---|---|---|
+| 1 | [ADR-0001 — 프로젝트 정체성과 MVP 검증 가설](./0001-project-identity-and-mvp-validation-hypothesis.md) | 왜 이 프로젝트가 존재하는가, MVP 가 무엇을 어떻게 검증하는가 (Pareto 우월 가설) |
+| 2 | [ADR-0002 — MVP 범위 경계](./0002-mvp-scope-boundaries.md) | 무엇을 의도적으로 미루는가, post-MVP 복귀 우선순위 |
+| 3 | [ADR-0003 — 그래프 진입점 선정 전략](./0003-graph-entry-point-strategy-hybrid-lexical-dense.md) | caller 의 anchor 추출 + Opentology 의 어휘 + dense 하이브리드 매칭 |
+| 4 | [ADR-0004 — 벡터 인프라 결정](./0004-vector-infra-graph-db-internal-index.md) | 별도 벡터 DB 서비스 미도입, 그래프 DB 내장 인덱스 |
+| 5 | [ADR-0005 — 측정 방법론](./0005-measurement-methodology-accuracy-tokens-latency.md) | MCQ + 이유 서술, 정확도/토큰/지연 3 메트릭, 하이브리드 judge |
+| 6 | [ADR-0006 — MCP/REST 표면](./0006-mcp-rest-primitives-surface.md) | graph primitives 만 노출, 자연어 미수용, Neo4j MCP 와 공존 |
+
+---
+
+## 토픽별 인덱스
+
+### 가설과 범위
+
+- [ADR-0001 — 프로젝트 정체성과 MVP 검증 가설](./0001-project-identity-and-mvp-validation-hypothesis.md)
+- [ADR-0002 — MVP 범위 경계](./0002-mvp-scope-boundaries.md)
+
+### Retrieval / 인덱싱
+
+- [ADR-0003 — 그래프 진입점 선정 전략](./0003-graph-entry-point-strategy-hybrid-lexical-dense.md)
+- [ADR-0004 — 벡터 인프라 결정](./0004-vector-infra-graph-db-internal-index.md)
+
+### 측정 / 평가
+
+- [ADR-0005 — 측정 방법론](./0005-measurement-methodology-accuracy-tokens-latency.md)
+
+### 외부 표면 (API / MCP)
+
+- [ADR-0006 — MCP/REST 표면](./0006-mcp-rest-primitives-surface.md)
+
+---
+
+## ADR 작성 규칙
+
+새 ADR 을 추가하려면.
+
+1. 다음 번호로 파일 생성 — `docs/adr/00NN-짧은-제목.md`.
+2. 기존 ADR 의 구조를 참고.
+   - `# ADR-00NN: 제목`
+   - `Status: proposed | accepted | superseded | amended`
+   - `Date: YYYY-MM-DD`
+   - TL;DR (한 문단 요약 + 필요한 용어 인라인 blockquote).
+   - 이 ADR 을 읽는 이유 (선택, 의문 형식으로).
+   - 읽기 전 권장 배경 (선택, 선행 ADR 링크).
+   - Context — 왜 이 결정이 필요했나.
+   - Decision — 무엇을 결정했나.
+   - Considered Options — 거부 옵션은 "만약 이걸 택했다면 ___ 문제가 왔을 것" 반사실 추가.
+   - Consequences — 즉시 영향 + 코드 작업 시 기억할 점.
+   - Related — 연결된 ADR.
+3. 기존 ADR 을 *수정* 하지 않는다. 결정이 바뀌면 *새 ADR 로 amend* 또는 *교체* (superseded 표시).
+4. amend 된 옛 ADR 상단에 명시적 `> **Amendment (ADR-00MM, YYYY-MM-DD)**: ...` 박스를 추가.
+
+---
+
+## 메타: ADR 톤과 분량
+
+이 디렉토리의 ADR 은 *처음 읽는 빌더/컨트리뷰터* 가 이해할 수 있도록 verbose 하게 작성됐다. 결과적으로 분량이 길지만, 다음을 의도한다.
+
+- *왜* 결정했는가가 *무엇을* 결정했는가만큼 비중을 갖는다.
+- 거부된 옵션은 단순한 "거부" 가 아니라 "만약 택했다면 어떤 문제가 왔을지" 를 풀어쓴다.
+- LLM·임베딩·BM25 등 자주 등장하는 기술 jargon 은 *처음 등장하는 자리* 에서 inline blockquote 으로 풀이.
+- 각 ADR 끝의 "코드 작업 시 기억할 점" 은 그 ADR 이 *실제 코드에 닿는 지점* 을 체크리스트로 정리.
+
+이 톤이 시간이 지나며 *코드 자체가 답하지 못하는* 결정의 이유를 살아 있게 한다.

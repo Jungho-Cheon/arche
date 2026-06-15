@@ -1,0 +1,56 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+dist/
+build/
+
+# Node
+node_modules/
+.next/
+.turbo/
+*.log
+
+# Vite / TS build
+apps/web/dist/
+apps/web/.vite/
+
+# Storybook build output
+apps/web/storybook-static/
+
+# Local agent state — agents/ 는 팀 공통으로 commit, 나머지(settings.local.json, worktrees/, …)는 로컬 전용
+.claude/*
+!.claude/agents/
+!.claude/agents/**
+
+# uv
+.uv-cache/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+.DS_Store
+
+# Env / secrets
+.env
+.env.*
+!.env.example
+
+# Docker
+.docker-data/
+
+# Local config (user overrides)
+config.local.yaml
+
+# HuggingFace cache (TEI)
+.hf-cache/
+
+# Brainstorming mockups (Visual Companion)
+.superpowers/
