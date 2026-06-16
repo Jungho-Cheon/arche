@@ -104,6 +104,31 @@ class StoredEntity:
     created_at: str
     updated_at: str
     embedding: list[float]
+    normalized_name: str = ""  # WHY default: PR #16 의 노드는 이 필드가 없다 — backfill 로 채움.
+    # WHY 정규화된 alias 사본을 따로 저장: PRD 2 §5.1 Step 1·2 의 lookup 은
+    # *normalize 된 키 == 정규명 OR 정규명 alias 중 하나* 면 hit 여야 한다.
+    # 표기형 aliases 는 그대로 두고, 검색용 정규화 사본을 병행 저장해 단일
+    # 인덱스로 양쪽 케이스를 모두 흡수.
+    normalized_aliases: list[str] = field(default_factory=list)
+
+
+@dataclass(frozen=True)
+class MergeMutation:
+    """`EntityMerger` 의 결과 — adapter 가 한 트랜잭션으로 set 한다.
+
+    WHY domain/models 에 둠: 어댑터 (`graph.py`) 와 도메인 (`identity.py`) 둘
+    다 참조하므로 두 모듈의 상위 (models) 에 정의해 import 순환 회피.
+    `embedding` 필드는 의도적으로 없다 — PRD 2 §5.3 "병합 시 embedding 재계산
+    안 함" 을 타입으로 강제.
+    """
+
+    id: str
+    aliases: list[str]
+    description: str
+    properties: dict[str, Any]
+    source_refs: list[SourceRef]
+    updated_at: str
+    normalized_aliases: list[str] = field(default_factory=list)
 
 
 def now_rfc3339() -> str:

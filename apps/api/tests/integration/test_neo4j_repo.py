@@ -97,9 +97,22 @@ def test_ingest_and_find_by_keyword(repo, tmp_path: Path):
             )
 
     class _E(EmbeddingProvider):
+        """이름별 다른 1-hot 벡터 — Step 3 임베딩 매칭이 *오발* 하지 않도록.
+
+        WHY: 동일성 매처가 들어온 뒤 모든 이름이 같은 벡터를 가지면 두 번째 노드부터
+        Step 3 으로 첫 노드와 병합되어 5 개가 1 개로 collapse 한다. 이름 hash 로
+        차원을 분산해 서로 직교한 벡터를 만든다.
+        """
+
         def embed(self, texts):
-            # 단순 deterministic vector — 1536-dim cosine 인덱스에 들어가야 하므로 차원 맞춤.
-            return [[0.001] * 1536 for _ in texts]
+            out = []
+            for t in texts:
+                v = [0.0] * 1536
+                # 이름 hash 의 mod 로 dim 결정 — 1536 개 dim 충분히 분산.
+                idx = (hash(t) & 0x7FFFFFFF) % 1536
+                v[idx] = 1.0
+                out.append(v)
+            return out
 
     p = tmp_path / "sample.md"
     p.write_text("fixture content irrelevant — LLM mocked", encoding="utf-8")
@@ -109,9 +122,11 @@ def test_ingest_and_find_by_keyword(repo, tmp_path: Path):
     assert first.entities_created == 5
     assert first.relations_created == 3
 
-    # 두 번째 실행 — 정확히 같은 그래프.
+    # 두 번째 실행 — 동일 hash 이므로 short-circuit. LLM 호출 없이 같은 결과.
     second = service.ingest_file(p)
+    assert second.short_circuited is True
     assert second.entities_created == 0
+    # short-circuit 시 entities_updated 는 이전 회차의 emitted 수 (= 5).
     assert second.entities_updated == 5
     assert second.relations_created == 0
 

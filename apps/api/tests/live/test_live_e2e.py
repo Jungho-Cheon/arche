@@ -67,8 +67,9 @@ def test_live_ingest_and_find(settings, tmp_path: Path):
         )
         assert first.relations_created >= 2
 
-        # 두 번째 실행 — 동일 그래프.
+        # 두 번째 실행 — 동일 hash 이므로 short-circuit (LLM 호출 없이 같은 결과).
         second = service.ingest_file(target)
+        assert second.short_circuited is True
         assert second.entities_created == 0
         assert second.entities_updated == first.entities_created
 

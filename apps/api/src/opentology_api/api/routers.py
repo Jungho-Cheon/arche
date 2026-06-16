@@ -183,5 +183,11 @@ def admin_ingest(
             entities_updated=result.entities_updated,
             relations_created=result.relations_created,
             relations_skipped_dangling=result.relations_skipped_dangling,
+            entities_matched_by_step=result.entities_matched_by_step,
+            short_circuited=result.short_circuited,
+            entities_deleted=result.entities_deleted,
+            entities_trimmed=result.entities_trimmed,
+            relations_deleted=result.relations_deleted,
+            relations_trimmed=result.relations_trimmed,
         )
     )
