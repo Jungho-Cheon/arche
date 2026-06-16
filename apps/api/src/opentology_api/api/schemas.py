@@ -105,28 +105,69 @@ class FindEntitiesResponse(BaseModel):
 
 
 class AdminIngestRequest(BaseModel):
+    """PRD 2 §1.2 — 디렉토리 경로 + dry_run 옵션.
+
+    WHY directory_path: PRD 2 §1.2 가 명시. 단일 파일 ingest 는 CLI 의 `ingest`
+    명령으로 처리 (CLI 는 디렉토리/파일 양쪽 받지만 admin REST 는 디렉토리만
+    노출 — *멀티 파일 흐름의 진입점* 으로 의미를 좁힌다).
+    """
+
     model_config = ConfigDict(extra="forbid")
 
-    file_path: str = Field(min_length=1, description="단일 파일 절대 경로 (.txt 또는 .md)")
+    directory_path: str = Field(
+        min_length=1, description="디렉토리 절대 경로 (재귀 크롤 대상)"
+    )
+    dry_run: bool = Field(
+        default=False, description="True 면 그래프에 쓰지 않고 추출만 수행."
+    )
 
 
 class AdminIngestResponse(BaseModel):
+    """PRD 2 §1.2 — 202 Accepted 응답 본문 (작업 ID + 상태 polling URL)."""
+
     model_config = ConfigDict(extra="forbid")
 
-    source_path: str
+    task_id: str
+    status_url: str
+
+
+class AdminIngestProgress(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    files_total: int
+    files_processed: int
+    files_skipped: int
+    files_pending_skipped: int
+    files_unsupported_skipped: int
+
+
+class AdminIngestMetrics(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
     entities_created: int
     entities_updated: int
     relations_created: int
     relations_skipped_dangling: int
-    # WHY by_step / diff 카운터 노출: 4 단계 매처와 차분 적용의 실 동작을 응답
-    # 으로 관찰 가능하게. 측정 회차 디버깅 + threshold tuning (#4 이후) 의 1 차
-    # 신호로 쓰인다. step 4 (= 신규) 는 entities_created 로 동치라 제외.
-    entities_matched_by_step: dict[int, int] = Field(default_factory=dict)
-    short_circuited: bool = False
-    entities_deleted: int = 0
-    entities_trimmed: int = 0
-    relations_deleted: int = 0
-    relations_trimmed: int = 0
+    chunks_total: int
+
+
+class AdminIngestError(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    code: str
+    message: str
+
+
+class AdminIngestStatusResponse(BaseModel):
+    """PRD 2 §1.3 의 status 응답 본문."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    task_id: str
+    state: str
+    progress: AdminIngestProgress
+    metrics: AdminIngestMetrics
+    error: AdminIngestError | None = None
 
 
 # ---------- healthz ----------

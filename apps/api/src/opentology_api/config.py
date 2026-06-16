@@ -29,6 +29,12 @@ DEFAULT_EMBEDDING_MODEL = "openai/text-embedding-3-small"
 # WHY 1536: text-embedding-3-small 의 출력 차원. 모델 교체 시 인덱스 재생성 필요.
 EMBEDDING_DIMENSION = 1536
 
+# WHY 청크 분할 트리거의 *모델 컨텍스트 한도* — PRD 2 §3.1. gpt-4.1 은 1M 컨텍스트
+# 지만 보수적으로 잡아 작은 값을 기본으로 둔다 (대용량 문서를 단일 호출로 처리
+# 하려 할 때 응답 timeout / cost 가 폭발하는 케이스를 가드). 모델 교체 시 본
+# 값을 같이 조정 — Settings 의 환경 변수로 오버라이드 가능.
+DEFAULT_LLM_MODEL_CONTEXT_TOKENS = 128_000
+
 
 class Settings(BaseSettings):
     """앱 전역 설정. uvicorn 부팅 시 한 번 로드."""
@@ -58,6 +64,12 @@ class Settings(BaseSettings):
     # 임베딩 차원 — 인덱스 생성에 사용. 모델 교체 시 함께 변경.
     embedding_dimension: int = Field(
         default=EMBEDDING_DIMENSION, alias="OPENTOLOGY_API_EMBEDDING_DIMENSION"
+    )
+
+    # 청크 분할 트리거의 모델 컨텍스트 한도 (PRD 2 §3.1).
+    llm_model_context_tokens: int = Field(
+        default=DEFAULT_LLM_MODEL_CONTEXT_TOKENS,
+        alias="OPENTOLOGY_API_LLM_MODEL_CONTEXT_TOKENS",
     )
 
     @property

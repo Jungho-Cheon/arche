@@ -1,19 +1,28 @@
-"""REST routers — healthz / find_entities / admin ingest."""
+"""REST routers — healthz / find_entities / admin ingest (async task)."""
 
 from __future__ import annotations
 
 import logging
 from pathlib import Path
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request, Response
 
 from ..adapters.graph import GraphRepository, KeywordHit
 from ..domain.errors import OpentologyError
 from ..domain.ingest import IngestService
-from .deps import graph_repo_dep, ingest_service_dep
+from .admin_tasks import (
+    IngestTaskRegistry,
+    spawn_ingest_task,
+    state_to_status_dict,
+)
+from .deps import graph_repo_dep, ingest_service_dep, task_registry_dep
 from .schemas import (
+    AdminIngestError,
+    AdminIngestMetrics,
+    AdminIngestProgress,
     AdminIngestRequest,
     AdminIngestResponse,
+    AdminIngestStatusResponse,
     DataEnvelope,
     EntityMatch,
     ErrorBody,
@@ -164,30 +173,91 @@ def _fuse_keyword_hits(
 
 @admin_router.post(
     "/ingest",
+    status_code=202,
     response_model=DataEnvelope[AdminIngestResponse],
 )
 def admin_ingest(
     body: AdminIngestRequest,
+    response: Response,
     service: IngestService = Depends(ingest_service_dep),
+    registry: IngestTaskRegistry = Depends(task_registry_dep),
 ) -> DataEnvelope[AdminIngestResponse]:
-    """admin ingest — PRD 2 §1.2 의 admin REST. walking skeleton 은 *동기 처리* .
+    """admin ingest — PRD 2 §1.2 의 비동기 작업 생성.
 
-    WHY sync: PRD 2 §1.3 의 async state machine 은 multi-file 흐름에서 의미가
-    있다. 단일 파일 + 작은 corpus 슬라이스에서는 sync 가 디버깅 가능성을 키운다.
+    *입력 검증* 만 동기적으로 한 뒤 background asyncio.Task 로 ingest 흐름을
+    띄우고 즉시 202 + task_id 응답. 진행 상태는 GET status 로 polling.
     """
-    result = service.ingest_file(Path(body.file_path))
+    directory = Path(body.directory_path)
+    if not directory.exists():
+        # WHY 동기 검증: 디렉토리 부재는 *작업을 시작하기 전에* 호출자에게 빠른
+        # 신호를 줘야 의미. 404 가 아니라 422 — 입력 자체가 잘못된 케이스.
+        raise HTTPException(
+            status_code=422,
+            detail=ErrorEnvelope(
+                error=ErrorBody(
+                    code="directory_not_found",
+                    message=f"Directory not found: {directory}",
+                )
+            ).model_dump(),
+        )
+    if not directory.is_dir():
+        raise HTTPException(
+            status_code=422,
+            detail=ErrorEnvelope(
+                error=ErrorBody(
+                    code="not_a_directory",
+                    message=f"Path is not a directory: {directory}",
+                )
+            ).model_dump(),
+        )
+
+    state = spawn_ingest_task(
+        registry=registry,
+        service=service,
+        directory_path=directory,
+        dry_run=body.dry_run,
+    )
+    response.status_code = 202
     return DataEnvelope(
         data=AdminIngestResponse(
-            source_path=result.source_path,
-            entities_created=result.entities_created,
-            entities_updated=result.entities_updated,
-            relations_created=result.relations_created,
-            relations_skipped_dangling=result.relations_skipped_dangling,
-            entities_matched_by_step=result.entities_matched_by_step,
-            short_circuited=result.short_circuited,
-            entities_deleted=result.entities_deleted,
-            entities_trimmed=result.entities_trimmed,
-            relations_deleted=result.relations_deleted,
-            relations_trimmed=result.relations_trimmed,
+            task_id=state.task_id,
+            status_url=f"/admin/ingest/{state.task_id}/status",
+        )
+    )
+
+
+@admin_router.get(
+    "/ingest/{task_id}/status",
+    response_model=DataEnvelope[AdminIngestStatusResponse],
+    response_model_exclude_none=True,
+)
+def admin_ingest_status(
+    task_id: str,
+    registry: IngestTaskRegistry = Depends(task_registry_dep),
+) -> DataEnvelope[AdminIngestStatusResponse]:
+    """PRD 2 §1.3 — 작업 상태 조회. running / succeeded / failed."""
+    state = registry.get(task_id)
+    if state is None:
+        raise HTTPException(
+            status_code=404,
+            detail=ErrorEnvelope(
+                error=ErrorBody(
+                    code="task_not_found",
+                    message=f"task not found: {task_id}",
+                )
+            ).model_dump(),
+        )
+    body = state_to_status_dict(state)
+    return DataEnvelope(
+        data=AdminIngestStatusResponse(
+            task_id=body["task_id"],
+            state=body["state"],
+            progress=AdminIngestProgress(**body["progress"]),
+            metrics=AdminIngestMetrics(**body["metrics"]),
+            error=(
+                AdminIngestError(**body["error"])
+                if body["error"] is not None
+                else None
+            ),
         )
     )

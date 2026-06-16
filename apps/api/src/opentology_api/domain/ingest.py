@@ -1,15 +1,22 @@
-"""Ingest 서비스 — 4 단계 동일성 + idempotent 차분 (PRD 2 §5).
+"""Ingest 서비스 — 4 단계 동일성 + idempotent 차분 (PRD 2 §5) + 청크 분할 (§3).
 
 흐름 (PRD 2 §6 의 본 슬라이스 형태):
   파일 읽기 → source_hash 계산 → 같은 hash 의 성공 회차가 있으면 short-circuit
-  → 그렇지 않으면 IngestionRun 생성 → LLM 추출 → 엔티티별 4 단계 매처 →
-  match 면 EntityMerger 로 merge, miss 면 create_entity → 관계 upsert →
-  이전 회차 emitted 와 비교해 사라진 노드/관계 diff 적용 → run 종결
+  → 그렇지 않으면 IngestionRun 생성 → 본문이 컨텍스트 70% 초과면 청크 분할 →
+  청크별 LLM 추출 → 병합된 ExtractedGraph 로 엔티티별 4 단계 매처 → match 면
+  EntityMerger 로 merge, miss 면 create_entity → 관계 upsert → 이전 회차
+  emitted 와 비교해 사라진 노드/관계 diff 적용 → run 종결
 
 WHY 단일 사용자 가정 (concurrency 없음): MVP 는 단일 환경 (ADR-0002 D2). 같은
 source_path 에 대한 동시 ingest 는 발생하지 않는다고 가정. post-MVP 의 multi-user
 가 들어오면 IngestionRun 노드를 advisory lock 으로 활용 (running 상태가 살아
 있으면 두 번째 호출 reject) 하는 패턴이 자연스럽다.
+
+WHY ingest_directory 가 ingest_file 위에 얹혀 있음: 단일 파일 처리는 이미 4 단계
+동일성 + 차분이 완성된 idempotent 단위다. 디렉토리 모드는 그 단위를 *직렬로 반복
+호출* 하기만 하면 same-hash short-circuit 가 변경되지 않은 파일을 자동으로 skip
+시킨다. 별도 큐 / 병렬 처리를 도입하지 않는 이유는 PRD 2 §6 의 MVP 제약 + 디버깅
+가능성 우선.
 """
 
 from __future__ import annotations
@@ -18,16 +25,21 @@ import hashlib
 import logging
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Callable
 
 from ulid import ULID
 
 from ..adapters.embedding import EmbeddingProvider
 from ..adapters.graph import GraphRepository
 from ..adapters.llm import LLMProvider
+from .chunking import Chunk, TOKEN_BUDGET_RATIO, chunk_text, count_tokens
+from .crawl import crawl
 from .errors import InvalidInputError, UnsupportedFileTypeError
 from .identity import EntityMatcher, EntityMerger, normalize
 from .models import (
+    ExtractedEntity,
     ExtractedGraph,
+    ExtractedRelation,
     SourceRef,
     StoredEntity,
     now_rfc3339,
@@ -61,6 +73,71 @@ class IngestResult:
     entities_trimmed: int = 0
     relations_deleted: int = 0
     relations_trimmed: int = 0
+    # WHY chunks_total 노출: CLI / admin status 가 "[i/n] doc.md (3 chunks) ..."
+    # 출력 형식 (PRD 2 §7.3) 을 만들 신호. short_circuit 시에는 1 (재처리 안 함).
+    chunks_total: int = 1
+
+
+@dataclass
+class DirectoryIngestResult:
+    """디렉토리 모드 — 파일별 IngestResult 묶음 + 집계 (PRD 2 §7.2 의 메트릭).
+
+    `pending_skipped` / `unsupported_skipped` 는 *크롤* 단계에서 걸러진 수치.
+    실제 ingest 단계의 `files_skipped` (= short-circuit 한 파일 수) 와 분리한다 —
+    의미가 다르고 사용자 보고에도 두 신호가 모두 필요.
+    """
+
+    directory_path: str
+    files_total: int
+    files_processed: int
+    files_skipped: int
+    files_pending_skipped: int
+    files_unsupported_skipped: int
+    per_file: list[IngestResult] = field(default_factory=list)
+
+    @property
+    def entities_created(self) -> int:
+        return sum(r.entities_created for r in self.per_file)
+
+    @property
+    def entities_updated(self) -> int:
+        return sum(r.entities_updated for r in self.per_file)
+
+    @property
+    def relations_created(self) -> int:
+        return sum(r.relations_created for r in self.per_file)
+
+    @property
+    def relations_skipped_dangling(self) -> int:
+        return sum(r.relations_skipped_dangling for r in self.per_file)
+
+    @property
+    def chunks_total(self) -> int:
+        return sum(r.chunks_total for r in self.per_file)
+
+
+# WHY progress 콜백: CLI / admin/status 두 호출자가 동일 hook 으로 진행률 신호를
+# 받게 한다. CLI 는 stdout 한 줄로 print, admin/status 는 task registry 의
+# progress 카운터 갱신. IngestService 자체는 출력/저장 방식을 모름 — 통제 변수.
+ProgressCallback = Callable[["FileProgressEvent"], None]
+
+
+@dataclass(frozen=True)
+class FileProgressEvent:
+    """한 파일 처리 이벤트.
+
+    - `index` / `total` : 디렉토리 안의 i/n.
+    - `chunks_total` : 해당 파일의 청크 수. short-circuit 일 때는 1.
+    - `result` : 처리 완료 후 IngestResult. CLI 가 entities/relations 수와
+      duration 을 같이 노출.
+    """
+
+    index: int
+    total: int
+    path: Path
+    chunks_total: int
+    result: IngestResult
+    duration_seconds: float
 
 
 class IngestService:
@@ -70,17 +147,133 @@ class IngestService:
         llm: LLMProvider,
         embedder: EmbeddingProvider,
         graph: GraphRepository,
+        model_context_tokens: int = 128_000,
     ) -> None:
         self._llm = llm
         self._embedder = embedder
         self._graph = graph
+        # WHY 인스턴스 필드 (싱글톤 설정이 아닌): 테스트가 작은 값으로
+        # monkeypatch 해 청크 분할을 강제할 수 있어야 한다. config 의 기본값을
+        # 라우터/CLI 가 주입.
+        self._model_context_tokens = model_context_tokens
+
+    def ingest_directory(
+        self,
+        path: Path,
+        *,
+        dry_run: bool = False,
+        progress: ProgressCallback | None = None,
+    ) -> DirectoryIngestResult:
+        """디렉토리 재귀 ingest — PRD 2 §1.1 + §2 + §6.
+
+        흐름:
+          1. `crawl(path)` 로 .txt / .md 파일을 결정적 순서로 수집.
+          2. 각 파일에 대해 `ingest_file` 호출 (short-circuit 가 자동으로
+             변경되지 않은 파일 skip).
+          3. `progress` 콜백으로 파일별 진행 신호 전달 (CLI/admin 양쪽 hook).
+
+        WHY 직렬: PRD 2 §6 가 MVP 의 병렬 처리 금지. idempotent 디버깅 가능성.
+
+        WHY dry_run 분기: PRD 2 §1.1 — 그래프에 쓰지 않고 추출만 보여준다.
+        본 메서드는 단순히 `ingest_file` 위에 *그래프 쓰기 우회* 를 얹지 않고
+        별도 dry_run 경로로 분기 — short-circuit / IngestionRun 생성 등 *상태
+        부작용 자체가 dry run 에서 발생하면 사용자의 다음 실 ingest 결과가
+        달라지기 때문*.
+        """
+        import time
+
+        path = path.resolve()
+        if not path.exists():
+            raise InvalidInputError(f"Directory not found: {path}")
+        if not path.is_dir():
+            raise InvalidInputError(
+                f"Path is not a directory (use ingest_file for single files): {path}"
+            )
+
+        summary = crawl(path)
+        files = summary.files_collected
+
+        per_file: list[IngestResult] = []
+        files_processed = 0
+        files_skipped = 0
+
+        for i, fp in enumerate(files, start=1):
+            t0 = time.perf_counter()
+            if dry_run:
+                result = self._dry_run_file(fp)
+            else:
+                result = self.ingest_file(fp)
+            elapsed = time.perf_counter() - t0
+
+            if result.short_circuited:
+                files_skipped += 1
+            else:
+                files_processed += 1
+            per_file.append(result)
+
+            if progress is not None:
+                progress(
+                    FileProgressEvent(
+                        index=i,
+                        total=len(files),
+                        path=fp,
+                        chunks_total=result.chunks_total,
+                        result=result,
+                        duration_seconds=elapsed,
+                    )
+                )
+
+        return DirectoryIngestResult(
+            directory_path=str(path),
+            files_total=len(files),
+            files_processed=files_processed,
+            files_skipped=files_skipped,
+            files_pending_skipped=summary.files_pending_skipped,
+            files_unsupported_skipped=summary.files_unsupported_skipped,
+            per_file=per_file,
+        )
+
+    def _dry_run_file(self, path: Path) -> IngestResult:
+        """dry-run — LLM 추출만 수행 후 결과를 *카운터로만* 반환.
+
+        WHY 그래프 호출 0: PRD 2 §1.1 의 dry-run 정의는 "그래프에 쓰지 않고 추출
+        결과만 출력". IngestionRun 생성도 안 함 — 다음 실 ingest 에 영향 없음.
+        """
+        path = path.resolve()
+        ext = path.suffix.lower()
+        if ext not in SUPPORTED_EXTS:
+            raise UnsupportedFileTypeError(
+                f"Unsupported extension {ext}. dry-run requires {sorted(SUPPORTED_EXTS)}."
+            )
+        text = path.read_text(encoding="utf-8")
+        chunks = chunk_text(text, model_context_tokens=self._model_context_tokens)
+        total_entities = 0
+        total_relations = 0
+        for chunk in chunks:
+            extracted = self._llm.extract(text=chunk.text, source_path=str(path))
+            total_entities += len(extracted.entities)
+            total_relations += len(extracted.relations)
+        return IngestResult(
+            source_path=str(path),
+            entities_created=total_entities,
+            entities_updated=0,
+            relations_created=total_relations,
+            relations_skipped_dangling=0,
+            entity_ids=[],
+            entities_matched_by_step={},
+            short_circuited=False,
+            chunks_total=len(chunks),
+        )
 
     def ingest_file(self, path: Path) -> IngestResult:
         path = path.resolve()
         if path.is_dir():
+            # WHY 명시 거부: 디렉토리는 `ingest_directory` 가 처리한다. ingest_file
+            # 시그니처는 단일 파일 단위 (PR #16/#17 의 의존 형태) 그대로 유지 —
+            # 호출자가 실수로 디렉토리를 넘기면 에러로 가이드.
             raise InvalidInputError(
-                "Directory ingest is not supported in the walking skeleton — "
-                "follow-up issue #2 covers directory crawl with watch/dry-run."
+                "ingest_file expects a single file. Use ingest_directory for "
+                "directories (PRD 2 §1.1 / §2)."
             )
         if not path.exists():
             raise InvalidInputError(f"File not found: {path}")
@@ -141,32 +334,84 @@ class IngestService:
         text = raw_bytes.decode("utf-8")
 
         try:
-            extracted = self._llm.extract(text=text, source_path=source_path)
-            source_ref = SourceRef(source_path=source_path, chunk_index=None)
+            # 청크 분할 — 컨텍스트 70% 이내면 단일 청크 (chunk_index=0,
+            # total_chunks=1) 반환. 초과면 PRD 2 §3.2 의 폴백 분할.
+            chunks = chunk_text(
+                text, model_context_tokens=self._model_context_tokens
+            )
 
             matcher = EntityMatcher(repo=self._graph, embedder=self._embedder)
             merger = EntityMerger()
 
-            name_to_id, entity_metrics = self._upsert_entities(
-                extracted=extracted,
-                source_ref=source_ref,
-                matcher=matcher,
-                merger=merger,
-                run_id=run_id,
-            )
+            # WHY 청크 단위 누적: 같은 엔티티 이름이 청크 3 개에 등장하면 3 개의
+            # source_ref 가 누적되어야 한다 (PRD 2 §3.3 의 출처 추적). 청크 안에서
+            # 발견된 이름은 4 단계 매처 + EntityMerger 가 그래프 / 직전 청크의
+            # 결과와 자동 병합 — 따라서 청크 루프 안에서 _upsert_entities 를
+            # 그대로 호출하면 동작이 자연스럽게 합쳐진다.
+            #
+            # WHY chunks_total: SourceRef 에 박혀 응답에 노출 — 분할된 한 문서가
+            # 몇 청크로 갈렸는지 추적성 확보 (PRD 3 §1.3 + PRD 2 §3.3).
+            all_name_to_id: dict[str, str] = {}
+            agg_created = 0
+            agg_updated = 0
+            agg_by_step: dict[int, int] = {1: 0, 2: 0, 3: 0}
+            all_rel_ids: list[str] = []
+            agg_rel_created = 0
+            agg_rel_dangling = 0
+            total_chunks = len(chunks)
 
-            rel_created, rel_dangling, rel_ids = self._upsert_relations(
-                extracted=extracted,
-                name_to_id=name_to_id,
-                source_ref=source_ref,
-                run_id=run_id,
-            )
+            for chunk in chunks:
+                # 청크 분할이 일어난 경우만 chunk_index 가 의미 — 단일 청크면
+                # PRD 3 §1.3 의 nullable 형태로 두 필드 모두 None 유지.
+                if total_chunks > 1:
+                    source_ref = SourceRef(
+                        source_path=source_path,
+                        chunk_index=chunk.chunk_index,
+                        total_chunks=total_chunks,
+                    )
+                else:
+                    source_ref = SourceRef(
+                        source_path=source_path,
+                        chunk_index=None,
+                        total_chunks=None,
+                    )
+
+                extracted = self._llm.extract(
+                    text=chunk.text, source_path=source_path
+                )
+
+                name_to_id, entity_metrics = self._upsert_entities(
+                    extracted=extracted,
+                    source_ref=source_ref,
+                    matcher=matcher,
+                    merger=merger,
+                    run_id=run_id,
+                )
+                rel_created, rel_dangling, rel_ids = self._upsert_relations(
+                    extracted=extracted,
+                    name_to_id=name_to_id,
+                    source_ref=source_ref,
+                    run_id=run_id,
+                )
+
+                # 청크 사이 누적. name_to_id 는 *이번 청크* 의 이름→id 매핑이므로
+                # 다음 청크에서 같은 이름이 나오면 EntityMatcher (Step 1) 가 다시
+                # 그래프 lookup 으로 같은 id 를 돌려준다 — 청크간 일관성은 그래프
+                # 상태로 보장된다.
+                all_name_to_id.update(name_to_id)
+                agg_created += entity_metrics["created"]
+                agg_updated += entity_metrics["updated"]
+                for step in (1, 2, 3):
+                    agg_by_step[step] += entity_metrics["by_step"].get(step, 0)
+                agg_rel_created += rel_created
+                agg_rel_dangling += rel_dangling
+                all_rel_ids.extend(rel_ids)
 
             # 차분 — 이전 회차가 emit 했는데 이번엔 안 한 것 처리.
             diff_metrics = self._apply_diff(
                 prior=prior_for_diff,
-                new_entity_ids=set(name_to_id.values()),
-                new_relation_ids=set(rel_ids),
+                new_entity_ids=set(all_name_to_id.values()),
+                new_relation_ids=set(all_rel_ids),
                 source_path=source_path,
                 run_id=run_id,
             )
@@ -175,23 +420,24 @@ class IngestService:
                 run_id=run_id,
                 status="succeeded",
                 completed_at=now_rfc3339(),
-                emitted_entity_ids=list(name_to_id.values()),
-                emitted_relation_ids=list(rel_ids),
+                emitted_entity_ids=list(all_name_to_id.values()),
+                emitted_relation_ids=list(all_rel_ids),
             )
 
             return IngestResult(
                 source_path=source_path,
-                entities_created=entity_metrics["created"],
-                entities_updated=entity_metrics["updated"],
-                relations_created=rel_created,
-                relations_skipped_dangling=rel_dangling,
-                entity_ids=list(name_to_id.values()),
-                entities_matched_by_step=entity_metrics["by_step"],
+                entities_created=agg_created,
+                entities_updated=agg_updated,
+                relations_created=agg_rel_created,
+                relations_skipped_dangling=agg_rel_dangling,
+                entity_ids=list(all_name_to_id.values()),
+                entities_matched_by_step=agg_by_step,
                 short_circuited=False,
                 entities_deleted=diff_metrics["entities_deleted"],
                 entities_trimmed=diff_metrics["entities_trimmed"],
                 relations_deleted=diff_metrics["relations_deleted"],
                 relations_trimmed=diff_metrics["relations_trimmed"],
+                chunks_total=total_chunks,
             )
         except Exception:
             # 실패 — run 을 failed 로 마킹해 다음 호출에서 short-circuit 되지
