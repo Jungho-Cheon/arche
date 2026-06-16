@@ -14,3 +14,8 @@ markers = [
     "live: end-to-end test that hits real OpenAI API + Neo4j (set RUN_LIVE_TESTS=1 to enable)",
     "integration: integration test that spins up Neo4j via testcontainers",
 ]
+
+[dependency-groups]
+dev = [
+    "graphifyy>=0.8.40",
+]
