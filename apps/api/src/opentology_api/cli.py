@@ -65,10 +65,16 @@ def ingest(
             raise typer.Exit(code=2)
 
         typer.echo(f"source: {result.source_path}")
+        typer.echo(f"short_circuited: {result.short_circuited}")
         typer.echo(f"entities_created: {result.entities_created}")
         typer.echo(f"entities_updated: {result.entities_updated}")
+        typer.echo(f"entities_matched_by_step: {result.entities_matched_by_step}")
+        typer.echo(f"entities_deleted: {result.entities_deleted}")
+        typer.echo(f"entities_trimmed: {result.entities_trimmed}")
         typer.echo(f"relations_created: {result.relations_created}")
         typer.echo(f"relations_skipped_dangling: {result.relations_skipped_dangling}")
+        typer.echo(f"relations_deleted: {result.relations_deleted}")
+        typer.echo(f"relations_trimmed: {result.relations_trimmed}")
     finally:
         graph.close()
 

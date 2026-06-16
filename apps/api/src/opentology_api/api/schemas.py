@@ -118,6 +118,15 @@ class AdminIngestResponse(BaseModel):
     entities_updated: int
     relations_created: int
     relations_skipped_dangling: int
+    # WHY by_step / diff 카운터 노출: 4 단계 매처와 차분 적용의 실 동작을 응답
+    # 으로 관찰 가능하게. 측정 회차 디버깅 + threshold tuning (#4 이후) 의 1 차
+    # 신호로 쓰인다. step 4 (= 신규) 는 entities_created 로 동치라 제외.
+    entities_matched_by_step: dict[int, int] = Field(default_factory=dict)
+    short_circuited: bool = False
+    entities_deleted: int = 0
+    entities_trimmed: int = 0
+    relations_deleted: int = 0
+    relations_trimmed: int = 0
 
 
 # ---------- healthz ----------
