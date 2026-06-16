@@ -13,6 +13,7 @@ from ..adapters.graph import GraphRepository, Neo4jGraphRepository
 from ..adapters.llm import LLMProvider, OpenAILLMProvider
 from ..config import Settings, get_settings
 from ..domain.ingest import IngestService
+from .admin_tasks import IngestTaskRegistry
 
 
 def settings_dep() -> Settings:
@@ -33,11 +34,28 @@ def embedding_provider_dep(request: Request) -> EmbeddingProvider:
 
 
 def ingest_service_dep(
+    request: Request,
     llm: LLMProvider = Depends(llm_provider_dep),
     embedder: EmbeddingProvider = Depends(embedding_provider_dep),
     graph: GraphRepository = Depends(graph_repo_dep),
 ) -> IngestService:
-    return IngestService(llm=llm, embedder=embedder, graph=graph)
+    settings = get_settings()
+    return IngestService(
+        llm=llm,
+        embedder=embedder,
+        graph=graph,
+        model_context_tokens=settings.llm_model_context_tokens,
+    )
+
+
+def task_registry_dep(request: Request) -> IngestTaskRegistry:
+    """Admin ingest 의 in-process 작업 registry.
+
+    WHY app.state 에서 가져옴: lifespan 에서 한 번 만들어 두면 모든 요청이 같은
+    registry 인스턴스를 공유 — task_id 가 어떤 요청에서 만들어졌든 다른 요청
+    (status polling) 이 조회 가능.
+    """
+    return request.app.state.ingest_task_registry
 
 
 def build_default_components(settings: Settings) -> dict:

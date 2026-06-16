@@ -393,6 +393,12 @@ class Neo4jGraphRepository(GraphRepository):
             sr.chunk_index if sr.chunk_index is not None else -1
             for sr in entity.source_refs
         ]
+        # WHY total_chunks 도 동일 sentinel: chunk_index 와 같이 -1 → None 복원.
+        # 분할 안 된 파일은 둘 다 None 으로 들어와 양쪽 모두 -1 로 저장된다.
+        source_totals = [
+            sr.total_chunks if sr.total_chunks is not None else -1
+            for sr in entity.source_refs
+        ]
         with self._driver.session() as s:
             s.run(
                 f"""
@@ -403,6 +409,7 @@ class Neo4jGraphRepository(GraphRepository):
                     embedding: $embedding,
                     source_paths: $source_paths,
                     source_chunk_indexes: $source_chunk_indexes,
+                    source_total_chunks: $source_total_chunks,
                     created_at: $created_at, updated_at: $updated_at
                 }})
                 """,
@@ -416,6 +423,7 @@ class Neo4jGraphRepository(GraphRepository):
                 embedding=entity.embedding,
                 source_paths=[sr.source_path for sr in entity.source_refs],
                 source_chunk_indexes=source_chunks,
+                source_total_chunks=source_totals,
                 created_at=entity.created_at,
                 updated_at=entity.updated_at,
             ).consume()
@@ -431,6 +439,10 @@ class Neo4jGraphRepository(GraphRepository):
             sr.chunk_index if sr.chunk_index is not None else -1
             for sr in mutation.source_refs
         ]
+        source_totals = [
+            sr.total_chunks if sr.total_chunks is not None else -1
+            for sr in mutation.source_refs
+        ]
         with self._driver.session() as s:
             s.run(
                 f"""
@@ -440,6 +452,7 @@ class Neo4jGraphRepository(GraphRepository):
                     e.description = $description,
                     e.source_paths = $source_paths,
                     e.source_chunk_indexes = $source_chunk_indexes,
+                    e.source_total_chunks = $source_total_chunks,
                     e.updated_at = $updated_at
                 """,
                 id=mutation.id,
@@ -448,6 +461,7 @@ class Neo4jGraphRepository(GraphRepository):
                 description=mutation.description,
                 source_paths=[sr.source_path for sr in mutation.source_refs],
                 source_chunk_indexes=source_chunks,
+                source_total_chunks=source_totals,
                 updated_at=mutation.updated_at,
             ).consume()
 
@@ -628,13 +642,15 @@ class Neo4jGraphRepository(GraphRepository):
             row = s.run(
                 f"MATCH (e:{ENTITY_LABEL} {{id: $id}}) "
                 "RETURN e.source_paths AS paths, "
-                "       e.source_chunk_indexes AS chunks",
+                "       e.source_chunk_indexes AS chunks, "
+                "       e.source_total_chunks AS totals",
                 id=entity_id,
             ).single()
             if row is None:
                 return "missing"
             paths = list(row["paths"] or [])
             chunks = list(row["chunks"] or [])
+            totals = list(row["totals"] or [])
             distinct_paths = set(paths)
             if not distinct_paths or distinct_paths == {source_path}:
                 # 단일 소스에서 온 노드 — 통째로 삭제.
@@ -644,22 +660,29 @@ class Neo4jGraphRepository(GraphRepository):
                 ).consume()
                 return "deleted"
             # 다른 소스도 들어 있음 — 해당 source_path 만 잘라낸다.
+            # WHY 세 array 동시 trim: 세 배열이 동일 인덱스 단위로 이어 있어야
+            # `_extract_source_refs` 가 올바른 (path, chunk_index, total_chunks)
+            # 묶음을 복원할 수 있다. 한 array 만 trim 하면 인덱스가 어긋난다.
             new_paths: list[str] = []
             new_chunks: list[int] = []
+            new_totals: list[int] = []
             for i, p in enumerate(paths):
                 if p == source_path:
                     continue
                 new_paths.append(p)
                 new_chunks.append(chunks[i] if i < len(chunks) else -1)
+                new_totals.append(totals[i] if i < len(totals) else -1)
             s.run(
                 f"""
                 MATCH (e:{ENTITY_LABEL} {{id: $id}})
                 SET e.source_paths = $paths,
-                    e.source_chunk_indexes = $chunks
+                    e.source_chunk_indexes = $chunks,
+                    e.source_total_chunks = $totals
                 """,
                 id=entity_id,
                 paths=new_paths,
                 chunks=new_chunks,
+                totals=new_totals,
             ).consume()
             return "trimmed"
 
@@ -814,13 +837,17 @@ def _node_to_response(node: Any) -> Node:
 def _extract_source_refs(node: Any) -> list[SourceRef]:
     paths = list(node.get("source_paths") or [])
     chunks = list(node.get("source_chunk_indexes") or [])
+    totals = list(node.get("source_total_chunks") or [])
     refs: list[SourceRef] = []
     for i, p in enumerate(paths):
         ci = chunks[i] if i < len(chunks) else None
-        # -1 sentinel → None (PRD 3 §1.3 의 nullable chunk_index 복원).
+        tc = totals[i] if i < len(totals) else None
+        # -1 sentinel → None (PRD 3 §1.3 의 nullable chunk_index/total_chunks 복원).
         if ci == -1:
             ci = None
-        refs.append(SourceRef(source_path=p, chunk_index=ci))
+        if tc == -1:
+            tc = None
+        refs.append(SourceRef(source_path=p, chunk_index=ci, total_chunks=tc))
     return refs
 
 

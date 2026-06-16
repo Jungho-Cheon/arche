@@ -1,8 +1,12 @@
-"""`opentology` CLI — walking skeleton 의 in-process 진입점.
+"""`opentology` CLI — 디렉토리 / 단일 파일 ingest 진입점.
 
 WHY in-process (HTTP 가 아닌): 사용자 셋업 비용 최소화. API 가 안 떠 있어도
-CLI 만으로 ingest 가 가능해야 follow-up 슬라이스 (디렉토리 크롤, watch 등)
-의 토대가 깨끗하다.
+CLI 만으로 디렉토리 통째로 ingest 가 가능해야 검증 도메인 (커머스 비즈니스
+규칙) 적재의 첫걸음이 막히지 않는다.
+
+WHY 디렉토리/파일 양쪽 받음: typer 의 `Path` 인자는 형식 차이만 본다. 사용자는
+"폴더 통째로" 또는 "한 파일만" 두 케이스 모두를 자주 쓰므로, 같은 명령으로
+모두 받고 내부에서 분기 (단일 파일은 ingest_file, 디렉토리는 ingest_directory).
 """
 
 from __future__ import annotations
@@ -17,18 +21,14 @@ from .adapters.embedding import OpenAIEmbeddingProvider
 from .adapters.graph import Neo4jGraphRepository
 from .config import get_settings
 from .domain.errors import OpentologyError
-from .domain.ingest import IngestService
+from .domain.ingest import FileProgressEvent, IngestService
 from .adapters.llm import OpenAILLMProvider
 
 
-# WHY 명시적 typer.Typer + add_completion=False + 다중 command shape: typer 는
-# command 가 하나뿐이면 자동으로 subcommand 를 숨겨 root 에 평탄화한다. 사양은
-# `opentology ingest <file>` 형태를 요구하므로 dummy version 커맨드를 함께 두어
-# subcommand 라우팅을 강제한다.
 app = typer.Typer(
     no_args_is_help=True,
     add_completion=False,
-    help="Opentology CLI — walking skeleton (single-file ingest only).",
+    help="Opentology CLI — directory or single-file ingest.",
 )
 
 
@@ -42,9 +42,26 @@ def version() -> None:
 
 @app.command()
 def ingest(
-    file: Annotated[Path, typer.Argument(help="단일 파일 경로 (.txt 또는 .md)")],
+    path: Annotated[
+        Path,
+        typer.Argument(
+            help="디렉토리 또는 단일 파일 경로 (.txt / .md, 디렉토리는 재귀 크롤)",
+        ),
+    ],
+    dry_run: Annotated[
+        bool,
+        typer.Option(
+            "--dry-run",
+            help="그래프에 쓰지 않고 추출 결과만 출력 (PRD 2 §1.1).",
+        ),
+    ] = False,
 ) -> None:
-    """단일 파일 → 엔티티/관계 추출 → Neo4j 적재."""
+    """디렉토리 (또는 단일 파일) → 엔티티/관계 추출 → Neo4j 적재.
+
+    출력 형식 (PRD 2 §7.3):
+      [i/n] path ......... Xe Yr in Zs   ← 파일별 한 줄
+      ingest summary: ...                  ← 마지막 요약 블록
+    """
     load_dotenv()
     settings = get_settings()
 
@@ -57,26 +74,122 @@ def ingest(
         embedder = OpenAIEmbeddingProvider(
             model_id=settings.embedding_model_id, api_key=settings.openai_api_key
         )
-        service = IngestService(llm=llm, embedder=embedder, graph=graph)
+        service = IngestService(
+            llm=llm,
+            embedder=embedder,
+            graph=graph,
+            model_context_tokens=settings.llm_model_context_tokens,
+        )
+
+        if path.is_file():
+            _run_single_file(service=service, path=path, dry_run=dry_run)
+        else:
+            _run_directory(service=service, path=path, dry_run=dry_run)
+    finally:
+        graph.close()
+
+
+# ---------- 출력 헬퍼 ----------
+
+
+def _format_progress_line(event: FileProgressEvent) -> str:
+    """PRD 2 §7.3 형식: `[i/n] path (k chunks) ... Xe Yr in Zs`.
+
+    단일 청크면 `(1 chunks)` 표기를 생략해 가독성을 높인다.
+    """
+    chunks_suffix = (
+        f" ({event.chunks_total} chunks)" if event.chunks_total > 1 else ""
+    )
+    skip_marker = " [skip]" if event.result.short_circuited else ""
+    return (
+        f"[{event.index}/{event.total}] {event.path}{chunks_suffix}{skip_marker} "
+        f"... {event.result.entities_created}e "
+        f"{event.result.relations_created}r in {event.duration_seconds:.1f}s"
+    )
+
+
+def _print_summary(
+    *,
+    files_total: int,
+    files_processed: int,
+    files_skipped: int,
+    entities_total: int,
+    relations_total: int,
+    chunks_total: int,
+    dry_run: bool,
+) -> None:
+    """마지막 요약 블록 — PRD 2 §7.3."""
+    typer.echo("")
+    typer.echo("ingest summary:")
+    typer.echo(
+        f"  files: {files_processed} processed, {files_skipped} skipped "
+        f"(of {files_total} total)"
+    )
+    typer.echo(
+        f"  graph: +{entities_total} entities, +{relations_total} relations "
+        f"(chunks: {chunks_total})"
+    )
+    if dry_run:
+        typer.echo("  mode:  dry-run (no graph writes)")
+
+
+def _run_directory(*, service: IngestService, path: Path, dry_run: bool) -> None:
+    try:
+        result = service.ingest_directory(
+            path,
+            dry_run=dry_run,
+            progress=lambda ev: typer.echo(_format_progress_line(ev)),
+        )
+    except OpentologyError as e:
+        typer.echo(f"[error] {e.code}: {e.message}", err=True)
+        raise typer.Exit(code=2)
+
+    _print_summary(
+        files_total=result.files_total,
+        files_processed=result.files_processed,
+        files_skipped=result.files_skipped,
+        entities_total=result.entities_created,
+        relations_total=result.relations_created,
+        chunks_total=result.chunks_total,
+        dry_run=dry_run,
+    )
+
+
+def _run_single_file(*, service: IngestService, path: Path, dry_run: bool) -> None:
+    """단일 파일 흐름 — 디렉토리 모드의 *얇은* 래퍼.
+
+    WHY dry-run 단일 파일도 지원: 사용자가 한 파일만 시험적으로 보고 싶을 때
+    `--dry-run` 이 의미가 있다. 그래프 호출 없이 LLM 추출만 시뮬레이션.
+    """
+    import time
+
+    t0 = time.perf_counter()
+    if dry_run:
+        result = service._dry_run_file(path)
+    else:
         try:
-            result = service.ingest_file(file)
+            result = service.ingest_file(path)
         except OpentologyError as e:
             typer.echo(f"[error] {e.code}: {e.message}", err=True)
             raise typer.Exit(code=2)
+    elapsed = time.perf_counter() - t0
 
-        typer.echo(f"source: {result.source_path}")
-        typer.echo(f"short_circuited: {result.short_circuited}")
-        typer.echo(f"entities_created: {result.entities_created}")
-        typer.echo(f"entities_updated: {result.entities_updated}")
-        typer.echo(f"entities_matched_by_step: {result.entities_matched_by_step}")
-        typer.echo(f"entities_deleted: {result.entities_deleted}")
-        typer.echo(f"entities_trimmed: {result.entities_trimmed}")
-        typer.echo(f"relations_created: {result.relations_created}")
-        typer.echo(f"relations_skipped_dangling: {result.relations_skipped_dangling}")
-        typer.echo(f"relations_deleted: {result.relations_deleted}")
-        typer.echo(f"relations_trimmed: {result.relations_trimmed}")
-    finally:
-        graph.close()
+    # 단일 파일 — i/n 은 1/1.
+    chunks_suffix = f" ({result.chunks_total} chunks)" if result.chunks_total > 1 else ""
+    skip_marker = " [skip]" if result.short_circuited else ""
+    typer.echo(
+        f"[1/1] {path.resolve()}{chunks_suffix}{skip_marker} ... "
+        f"{result.entities_created}e {result.relations_created}r in {elapsed:.1f}s"
+    )
+    _print_summary(
+        files_total=1,
+        files_processed=0 if result.short_circuited else 1,
+        files_skipped=1 if result.short_circuited else 0,
+        entities_total=result.entities_created,
+        relations_total=result.relations_created,
+        chunks_total=result.chunks_total,
+        dry_run=dry_run,
+    )
 
 
 if __name__ == "__main__":  # pragma: no cover

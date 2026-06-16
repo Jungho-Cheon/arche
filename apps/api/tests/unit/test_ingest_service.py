@@ -490,13 +490,14 @@ def test_ingest_rejects_pdf(tmp_path: Path, fake_graph: FakeGraph):
     assert "issue #5" in str(exc.value.message)
 
 
-def test_ingest_rejects_directory(tmp_path: Path, fake_graph: FakeGraph):
+def test_ingest_file_rejects_directory(tmp_path: Path, fake_graph: FakeGraph):
+    """ingest_file 은 단일 파일 전용 — 디렉토리는 ingest_directory 로 가야 한다."""
     service = _build_service(
         fake_graph, ExtractedGraph(entities=[], relations=[])
     )
     with pytest.raises(InvalidInputError) as exc:
         service.ingest_file(tmp_path)
-    assert "issue #2" in str(exc.value.message)
+    assert "ingest_directory" in str(exc.value.message)
 
 
 def test_ingest_skips_dangling_relation(tmp_path: Path, fake_graph: FakeGraph):
