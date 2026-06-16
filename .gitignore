@@ -32,6 +32,9 @@ apps/web/storybook-static/
 # uv
 .uv-cache/
 
+# Eval run outputs — 측정 산출물은 별도 트래킹 (commit 하지 않음)
+eval/runs/
+
 # IDE
 .vscode/
 .idea/
