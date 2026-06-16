@@ -115,13 +115,18 @@ def test_ingest_and_find_by_keyword(repo, tmp_path: Path):
     assert second.entities_updated == 5
     assert second.relations_created == 0
 
-    # fulltext 검색.
-    found = repo.find_by_keywords(keywords=["여름 환영 쿠폰"], limit=10)
-    assert len(found) >= 1
-    assert any(n.name == "여름 환영 쿠폰" for n in found)
+    # fulltext 검색 — 새 keyword-별 scored API.
+    hits = repo.find_by_keywords_scored(
+        keywords=["여름 환영 쿠폰"], limit_per_keyword=10
+    )
+    assert len(hits) >= 1
+    assert any(h.node.name == "여름 환영 쿠폰" for h in hits)
+    assert all(h.matched_keyword == "여름 환영 쿠폰" for h in hits)
     # 별칭 매칭.
-    found_alias = repo.find_by_keywords(keywords=["여름 쿠폰"], limit=10)
-    assert any(n.name == "여름 환영 쿠폰" for n in found_alias)
+    hits_alias = repo.find_by_keywords_scored(
+        keywords=["여름 쿠폰"], limit_per_keyword=10
+    )
+    assert any(h.node.name == "여름 환영 쿠폰" for h in hits_alias)
 
 
 def test_find_entities_dense_is_stub(repo):

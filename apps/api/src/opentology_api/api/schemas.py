@@ -34,27 +34,71 @@ class DataEnvelope(BaseModel, Generic[T]):
     data: T
 
 
-# ---------- find_entities (walking skeleton 슬라이스) ----------
+# ---------- find_entities (PRD 3 §3.3 / §3.4) ----------
 
 
 class FindEntitiesRequest(BaseModel):
-    model_config = ConfigDict(extra="forbid")
+    """입력 — PRD 3 §3.3.
 
-    keywords: list[str] = Field(min_length=1, max_length=32)
-    limit: int = Field(default=10, ge=1, le=50)
-
-
-class FindEntitiesResponse(BaseModel):
-    """walking skeleton 응답 — *Node 배열* .
-
-    WHY *full* PRD 3 §3.4 (matches[].node + score + matched_keyword) 가 아닌
-    축약본: 본 워커 사양은 `payload { "entities": [Node, ...] }` 를 요구.
-    하이브리드 매칭 (#6) 도입 시 응답을 PRD 3 §3.4 형태로 확장한다.
+    WHY `types` / `include_scores` 도 본 슬라이스에서 구현: 둘 다 *입력 계약*
+    이므로 (PRD 3 §3.3 이 source of truth) caller 가 호환을 가정한다. 하이브리드
+    구현 (#6) 전까지도 lexical-only 컨텍스트에서 의미 있게 동작 가능.
     """
 
     model_config = ConfigDict(extra="forbid")
 
-    entities: list[Node]
+    keywords: list[str] = Field(min_length=1, max_length=32)
+    types: list[str] | None = Field(
+        default=None,
+        description="필터 — 결과 노드의 type 이 이 리스트에 포함된 것만 반환.",
+    )
+    limit: int = Field(default=10, ge=1, le=50)
+    include_scores: bool = Field(
+        default=False,
+        description="True 이면 매치별 raw lexical/dense 점수 동봉 (디버깅 / 커스텀 re-rank).",
+    )
+
+
+class MatchScores(BaseModel):
+    """include_scores=true 일 때 노출되는 raw 점수 (PRD 3 §3.4).
+
+    WHY dense 는 0.0 으로 채워서라도 키를 노출: 하이브리드 도입 (#6) 이후에도
+    응답 형태가 *키 등장 여부* 로 갈리지 않게. lexical 만 동작 중이라는 사실은
+    별도 컨텍스트 (README 의 walking skeleton 한계 표) 로 안내.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    lexical: float = Field(ge=0.0)
+    dense: float = Field(ge=0.0, le=1.0)
+
+
+class EntityMatch(BaseModel):
+    """PRD 3 §3.4 의 matches[] 한 항목."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    node: Node
+    score: float = Field(
+        ge=0.0,
+        le=1.0,
+        description="Fused score — walking skeleton 은 lexical-only 라 max-normalize 된 fulltext 점수.",
+    )
+    matched_keyword: str = Field(
+        description="이 노드를 surface 시킨 input keyword (PRD 3 §3.5: 가장 높은 점수의 keyword).",
+    )
+    scores: MatchScores | None = Field(
+        default=None,
+        description="include_scores=true 일 때만 set.",
+    )
+
+
+class FindEntitiesResponse(BaseModel):
+    """PRD 3 §3.4 출력. envelope 으로 감싼 형태가 최종 REST 응답."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    matches: list[EntityMatch]
 
 
 # ---------- admin/ingest ----------

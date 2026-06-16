@@ -74,7 +74,9 @@ def test_live_ingest_and_find(settings, tmp_path: Path):
 
         # fulltext 검색 — 본문에 등장하는 어휘 하나로 진입점 매칭.
         time.sleep(1)  # fulltext index 반영을 위한 짧은 grace.
-        found = repo.find_by_keywords(keywords=["쿠폰"], limit=10)
-        assert len(found) >= 1
+        hits = repo.find_by_keywords_scored(
+            keywords=["쿠폰"], limit_per_keyword=10
+        )
+        assert len(hits) >= 1
     finally:
         repo.close()

@@ -83,7 +83,9 @@ class FakeGraph(GraphRepository):
     def find_by_name_exact(self, *, name: str) -> StoredEntity | None:  # noqa: D401
         return self._by_name.get(name)
 
-    def find_by_keywords(self, *, keywords: list[str], limit: int) -> list[Node]:  # noqa: D401
+    def find_by_keywords_scored(
+        self, *, keywords: list[str], limit_per_keyword: int
+    ):  # noqa: D401
         return []
 
     def find_entities_dense(self, *, keywords: list[str], limit: int) -> list[Node]:

@@ -4,7 +4,8 @@
 - ensure_indexes() — 부팅 시 idempotent 하게 인덱스 보장
 - upsert_entity() — 이름 정확 매칭 (1-step identity, walking skeleton)
 - upsert_relation() — (from_id, type, to_id) 3-튜플 유일성 (PRD 2 §5.5)
-- find_by_keywords() — fulltext 인덱스로 진입점 검색 (lexical-only)
+- find_by_keywords_scored() — fulltext 인덱스로 진입점 검색 (lexical-only),
+  keyword 별 raw 점수 동봉 (PRD 3 §3.4 의 matched_keyword + score 산출용)
 - find_entities_dense() — *stub* . 하이브리드는 #6 의 후속.
 """
 
@@ -12,6 +13,7 @@ from __future__ import annotations
 
 import logging
 from abc import ABC, abstractmethod
+from dataclasses import dataclass
 from typing import Any
 
 from neo4j import GraphDatabase
@@ -24,6 +26,22 @@ from ..domain.models import (
     StoredEntity,
     now_rfc3339,
 )
+
+
+@dataclass(frozen=True)
+class KeywordHit:
+    """단일 keyword 의 fulltext 매치 한 건.
+
+    WHY dataclass: 라우터 레이어가 keyword 별 raw Lucene 점수 + 어느 keyword
+    가 surface 시켰는지 두 정보를 모두 받아 PRD 3 §3.4 의 matched_keyword 와
+    score 를 도출한다 (§3.5: 같은 노드가 여러 keyword 에서 surface 됐다면
+    가장 높은 점수의 keyword 유지). 어댑터는 *데이터* 만 책임지고 fusion 은
+    상위 레이어가 책임.
+    """
+
+    node: Node
+    raw_score: float
+    matched_keyword: str
 
 
 logger = logging.getLogger(__name__)
@@ -63,7 +81,14 @@ class GraphRepository(ABC):
     def find_by_name_exact(self, *, name: str) -> StoredEntity | None: ...
 
     @abstractmethod
-    def find_by_keywords(self, *, keywords: list[str], limit: int) -> list[Node]: ...
+    def find_by_keywords_scored(
+        self, *, keywords: list[str], limit_per_keyword: int
+    ) -> list[KeywordHit]:
+        """각 keyword 별로 fulltext 매칭 결과를 반환 (raw Lucene 점수 포함).
+
+        같은 노드가 여러 keyword 에서 매칭될 수 있으므로 union/dedup 은 호출자
+        책임 (PRD 3 §3.5).
+        """
 
     @abstractmethod
     def find_entities_dense(
@@ -109,7 +134,7 @@ class Neo4jGraphRepository(GraphRepository):
         """부팅 시 idempotent 하게 인덱스 보장.
 
         WHY 세 가지 인덱스:
-        - fulltext (name + aliases): find_by_keywords 의 lexical 신호.
+        - fulltext (name + aliases): find_by_keywords_scored 의 lexical 신호.
         - vector (embedding): #6 후속의 dense 신호. *지금은 사용 안 함* 이지만
           미리 만들어 #6 가 마이그레이션을 안 하도록.
         - btree (name): upsert 시 *정확 이름 매칭* (1-step identity) 의 빠른
@@ -282,39 +307,53 @@ class Neo4jGraphRepository(GraphRepository):
 
     # ---------- Read ----------
 
-    def find_by_keywords(self, *, keywords: list[str], limit: int) -> list[Node]:
-        """fulltext 인덱스로 lexical 검색. OR + Lucene escape.
+    def find_by_keywords_scored(
+        self, *, keywords: list[str], limit_per_keyword: int
+    ) -> list[KeywordHit]:
+        """fulltext 인덱스를 *keyword 별로* 따로 호출.
 
-        WHY OR: 각 keyword 가 다른 entity 를 가리키는 게 자연스러운 caller
-        패턴 (정규명 + 별칭 list). 각 keyword 가 한 노드를 찾고, 노드 ID 로
-        dedup 후 점수 max 유지.
+        WHY keyword 별 분리: PRD 3 §3.4 의 `matched_keyword` 는 *어느 input
+        keyword 가 이 노드를 surface 시켰는지* 를 정확히 보고해야 한다. 모든
+        keyword 를 하나의 OR 쿼리로 보내면 점수는 받지만 어느 항이 매칭됐는지
+        파서가 알려주지 않는다. keyword 단위로 호출하고 결과에 keyword 를
+        태깅한 뒤, 상위 레이어가 노드 ID 로 union 하면서 점수 max 유지하는
+        구조로 둔다.
+
+        WHY 어댑터는 raw 점수만: 0..1 정규화 (PRD 3 §3.4) 는 *전체 결과 집합*
+        을 봐야 하므로 (예: max-normalize) 라우터에서 수행. 어댑터는 단일
+        Lucene/BM25 의 raw 점수만 책임.
+
+        성능 노트: keyword 수만큼 query 가 늘어남. walking skeleton 단계 비용
+        은 무시 가능. #6 의 dense + RRF 도입 시 fusion 단계에서 함께 재검토.
         """
         if not keywords:
             return []
-        lucene_query = " OR ".join(_lucene_escape(k) for k in keywords)
-        # WHY parameters dict 사용: neo4j driver 의 Session.run 시그니처가 첫
-        # positional 을 `query` 라는 이름으로 가진다. kwarg 로 `query=...` 를 넘기면
-        # 충돌. 명시적 `parameters={...}` 로 회피.
+        hits: list[KeywordHit] = []
         with self._driver.session() as s:
-            records = s.run(
-                """
-                CALL db.index.fulltext.queryNodes($idx, $q) YIELD node, score
-                RETURN node, score
-                ORDER BY score DESC
-                LIMIT $limit
-                """,
-                parameters={
-                    "idx": FULLTEXT_INDEX,
-                    "q": lucene_query,
-                    "limit": limit,
-                },
-            ).data()
-        seen: dict[str, Node] = {}
-        for rec in records:
-            n = _node_to_response(rec["node"])
-            if n.id not in seen:
-                seen[n.id] = n
-        return list(seen.values())
+            for kw in keywords:
+                lucene_query = _lucene_escape(kw)
+                records = s.run(
+                    """
+                    CALL db.index.fulltext.queryNodes($idx, $q) YIELD node, score
+                    RETURN node, score
+                    ORDER BY score DESC
+                    LIMIT $limit
+                    """,
+                    parameters={
+                        "idx": FULLTEXT_INDEX,
+                        "q": lucene_query,
+                        "limit": limit_per_keyword,
+                    },
+                ).data()
+                for rec in records:
+                    hits.append(
+                        KeywordHit(
+                            node=_node_to_response(rec["node"]),
+                            raw_score=float(rec["score"]),
+                            matched_keyword=kw,
+                        )
+                    )
+        return hits
 
     def find_entities_dense(
         self, *, keywords: list[str], limit: int
