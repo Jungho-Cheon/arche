@@ -101,10 +101,66 @@ eval/ 와 같은 워크스페이스에 join. `uv sync` 한 번으로 두 패키�
 | 인덱스 | 타입 | 용도 |
 |---|---|---|
 | `entity_name_idx` | FULLTEXT on `(:Entity)` over `[name, aliases]` | `find_entities` 의 lexical 매칭 |
-| `entity_embedding_idx` | VECTOR on `(:Entity).embedding`, 1536-dim, cosine | 하이브리드 dense 매칭 (#6 후속, 지금은 stub) |
-| `entity_name_btree` | BTREE on `(:Entity).name` | upsert 시 정확 이름 매칭 lookup (1-step identity) |
+| `entity_embedding_idx` | VECTOR on `(:Entity).embedding`, 1536-dim, cosine | 동일성 4 단계 Step 3 + 하이브리드 dense 매칭 (#6 후속) |
+| `entity_name_btree` | BTREE on `(:Entity).name` | 디버그 / 직접 조회용 |
+| `entity_normalized_name_idx` | BTREE on `(:Entity).normalized_name` | 4 단계 동일성 Step 1·2 lookup |
+| `ingestion_run_source_idx` | BTREE on `(:IngestionRun).source_path` | 차분 알고리즘의 "직전 성공 회차" 조회 |
 
 벡터 인덱스 차원 1536 은 `text-embedding-3-small` 의 출력 차원과 *반드시 일치* . 모델 교체 시 `OPENTOLOGY_API_EMBEDDING_DIMENSION` 환경 변수와 인덱스 재생성 둘 다 필요.
+
+## 재 ingest 동작 (Re-ingest behavior)
+
+같은 소스를 다시 넣어도 그래프가 결정적으로 같아져야 한다 (ADR-0001 D6). 본 코드는 두 가지 메커니즘으로 약속한다.
+
+### 회차 모델 — `(:IngestionRun)`
+
+ingest 한 번이 곧 한 회차 노드. 노드 속성:
+
+- `id` (ULID)
+- `source_path` — 절대 경로
+- `source_hash` — 파일 바이트의 sha256
+- `started_at` / `completed_at` — RFC 3339 UTC
+- `status` — `running` / `succeeded` / `failed`
+- `emitted_entity_ids` — 이번 회차가 만들었거나 병합한 엔티티 id 목록
+- `emitted_relation_ids` — 이번 회차가 만들었거나 병합한 관계 id 목록
+
+엔티티는 회차 노드와 `[:EMITTED_IN]` 관계로 연결. 관계 (edge) 는 Neo4j 의 property graph 가 edge 에 edge 를 달 수 없어 `r.emitted_in_run_ids` 배열 속성에 회차 id 를 dedupe 으로 append.
+
+### Short-circuit
+
+같은 `(source_path, source_hash)` 의 *성공* 회차가 이미 있으면 LLM / 임베딩 호출 자체를 건너뛴다. 응답의 `short_circuited: true` 와 이전 회차의 emitted 카운트 그대로 돌려준다 — 그래프 상태는 손대지 않는다.
+
+### 차분 (diff) 적용
+
+소스의 *내용* 이 바뀌면 (hash 가 다르면) 새 회차를 시작하고, 이전 *성공* 회차의 emitted 와 비교한다.
+
+- 이전 회차가 emit 했는데 이번 회차가 안 건드린 노드 / 관계 →
+  - `source_paths` 가 *오직 이번 source_path 만* 포함 → 노드 / 관계 삭제 (노드는 인접 관계도 함께 `DETACH DELETE`).
+  - 그 외 → `source_paths` (와 `source_chunk_indexes`) 에서 해당 항목만 trim, 노드 자체는 유지.
+- 양쪽에 있는 것 → 4 단계 매처가 step 1·2·3 으로 hit 시켜 병합 규칙 (PRD 2 §5.3) 적용.
+
+처리 순서는 *관계 → 엔티티* . 엔티티 `DETACH DELETE` 가 cascade 로 관계를 지우면 관계 카운터가 누락되므로 관계를 먼저 처리한다.
+
+회차 노드는 회차 히스토리 자체로도 가치 (예: 어떤 회차가 무엇을 emit 했는지) 가 있어 *자동 정리하지 않는다* . post-MVP 에서 retention 정책을 정한다.
+
+### 4 단계 동일성
+
+엔티티 추출 결과는 다음 순서로 기존 노드와 매칭된다 (PRD 2 §5.1).
+
+1. **Step 1** — `normalize(name)` 정확 일치 (정규명 OR 정규화된 alias). `entity_normalized_name_idx` btree lookup.
+2. **Step 2** — 새 엔티티의 각 alias 를 정규화해 동일 lookup. 첫 hit 채택.
+3. **Step 3** — 임베딩 cosine ≥ `EMBEDDING_MATCH_THRESHOLD` (= 0.92) 인 후보. `entity_embedding_idx` 의 ANN top-5 후 type 필터, 우리 코드에서 cosine 재계산.
+4. **Step 4** — 모두 miss → 새 노드 생성.
+
+응답의 `entities_matched_by_step` 가 step 1·2·3 의 분포를 노출 (디버그 + threshold tuning 신호).
+
+## 통제 변수 (Control variables)
+
+다음 값들은 *측정 회차 사이에 바뀌면 모든 측정의 의미가 깨진다* (ADR-0001).
+
+- `EMBEDDING_MATCH_THRESHOLD = 0.92` — `src/opentology_api/domain/identity.py` 에 *단 한 곳* . 변경하려면 ADR-0003 amend + 새 측정 회차를 시작해야 한다. 기존 그래프의 동일성 분류가 통째로 달라진다.
+- `normalize()` 의 범위 — 동일 모듈. `strip + NFC + lowercase + 공백 축약 + 양 끝 흔한 구두점 trim` 까지. 한국어 조사/접미사 제거는 *의도적으로 안 한다* — false positive 가 많아서. 변경 시 `normalized_name` 인덱스 값이 전부 바뀌어 기존 동일성이 깨진다.
+- 임베딩 모델 (`text-embedding-3-small`) 과 차원 (1536) — eval/ 의 청크 RAG 와 *반드시 동일* (ADR-0003 D2).
 
 ## 의도적 한계 (이 슬라이스 범위 밖)
 
@@ -112,7 +168,6 @@ eval/ 와 같은 워크스페이스에 join. `uv sync` 한 번으로 두 패키�
 |---|---|
 | 디렉토리 크롤 / `--watch` / `--dry-run` | #2 |
 | 청크 분할 + overlap | #3 |
-| 4-step 엔티티 동일성 (별칭 / 임베딩 유사도 / LLM judge) | #4 |
 | PDF / 이미지 멀티모달 추출 | #5 |
 | `get_schema` / `get_entity` / `get_neighbors` / `find_path` / `get_subgraph` | #6 |
 | MCP stdio 어댑터 | #7 |

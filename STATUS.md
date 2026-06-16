@@ -17,8 +17,8 @@ Opentology = LLM·AI 에이전트가 *도메인 지식의 관계* 를 *최소한
 | 단계 | 상태 | 비고 |
 |---|---|---|
 | 소스 입력 (디렉토리 크롤) | 미착수 | 단일 파일 ingest 만 동작 (#1). 디렉토리 크롤 / `--watch` / `--dry-run` 은 #2 |
-| 엔티티/관계 추출 (멀티모달 LLM) | 부분 | `.txt` / `.md` 단일 파일 + 청크 분할 없음 (#1). PDF / 이미지는 #5 |
-| 그래프 적재 (idempotent) | 부분 | 1-step 이름 정확 매칭 동일성만 (#1). 4-step (별칭 / 임베딩 유사도 / LLM judge) 은 #4 |
+| 엔티티/관계 추출 (멀티모달 LLM) | 부분 | `.txt` / `.md` 단일 파일 + 청크 분할 없음 (#1). 동일성은 4 단계 + idempotent 차분 완료 (#4). PDF / 이미지는 #5 |
+| 그래프 적재 (idempotent) | 완료 | 4 단계 동일성 (정규화 / 별칭 / 임베딩 유사도 0.92) + IngestionRun 기반 차분 적용 (#4). 청크 분할 (#3) 은 적재 약속 자체에 영향 없음 |
 | 그래프 진입점 인덱싱 (어휘 + dense 하이브리드) | 부분 | fulltext + 벡터 인덱스 둘 다 *생성* . 검색은 lexical-only 이고 dense + RRF 하이브리드는 #6 |
 | Graph Primitives REST API | 부분 | `find_entities` (lexical) + `/admin/ingest` + `/healthz` (#1). 나머지 5 primitives (`get_schema` / `get_entity` / `get_neighbors` / `find_path` / `get_subgraph`) 는 #6 |
 | Graph Primitives MCP 서버 | 미착수 | stdio 어댑터 #7 |
@@ -47,7 +47,6 @@ Opentology = LLM·AI 에이전트가 *도메인 지식의 관계* 를 *최소한
 | `Neo4jGraphRepository.find_entities_dense` | `NotImplementedError` raise — 하이브리드 매칭의 dense 신호 + RRF 결합 | #6 |
 | `apps/api` 의 `find_entities` REST 응답 | PRD 3 §3.4 의 `matches[].node + score + matched_keyword` 형식이 아닌 *Node 배열* 축약본 | #6 |
 | `apps/api` ingest 의 청크 분할 | 컨텍스트 초과 분할 미구현 (단일 파일 통째로 LLM 전달) | #3 |
-| `apps/api` ingest 의 엔티티 동일성 | 1-step (이름 정확 매칭) 만. 별칭 / 임베딩 유사도 / LLM judge 미구현 | #4 |
 | `apps/api` ingest 의 PDF/이미지 | `UnsupportedFileTypeError` raise + #5 안내 | #5 |
 | `apps/api` 의 admin ingest | 동기 처리 (PRD 2 §1.3 의 task_id + polling 미구현) | #2 |
 
@@ -57,7 +56,6 @@ Opentology = LLM·AI 에이전트가 *도메인 지식의 관계* 를 *최소한
 |---|---|---|
 | P0 | 디렉토리 크롤 + 변경 감지 (#2) | walking skeleton 위에 multi-file 흐름 얹음 |
 | P0 | 청크 분할 + overlap (#3) | LLM 컨텍스트 초과 케이스 해소 |
-| P0 | 4-step 엔티티 동일성 (#4) | 별칭 / 임베딩 / LLM judge |
 | P1 | PDF / 이미지 멀티모달 추출 (#5) | 검증 도메인 소스 파일 형태에 맞춰 |
 | P1 | 나머지 5 graph primitives + dense + RRF (#6) | 이 PR 의 stub 해소 |
 | P1 | MCP stdio 어댑터 (#7) | ADR-0006 D2 |
