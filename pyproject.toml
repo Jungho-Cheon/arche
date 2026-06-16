@@ -1,5 +1,5 @@
 [tool.uv.workspace]
-members = ["eval"]
+members = ["eval", "apps/api"]
 
 [tool.uv]
 # WHY: Workspace root only — actual package lives in eval/. Keeping the root
@@ -9,7 +9,8 @@ package = false
 
 [tool.pytest.ini_options]
 # WHY 루트에 둠: rootdir 가 workspace 루트라 marker 등록도 여기서 해야 추가 인식된다.
-testpaths = ["eval/tests"]
+testpaths = ["eval/tests", "apps/api/tests"]
 markers = [
-    "live: end-to-end test that hits real OpenAI API (set RUN_LIVE_TESTS=1 to enable)",
+    "live: end-to-end test that hits real OpenAI API + Neo4j (set RUN_LIVE_TESTS=1 to enable)",
+    "integration: integration test that spins up Neo4j via testcontainers",
 ]

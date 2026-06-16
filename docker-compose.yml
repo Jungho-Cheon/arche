@@ -1,0 +1,57 @@
+# WHY 단일 compose: ADR-0004 D1 의 "별도 벡터 DB 서비스 미도입" + walking
+# skeleton 사양의 두 서비스 (neo4j + api) 만. 추후 MCP 어댑터 (#7) 가 추가되어도
+# 같은 compose 에 들어가는 게 운영 무게 면에서 합리적.
+
+services:
+  opentology-neo4j:
+    # WHY 5.15-community: 5.15+ 부터 표준 `CREATE VECTOR INDEX ... IF NOT
+    # EXISTS` Cypher 가 GA. 5.13 의 `db.index.vector.createNodeIndex`
+    # 프로시저 + SHOW INDEXES 가드 패턴이 정리된다. 특정 minor 에 고정 (latest
+    # 금지) — 인덱스 syntax / 동작이 minor 업그레이드 시 *깨질 수* 있어 부팅
+    # 가정을 명시적으로 묶는다.
+    image: neo4j:5.15-community
+    container_name: opentology-neo4j
+    ports:
+      - "7474:7474"   # browser UI
+      - "7687:7687"   # bolt
+    environment:
+      # NEO4J_AUTH 가 단일 문자열 (user/password). .env 의 NEO4J_PASSWORD 사용.
+      NEO4J_AUTH: "neo4j/${NEO4J_PASSWORD:-opentology}"
+      NEO4J_dbms_security_procedures_unrestricted: "apoc.*,gds.*"
+    volumes:
+      - neo4j-data:/data
+      - neo4j-logs:/logs
+    healthcheck:
+      test: ["CMD-SHELL", "cypher-shell -u neo4j -p ${NEO4J_PASSWORD:-opentology} 'RETURN 1' || exit 1"]
+      interval: 5s
+      timeout: 10s
+      retries: 20
+      start_period: 20s
+
+  opentology-api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    container_name: opentology-api
+    ports:
+      - "8000:8000"
+    environment:
+      OPENAI_API_KEY: "${OPENAI_API_KEY}"
+      NEO4J_URI: "bolt://opentology-neo4j:7687"
+      NEO4J_USER: "neo4j"
+      NEO4J_PASSWORD: "${NEO4J_PASSWORD:-opentology}"
+      OPENTOLOGY_API_LLM_MODEL: "${OPENTOLOGY_API_LLM_MODEL:-openai/gpt-4.1}"
+      OPENTOLOGY_API_EMBEDDING_MODEL: "${OPENTOLOGY_API_EMBEDDING_MODEL:-openai/text-embedding-3-small}"
+    depends_on:
+      opentology-neo4j:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://localhost:8000/healthz', timeout=2).status==200 else 1)\""]
+      interval: 5s
+      timeout: 10s
+      retries: 12
+      start_period: 15s
+
+volumes:
+  neo4j-data:
+  neo4j-logs:
