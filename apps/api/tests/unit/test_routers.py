@@ -46,14 +46,54 @@ class StubGraph(GraphRepository):
     def healthcheck(self) -> bool:
         return self._healthy
 
-    def upsert_entity(self, *, entity: StoredEntity):  # noqa: D401
-        return entity.id, True
+    def find_by_normalized_name(self, *, normalized, type_):  # noqa: D401
+        return None
+
+    def vector_search(self, *, embedding, top_k, type_):  # noqa: D401
+        return []
+
+    def create_entity(self, *, entity):  # noqa: D401
+        return None
+
+    def apply_merge_mutation(self, *, mutation):  # noqa: D401
+        return None
 
     def upsert_relation(self, *, from_id, to_id, rel_type, source_ref):  # noqa: D401
         return "rel", True
 
-    def find_by_name_exact(self, *, name):  # noqa: D401
+    def find_succeeded_run_by_hash(self, *, source_path, source_hash):  # noqa: D401
         return None
+
+    def find_latest_succeeded_run(self, *, source_path):  # noqa: D401
+        return None
+
+    def create_ingestion_run(
+        self, *, run_id, source_path, source_hash, started_at
+    ):  # noqa: D401
+        return None
+
+    def mark_entity_emitted(self, *, entity_id, run_id):  # noqa: D401
+        return None
+
+    def mark_relation_emitted(self, *, relation_id, run_id):  # noqa: D401
+        return None
+
+    def finalize_run(
+        self,
+        *,
+        run_id,
+        status,
+        completed_at,
+        emitted_entity_ids,
+        emitted_relation_ids,
+    ):  # noqa: D401
+        return None
+
+    def apply_entity_diff(self, *, entity_id, source_path, run_id):  # noqa: D401
+        return "missing"
+
+    def apply_relation_diff(self, *, relation_id, source_path):  # noqa: D401
+        return "missing"
 
     def find_by_keywords_scored(  # noqa: D401
         self, *, keywords, limit_per_keyword
