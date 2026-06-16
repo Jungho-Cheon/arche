@@ -32,9 +32,9 @@ Opentology = LLM·AI 에이전트가 *도메인 지식의 관계* 를 *최소한
 | # | 이름 | 상태 |
 |---|---|---|
 | M1 | 코드 골격 + 인프라 (FastAPI, 그래프 DB, 임베딩 어댑터) | 진행 중 |
-| M2 | Ingest 파이프라인 (소스 → 엔티티/관계 → 그래프, idempotent) | 진행 중 |
-| M3 | Graph Primitives (REST + MCP) | 진행 중 |
-| M4 | 베이스라인 하니스 (full-context + 청크 RAG) | 완료 (#15) |
+| M2 | Ingest 파이프라인 (소스 → 엔티티/관계 → 그래프, idempotent) | 미착수 |
+| M3 | Graph Primitives (REST + MCP) | 미착수 |
+| M4 | 베이스라인 하니스 (full-context + 청크 RAG) | 미착수 |
 | M5 | 평가 데이터 (상거래 검증 도메인 소스 + 30 MCQ) | 미착수 |
 | M6 | 3-way 측정 + 보고서 1 회 | 미착수 |
 
