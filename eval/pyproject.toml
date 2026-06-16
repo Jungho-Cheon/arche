@@ -1,0 +1,36 @@
+[project]
+name = "opentology-eval"
+version = "0.1.0"
+description = "Opentology MVP 3-way 비교 측정 하니스 (full-context / chunk RAG / opentology)"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "openai>=1.40.0",
+    "chromadb>=0.5.0",
+    "tiktoken>=0.7.0",
+    "pyyaml>=6.0",
+    "python-dotenv>=1.0.0",
+    "typer>=0.12.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-mock>=3.12",
+]
+
+[project.scripts]
+opentology-eval = "opentology_eval.cli:app"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/opentology_eval"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+    "live: end-to-end test that hits real OpenAI API (set RUN_LIVE_TESTS=1 to enable)",
+]

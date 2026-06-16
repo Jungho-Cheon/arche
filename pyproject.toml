@@ -1,0 +1,15 @@
+[tool.uv.workspace]
+members = ["eval"]
+
+[tool.uv]
+# WHY: Workspace root only — actual package lives in eval/. Keeping the root
+# without its own package avoids accidentally publishing a meta-package and
+# lets future members (apps/api, etc.) join without restructuring.
+package = false
+
+[tool.pytest.ini_options]
+# WHY 루트에 둠: rootdir 가 workspace 루트라 marker 등록도 여기서 해야 추가 인식된다.
+testpaths = ["eval/tests"]
+markers = [
+    "live: end-to-end test that hits real OpenAI API (set RUN_LIVE_TESTS=1 to enable)",
+]
