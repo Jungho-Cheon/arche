@@ -44,11 +44,44 @@ curl -s -X POST http://localhost:8000/entities/find \
   -d '{"keywords":["여름 환영 쿠폰"]}' | jq
 ```
 
+응답은 PRD 3 §0.3 envelope + §3.4 매치 형식:
+
+```json
+{
+  "data": {
+    "matches": [
+      {
+        "node": {
+          "id": "01HZX0G7M8N0RT0V0EXAMPLE00",
+          "name": "여름 환영 쿠폰",
+          "type": "coupon",
+          "aliases": ["여름 쿠폰"],
+          "properties": {},
+          "source_refs": [{"source_path": "/abs/path/to/sample.md"}],
+          "created_at": "2026-06-16T12:00:00Z",
+          "updated_at": "2026-06-16T12:00:00Z"
+        },
+        "score": 1.0,
+        "matched_keyword": "여름 환영 쿠폰"
+      }
+    ]
+  }
+}
+```
+
+`include_scores: true` 로 보내면 매치마다 raw `scores.lexical` / `scores.dense` 가 동봉된다 (walking skeleton 의 dense 는 stub 이라 0.0).
+
+`score` 정규화: walking skeleton 은 lexical-only — fulltext (BM25 류) raw 점수를 *현재 결과 집합 안의 최댓값* 으로 나눠 0..1 로 매핑한다 (max-normalize). 즉 top 매치는 1.0, 하위 매치는 비율로 줄어든다. 결과 집합 단위 정규화라 두 호출 간 score 의 *절대* 비교는 의미가 없다 (상대 순위만 의미). #6 의 dense + RRF 하이브리드가 들어오면 RRF fused score 로 교체되며 정규화 자체가 불필요해진다.
+
+`matched_keyword`: PRD 3 §3.5 — 같은 노드가 여러 input keyword 에서 surface 됐다면 *가장 높은 raw 점수* 를 만든 keyword 가 채워진다. 어휘 검색을 OR'd 한 단일 쿼리로 묶으면 어느 항이 매칭됐는지 추적이 어려우므로, walking skeleton 은 *keyword 별로 개별 fulltext 쿼리* 를 돌린 뒤 노드 ID union 단계에서 점수 max 와 함께 keyword 를 유지한다. keyword 수만큼 쿼리가 늘어나는 비용 (#6 fusion 단계에서 재검토 예정).
+
 ## 왜 이 선택들인가
 
-### Neo4j 5.13+ Community
+### Neo4j 5.15+ Community
 
 ADR-0004 D1 — 풀텍스트 인덱스 + 벡터 인덱스 + 그래프 traversal 세 가지를 *한 컴포넌트* 에서 모두 제공해야 한다는 제약을 만족하는 가장 성숙한 벤더. `db.index.fulltext.queryNodes` (이름·별칭 검색) 와 `db.index.vector.queryNodes` (1536-dim cosine) 가 같은 인스턴스에 공존한다. 별도 벡터 DB 서비스 (Pinecone / Qdrant 등) 는 ADR-0004 D1 에 따라 *MVP 에서 도입하지 않는다* .
+
+5.15+ 핀: 5.15 부터 `CREATE VECTOR INDEX ... IF NOT EXISTS` 표준 Cypher 가 GA. 5.13 의 `db.index.vector.createNodeIndex` 프로시저 + `SHOW INDEXES` 가드 패턴이 사라지고, 세 인덱스 (fulltext / vector / btree) 모두 단일 `CREATE ... IF NOT EXISTS` 로 idempotent 보장된다. `docker-compose.yml` 의 이미지 태그도 같은 minor 에 고정 (`5.15-community`).
 
 ### OpenAI gpt-4.1 + text-embedding-3-small
 

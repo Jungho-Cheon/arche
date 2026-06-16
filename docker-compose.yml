@@ -4,7 +4,12 @@
 
 services:
   opentology-neo4j:
-    image: neo4j:5.13-community
+    # WHY 5.15-community: 5.15+ 부터 표준 `CREATE VECTOR INDEX ... IF NOT
+    # EXISTS` Cypher 가 GA. 5.13 의 `db.index.vector.createNodeIndex`
+    # 프로시저 + SHOW INDEXES 가드 패턴이 정리된다. 특정 minor 에 고정 (latest
+    # 금지) — 인덱스 syntax / 동작이 minor 업그레이드 시 *깨질 수* 있어 부팅
+    # 가정을 명시적으로 묶는다.
+    image: neo4j:5.15-community
     container_name: opentology-neo4j
     ports:
       - "7474:7474"   # browser UI
@@ -12,7 +17,6 @@ services:
     environment:
       # NEO4J_AUTH 가 단일 문자열 (user/password). .env 의 NEO4J_PASSWORD 사용.
       NEO4J_AUTH: "neo4j/${NEO4J_PASSWORD:-opentology}"
-      # vector index 는 5.13 community 부터 GA.
       NEO4J_dbms_security_procedures_unrestricted: "apoc.*,gds.*"
     volumes:
       - neo4j-data:/data

@@ -1,7 +1,7 @@
 """실제 Neo4j 컨테이너 위에서 인덱스 + upsert + find 흐름.
 
 WHY testcontainers: docker compose 스택을 따로 띄울 필요 없이, pytest 한 번에
-neo4j:5.13 컨테이너가 떠서 격리된 상태로 검증된다.
+neo4j:5.15 컨테이너가 떠서 격리된 상태로 검증된다.
 """
 
 from __future__ import annotations
@@ -24,7 +24,7 @@ pytestmark = pytest.mark.integration
 def neo4j_container():
     if os.environ.get("SKIP_INTEGRATION") == "1":
         pytest.skip("integration skipped via env")
-    with Neo4jContainer("neo4j:5.13-community") as neo4j:
+    with Neo4jContainer("neo4j:5.15-community") as neo4j:
         yield neo4j
 
 

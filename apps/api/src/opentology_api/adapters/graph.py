@@ -1,4 +1,4 @@
-"""그래프 저장소 어댑터 — Neo4j 5.13+ 내장 인덱스 사용 (ADR-0004 D1).
+"""그래프 저장소 어댑터 — Neo4j 5.15+ 내장 인덱스 사용 (ADR-0004 D1).
 
 핵심 책임:
 - ensure_indexes() — 부팅 시 idempotent 하게 인덱스 보장
@@ -100,7 +100,7 @@ class GraphRepository(ABC):
 
 
 class Neo4jGraphRepository(GraphRepository):
-    """Neo4j 5.13+ 어댑터.
+    """Neo4j 5.15+ 어댑터.
 
     WHY driver 1 개 보존: bolt 커넥션 풀은 driver 내부에서 관리된다. 매 요청
     재생성하면 풀이 의미 없어지고 latency 가 늘어난다.
@@ -139,6 +139,10 @@ class Neo4jGraphRepository(GraphRepository):
           미리 만들어 #6 가 마이그레이션을 안 하도록.
         - btree (name): upsert 시 *정확 이름 매칭* (1-step identity) 의 빠른
           lookup. fulltext 만으로는 exact-match 속도가 보장 안 된다.
+
+        Neo4j 5.15+ 부터 세 인덱스 모두 표준 `CREATE ... IF NOT EXISTS` 구문으로
+        idempotent 보장이 가능 (5.13 의 `db.index.vector.createNodeIndex`
+        프로시저 + SHOW INDEXES 가드 패턴은 더 이상 불필요).
         """
         dim = self._settings.embedding_dimension
         with self._driver.session() as s:
@@ -146,23 +150,21 @@ class Neo4jGraphRepository(GraphRepository):
                 f"CREATE FULLTEXT INDEX {FULLTEXT_INDEX} IF NOT EXISTS "
                 f"FOR (e:{ENTITY_LABEL}) ON EACH [e.name, e.aliases]"
             ).consume()
-            # WHY 프로시저 형태: Neo4j 5.13 은 CREATE VECTOR INDEX 구문 미지원 (5.15+).
-            # `db.index.vector.createNodeIndex` 는 같은 이름으로 두 번 호출하면 에러를
-            # 던지므로 SHOW INDEXES 로 idempotent 가드.
-            existing = s.run(
-                "SHOW INDEXES YIELD name WHERE name = $name RETURN count(*) AS c",
-                name=VECTOR_INDEX,
-            ).single()
-            if existing is None or existing["c"] == 0:
-                s.run(
-                    "CALL db.index.vector.createNodeIndex("
-                    "$name, $label, $prop, $dim, $sim)",
-                    name=VECTOR_INDEX,
-                    label=ENTITY_LABEL,
-                    prop="embedding",
-                    dim=dim,
-                    sim="cosine",
-                ).consume()
+            # Neo4j 5.15+ 표준 vector index 구문.
+            # WHY 인라인 dim: OPTIONS 의 indexConfig 는 parameter 바인딩을
+            # 받지 않으므로 (Cypher 가 리터럴만 허용) 정수를 직접 삽입한다.
+            # dim 은 Settings 에서 온 신뢰 가능 값.
+            # WHY 백틱 키: Neo4j 5.15 의 Cypher 파서는 map literal 안에서 점이
+            # 포함된 key 를 *backtick* 으로 감싸야 받아들인다 (single-quoted
+            # string 키는 SyntaxError). 즉 `\`vector.dimensions\`: 1536` 형태.
+            s.run(
+                f"CREATE VECTOR INDEX {VECTOR_INDEX} IF NOT EXISTS "
+                f"FOR (e:{ENTITY_LABEL}) ON (e.embedding) "
+                f"OPTIONS {{ indexConfig: {{ "
+                f"`vector.dimensions`: {int(dim)}, "
+                f"`vector.similarity_function`: 'cosine' "
+                f"}} }}"
+            ).consume()
             s.run(
                 f"CREATE INDEX entity_name_btree IF NOT EXISTS "
                 f"FOR (e:{ENTITY_LABEL}) ON (e.name)"
