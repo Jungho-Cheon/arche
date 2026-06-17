@@ -28,7 +28,7 @@ from opentology_api.api.deps import (
     graph_repo_dep,
     llm_provider_dep,
 )
-from opentology_api.api.routers import _fuse_with_rrf
+from opentology_api.api.services import _fuse_with_rrf
 from opentology_api.domain.models import (
     Edge,
     ExtractedGraph,

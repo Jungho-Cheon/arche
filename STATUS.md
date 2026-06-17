@@ -21,7 +21,7 @@ Opentology = LLM·AI 에이전트가 *도메인 지식의 관계* 를 *최소한
 | 그래프 적재 (idempotent) | 완료 | 4 단계 동일성 (정규화 / 별칭 / 임베딩 유사도 0.92) + IngestionRun 기반 차분 적용 (#4) + 청크 분할 (#3) 도 동일성 매처가 청크 경계 무관하게 흡수 |
 | 그래프 진입점 인덱싱 (어휘 + dense 하이브리드) | 완료 | fulltext + 벡터 인덱스 + 하이브리드 검색 (lexical + dense, RRF k=60). raw 점수는 `include_scores=true` 로 노출 |
 | Graph Primitives REST API | 완료 | 6 primitive 모두 (`get_schema` / `find_entities` 하이브리드 / `get_entity` + edge_counts / `get_neighbors` BFS + 절단 / `find_path` k-shortest / `get_subgraph` multi-source BFS) + `/healthz` + `/admin/ingest`. OpenAPI 는 `/openapi.json` 으로 노출. MCP 어댑터는 #7 |
-| Graph Primitives MCP 서버 | 미착수 | stdio 어댑터 #7 |
+| Graph Primitives MCP 서버 | 완료 (stdio) | `opentology mcp serve --stdio` 가 6 primitive 를 표준 MCP tool 로 노출 (#7). REST 와 *동일 입출력 schema* (Pydantic 단일 source). HTTP+SSE 는 post-MVP (PRD 3 §8.1) |
 | 청크 벡터 RAG 베이스라인 하니스 | 완료 | #15 머지 (eval/) |
 | Full-context LLM 베이스라인 하니스 | 완료 | #15 머지 (eval/) |
 | Opentology 컬럼 (anchor 추출 + primitives 조합 + 직렬화) | 완료 | #10 머지 (eval/columns/opentology.py + eval/clients/opentology.py + eval/serializers.py) |
@@ -34,7 +34,7 @@ Opentology = LLM·AI 에이전트가 *도메인 지식의 관계* 를 *최소한
 |---|---|---|
 | M1 | 코드 골격 + 인프라 (FastAPI, 그래프 DB, 임베딩 어댑터) | 진행 중 |
 | M2 | Ingest 파이프라인 (소스 → 엔티티/관계 → 그래프, idempotent) | 미착수 |
-| M3 | Graph Primitives (REST + MCP) | 미착수 |
+| M3 | Graph Primitives (REST + MCP) | 완료 — REST 6 primitive (#19) + MCP stdio (#7). HTTP+SSE 는 post-MVP |
 | M4 | 베이스라인 하니스 (full-context + 청크 RAG) | 미착수 |
 | M5 | 평가 데이터 (상거래 검증 도메인 소스 + 30 MCQ) | 미착수 |
 | M6 | 3-way 측정 + 보고서 1 회 | 부분 — 도구 완료, 실 측정은 #13 (30 MCQ) 후 |
@@ -52,7 +52,6 @@ Opentology = LLM·AI 에이전트가 *도메인 지식의 관계* 를 *최소한
 | 우선순위 | 항목 | 비고 |
 |---|---|---|
 | P1 | PDF / 이미지 멀티모달 추출 (#5) | 검증 도메인 소스 파일 형태에 맞춰 |
-| P1 | MCP stdio 어댑터 (#7) | ADR-0006 D2. 본 PR 의 6 primitive REST 와 *동일 입출력 schema* 를 MCP tool 로 노출 |
 
 ## 갱신 정책
 

@@ -31,6 +31,13 @@ app = typer.Typer(
     help="Opentology CLI — directory or single-file ingest.",
 )
 
+mcp_app = typer.Typer(
+    no_args_is_help=True,
+    add_completion=False,
+    help="MCP server commands — Model Context Protocol stdio adapter.",
+)
+app.add_typer(mcp_app, name="mcp")
+
 
 @app.command()
 def version() -> None:
@@ -38,6 +45,79 @@ def version() -> None:
     from . import __version__
 
     typer.echo(__version__)
+
+
+@mcp_app.command("serve")
+def mcp_serve(
+    stdio: Annotated[
+        bool,
+        typer.Option(
+            "--stdio/--no-stdio",
+            help="stdio transport 사용 여부 (현재는 stdio 만 지원, post-MVP 에서 HTTP+SSE).",
+        ),
+    ] = True,
+) -> None:
+    """6 graph primitive 를 MCP 표준 tool 로 노출 (PRD 3 §8).
+
+    동작:
+    1. `.env` 로드 + Settings / Neo4jGraphRepository / OpenAIEmbeddingProvider
+       구성.
+    2. `build_mcp_server` 로 6 tool 등록.
+    3. stdio transport 에서 JSON-RPC 핸드셰이크 (initialize / list_tools /
+       call_tool) 를 처리.
+
+    클라이언트 (Claude Desktop / Cursor 등) 등록 예시:
+
+        "mcpServers": {
+          "opentology": { "command": "opentology", "args": ["mcp", "serve", "--stdio"] }
+        }
+
+    WHY stdio 만: PRD 3 §8.1 — MVP 범위 결정. HTTP+SSE 는 post-MVP.
+    """
+    import asyncio
+
+    if not stdio:
+        # PRD 3 §8.1 — MVP 는 stdio 만 지원. 다른 transport 요청은 명시적 에러.
+        typer.echo(
+            "[error] only --stdio transport is supported in MVP "
+            "(HTTP+SSE is post-MVP, ADR-0006).",
+            err=True,
+        )
+        raise typer.Exit(code=2)
+
+    import os
+
+    # WHY 환경변수 fake graph: integration 테스트가 본 서버를 subprocess 로
+    # spawn 할 때 실제 Neo4j / OpenAI 없이 핸드셰이크와 6 primitive 응답 경로만
+    # 검증한다. production 부팅 경로는 변수 없이 그대로 Neo4j + OpenAI 를 쓴다.
+    if os.environ.get("OPENTOLOGY_TEST_FAKE_GRAPH") == "1":
+        from .mcp_server import run_stdio_server
+        from .test_support import FakeEmbedder, FakeGraph, FakeSettings
+
+        asyncio.run(run_stdio_server(FakeGraph(), FakeEmbedder(), FakeSettings()))
+        return
+
+    load_dotenv()
+    settings = get_settings()
+
+    graph = Neo4jGraphRepository(settings)
+    embedder = OpenAIEmbeddingProvider(
+        model_id=settings.embedding_model_id, api_key=settings.openai_api_key
+    )
+    try:
+        # 인덱스 idempotent 보장 — REST 의 lifespan 과 같은 책임.
+        try:
+            graph.ensure_indexes()
+        except Exception as e:  # noqa: BLE001
+            # 부팅 시 실패해도 read 요청에 의존성 누락 발생하면 그때 503 으로
+            # 표면화 — 부팅 자체를 막지는 않는다.
+            typer.echo(f"[warn] ensure_indexes failed: {e}", err=True)
+
+        from .mcp_server import run_stdio_server
+
+        asyncio.run(run_stdio_server(graph, embedder, settings))
+    finally:
+        graph.close()
 
 
 @app.command()
