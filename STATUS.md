@@ -26,7 +26,7 @@ Opentology = LLM·AI 에이전트가 *도메인 지식의 관계* 를 *최소한
 | Full-context LLM 베이스라인 하니스 | 완료 | #15 머지 (eval/) |
 | Opentology 컬럼 (anchor 추출 + primitives 조합 + 직렬화) | 완료 | #10 머지 (eval/columns/opentology.py + eval/clients/opentology.py + eval/serializers.py) |
 | 30 개 MCQ 평가 셋 | 미착수 | |
-| 3-way 측정 보고서 | 미착수 | 3 컬럼 모두 구현 완료 — 보고서/judge/spotcheck 는 #11 |
+| 3-way 측정 보고서 | 완료 (도구) | judge / spotcheck / aggregate / report 도구 일체 완료 (#11). 실 측정은 #13 가 30 MCQ 만들면 가능 |
 
 ## 마일스톤 진행도
 
@@ -37,7 +37,7 @@ Opentology = LLM·AI 에이전트가 *도메인 지식의 관계* 를 *최소한
 | M3 | Graph Primitives (REST + MCP) | 미착수 |
 | M4 | 베이스라인 하니스 (full-context + 청크 RAG) | 미착수 |
 | M5 | 평가 데이터 (상거래 검증 도메인 소스 + 30 MCQ) | 미착수 |
-| M6 | 3-way 측정 + 보고서 1 회 | 미착수 |
+| M6 | 3-way 측정 + 보고서 1 회 | 부분 — 도구 완료, 실 측정은 #13 (30 MCQ) 후 |
 
 위 골격은 *구현 계획서* 가 확정되면 그 결정에 맞춰 갱신된다.
 

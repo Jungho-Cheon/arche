@@ -1,6 +1,6 @@
-"""CLI — `opentology-eval` 진입점. PRD 4 §6 의 서브커맨드 중 setup / ask / run 만.
+"""CLI — `opentology-eval` 진입점. PRD 4 §6 서브커맨드 모두.
 
-judge / spotcheck / report 는 issue #11.
+setup / ask / run + judge / spotcheck / report / init-run.
 """
 
 from __future__ import annotations
@@ -20,7 +20,7 @@ from .columns.full_context import FullContextRunner
 from .columns.opentology import OpentologyRunner
 from .config import load_config
 from .loaders import FileLoader
-from .providers import OpenAIEmbeddingProvider, OpenAIProvider
+from .providers import AnthropicProvider, OpenAIEmbeddingProvider, OpenAIProvider
 from .questions import load_questions
 from .runlog import (
     RunDirs,
@@ -30,6 +30,11 @@ from .runlog import (
     write_meta_yaml,
     write_response_json,
 )
+from .runs.layout import init_run_dir as _init_run_dir
+from .scoring import aggregate_run, write_report
+from .scoring.judge import DEFAULT_JUDGE_MODEL
+from .scoring.judge_runner import run_judge_on_run_dir
+from .scoring.spotcheck import apply_overrides_file, run_interactive
 
 
 app = typer.Typer(no_args_is_help=True, help="Opentology MVP 평가 하니스 — 3-way 비교.")
@@ -282,6 +287,140 @@ def run(
                     typer.echo(f"[opentology] {q.id} run{r} done")
 
     typer.echo(f"run complete: {dirs.root}")
+
+
+@app.command("init-run")
+def init_run(
+    corpus: Annotated[Path, typer.Option(help="corpus 디렉토리 경로")],
+    questions: Annotated[Path, typer.Option(help="questions.yaml 경로")],
+    output_root: Annotated[
+        Path,
+        typer.Option("--output-root", help="run 출력 베이스 (예: eval/runs)"),
+    ],
+    runs: Annotated[int, typer.Option(help="질문당 반복 횟수 N")] = 3,
+    judge_model: Annotated[
+        str, typer.Option(help="judge 모델 식별자")
+    ] = DEFAULT_JUDGE_MODEL,
+) -> None:
+    """`runs/<ts>/` 디렉토리 + meta.yaml + corpus_hash + questions.yaml 사본 생성.
+
+    이후 `ask` / `run` 으로 응답을 채우고, `judge` / `spotcheck` / `report` 로 마무리.
+    """
+    _load_env()
+    cfg = load_config()
+    columns_meta = {
+        "full_context": {"llm_model": cfg.llm_model},
+        "chunk_rag": {
+            "llm_model": cfg.llm_model,
+            "embedding_model": cfg.embedding_model,
+            "chunk_size_tokens": 800,
+            "chunk_overlap_tokens": 100,
+            "top_k": 8,
+        },
+        "opentology": {
+            "llm_model": cfg.llm_model,
+            "embedding_model": cfg.embedding_model,
+            "anchor_llm_model": cfg.llm_model,
+        },
+    }
+    root = _init_run_dir(
+        output_root,
+        corpus_path=corpus,
+        questions_path=questions,
+        columns_meta=columns_meta,
+        judge_meta={"model": judge_model},
+        runs_count=runs,
+    )
+    typer.echo(f"init-run: {root}")
+
+
+def _make_judge_provider(model: str) -> AnthropicProvider | OpenAIProvider:
+    """judge 모델 식별자에 맞는 provider 인스턴스.
+
+    'anthropic/' 접두사 → AnthropicProvider, 그 외 → OpenAIProvider.
+    ADR-0005 D4 의 "답변 모델과 다른 계열" 통제 변수.
+    """
+    if model.startswith("anthropic/"):
+        return AnthropicProvider(
+            model_id=model.split("/", 1)[1],
+            api_key=os.environ.get("ANTHROPIC_API_KEY"),
+        )
+    model_id = model.split("/", 1)[1] if "/" in model else model
+    return OpenAIProvider(
+        model_id=model_id, api_key=os.environ.get("OPENAI_API_KEY")
+    )
+
+
+@app.command()
+def judge(
+    run_dir: Annotated[Path, typer.Option("--run-dir", help="run 디렉토리")],
+    judge_model: Annotated[
+        str, typer.Option(help="judge 모델 식별자")
+    ] = DEFAULT_JUDGE_MODEL,
+    mapping_seed: Annotated[
+        int | None,
+        typer.Option(help="컬럼 익명화 매핑의 random seed (재현성)"),
+    ] = None,
+) -> None:
+    """run-dir 전체에 judge 적용 — `judge/scores.jsonl` + `judge/mapping.json`."""
+    _load_env()
+    provider = _make_judge_provider(judge_model)
+    summary = run_judge_on_run_dir(
+        run_dir=run_dir,
+        judge_llm=provider,  # type: ignore[arg-type]
+        judge_model_label=judge_model,
+        mapping_seed=mapping_seed,
+    )
+    typer.echo(
+        f"judge: questions={summary.questions_count} rows={summary.rows_emitted} "
+        f"reasoning_parse_errors={summary.reasoning_parse_errors} "
+        f"faithfulness_parse_errors={summary.faithfulness_parse_errors}"
+    )
+
+
+@app.command()
+def spotcheck(
+    run_dir: Annotated[Path, typer.Option("--run-dir", help="run 디렉토리")],
+    non_interactive: Annotated[
+        bool,
+        typer.Option(
+            "--non-interactive",
+            help="대화형 없이 --overrides-file 의 내용을 일괄 적용 (CI 자동 검증용)",
+        ),
+    ] = False,
+    overrides_file: Annotated[
+        Path | None,
+        typer.Option(
+            "--overrides-file",
+            help="비대화형 모드용 override JSON list 파일",
+        ),
+    ] = None,
+) -> None:
+    """본인 검토 큐 진행 + 점수 덮어쓰기 → `spotcheck/overrides.jsonl`."""
+    if non_interactive:
+        if overrides_file is None:
+            raise typer.BadParameter(
+                "--non-interactive 모드는 --overrides-file 가 필요합니다."
+            )
+        count = apply_overrides_file(run_dir, overrides_file)
+        typer.echo(f"spotcheck (non-interactive): applied {count} overrides")
+        return
+    processed = run_interactive(run_dir)
+    typer.echo(f"spotcheck: processed {processed}")
+
+
+@app.command()
+def report(
+    run_dir: Annotated[Path, typer.Option("--run-dir", help="run 디렉토리")],
+    run_ts: Annotated[
+        str, typer.Option(help="보고서 타이틀에 박을 run timestamp")
+    ] = "",
+) -> None:
+    """`report.md` + `report_data.json` 생성."""
+    agg = aggregate_run(run_dir)
+    md_path, data_path = write_report(run_dir, agg, run_ts=run_ts or run_dir.name)
+    typer.echo(f"report: {md_path}")
+    typer.echo(f"report data: {data_path}")
 
 
 if __name__ == "__main__":  # pragma: no cover
