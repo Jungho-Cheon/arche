@@ -19,8 +19,8 @@ Opentology = LLM·AI 에이전트가 *도메인 지식의 관계* 를 *최소한
 | 소스 입력 (디렉토리 크롤) | 완료 | `opentology ingest <dir>` + `.opentologyignore` + 자동 제외 + `--dry-run` (#2). `--watch` 는 post-MVP |
 | 엔티티/관계 추출 (멀티모달 LLM) | 부분 | `.txt` / `.md` + 청크 분할 (heading→paragraph→sentence + 20% overlap) 완료 (#3). 동일성은 4 단계 + idempotent 차분 완료 (#4). PDF / 이미지는 #5 |
 | 그래프 적재 (idempotent) | 완료 | 4 단계 동일성 (정규화 / 별칭 / 임베딩 유사도 0.92) + IngestionRun 기반 차분 적용 (#4) + 청크 분할 (#3) 도 동일성 매처가 청크 경계 무관하게 흡수 |
-| 그래프 진입점 인덱싱 (어휘 + dense 하이브리드) | 부분 | fulltext + 벡터 인덱스 둘 다 *생성* . 검색은 lexical-only 이고 dense + RRF 하이브리드는 #6 |
-| Graph Primitives REST API | 부분 | `find_entities` (lexical) + `/admin/ingest` (202 + task_id, polling status) + `/healthz`. 나머지 5 primitives (`get_schema` / `get_entity` / `get_neighbors` / `find_path` / `get_subgraph`) 는 #6 |
+| 그래프 진입점 인덱싱 (어휘 + dense 하이브리드) | 완료 | fulltext + 벡터 인덱스 + 하이브리드 검색 (lexical + dense, RRF k=60). raw 점수는 `include_scores=true` 로 노출 |
+| Graph Primitives REST API | 완료 | 6 primitive 모두 (`get_schema` / `find_entities` 하이브리드 / `get_entity` + edge_counts / `get_neighbors` BFS + 절단 / `find_path` k-shortest / `get_subgraph` multi-source BFS) + `/healthz` + `/admin/ingest`. OpenAPI 는 `/openapi.json` 으로 노출. MCP 어댑터는 #7 |
 | Graph Primitives MCP 서버 | 미착수 | stdio 어댑터 #7 |
 | 청크 벡터 RAG 베이스라인 하니스 | 완료 | #15 머지 (eval/) |
 | Full-context LLM 베이스라인 하니스 | 완료 | #15 머지 (eval/) |
@@ -44,8 +44,6 @@ Opentology = LLM·AI 에이전트가 *도메인 지식의 관계* 를 *최소한
 
 | 위치 | stub 동작 | 해소 이슈 |
 |---|---|---|
-| `Neo4jGraphRepository.find_entities_dense` | `NotImplementedError` raise — 하이브리드 매칭의 dense 신호 + RRF 결합 | #6 |
-| `apps/api` 의 `find_entities` REST 응답 | PRD 3 §3.4 의 `matches[].node + score + matched_keyword` 형식이 아닌 *Node 배열* 축약본 | #6 |
 | `apps/api` ingest 의 PDF/이미지 | `UnsupportedFileTypeError` raise + #5 안내 | #5 |
 
 ## 다음 액션
@@ -53,8 +51,7 @@ Opentology = LLM·AI 에이전트가 *도메인 지식의 관계* 를 *최소한
 | 우선순위 | 항목 | 비고 |
 |---|---|---|
 | P1 | PDF / 이미지 멀티모달 추출 (#5) | 검증 도메인 소스 파일 형태에 맞춰 |
-| P1 | 나머지 5 graph primitives + dense + RRF (#6) | 이 PR 의 stub 해소 |
-| P1 | MCP stdio 어댑터 (#7) | ADR-0006 D2 |
+| P1 | MCP stdio 어댑터 (#7) | ADR-0006 D2. 본 PR 의 6 primitive REST 와 *동일 입출력 schema* 를 MCP tool 로 노출 |
 
 ## 갱신 정책
 

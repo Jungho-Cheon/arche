@@ -243,8 +243,54 @@ class FakeGraph(GraphRepository):
     def find_by_keywords_scored(self, *, keywords, limit_per_keyword):
         return []
 
-    def find_entities_dense(self, *, keywords, limit) -> list[Node]:
-        raise NotImplementedError
+    def find_entities_dense(self, *, query_embedding, matched_keyword, limit):
+        return []
+
+    # -- 5 primitive read (ingest 슬라이스 검증 범위 밖) --
+    def get_schema_summary(self, *, examples_per_type=5):
+        return ([], [])
+
+    def get_entity_with_counts(self, *, entity_id):
+        return None
+
+    def expand_neighbors(
+        self,
+        *,
+        entry_id,
+        relation_types,
+        direction,
+        hops,
+        max_nodes,
+    ):
+        from opentology_api.adapters.graph import NeighborhoodResult
+
+        return NeighborhoodResult(nodes=[], edges=[], truncated=False)
+
+    def expand_subgraph(
+        self,
+        *,
+        entry_ids,
+        relation_types,
+        hops,
+        max_nodes,
+    ):
+        from opentology_api.adapters.graph import NeighborhoodResult
+
+        return NeighborhoodResult(nodes=[], edges=[], truncated=False)
+
+    def find_shortest_paths(
+        self,
+        *,
+        from_id,
+        to_id,
+        max_hops,
+        max_paths,
+        relation_types,
+    ):
+        return []
+
+    def entity_exists(self, *, entity_id):
+        return entity_id in self._entities
 
     def close(self) -> None:
         pass
