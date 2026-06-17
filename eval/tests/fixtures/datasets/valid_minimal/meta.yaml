@@ -1,0 +1,16 @@
+dataset_id: valid-minimal-20260618
+domain: 상거래 비즈니스 규칙 (lint 테스트용)
+language: ko
+author: opentology-eval-tests
+created_at: "2026-06-18"
+description: |
+  lint 도구의 valid path 검증용 최소 데이터셋. 실 측정은 사용하지 않음.
+corpus:
+  file_count: 3
+  total_tokens_estimate: 200
+  formats: [md]
+questions:
+  count: 2
+  by_failure_mode:
+    multi_hop: 1
+    cross_source: 1

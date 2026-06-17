@@ -19,6 +19,7 @@ from .columns.chunk_rag import ChunkRAGRunner
 from .columns.full_context import FullContextRunner
 from .columns.opentology import OpentologyRunner
 from .config import load_config
+from .lint.runner import LintReport, run_lint
 from .loaders import FileLoader
 from .providers import AnthropicProvider, OpenAIEmbeddingProvider, OpenAIProvider
 from .questions import load_questions
@@ -421,6 +422,114 @@ def report(
     md_path, data_path = write_report(run_dir, agg, run_ts=run_ts or run_dir.name)
     typer.echo(f"report: {md_path}")
     typer.echo(f"report data: {data_path}")
+
+
+@app.command("lint")
+def lint_cmd(
+    dataset: Annotated[
+        Path,
+        typer.Option(
+            "--dataset", help="데이터셋 디렉토리 (PRD 5 §1)"
+        ),
+    ],
+    dry_run_ingest: Annotated[
+        bool,
+        typer.Option(
+            "--dry-run-ingest",
+            help="corpus 의 청크/토큰/비용 추정 (실 LLM 호출 없이)",
+        ),
+    ] = False,
+    llm_model: Annotated[
+        str,
+        typer.Option(
+            "--llm-model",
+            help="비용 추정 시 표시할 기본 모델 (price.yaml 의 식별자)",
+        ),
+    ] = "openai/gpt-4o",
+) -> None:
+    """데이터셋 형식 검증 — PRD 5 §6 의 lint 도구."""
+    report = run_lint(
+        dataset, dry_run_ingest_flag=dry_run_ingest, llm_model=llm_model
+    )
+    _print_lint_report(report)
+    raise typer.Exit(code=report.exit_code)
+
+
+def _print_lint_report(report: LintReport) -> None:
+    """LintReport 를 사람이 읽는 형태로 stdout/stderr 에 출력.
+
+    - hard 는 빨간색 + stderr.
+    - warn 은 노란색 + stderr.
+    - dry-run 결과는 rich.Table 로 stdout.
+    - 마지막 라인은 stdout (CI 스크립트가 grep 하기 쉽게).
+    """
+    from rich.console import Console
+    from rich.table import Table
+
+    # WHY soft_wrap + 넓은 width: rich 의 기본 wrap 이 좁은 터미널에서 코드/메시지를
+    # 줄바꿈해 CI 가 grep 으로 코드명을 잡지 못한다 (테스트 assertion 의 기준).
+    # 한 finding 은 *한 라인* 으로 유지되어야 한다.
+    out = Console(soft_wrap=True, width=200)
+    err = Console(stderr=True, soft_wrap=True, width=200)
+
+    if report.hard_findings:
+        err.print("[bold red]hard:[/bold red]")
+        for f in report.hard_findings:
+            loc = f" [dim]({f.location})[/dim]" if f.location else ""
+            # WHY 코드 라벨을 markup 밖에서: rich 의 `[...]` 가 style 토큰으로
+            # 오해되지 않게 평문으로 prefix. 사용자/CI 가 grep 으로 코드명을
+            # 잡을 수 있어야 한다 (테스트 assertion 의 기준).
+            err.print(f"  [red]x[/red] {f.code} - {f.message}{loc}")
+
+    if report.warn_findings:
+        err.print("[bold yellow]warn:[/bold yellow]")
+        for f in report.warn_findings:
+            loc = f" [dim]({f.location})[/dim]" if f.location else ""
+            err.print(f"  [yellow]![/yellow] {f.code} - {f.message}{loc}")
+
+    if report.dry_run is not None:
+        d = report.dry_run
+        out.print()
+        out.print("[bold]dry-run ingest estimate[/bold]")
+        meta = Table(show_header=True, header_style="bold cyan")
+        meta.add_column("metric")
+        meta.add_column("value", justify="right")
+        meta.add_row("total_files", str(d.total_files))
+        meta.add_row("total_chunks_estimated", str(d.total_chunks_estimated))
+        meta.add_row(
+            "total_input_tokens_estimated",
+            f"{d.total_input_tokens_estimated:,}",
+        )
+        meta.add_row(
+            "total_output_tokens_estimated",
+            f"{d.total_output_tokens_estimated:,}",
+        )
+        out.print(meta)
+
+        if d.by_ext:
+            ext_t = Table(show_header=True, header_style="bold cyan")
+            ext_t.add_column("ext")
+            ext_t.add_column("files", justify="right")
+            for ext in sorted(d.by_ext):
+                ext_t.add_row(ext, str(d.by_ext[ext]))
+            out.print(ext_t)
+
+        if d.estimated_cost_usd:
+            cost_t = Table(show_header=True, header_style="bold cyan")
+            cost_t.add_column("model")
+            cost_t.add_column("estimated USD", justify="right")
+            for model, usd in d.estimated_cost_usd.items():
+                cost_t.add_row(model, f"${usd:,.4f}")
+            out.print(cost_t)
+
+    n_hard = len(report.hard_findings)
+    n_warn = len(report.warn_findings)
+    if n_hard == 0:
+        out.print(f"[bold green]OK[/bold green] ({n_warn} warnings)")
+    else:
+        out.print(
+            f"[bold red]FAILED[/bold red] ({n_hard} hard, {n_warn} warnings)"
+        )
 
 
 if __name__ == "__main__":  # pragma: no cover
