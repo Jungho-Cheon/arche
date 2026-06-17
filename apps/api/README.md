@@ -170,11 +170,65 @@ ingest 한 번이 곧 한 회차 노드. 노드 속성:
 | 청크 분할 + overlap | #3 |
 | PDF / 이미지 멀티모달 추출 | #5 |
 | `get_schema` / `get_entity` / `get_neighbors` / `find_path` / `get_subgraph` | #6 |
-| MCP stdio 어댑터 | #7 |
+| MCP HTTP+SSE 어댑터 | post-MVP (PRD 3 §8.1) |
 | `find_entities` 의 dense + RRF 하이브리드 | #6 |
 | 인증·테넌트 | ADR-0002 (post-MVP) |
 
 본 슬라이스의 코드는 *위 후속 슬라이스의 토대* 다. 인덱스 / 어댑터 / 스키마는 follow-up 시 깨지지 않게 잡혀 있다.
+
+## MCP stdio 어댑터 (PRD 3 §8)
+
+6 graph primitive 를 *Model Context Protocol* 의 표준 tool 로 노출. 로컬 에이전트 (Claude Desktop / Cursor 등) 가 REST 호출 어댑터 없이 그래프를 탐색할 수 있다.
+
+```
+opentology mcp serve --stdio
+```
+
+서버는 stdio (stdin / stdout) 위에서 JSON-RPC 로 동작한다. 호출 전 `.env` 가 로드돼 `OPENAI_API_KEY` + Neo4j 접속 정보를 읽는다.
+
+### Claude Desktop 등록 예시
+
+`~/Library/Application Support/Claude/claude_desktop_config.json` (macOS) 의 `mcpServers` 에 추가:
+
+```json
+{
+  "mcpServers": {
+    "opentology": {
+      "command": "opentology",
+      "args": ["mcp", "serve", "--stdio"]
+    }
+  }
+}
+```
+
+`opentology` 가 PATH 에 없거나 venv 안에 있을 때는 절대 경로 (`/path/to/venv/bin/opentology`) 또는 `uv run --package opentology-api opentology mcp serve --stdio` 형태로 등록.
+
+### 노출되는 tool
+
+| Tool | 동작 | REST 대응 |
+|---|---|---|
+| `get_schema` | 엔티티 타입 / 관계 타입 / embedding_info | `GET /schema` |
+| `find_entities` | 키워드 → 노드 (lexical + dense + RRF) | `POST /entities/find` |
+| `get_entity` | ID → 노드 + edge 카운트 | `GET /entities/{id}` |
+| `get_neighbors` | 진입점 N-hop 이웃 | `POST /entities/{id}/neighbors` |
+| `find_path` | 두 노드 사이 k-shortest path | `POST /paths/find` |
+| `get_subgraph` | 여러 진입점 union N-hop | `POST /subgraph` |
+
+REST 와 MCP 의 *입출력 스키마는 완전 동일* — Pydantic 모델 1 곳에서 정의해 OpenAPI 와 MCP `input_schema` 둘 다 자동 일치 (PRD 3 §0.1 / §8.3).
+
+### 보안 / write 미노출
+
+ADR-0006 D3 — MCP 어댑터는 **read-only** . `admin/ingest` / `create_entity` / `delete_*` 같은 write tool 은 *등록조차 하지 않는다* . ingest 는 CLI (`opentology ingest <path>`) 와 admin REST (`POST /admin/ingest`) 로만 수행.
+
+### 에러 형식
+
+도메인 예외 (PRD 3 §9) 는 MCP `CallToolResult(isError=true)` + text content 안 JSON 으로 전달:
+
+```json
+{ "error": { "code": "entity_not_found", "message": "...", "details": { "id": "..." } } }
+```
+
+caller 는 `isError` 플래그로 분기 후 text 를 JSON 파싱.
 
 ## 테스트
 
