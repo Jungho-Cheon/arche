@@ -121,7 +121,7 @@ def ask(
     if column == "full_context":
         runner = FullContextRunner(loader=loader, llm=llm)
         payload = runner.ask(
-            corpus_text=runner.setup_corpus_text(),
+            corpus=runner.setup_corpus(),
             question=q,
             run_index=run_index,
         )
@@ -234,10 +234,12 @@ def run(
 
     if "full_context" in requested:
         fc = FullContextRunner(loader=loader, llm=llm)
-        corpus_text = fc.setup_corpus_text()
+        corpus_serialized = fc.setup_corpus()
         for q in qset.questions:
             for r in range(runs):
-                payload = fc.ask(corpus_text=corpus_text, question=q, run_index=r)
+                payload = fc.ask(
+                    corpus=corpus_serialized, question=q, run_index=r
+                )
                 write_response_json(dirs.full_context / f"{q.id}_run{r}.json", payload)
                 typer.echo(f"[full_context] {q.id} run{r} done")
 
