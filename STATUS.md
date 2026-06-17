@@ -24,8 +24,9 @@ Opentology = LLM·AI 에이전트가 *도메인 지식의 관계* 를 *최소한
 | Graph Primitives MCP 서버 | 미착수 | stdio 어댑터 #7 |
 | 청크 벡터 RAG 베이스라인 하니스 | 완료 | #15 머지 (eval/) |
 | Full-context LLM 베이스라인 하니스 | 완료 | #15 머지 (eval/) |
+| Opentology 컬럼 (anchor 추출 + primitives 조합 + 직렬화) | 완료 | #10 머지 (eval/columns/opentology.py + eval/clients/opentology.py + eval/serializers.py) |
 | 30 개 MCQ 평가 셋 | 미착수 | |
-| 3-way 측정 보고서 | 미착수 | (3) Opentology 컬럼은 본 슬라이스가 토대 (#10) |
+| 3-way 측정 보고서 | 미착수 | 3 컬럼 모두 구현 완료 — 보고서/judge/spotcheck 는 #11 |
 
 ## 마일스톤 진행도
 

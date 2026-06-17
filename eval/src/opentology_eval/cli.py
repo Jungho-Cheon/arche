@@ -5,6 +5,7 @@ judge / spotcheck / report 는 issue #11.
 
 from __future__ import annotations
 
+import os
 import shutil
 from datetime import datetime
 from pathlib import Path
@@ -13,8 +14,10 @@ from typing import Annotated
 import typer
 from dotenv import load_dotenv
 
+from .clients import OpentologyClient
 from .columns.chunk_rag import ChunkRAGRunner
 from .columns.full_context import FullContextRunner
+from .columns.opentology import OpentologyRunner
 from .config import load_config
 from .loaders import FileLoader
 from .providers import OpenAIEmbeddingProvider, OpenAIProvider
@@ -29,13 +32,20 @@ from .runlog import (
 )
 
 
-app = typer.Typer(no_args_is_help=True, help="Opentology MVP 평가 하니스 — baselines.")
+app = typer.Typer(no_args_is_help=True, help="Opentology MVP 평가 하니스 — 3-way 비교.")
 
 
 def _load_env() -> None:
     # WHY 호출자에서 한 번만: provider 초기화 시점에 OPENAI_API_KEY 가 필요한데,
     # CLI 진입점에서 한 번 로드하면 이후 import-time API 키 누락이 없다.
     load_dotenv()
+
+
+def _resolve_api_url(explicit: str | None) -> str:
+    # 우선순위: CLI 옵션 > 환경 변수 > 기본값.
+    if explicit:
+        return explicit
+    return os.environ.get("OPENTOLOGY_API_URL", "http://localhost:8000")
 
 
 @app.command()
@@ -68,9 +78,27 @@ def ask(
     corpus: Annotated[Path, typer.Option(help="corpus 디렉토리 경로")],
     questions: Annotated[Path, typer.Option(help="questions.yaml 경로")],
     question_id: Annotated[str, typer.Option("--question", help="질문 ID 예: Q01")],
-    column: Annotated[str, typer.Option(help="full_context | chunk_rag")],
+    column: Annotated[str, typer.Option(help="full_context | chunk_rag | opentology")],
     output: Annotated[Path, typer.Option(help="응답 JSON 저장 디렉토리")],
     run_index: Annotated[int, typer.Option(help="run 번호 (0..N-1)")] = 0,
+    api_url: Annotated[
+        str | None,
+        typer.Option(help="opentology 컬럼 한정 — 코어 REST base URL"),
+    ] = None,
+    skip_setup: Annotated[
+        bool,
+        typer.Option(
+            "--skip-setup",
+            help="opentology 컬럼 한정 — 이미 ingest 된 그래프 가정",
+        ),
+    ] = True,
+    setup_corpus_path: Annotated[
+        Path | None,
+        typer.Option(
+            "--setup-corpus",
+            help="opentology 컬럼 한정 — 이 디렉토리를 코어에 ingest 후 진행",
+        ),
+    ] = None,
 ) -> None:
     """단일 질문 × 단일 컬럼 호출 (디버깅용)."""
     _load_env()
@@ -100,6 +128,16 @@ def ask(
         payload = crag.ask(
             question=q, run_index=run_index, questions_count=len(qset.questions)
         )
+    elif column == "opentology":
+        with OpentologyClient(base_url=_resolve_api_url(api_url)) as client:
+            orun = OpentologyRunner(client=client, answer_llm=llm)
+            if setup_corpus_path is not None:
+                orun.setup_corpus(directory_path=str(setup_corpus_path.resolve()))
+            elif not skip_setup:
+                # 사용자가 setup 도 안 시키고 skip 도 명시 안 하면 안전 디폴트는
+                # skip — 코어가 비어있어도 빈 결과로 흐름이 끝까지 가도록.
+                pass
+            payload = orun.ask(question=q, run_index=run_index)
     else:
         raise typer.BadParameter(f"알 수 없는 컬럼: {column}")
 
@@ -115,28 +153,53 @@ def run(
     output: Annotated[Path, typer.Option(help="run 출력 베이스 (예: eval/runs)")],
     runs: Annotated[int, typer.Option(help="질문당 반복 횟수 N")] = 3,
     columns: Annotated[
-        str, typer.Option(help="컴마 구분: full_context,chunk_rag")
+        str,
+        typer.Option(help="컴마 구분: full_context,chunk_rag,opentology"),
     ] = "full_context,chunk_rag",
+    api_url: Annotated[
+        str | None,
+        typer.Option(help="opentology 컬럼 한정 — 코어 REST base URL"),
+    ] = None,
+    setup_corpus_path: Annotated[
+        Path | None,
+        typer.Option(
+            "--setup-corpus",
+            help="opentology 컬럼 한정 — 이 디렉토리를 코어에 ingest 후 진행",
+        ),
+    ] = None,
+    skip_setup: Annotated[
+        bool,
+        typer.Option(
+            "--skip-setup",
+            help="opentology 컬럼 한정 — 이미 ingest 된 그래프 가정 (기본 True)",
+        ),
+    ] = True,
+    anchor_llm_model: Annotated[
+        str | None,
+        typer.Option(
+            help="opentology 컬럼 한정 — anchor 추출용 별도 모델 (기본은 답변 모델과 동일)",
+        ),
+    ] = None,
 ) -> None:
-    """전체 실행 — 두 베이스라인 컬럼 × N runs."""
+    """전체 실행 — 베이스라인 두 컬럼 + opentology × N runs."""
     _load_env()
     cfg = load_config()
     qset = load_questions(questions)
 
     requested = [c.strip() for c in columns.split(",") if c.strip()]
-    unknown = set(requested) - {"full_context", "chunk_rag"}
+    known = {"full_context", "chunk_rag", "opentology"}
+    unknown = set(requested) - known
     if unknown:
-        raise typer.BadParameter(
-            f"본 PR 의 베이스라인 컬럼이 아닙니다: {sorted(unknown)} "
-            f"(opentology 컬럼은 issue #10)."
-        )
+        raise typer.BadParameter(f"알 수 없는 컬럼: {sorted(unknown)}")
 
     run_id = make_run_id()
     dirs = RunDirs.create(output, run_id)
 
     # questions.yaml 사본 + 해시.
     shutil.copy2(questions, dirs.root / "questions.yaml")
-    (dirs.root / "corpus_hash.txt").write_text(hash_directory(corpus), encoding="utf-8")
+    (dirs.root / "corpus_hash.txt").write_text(
+        hash_directory(corpus), encoding="utf-8"
+    )
     write_meta_yaml(
         run_dir=dirs.root,
         run_id=run_id,
@@ -152,6 +215,11 @@ def run(
             "chunk_size": 800,
             "chunk_overlap": 100,
             "chunk_top_k": 8,
+            "find_entities_limit": 10,
+            "subgraph_hops": 2,
+            "subgraph_max_nodes": 80,
+            "find_path_max_hops": 4,
+            "find_path_max_paths": 5,
         },
     )
 
@@ -180,6 +248,38 @@ def run(
                 )
                 write_response_json(dirs.chunk_rag / f"{q.id}_run{r}.json", payload)
                 typer.echo(f"[chunk_rag] {q.id} run{r} done")
+
+    if "opentology" in requested:
+        anchor_llm = None
+        if anchor_llm_model:
+            anchor_id = (
+                anchor_llm_model.split("/", 1)[1]
+                if "/" in anchor_llm_model
+                else anchor_llm_model
+            )
+            anchor_llm = OpenAIProvider(
+                model_id=anchor_id, api_key=cfg.openai_api_key
+            )
+
+        with OpentologyClient(base_url=_resolve_api_url(api_url)) as client:
+            orun = OpentologyRunner(
+                client=client, answer_llm=llm, anchor_llm=anchor_llm
+            )
+            if setup_corpus_path is not None:
+                orun.setup_corpus(directory_path=str(setup_corpus_path.resolve()))
+            elif not skip_setup:
+                # 같은 의미 — 사용자가 skip-setup 도 안 켜고 setup-corpus 도 안 주면
+                # 빈 그래프 가정 (안전 디폴트). 메시지로 안내.
+                typer.echo(
+                    "[opentology] setup_corpus 와 skip-setup 둘 다 미지정 — 빈 그래프 가정으로 진행"
+                )
+            for q in qset.questions:
+                for r in range(runs):
+                    payload = orun.ask(question=q, run_index=r)
+                    write_response_json(
+                        dirs.opentology / f"{q.id}_run{r}.json", payload
+                    )
+                    typer.echo(f"[opentology] {q.id} run{r} done")
 
     typer.echo(f"run complete: {dirs.root}")
 
