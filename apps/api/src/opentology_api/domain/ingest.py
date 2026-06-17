@@ -21,6 +21,7 @@ WHY ingest_directory 가 ingest_file 위에 얹혀 있음: 단일 파일 처리�
 
 from __future__ import annotations
 
+import base64
 import hashlib
 import logging
 from dataclasses import dataclass, field
@@ -31,7 +32,9 @@ from ulid import ULID
 
 from ..adapters.embedding import EmbeddingProvider
 from ..adapters.graph import GraphRepository
-from ..adapters.llm import LLMProvider
+from ..adapters.image_loader import IMAGE_EXTS, load_image_as_b64
+from ..adapters.llm import ImageInput, LLMProvider
+from ..adapters.pdf import PdfPage, extract_pdf
 from .chunking import Chunk, TOKEN_BUDGET_RATIO, chunk_text, count_tokens
 from .crawl import crawl
 from .errors import InvalidInputError, UnsupportedFileTypeError
@@ -49,9 +52,13 @@ from .models import (
 logger = logging.getLogger(__name__)
 
 
-SUPPORTED_EXTS = {".txt", ".md"}
-# WHY 분리: PDF / 이미지는 follow-up issue #5 — 명확한 에러로 user 가 경로 알도록.
-PENDING_EXTS = {".pdf", ".jpg", ".jpeg", ".png", ".webp"}
+TEXT_EXTS: frozenset[str] = frozenset({".txt", ".md"})
+PDF_EXTS: frozenset[str] = frozenset({".pdf"})
+# 이미지 확장자는 image_loader 의 단일 source 와 동기화 — 한 곳에서만 정의.
+SUPPORTED_EXTS: frozenset[str] = frozenset(TEXT_EXTS | PDF_EXTS | IMAGE_EXTS)
+# WHY 빈 집합 보존: 호출자 (crawl) 가 import 하던 심볼. 이후 follow-up 이 새로
+# 들어오면 다시 채우기 위해 유지.
+PENDING_EXTS: frozenset[str] = frozenset()
 
 
 @dataclass
@@ -91,8 +98,13 @@ class DirectoryIngestResult:
     files_total: int
     files_processed: int
     files_skipped: int
-    files_pending_skipped: int
-    files_unsupported_skipped: int
+    # WHY 별도 카운터: PRD 2 §8 의 파일별 isolation 결과 — 한 파일이 깨져도
+    # 전체 디렉토리는 끝까지 처리한다. 사용자 보고 시 "처리 / short-circuit /
+    # 실패 / 미지원" 4 개 신호를 분리해서 보여줘야 의사결정이 가능하다 (어느
+    # 파일을 다시 봐야 하는지).
+    files_failed: int = 0
+    files_pending_skipped: int = 0
+    files_unsupported_skipped: int = 0
     per_file: list[IngestResult] = field(default_factory=list)
 
     @property
@@ -196,13 +208,26 @@ class IngestService:
         per_file: list[IngestResult] = []
         files_processed = 0
         files_skipped = 0
+        files_failed = 0
 
         for i, fp in enumerate(files, start=1):
             t0 = time.perf_counter()
-            if dry_run:
-                result = self._dry_run_file(fp)
-            else:
-                result = self.ingest_file(fp)
+            try:
+                if dry_run:
+                    result = self._dry_run_file(fp)
+                else:
+                    result = self.ingest_file(fp)
+            except (InvalidInputError, UnsupportedFileTypeError) as e:
+                # PRD 2 §8 — 파일별 실패 isolation. 깨진 PDF / 알 수 없는
+                # 확장자 / 빈 이미지 등은 *그 파일만 skip + warning* 으로 흡수.
+                # 다른 파일 처리는 계속한다. 디렉토리 전체가 한 파일 때문에
+                # 중단되면 사용자가 일괄 재처리하기 어렵다 (PRD 2 §7.2 의 신뢰성
+                # 요구).
+                files_failed += 1
+                logger.warning(
+                    "ingest_directory skip path=%s err=%s", fp, e
+                )
+                continue
             elapsed = time.perf_counter() - t0
 
             if result.short_circuited:
@@ -228,6 +253,7 @@ class IngestService:
             files_total=len(files),
             files_processed=files_processed,
             files_skipped=files_skipped,
+            files_failed=files_failed,
             files_pending_skipped=summary.files_pending_skipped,
             files_unsupported_skipped=summary.files_unsupported_skipped,
             per_file=per_file,
@@ -238,6 +264,11 @@ class IngestService:
 
         WHY 그래프 호출 0: PRD 2 §1.1 의 dry-run 정의는 "그래프에 쓰지 않고 추출
         결과만 출력". IngestionRun 생성도 안 함 — 다음 실 ingest 에 영향 없음.
+
+        WHY 모달별 분기: PRD 2 §2.1 의 세 모달 (텍스트 / PDF / 이미지) 은 *호출
+        단위* 가 다르다. 텍스트는 chunk_text 결과의 청크 수만큼, PDF 는 페이지
+        flatten 후 결정된 input 수만큼, 이미지는 1 회. dry-run 이라도 *실제
+        ingest 와 동일한 호출 횟수* 를 따라야 사용자가 비용을 가늠한다.
         """
         path = path.resolve()
         ext = path.suffix.lower()
@@ -245,16 +276,59 @@ class IngestService:
             raise UnsupportedFileTypeError(
                 f"Unsupported extension {ext}. dry-run requires {sorted(SUPPORTED_EXTS)}."
             )
-        text = path.read_text(encoding="utf-8")
-        chunks = chunk_text(text, model_context_tokens=self._model_context_tokens)
+
+        source_path = str(path)
         total_entities = 0
         total_relations = 0
-        for chunk in chunks:
-            extracted = self._llm.extract(text=chunk.text, source_path=str(path))
+
+        if ext in TEXT_EXTS:
+            text = path.read_text(encoding="utf-8")
+            chunks = chunk_text(
+                text, model_context_tokens=self._model_context_tokens
+            )
+            for chunk in chunks:
+                extracted = self._llm.extract(
+                    text=chunk.text, source_path=source_path
+                )
+                total_entities += len(extracted.entities)
+                total_relations += len(extracted.relations)
+            chunks_total = len(chunks)
+
+        elif ext in PDF_EXTS:
+            pages = extract_pdf(path)
+            inputs = self._build_pdf_extract_inputs(pages)
+            for inp in inputs:
+                extracted = self._llm.extract(
+                    text=inp.text,
+                    images=inp.images or None,
+                    source_path=source_path,
+                )
+                total_entities += len(extracted.entities)
+                total_relations += len(extracted.relations)
+            # WHY max(1, ...): 빈 PDF 도 *처리는 했다* 는 신호로 1 로 보고.
+            chunks_total = max(1, len(inputs))
+
+        elif ext in IMAGE_EXTS:
+            b64, mime = load_image_as_b64(path)
+            extracted = self._llm.extract(
+                images=[ImageInput(b64_data=b64, mime_type=mime)],
+                source_path=source_path,
+            )
             total_entities += len(extracted.entities)
             total_relations += len(extracted.relations)
+            chunks_total = 1
+
+        else:
+            # WHY 도달 불가 가드: 위의 SUPPORTED_EXTS 검사 + 세 그룹의 합집합이
+            # SUPPORTED_EXTS 와 같다. 새 모달이 추가됐을 때 *분기 누락* 을 즉시
+            # 드러내기 위한 명시적 fail-fast.
+            raise UnsupportedFileTypeError(
+                f"Unhandled extension {ext} after SUPPORTED_EXTS check. "
+                "Modality dispatch is out of sync — see ingest._dry_run_file."
+            )
+
         return IngestResult(
-            source_path=str(path),
+            source_path=source_path,
             entities_created=total_entities,
             entities_updated=0,
             relations_created=total_relations,
@@ -262,7 +336,7 @@ class IngestService:
             entity_ids=[],
             entities_matched_by_step={},
             short_circuited=False,
-            chunks_total=len(chunks),
+            chunks_total=chunks_total,
         )
 
     def ingest_file(self, path: Path) -> IngestResult:
@@ -279,11 +353,9 @@ class IngestService:
             raise InvalidInputError(f"File not found: {path}")
 
         ext = path.suffix.lower()
-        if ext in PENDING_EXTS:
-            raise UnsupportedFileTypeError(
-                f"File type {ext} is pending — follow-up issue #5 (PDF + image "
-                "multimodal extraction). Walking skeleton supports {.txt, .md} only."
-            )
+        # WHY PENDING_EXTS 분기 제거: PR #23 (issue #5) 으로 PDF + 이미지가
+        # SUPPORTED 로 승격되며 PENDING_EXTS 가 빈 집합이 됐다. 분기 자체가 죽은
+        # 코드라 제거 — 새 모달이 들어올 때 명시적으로 다시 살린다.
         if ext not in SUPPORTED_EXTS:
             raise UnsupportedFileTypeError(
                 f"Unsupported extension {ext}. Walking skeleton supports "
@@ -331,13 +403,15 @@ class IngestService:
             source_path=source_path
         )
 
-        text = raw_bytes.decode("utf-8")
-
         try:
-            # 청크 분할 — 컨텍스트 70% 이내면 단일 청크 (chunk_index=0,
-            # total_chunks=1) 반환. 초과면 PRD 2 §3.2 의 폴백 분할.
-            chunks = chunk_text(
-                text, model_context_tokens=self._model_context_tokens
+            # WHY 모달별 input 시퀀스 통일: 텍스트 / PDF / 이미지가 *서로 다른
+            # 분할 단위* 를 가지지만 (텍스트=토큰, PDF=페이지+청크, 이미지=파일)
+            # 본 루프 입장에서는 `_LLMCallInput(text, images, chunk_index)` 의
+            # 동일 형태로 들어와야 한다. 모달별 어댑터가 각자의 분할을 끝내고
+            # 동일 형태로 정규화 — IngestionRun 안에서 매칭/병합/diff 로직은
+            # 모달에 무관하게 한 줄기로 흐른다.
+            llm_inputs = self._build_llm_inputs(
+                path=path, raw_bytes=raw_bytes, ext=ext
             )
 
             matcher = EntityMatcher(repo=self._graph, embedder=self._embedder)
@@ -358,15 +432,20 @@ class IngestService:
             all_rel_ids: list[str] = []
             agg_rel_created = 0
             agg_rel_dangling = 0
-            total_chunks = len(chunks)
+            total_chunks = len(llm_inputs)
 
-            for chunk in chunks:
-                # 청크 분할이 일어난 경우만 chunk_index 가 의미 — 단일 청크면
-                # PRD 3 §1.3 의 nullable 형태로 두 필드 모두 None 유지.
+            for inp in llm_inputs:
+                # chunk_index 의미 부여 정책:
+                #  - 단일 input 이면 None (텍스트 청크 1 개 / 이미지 파일).
+                #    PRD 3 §1.3 의 nullable 형태와 일관.
+                #  - 여러 input 이면 0..N-1 의 평탄화된 인덱스.
+                #    PDF 의 페이지 정보는 본 PR 에서는 별도 필드로 노출하지 않고
+                #    추적성은 chunk_index 로만 — page_index 노출은 PRD 3 §1.3
+                #    schema 확장과 묶어 follow-up 으로.
                 if total_chunks > 1:
                     source_ref = SourceRef(
                         source_path=source_path,
-                        chunk_index=chunk.chunk_index,
+                        chunk_index=inp.chunk_index,
                         total_chunks=total_chunks,
                     )
                 else:
@@ -377,7 +456,9 @@ class IngestService:
                     )
 
                 extracted = self._llm.extract(
-                    text=chunk.text, source_path=source_path
+                    text=inp.text,
+                    images=inp.images or None,
+                    source_path=source_path,
                 )
 
                 name_to_id, entity_metrics = self._upsert_entities(
@@ -450,6 +531,109 @@ class IngestService:
                 emitted_relation_ids=[],
             )
             raise
+
+    # ---------- 모달별 LLM 호출 input 정규화 ----------
+
+    def _build_llm_inputs(
+        self, *, path: Path, raw_bytes: bytes, ext: str
+    ) -> list["_LLMCallInput"]:
+        """확장자에 따라 LLM 호출 단위 시퀀스를 생성.
+
+        WHY 단일 진입점: ingest_file 본 루프는 *모달이 무엇인지 모른다* . 본
+        helper 가 모달별 분할 차이를 흡수해 균일한 형태로 돌려준다.
+        """
+        if ext in TEXT_EXTS:
+            text = raw_bytes.decode("utf-8")
+            chunks = chunk_text(
+                text, model_context_tokens=self._model_context_tokens
+            )
+            return [
+                _LLMCallInput(
+                    text=c.text, images=[], chunk_index=c.chunk_index
+                )
+                for c in chunks
+            ]
+        if ext in PDF_EXTS:
+            pages = extract_pdf(path)
+            return self._build_pdf_extract_inputs(pages)
+        if ext in IMAGE_EXTS:
+            b64, mime = load_image_as_b64(path)
+            return [
+                _LLMCallInput(
+                    text=None,
+                    images=[ImageInput(b64_data=b64, mime_type=mime)],
+                    chunk_index=0,
+                )
+            ]
+        # SUPPORTED_EXTS 체크가 호출자에서 이미 끝났으므로 도달 불가 — 명시
+        # fail-fast 로 새 모달 누락을 즉시 드러낸다.
+        raise UnsupportedFileTypeError(
+            f"Unhandled extension {ext} after SUPPORTED_EXTS check. "
+            "Modality dispatch is out of sync — see ingest._build_llm_inputs."
+        )
+
+    def _build_pdf_extract_inputs(
+        self, pages: list[PdfPage]
+    ) -> list["_LLMCallInput"]:
+        """PDF 페이지 시퀀스를 평탄화된 LLM 호출 input 시퀀스로 변환.
+
+        결정 규칙 (PRD 2 §3.4):
+          - 텍스트가 있는 페이지 → 페이지 텍스트를 chunk_text 로 분할 (각 청크
+            가 한 호출). 같은 페이지의 이미지는 *첫 번째 청크에 동봉* — LLM 이
+            텍스트와 그림을 한 컨텍스트에서 보도록.
+          - 텍스트가 비어 있고 이미지가 있는 페이지 → 이미지만으로 한 호출
+            (이미지 페이지 OCR 폴백, PRD 2 §3.4).
+          - 텍스트 + 이미지 둘 다 비어 있는 페이지 → 호출 스킵 (LLM 비용 절감).
+
+        WHY 이미지를 *첫 번째 청크에만* 동봉:
+          - LLM 호출 1 회당 *동일 페이지 이미지* 가 1 회만 들어가야 (1) 토큰
+            비용 폭증 방지, (2) 측정 통제 변수 (호출 당 한 모달 그룹).
+          - 후속 청크가 같은 페이지 텍스트 일부면 텍스트만 보낸다.
+        """
+        out: list[_LLMCallInput] = []
+        chunk_counter = 0
+        for page in pages:
+            page_text = page.text or ""
+            page_images = [
+                ImageInput(b64_data=_b64encode(b), mime_type=m)
+                for b, m in zip(page.images, page.image_mime_types)
+            ]
+
+            if page_text.strip():
+                chunks = chunk_text(
+                    page_text,
+                    model_context_tokens=self._model_context_tokens,
+                )
+                for i, chunk in enumerate(chunks):
+                    images_for_chunk = page_images if i == 0 else []
+                    out.append(
+                        _LLMCallInput(
+                            text=chunk.text,
+                            images=images_for_chunk,
+                            chunk_index=chunk_counter,
+                            page_index=page.page_index,
+                        )
+                    )
+                    chunk_counter += 1
+            elif page_images:
+                out.append(
+                    _LLMCallInput(
+                        text=None,
+                        images=page_images,
+                        chunk_index=chunk_counter,
+                        page_index=page.page_index,
+                    )
+                )
+                chunk_counter += 1
+            else:
+                # 빈 페이지 — LLM 호출 자체를 스킵. 단 로그는 남겨 사용자가
+                # *왜 청크 수가 페이지 수보다 작은지* 추적할 수 있게.
+                logger.debug(
+                    "pdf_page_empty_skipped page=%d/%d",
+                    page.page_index + 1,
+                    page.total_pages,
+                )
+        return out
 
     def _upsert_entities(
         self,
@@ -614,3 +798,37 @@ class IngestService:
                 metrics["entities_trimmed"] += 1
 
         return metrics
+
+
+# ---------- 내부 자료형 ----------
+
+
+@dataclass(frozen=True)
+class _LLMCallInput:
+    """모달에 무관한 LLM 호출 단위.
+
+    `_build_llm_inputs` 가 텍스트 청크 / PDF 페이지 청크 / 이미지 파일을 모두
+    이 형태로 정규화한다. ingest_file 본 루프는 이 형태만 받아 처리하므로
+    모달별 분기가 한 자리 (helper) 에 모인다.
+
+    - `text` : 한 호출에 보낼 텍스트. 이미지만 있는 페이지면 None.
+    - `images` : 같은 호출에 동봉할 이미지들. 텍스트만이면 빈 리스트.
+    - `chunk_index` : 0-based, 한 source 안에서 평탄화된 인덱스.
+    - `page_index` : PDF 모달에 한해 디버그/로깅용 — SourceRef 에는 노출하지
+      않는다 (PRD 3 §1.3 schema 확장은 follow-up).
+    """
+
+    text: str | None
+    images: list[ImageInput]
+    chunk_index: int
+    page_index: int | None = None
+
+
+def _b64encode(data: bytes) -> str:
+    """이미지 바이트 → 순수 base64 문자열 (dataURI 헤더 없음).
+
+    WHY 모듈 헬퍼: PDF 어댑터는 *raw bytes + MIME* 만 돌려준다. 멀티모달 LLM
+    호출 시점에 base64 인코딩이 필요한데, 디스크 이미지 (image_loader) 와
+    PDF 임베디드 이미지 (여기) 가 같은 인코딩을 거치도록 단일 통로로 묶는다.
+    """
+    return base64.b64encode(data).decode("ascii")

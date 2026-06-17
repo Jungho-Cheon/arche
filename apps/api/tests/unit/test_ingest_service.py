@@ -13,7 +13,7 @@ import pytest
 
 from opentology_api.adapters.embedding import EmbeddingProvider
 from opentology_api.adapters.graph import GraphRepository, IngestionRunRecord
-from opentology_api.adapters.llm import LLMProvider
+from opentology_api.adapters.llm import ImageInput, LLMProvider
 from opentology_api.domain.errors import (
     InvalidInputError,
     UnsupportedFileTypeError,
@@ -35,9 +35,22 @@ class FakeLLM(LLMProvider):
     def __init__(self, graph: ExtractedGraph) -> None:
         self._graph = graph
         self.calls = 0
+        # WHY 호출 인자 캡처: PR #23 (이슈 #5) 이후 ingest_file 이 모달별로 다른
+        # 키워드 (text / images) 를 넘긴다. 어떤 모달이 어떻게 호출됐는지 테스트에서
+        # 직접 들여다볼 수 있도록 인자 그대로 보관.
+        self.call_args: list[dict] = []
 
-    def extract(self, text: str, source_path: str) -> ExtractedGraph:  # noqa: D401
+    def extract(  # noqa: D401
+        self,
+        *,
+        text: str | None = None,
+        images: list[ImageInput] | None = None,
+        source_path: str,
+    ) -> ExtractedGraph:
         self.calls += 1
+        self.call_args.append(
+            {"text": text, "images": list(images) if images else [], "source_path": source_path}
+        )
         return self._graph
 
 
@@ -525,15 +538,30 @@ def test_diff_trims_source_ref_for_shared_entity(
     assert {sr.source_path for sr in a_node.source_refs} == {str(s2.resolve())}
 
 
-def test_ingest_rejects_pdf(tmp_path: Path, fake_graph: FakeGraph):
-    p = tmp_path / "doc.pdf"
-    p.write_bytes(b"%PDF-1.4")
+def test_ingest_rejects_unknown_extension(tmp_path: Path, fake_graph: FakeGraph):
+    """PR #23 (이슈 #5) 이후 PDF/이미지가 SUPPORTED. .json 같은 미지원만 reject."""
+    p = tmp_path / "data.json"
+    p.write_text("{}", encoding="utf-8")
     service = _build_service(
         fake_graph, ExtractedGraph(entities=[], relations=[])
     )
-    with pytest.raises(UnsupportedFileTypeError) as exc:
+    with pytest.raises(UnsupportedFileTypeError):
         service.ingest_file(p)
-    assert "issue #5" in str(exc.value.message)
+
+
+def test_ingest_rejects_broken_pdf(tmp_path: Path, fake_graph: FakeGraph):
+    """깨진 PDF 바이트는 pdf 어댑터가 InvalidInputError 로 변환한다.
+
+    호출자 (ingest_directory) 는 이 예외를 잡아 *그 파일만 skip* (PRD 2 §8) 한다.
+    여기서는 단일 파일 호출이 깔끔하게 에러로 전파되는지 확인.
+    """
+    p = tmp_path / "doc.pdf"
+    p.write_bytes(b"not actually a pdf")
+    service = _build_service(
+        fake_graph, ExtractedGraph(entities=[], relations=[])
+    )
+    with pytest.raises(InvalidInputError):
+        service.ingest_file(p)
 
 
 def test_ingest_file_rejects_directory(tmp_path: Path, fake_graph: FakeGraph):

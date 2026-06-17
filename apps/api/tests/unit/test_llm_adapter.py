@@ -22,7 +22,11 @@ def _make_provider_with_responses(responses: list[str]) -> OpenAILLMProvider:
 
     call_count = {"i": 0}
 
-    def fake_call(_text: str) -> str:
+    def fake_call(
+        *,
+        text: str | None = None,
+        images: list | None = None,  # noqa: ARG001 — 인자 시그니처 호환만 맞춘다
+    ) -> str:
         idx = call_count["i"]
         call_count["i"] += 1
         return responses[idx]

@@ -26,12 +26,16 @@ import pathspec
 logger = logging.getLogger(__name__)
 
 
-# WHY 두 그룹 분리: 텍스트는 walking skeleton 의 직접 처리 대상, PENDING 은
-# follow-up issue #5 (PDF/이미지). PENDING 마주치면 PRD 2 §2.1 의 "조용히
-# 건너뛴다" 정책 + warning 로그 — 사용자가 디렉토리에 PDF/이미지를 의도적으로
-# 넣었음을 알 수 있게 (silent skip 이 아니라 *quiet skip*).
-SUPPORTED_EXTS: frozenset[str] = frozenset({".txt", ".md"})
-PENDING_EXTS: frozenset[str] = frozenset({".pdf", ".jpg", ".jpeg", ".png", ".webp"})
+# WHY 단일 그룹: #5 (PDF + 멀티모달 이미지) 가 들어오면서 텍스트/PDF/이미지가 같은
+# 흐름에 들어왔다. 이전 슬라이스에서는 PDF/이미지가 PENDING 으로 분리되어 있었지만
+# 이제 IngestService 가 확장자별로 분기 처리한다 (PRD 2 §2.1).
+SUPPORTED_EXTS: frozenset[str] = frozenset(
+    {".txt", ".md", ".pdf", ".jpg", ".jpeg", ".png", ".webp"}
+)
+# WHY 빈 PENDING 보존: 외부 코드/STATUS 가 import 하는 심볼 — 빈 집합으로 두고
+# 후속 follow-up (예: 오디오/동영상) 이 들어오면 다시 채운다. 제거하면 호출자에
+# AttributeError 가 새어 나간다.
+PENDING_EXTS: frozenset[str] = frozenset()
 
 
 # WHY 패턴 고정: 도트 디렉토리 + node_modules / venv / __pycache__ 는 사용자가

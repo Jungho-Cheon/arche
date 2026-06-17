@@ -151,15 +151,19 @@ def test_dry_run_does_not_write_to_graph(tmp_path: Path):
     assert result.per_file[0].relations_created == 1
 
 
-def test_ingest_directory_counts_pending_skipped(tmp_path: Path):
-    """PDF / 이미지는 follow-up #5 — files_pending_skipped 로 분리 카운트."""
-    (tmp_path / "doc.md").write_text("x", encoding="utf-8")
-    (tmp_path / "img.png").write_bytes(b"PNG")
+def test_ingest_directory_pending_skipped_is_zero_after_pdf_image_support(
+    tmp_path: Path,
+):
+    """PR #23 (이슈 #5) 으로 PDF/이미지가 SUPPORTED 가 되어 PENDING 이 비었다.
 
+    crawl 결과의 `files_pending_skipped` 는 0 이 유지된다 — 새 모달이 도입되어
+    다시 PENDING 으로 분리해야 할 때 본 가드가 변화를 잡는다.
+    """
+    (tmp_path / "doc.md").write_text("x", encoding="utf-8")
     extracted = ExtractedGraph(entities=[], relations=[])
     service, _, _ = _build(extracted)
     result = service.ingest_directory(tmp_path)
-    assert result.files_pending_skipped == 1
+    assert result.files_pending_skipped == 0
     assert result.files_total == 1
 
 

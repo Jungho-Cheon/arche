@@ -184,7 +184,7 @@ class StubGraph(GraphRepository):
 
 
 class StubLLM(LLMProvider):
-    def extract(self, text, source_path) -> ExtractedGraph:
+    def extract(self, *, text=None, images=None, source_path) -> ExtractedGraph:
         return ExtractedGraph(entities=[], relations=[])
 
 
