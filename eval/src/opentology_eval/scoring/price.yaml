@@ -1,0 +1,37 @@
+# 모델별 단가 — 2026-06 기준, 1M 토큰당 USD.
+#
+# 출처: 각 provider 공식 가격표 (변동 시 본 파일을 갱신).
+# 본 표가 비용 합산 (PRD 4 §6) 의 단일 진실의 원천이다.
+# 보고서는 input_tokens × input_price + output_tokens × output_price 를 sum 한다.
+# 임베딩 모델은 output 단가 0 (임베딩 응답은 토큰이 아닌 벡터다).
+
+openai/gpt-4o:
+  input: 2.50
+  output: 10.00
+openai/gpt-4o-mini:
+  input: 0.15
+  output: 0.60
+openai/gpt-4.1:
+  input: 2.00
+  output: 8.00
+openai/gpt-4.1-mini:
+  input: 0.40
+  output: 1.60
+anthropic/claude-sonnet-4-6:
+  input: 3.00
+  output: 15.00
+anthropic/claude-opus-4-7:
+  input: 15.00
+  output: 75.00
+google/gemini-3-flash-preview:
+  input: 0.075
+  output: 0.30
+google/gemini-3-pro:
+  input: 3.50
+  output: 10.50
+openai/text-embedding-3-small:
+  input: 0.02
+  output: 0.0
+openai/text-embedding-3-large:
+  input: 0.13
+  output: 0.0
