@@ -70,9 +70,20 @@ class ChunkRAGRunner:
     setup_embedding_tokens: int = 0
 
     def setup(self) -> None:
-        """corpus 를 청크화하고 모든 청크를 임베딩해 인덱스에 적재."""
+        """corpus 를 청크화하고 모든 청크를 임베딩해 인덱스에 적재.
+
+        WHY 이미지 무시: PRD 4 §2 의 chunk RAG 대조군은 *전형적 텍스트 RAG* . 이미지
+        청크화는 multimodal embedding 모델이 필요해 변수가 추가된다 (ADR-0001 D3 의
+        측정 통제 변수 정책 위반). MVP 단계에선 *텍스트 청크만* 의 baseline 을 유지해
+        측정 통제 변수를 보존한다. corpus 에 이미지 파일이나 이미지 페이지가 있어도
+        *그 청크가 RAG 인덱스에 들어가지 않을 뿐* — 에러는 아니다 (loader 가 warning
+        로그를 남긴다).
+
+        PDF 는 텍스트 페이지만 인덱싱. 페이지 시퀀스를 한 파일 단위로 이어붙여
+        chunk_corpus 에 넘긴다 (`iter_text_units_for_chunking` 참조).
+        """
         files = self.loader.discover()
-        pairs = [(f, self.loader.read(f)) for f in files]
+        pairs = self.loader.iter_text_units_for_chunking(files)
         chunks = chunk_corpus(pairs, self.loader.root)
         if not chunks:
             return

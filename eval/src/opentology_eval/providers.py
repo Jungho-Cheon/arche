@@ -1,10 +1,25 @@
-"""LLM / 임베딩 provider 추상화 — 테스트에서 mock 으로 갈아끼우기 위한 최소 인터페이스."""
+"""LLM / 임베딩 provider 추상화 — 테스트에서 mock 으로 갈아끼우기 위한 최소 인터페이스.
+
+`complete(user=...)` 는 단일 문자열 또는 멀티모달 content block 리스트를 받는다.
+content block 은 OpenAI Chat Completions 의 vision 형식과 동일:
+  - `{"type": "text", "text": "..."}`
+  - `{"type": "image_url", "image_url": {"url": "data:<mime>;base64,<b64>"}}`
+
+WHY 두 입력 형식:
+  베이스라인 full-context 컬럼이 이미지 corpus 를 받으면 멀티모달 호출이 필요하다.
+  텍스트 전용 호출은 *변경하지 않고* (측정 통제 변수 — ADR-0001 D3) 새 경로만 추가.
+"""
 
 from __future__ import annotations
 
 import time
 from dataclasses import dataclass
-from typing import Any, Protocol
+from typing import Any, Protocol, Union
+
+
+# user content block — OpenAI vision 형식의 일부분.
+ContentBlock = dict[str, Any]
+UserContent = Union[str, list[ContentBlock]]
 
 
 @dataclass(frozen=True)
@@ -35,7 +50,7 @@ class LLMProvider(Protocol):
         self,
         *,
         system: str,
-        user: str,
+        user: UserContent,
         response_format: dict[str, Any],
     ) -> LLMResult: ...
 
@@ -61,11 +76,15 @@ class OpenAIProvider:
         self,
         *,
         system: str,
-        user: str,
+        user: UserContent,
         response_format: dict[str, Any],
     ) -> LLMResult:
         import json
 
+        # WHY 분기 없이 그대로 전달: OpenAI SDK 의 messages.content 는 *문자열 또는
+        # content block 리스트* 두 형식을 모두 정식 지원한다 (Chat Completions
+        # vision API). 분기 없이 그대로 넘기면 텍스트 전용 호출의 동작이 본 PR
+        # 이전과 1 비트도 다르지 않다 (측정 통제 변수 보존).
         t0 = time.perf_counter()
         resp = self._client.chat.completions.create(
             model=self.model_id,
@@ -126,17 +145,28 @@ class AnthropicProvider:
         self,
         *,
         system: str,
-        user: str,
+        user: UserContent,
         response_format: dict[str, Any],  # 무시 (호환용 시그니처)
     ) -> LLMResult:
         import json
+
+        # WHY 텍스트만 합치기: judge 단계 (PRD 4 §4.4) 는 *텍스트 채점* 이라
+        # 멀티모달 입력을 보지 않는다. 하지만 시그니처는 통일 (LLMProvider
+        # Protocol) 이라 list 가 들어올 가능성을 열어 두고, 받으면 텍스트 block
+        # 만 추출해 concat — 본 PR 범위에서 Anthropic 멀티모달 호출은 미구현.
+        if isinstance(user, list):
+            user_text = "\n\n".join(
+                b.get("text", "") for b in user if b.get("type") == "text"
+            )
+        else:
+            user_text = user
 
         t0 = time.perf_counter()
         resp = self._client.messages.create(
             model=self.model_id,
             system=system,
             max_tokens=1024,
-            messages=[{"role": "user", "content": user}],
+            messages=[{"role": "user", "content": user_text}],
         )
         latency_ms = int((time.perf_counter() - t0) * 1000)
 

@@ -15,6 +15,10 @@ dependencies = [
     "httpx>=0.27.0",
     "jsonschema>=4.21.0",
     "rich>=13.7.0",
+    # WHY pypdf: PDF 텍스트 + 임베디드 이미지 추출. apps/api 와 동일 라이브러리
+    # (BSD-3, 순수 Python). eval 의 PDF 어댑터는 코어와 *입력 → 출력 형태가
+    # 같아야* 측정 통제 변수가 보존된다 (ADR-0001 D3).
+    "pypdf>=4.0.0",
 ]
 
 [project.optional-dependencies]

@@ -41,7 +41,7 @@ def test_full_context_live(corpus_dir: Path, questions_path: Path, tmp_path: Pat
     runner = FullContextRunner(loader=loader, llm=llm)
     q = load_questions(questions_path).questions[0]
     payload = runner.ask(
-        corpus_text=runner.setup_corpus_text(), question=q, run_index=0
+        corpus=runner.setup_corpus(), question=q, run_index=0
     )
     out = tmp_path / "full_context_Q01_run0.json"
     out.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")

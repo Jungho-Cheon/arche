@@ -22,8 +22,8 @@ Opentology = LLM·AI 에이전트가 *도메인 지식의 관계* 를 *최소한
 | 그래프 진입점 인덱싱 (어휘 + dense 하이브리드) | 완료 | fulltext + 벡터 인덱스 + 하이브리드 검색 (lexical + dense, RRF k=60). raw 점수는 `include_scores=true` 로 노출 |
 | Graph Primitives REST API | 완료 | 6 primitive 모두 (`get_schema` / `find_entities` 하이브리드 / `get_entity` + edge_counts / `get_neighbors` BFS + 절단 / `find_path` k-shortest / `get_subgraph` multi-source BFS) + `/healthz` + `/admin/ingest`. OpenAPI 는 `/openapi.json` 으로 노출. MCP 어댑터는 #7 |
 | Graph Primitives MCP 서버 | 완료 (stdio) | `opentology mcp serve --stdio` 가 6 primitive 를 표준 MCP tool 로 노출 (#7). REST 와 *동일 입출력 schema* (Pydantic 단일 source). HTTP+SSE 는 post-MVP (PRD 3 §8.1) |
-| 청크 벡터 RAG 베이스라인 하니스 | 완료 | #15 머지 (eval/) |
-| Full-context LLM 베이스라인 하니스 | 완료 | #15 머지 (eval/) |
+| 청크 벡터 RAG 베이스라인 하니스 | 완료 | #15 머지 (eval/). PDF 어댑터 연결 완료 — PDF 텍스트 페이지를 청크 소스로 사용 (#14). 이미지 입력은 PRD 4 §2 의 통제 변수 정책으로 무시 + warning 로그 |
+| Full-context LLM 베이스라인 하니스 | 완료 | #15 머지 (eval/). PDF/이미지 어댑터 연결 완료 — PDF 텍스트는 직렬화 본문에, 이미지 파일 + PDF 이미지 페이지는 멀티모달 user content 로 동봉 (#14) |
 | Opentology 컬럼 (anchor 추출 + primitives 조합 + 직렬화) | 완료 | #10 머지 (eval/columns/opentology.py + eval/clients/opentology.py + eval/serializers.py) |
 | 30 개 MCQ 평가 셋 | 미착수 | lint 도구 완료 (#12) — `opentology-eval lint --dataset <dir>` 가 PRD 5 §6 의 hard fail / warn 검증 + `--dry-run-ingest` 토큰·비용 추정 |
 | 3-way 측정 보고서 | 완료 (도구) | judge / spotcheck / aggregate / report 도구 일체 완료 (#11). 실 측정은 #13 가 30 MCQ 만들면 가능 |
@@ -52,7 +52,6 @@ Opentology = LLM·AI 에이전트가 *도메인 지식의 관계* 를 *최소한
 | 우선순위 | 항목 | 비고 |
 |---|---|---|
 | P1 | 30 MCQ 평가 셋 (#13) | 사용자 HITL — 검증 도메인 질문 작성 |
-| P2 | eval PDF / 이미지 어댑터 연결 (#14) | ingest 가 받을 수 있으니 eval 도 같은 경로 |
 
 ## 갱신 정책
 

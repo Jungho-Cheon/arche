@@ -43,9 +43,9 @@ def test_full_context_payload_matches_prd_15(corpus_dir: Path, questions_path: P
     llm.complete.return_value = _fake_llm_result(choice="a", reasoning="A 이유")
 
     runner = FullContextRunner(loader=loader, llm=llm)
-    corpus_text = runner.setup_corpus_text()
+    corpus = runner.setup_corpus()
     q = load_questions(questions_path).questions[0]
-    payload = runner.ask(corpus_text=corpus_text, question=q, run_index=0)
+    payload = runner.ask(corpus=corpus, question=q, run_index=0)
 
     # PRD 4 §1.5 의 모든 키.
     expected_keys = {
@@ -79,7 +79,7 @@ def test_full_context_records_parse_error_without_retry(
     runner = FullContextRunner(loader=loader, llm=llm)
     q = load_questions(questions_path).questions[0]
     payload = runner.ask(
-        corpus_text=runner.setup_corpus_text(), question=q, run_index=0
+        corpus=runner.setup_corpus(), question=q, run_index=0
     )
     assert payload["parsed"] is None
     assert payload["parse_error"] is not None
@@ -95,7 +95,7 @@ def test_full_context_corpus_text_passed_in_user_prompt(
     llm.complete.return_value = _fake_llm_result()
     runner = FullContextRunner(loader=loader, llm=llm)
     q = load_questions(questions_path).questions[0]
-    runner.ask(corpus_text=runner.setup_corpus_text(), question=q, run_index=0)
+    runner.ask(corpus=runner.setup_corpus(), question=q, run_index=0)
     call = llm.complete.call_args
     user = call.kwargs["user"]
     assert "=== FILE: coupon.md ===" in user
