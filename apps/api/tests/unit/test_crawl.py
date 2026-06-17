@@ -34,18 +34,23 @@ def test_collects_md_and_txt_only(tmp_path: Path):
     assert summary.files_unsupported_skipped == 1
 
 
-def test_skips_pending_pdf_image_with_warning(tmp_path: Path, caplog):
+def test_collects_pdf_and_image_files(tmp_path: Path):
+    """PR #23 (issue #5) 이후 PDF/이미지가 SUPPORTED 로 승격.
+
+    이전 슬라이스에서는 PENDING 으로 분리되어 warning + skip 이었지만 이제는
+    텍스트와 동일하게 수집되어 IngestService 가 모달별로 분기 처리한다.
+    """
     _touch(tmp_path / "doc.md")
     _touch(tmp_path / "page.pdf", "%PDF")
     _touch(tmp_path / "img.png", "PNG")
+    _touch(tmp_path / "photo.jpg", "JPG")
+    _touch(tmp_path / "shot.webp", "WEBP")
 
-    with caplog.at_level("WARNING"):
-        summary = crawl(tmp_path)
-    assert len(summary.files_collected) == 1
-    assert summary.files_pending_skipped == 2
-    # warning 로그가 PDF/이미지 양쪽에 대해 떴는지.
-    warnings_text = "\n".join(r.message for r in caplog.records)
-    assert "issue #5" in warnings_text
+    summary = crawl(tmp_path)
+    names = sorted(p.name for p in summary.files_collected)
+    assert names == ["doc.md", "img.png", "page.pdf", "photo.jpg", "shot.webp"]
+    assert summary.files_pending_skipped == 0
+    assert summary.files_unsupported_skipped == 0
 
 
 def test_auto_excludes_dot_and_cache_directories(tmp_path: Path):

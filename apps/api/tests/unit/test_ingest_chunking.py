@@ -31,8 +31,15 @@ class ChunkAwareFakeLLM(LLMProvider):
     def __init__(self) -> None:
         self.calls: list[str] = []
 
-    def extract(self, text: str, source_path: str) -> ExtractedGraph:
-        self.calls.append(text)
+    def extract(
+        self,
+        *,
+        text: str | None = None,
+        images: list | None = None,  # noqa: ARG002
+        source_path: str,
+    ) -> ExtractedGraph:
+        self.calls.append(text or "")
+        text = text or ""
         if "MARK_ONE" in text:
             return ExtractedGraph(
                 entities=[
