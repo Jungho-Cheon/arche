@@ -25,7 +25,7 @@ Opentology = LLM·AI 에이전트가 *도메인 지식의 관계* 를 *최소한
 | 청크 벡터 RAG 베이스라인 하니스 | 완료 | #15 머지 (eval/) |
 | Full-context LLM 베이스라인 하니스 | 완료 | #15 머지 (eval/) |
 | Opentology 컬럼 (anchor 추출 + primitives 조합 + 직렬화) | 완료 | #10 머지 (eval/columns/opentology.py + eval/clients/opentology.py + eval/serializers.py) |
-| 30 개 MCQ 평가 셋 | 미착수 | |
+| 30 개 MCQ 평가 셋 | 미착수 | lint 도구 완료 (#12) — `opentology-eval lint --dataset <dir>` 가 PRD 5 §6 의 hard fail / warn 검증 + `--dry-run-ingest` 토큰·비용 추정 |
 | 3-way 측정 보고서 | 완료 (도구) | judge / spotcheck / aggregate / report 도구 일체 완료 (#11). 실 측정은 #13 가 30 MCQ 만들면 가능 |
 
 ## 마일스톤 진행도
@@ -36,7 +36,7 @@ Opentology = LLM·AI 에이전트가 *도메인 지식의 관계* 를 *최소한
 | M2 | Ingest 파이프라인 (소스 → 엔티티/관계 → 그래프, idempotent) | 미착수 |
 | M3 | Graph Primitives (REST + MCP) | 완료 — REST 6 primitive (#19) + MCP stdio (#7). HTTP+SSE 는 post-MVP |
 | M4 | 베이스라인 하니스 (full-context + 청크 RAG) | 미착수 |
-| M5 | 평가 데이터 (상거래 검증 도메인 소스 + 30 MCQ) | 미착수 |
+| M5 | 평가 데이터 (상거래 검증 도메인 소스 + 30 MCQ) | 부분 — 데이터셋 형식 (PRD 5) + lint 도구 (#12) 완료, 실 30 MCQ 작성 (#13) 대기 |
 | M6 | 3-way 측정 + 보고서 1 회 | 부분 — 도구 완료, 실 측정은 #13 (30 MCQ) 후 |
 
 위 골격은 *구현 계획서* 가 확정되면 그 결정에 맞춰 갱신된다.

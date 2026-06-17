@@ -1,0 +1,65 @@
+dataset_id: valid-minimal-20260618
+questions:
+  - id: Q01
+    question: "쿠폰 X 는 어떤 상품에 적용되나요?"
+    domain_pattern: multi_hop
+    hops_required: 3
+    options:
+      - id: a
+        text: "상품 A"
+        is_correct: true
+        failure_mode_tested: null
+      - id: b
+        text: "상품 A 와 상품 B"
+        is_correct: false
+        failure_mode_tested: missed_category_hop
+      - id: c
+        text: "상품 B"
+        is_correct: false
+        failure_mode_tested: wrong_promotion_filter
+      - id: d
+        text: "모든 상품"
+        is_correct: false
+        failure_mode_tested: overgeneralization
+      - id: e
+        text: "정보 부족 / 알 수 없음"
+        is_correct: false
+        failure_mode_tested: retrieval_failure
+    reference_reasoning: |
+      쿠폰 X 는 프로모션 P 에 속한다 (쿠폰 정책 §1).
+      프로모션 P 는 카테고리 C 에만 적용 가능하다 (프로모션 정책 §1).
+      카테고리 C 에 속한 상품은 카탈로그 상 상품 A 하나뿐이다 (상품 카탈로그 §1).
+      따라서 정답은 (a) 상품 A.
+    expected_sources:
+      - corpus/policy/coupon.md
+      - corpus/policy/promotion.md
+      - corpus/catalog/products.md
+    tags: [coupon, promotion, multi_hop]
+  - id: Q02
+    question: "환불 정책의 기간 한도는 며칠인가요?"
+    domain_pattern: cross_source
+    hops_required: 2
+    options:
+      - id: a
+        text: "7 일"
+        is_correct: true
+        failure_mode_tested: null
+      - id: b
+        text: "14 일"
+        is_correct: false
+        failure_mode_tested: numeric_error
+      - id: c
+        text: "30 일"
+        is_correct: false
+        failure_mode_tested: outdated_replaced
+      - id: d
+        text: "정보 부족 / 알 수 없음"
+        is_correct: false
+        failure_mode_tested: retrieval_failure
+    reference_reasoning: |
+      환불 정책 §2 에 따르면 기본 한도는 7 일이다.
+      쿠폰 정책 §3 의 별도 면책 조항도 같은 기간을 따른다.
+      따라서 정답은 (a) 7 일.
+    expected_sources:
+      - corpus/policy/refund.md
+    tags: [refund, numeric]
