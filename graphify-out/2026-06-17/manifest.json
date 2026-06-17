@@ -1,0 +1,447 @@
+{
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/apps/api/src/opentology_api/__init__.py": {
+    "mtime": 1781646519.852892,
+    "ast_hash": "5592d7da96fec574e2f95b4d2436ff00",
+    "semantic_hash": "5592d7da96fec574e2f95b4d2436ff00"
+  },
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/apps/api/src/opentology_api/adapters/__init__.py": {
+    "mtime": 1781646519.853068,
+    "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
+    "semantic_hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/apps/api/src/opentology_api/adapters/embedding.py": {
+    "mtime": 1781646519.858728,
+    "ast_hash": "6a3f94c7987efb94c4578802e4d1a239",
+    "semantic_hash": "6a3f94c7987efb94c4578802e4d1a239"
+  },
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/apps/api/src/opentology_api/adapters/graph.py": {
+    "mtime": 1781647806.0819757,
+    "ast_hash": "ef43bef60829e0a9e7a0fcf9b687e456",
+    "semantic_hash": "ef43bef60829e0a9e7a0fcf9b687e456"
+  },
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/apps/api/src/opentology_api/adapters/llm.py": {
+    "mtime": 1781646519.8654,
+    "ast_hash": "679ee113a054d7e637f3674aeb6e5481",
+    "semantic_hash": "679ee113a054d7e637f3674aeb6e5481"
+  },
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/apps/api/src/opentology_api/api/__init__.py": {
+    "mtime": 1781646519.865608,
+    "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
+    "semantic_hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/apps/api/src/opentology_api/api/admin_tasks.py": {
+    "mtime": 1781648238.6601596,
+    "ast_hash": "d04d1a054b0451d02dd2ddd72dcbc3d6",
+    "semantic_hash": "d04d1a054b0451d02dd2ddd72dcbc3d6"
+  },
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/apps/api/src/opentology_api/api/deps.py": {
+    "mtime": 1781648132.439633,
+    "ast_hash": "f3f3f42f86b2b14be8d49f82ee1e7b0a",
+    "semantic_hash": "f3f3f42f86b2b14be8d49f82ee1e7b0a"
+  },
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/apps/api/src/opentology_api/api/routers.py": {
+    "mtime": 1781648262.8919413,
+    "ast_hash": "97d8751107f717d35b5b3cf6ab0fa4c6",
+    "semantic_hash": "97d8751107f717d35b5b3cf6ab0fa4c6"
+  },
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/apps/api/src/opentology_api/api/schemas.py": {
+    "mtime": 1781648081.3386781,
+    "ast_hash": "c7bd27a09bc52a1b4f6fa87137ce6eca",
+    "semantic_hash": "c7bd27a09bc52a1b4f6fa87137ce6eca"
+  },
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/apps/api/src/opentology_api/cli.py": {
+    "mtime": 1781648312.4831135,
+    "ast_hash": "93fd6d25288e24fe74b468c9b0686631",
+    "semantic_hash": "93fd6d25288e24fe74b468c9b0686631"
+  },
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/apps/api/src/opentology_api/config.py": {
+    "mtime": 1781647752.2780867,
+    "ast_hash": "225ab525357a53da34d3860cee1f46b5",
+    "semantic_hash": "225ab525357a53da34d3860cee1f46b5"
+  },
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/apps/api/src/opentology_api/domain/__init__.py": {
+    "mtime": 1781646519.8803408,
+    "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
+    "semantic_hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/apps/api/src/opentology_api/domain/chunking.py": {
+    "mtime": 1781647597.6675835,
+    "ast_hash": "eafd5f4f89ea2e897d143f639f3c0407",
+    "semantic_hash": "eafd5f4f89ea2e897d143f639f3c0407"
+  },
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/apps/api/src/opentology_api/domain/crawl.py": {
+    "mtime": 1781647729.0600598,
+    "ast_hash": "4031b6caa87f8f027ab54747752374a0",
+    "semantic_hash": "4031b6caa87f8f027ab54747752374a0"
+  },
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/apps/api/src/opentology_api/domain/errors.py": {
+    "mtime": 1781646519.8849103,
+    "ast_hash": "4009cd3cda90d5c3876fbe17984616fa",
+    "semantic_hash": "4009cd3cda90d5c3876fbe17984616fa"
+  },
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/apps/api/src/opentology_api/domain/identity.py": {
+    "mtime": 1781646519.8883023,
+    "ast_hash": "51f486db4f72181994d8b1bad11d1833",
+    "semantic_hash": "51f486db4f72181994d8b1bad11d1833"
+  },
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/apps/api/src/opentology_api/domain/ingest.py": {
+    "mtime": 1781647939.3009467,
+    "ast_hash": "1d428e3e03fcafba1fdba9ff5094c637",
+    "semantic_hash": "1d428e3e03fcafba1fdba9ff5094c637"
+  },
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/apps/api/src/opentology_api/domain/models.py": {
+    "mtime": 1781646519.8949306,
+    "ast_hash": "ab447a7a22e257724cd5f36939e108cf",
+    "semantic_hash": "ab447a7a22e257724cd5f36939e108cf"
+  },
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/apps/api/src/opentology_api/main.py": {
+    "mtime": 1781648144.3976555,
+    "ast_hash": "3f42cf2fd3f094f4d408658ea50eca5f",
+    "semantic_hash": "3f42cf2fd3f094f4d408658ea50eca5f"
+  },
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/apps/api/tests/__init__.py": {
+    "mtime": 1781646519.898054,
+    "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
+    "semantic_hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/apps/api/tests/conftest.py": {
+    "mtime": 1781646519.9015067,
+    "ast_hash": "539c2a2e2e9bc8055ccdad9e28b3875d",
+    "semantic_hash": "539c2a2e2e9bc8055ccdad9e28b3875d"
+  },
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/apps/api/tests/integration/__init__.py": {
+    "mtime": 1781646519.9047492,
+    "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
+    "semantic_hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/apps/api/tests/integration/test_identity_e2e.py": {
+    "mtime": 1781646519.9092042,
+    "ast_hash": "e6180b94b2adae0ab7ab3a5ecf28d226",
+    "semantic_hash": "e6180b94b2adae0ab7ab3a5ecf28d226"
+  },
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/apps/api/tests/integration/test_neo4j_repo.py": {
+    "mtime": 1781646519.9117851,
+    "ast_hash": "06fd2713fe75bfc5bee671ee528634dc",
+    "semantic_hash": "06fd2713fe75bfc5bee671ee528634dc"
+  },
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/apps/api/tests/live/__init__.py": {
+    "mtime": 1781646519.9119802,
+    "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
+    "semantic_hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/apps/api/tests/live/proof_alias_and_deletion.py": {
+    "mtime": 1781646519.9151707,
+    "ast_hash": "d2a8c15ec15228010be2c28823b0d03a",
+    "semantic_hash": "d2a8c15ec15228010be2c28823b0d03a"
+  },
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/apps/api/tests/live/test_directory_idempotency_live.py": {
+    "mtime": 1781648538.9723856,
+    "ast_hash": "164a85632cef185e63b10180d55bd4e6",
+    "semantic_hash": "164a85632cef185e63b10180d55bd4e6"
+  },
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/apps/api/tests/live/test_idempotency_live.py": {
+    "mtime": 1781646519.9174862,
+    "ast_hash": "300802699e29f260238d12b3d17295dd",
+    "semantic_hash": "300802699e29f260238d12b3d17295dd"
+  },
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/apps/api/tests/live/test_live_e2e.py": {
+    "mtime": 1781646519.9198427,
+    "ast_hash": "c59000fae59c7078a781a9e77f263e3c",
+    "semantic_hash": "c59000fae59c7078a781a9e77f263e3c"
+  },
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/apps/api/tests/unit/__init__.py": {
+    "mtime": 1781646519.9200401,
+    "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
+    "semantic_hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/apps/api/tests/unit/test_admin_async.py": {
+    "mtime": 1781648272.8609788,
+    "ast_hash": "376450bba570b9a30a421c2a2e64556d",
+    "semantic_hash": "376450bba570b9a30a421c2a2e64556d"
+  },
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/apps/api/tests/unit/test_chunking.py": {
+    "mtime": 1781647645.6229606,
+    "ast_hash": "f963a1b1265003d652ce596bcfd2e7e2",
+    "semantic_hash": "f963a1b1265003d652ce596bcfd2e7e2"
+  },
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/apps/api/tests/unit/test_cli_stdout.py": {
+    "mtime": 1781648332.9327016,
+    "ast_hash": "f606573644c231e7faf7d220478151ee",
+    "semantic_hash": "f606573644c231e7faf7d220478151ee"
+  },
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/apps/api/tests/unit/test_crawl.py": {
+    "mtime": 1781647719.436209,
+    "ast_hash": "cfdc3a550e306111ac3cfadc8cc7676c",
+    "semantic_hash": "cfdc3a550e306111ac3cfadc8cc7676c"
+  },
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/apps/api/tests/unit/test_diff_logic.py": {
+    "mtime": 1781646519.923467,
+    "ast_hash": "a0badb0244ea84d08b9c595367c79e46",
+    "semantic_hash": "a0badb0244ea84d08b9c595367c79e46"
+  },
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/apps/api/tests/unit/test_entity_matcher.py": {
+    "mtime": 1781646519.9258444,
+    "ast_hash": "451138060d36a9e1936c71ea4d2a1d74",
+    "semantic_hash": "451138060d36a9e1936c71ea4d2a1d74"
+  },
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/apps/api/tests/unit/test_entity_merger.py": {
+    "mtime": 1781646519.9281473,
+    "ast_hash": "368383524a7d9a4725a758936f1ddccc",
+    "semantic_hash": "368383524a7d9a4725a758936f1ddccc"
+  },
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/apps/api/tests/unit/test_ingest_chunking.py": {
+    "mtime": 1781648019.1946995,
+    "ast_hash": "320d0cf46a9d8279fe813382d6ee17ea",
+    "semantic_hash": "320d0cf46a9d8279fe813382d6ee17ea"
+  },
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/apps/api/tests/unit/test_ingest_directory.py": {
+    "mtime": 1781647985.6292121,
+    "ast_hash": "8edc9e0d1f6cfe5d7d862232827a2cba",
+    "semantic_hash": "8edc9e0d1f6cfe5d7d862232827a2cba"
+  },
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/apps/api/tests/unit/test_ingest_service.py": {
+    "mtime": 1781647950.6695483,
+    "ast_hash": "c1a13f18912ff8fa473f96c3d06ff3f3",
+    "semantic_hash": "c1a13f18912ff8fa473f96c3d06ff3f3"
+  },
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/apps/api/tests/unit/test_llm_adapter.py": {
+    "mtime": 1781646519.9332383,
+    "ast_hash": "e30fec80c17dfbc56da3c3d32ede785b",
+    "semantic_hash": "e30fec80c17dfbc56da3c3d32ede785b"
+  },
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/apps/api/tests/unit/test_lucene_escape.py": {
+    "mtime": 1781646519.9348726,
+    "ast_hash": "92fcecfdd14275429585ac5a28775842",
+    "semantic_hash": "92fcecfdd14275429585ac5a28775842"
+  },
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/apps/api/tests/unit/test_models.py": {
+    "mtime": 1781646519.9368877,
+    "ast_hash": "a98b4ebd79e105355076948f430a7ffb",
+    "semantic_hash": "a98b4ebd79e105355076948f430a7ffb"
+  },
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/apps/api/tests/unit/test_normalize.py": {
+    "mtime": 1781646519.93854,
+    "ast_hash": "14b5ebf017572d486b71db45ecdec88b",
+    "semantic_hash": "14b5ebf017572d486b71db45ecdec88b"
+  },
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/apps/api/tests/unit/test_routers.py": {
+    "mtime": 1781646519.9401371,
+    "ast_hash": "9b8c57a02092a5604f5de7e31e7fc81e",
+    "semantic_hash": "9b8c57a02092a5604f5de7e31e7fc81e"
+  },
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/eval/src/opentology_eval/__init__.py": {
+    "mtime": 1781646519.9692302,
+    "ast_hash": "f3300004cf0fd56c4eca00505126fa4a",
+    "semantic_hash": "f3300004cf0fd56c4eca00505126fa4a"
+  },
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/eval/src/opentology_eval/chunking.py": {
+    "mtime": 1781646519.9709818,
+    "ast_hash": "a11fc65cac06cf7babb7d7117f80180b",
+    "semantic_hash": "a11fc65cac06cf7babb7d7117f80180b"
+  },
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/eval/src/opentology_eval/cli.py": {
+    "mtime": 1781646519.9725418,
+    "ast_hash": "cd5e213b0e4cef9a4ce005e9ccf191cc",
+    "semantic_hash": "cd5e213b0e4cef9a4ce005e9ccf191cc"
+  },
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/eval/src/opentology_eval/columns/__init__.py": {
+    "mtime": 1781646519.9746392,
+    "ast_hash": "1e79e2122065fe37a6eebf8b1413dee1",
+    "semantic_hash": "1e79e2122065fe37a6eebf8b1413dee1"
+  },
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/eval/src/opentology_eval/columns/chunk_rag.py": {
+    "mtime": 1781646519.9763167,
+    "ast_hash": "09345bd54e17552c893f851faa27f532",
+    "semantic_hash": "09345bd54e17552c893f851faa27f532"
+  },
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/eval/src/opentology_eval/columns/full_context.py": {
+    "mtime": 1781646519.978092,
+    "ast_hash": "5798339a97663ca4a39b42a7dd066fb7",
+    "semantic_hash": "5798339a97663ca4a39b42a7dd066fb7"
+  },
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/eval/src/opentology_eval/config.py": {
+    "mtime": 1781646519.9795077,
+    "ast_hash": "972b0e411674a3cefe9a403e769fd483",
+    "semantic_hash": "972b0e411674a3cefe9a403e769fd483"
+  },
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/eval/src/opentology_eval/loaders.py": {
+    "mtime": 1781646519.9810517,
+    "ast_hash": "69512262d7360db524dbced5687d408b",
+    "semantic_hash": "69512262d7360db524dbced5687d408b"
+  },
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/eval/src/opentology_eval/prompts.py": {
+    "mtime": 1781646519.9828627,
+    "ast_hash": "3299e08c5b8a92b9aecd0a8a108bd6eb",
+    "semantic_hash": "3299e08c5b8a92b9aecd0a8a108bd6eb"
+  },
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/eval/src/opentology_eval/providers.py": {
+    "mtime": 1781646519.9850926,
+    "ast_hash": "0f78a7ece824b5ced7923826c3185acd",
+    "semantic_hash": "0f78a7ece824b5ced7923826c3185acd"
+  },
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/eval/src/opentology_eval/questions.py": {
+    "mtime": 1781646519.9875462,
+    "ast_hash": "c6cd08b6ddcc2be43dab9fea3f6071c2",
+    "semantic_hash": "c6cd08b6ddcc2be43dab9fea3f6071c2"
+  },
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/eval/src/opentology_eval/runlog.py": {
+    "mtime": 1781646519.9900773,
+    "ast_hash": "6963a1304110fe9c1f59361256535e91",
+    "semantic_hash": "6963a1304110fe9c1f59361256535e91"
+  },
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/eval/tests/conftest.py": {
+    "mtime": 1781646519.9917533,
+    "ast_hash": "1a30d8afb0ed6bb2c19820c5c028d43e",
+    "semantic_hash": "1a30d8afb0ed6bb2c19820c5c028d43e"
+  },
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/eval/tests/test_chunking.py": {
+    "mtime": 1781646520.0003119,
+    "ast_hash": "78f392f68364913463c03896923e3574",
+    "semantic_hash": "78f392f68364913463c03896923e3574"
+  },
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/eval/tests/test_columns.py": {
+    "mtime": 1781646520.002037,
+    "ast_hash": "56a1e710def8a77814ad0b632f44a752",
+    "semantic_hash": "56a1e710def8a77814ad0b632f44a752"
+  },
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/eval/tests/test_config.py": {
+    "mtime": 1781646520.0037076,
+    "ast_hash": "01dd324bec0f839eecec4c54e63eec2c",
+    "semantic_hash": "01dd324bec0f839eecec4c54e63eec2c"
+  },
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/eval/tests/test_live.py": {
+    "mtime": 1781646520.005289,
+    "ast_hash": "8d3ab8c6ecdcd2f9c0347bb4ae93fcf9",
+    "semantic_hash": "8d3ab8c6ecdcd2f9c0347bb4ae93fcf9"
+  },
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/eval/tests/test_loaders.py": {
+    "mtime": 1781646520.0066855,
+    "ast_hash": "9a67f5abc939c8dfe90a5cee147edb4f",
+    "semantic_hash": "9a67f5abc939c8dfe90a5cee147edb4f"
+  },
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/eval/tests/test_questions.py": {
+    "mtime": 1781646520.0081415,
+    "ast_hash": "e4f46b606320b4018291781c780ff108",
+    "semantic_hash": "e4f46b606320b4018291781c780ff108"
+  },
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/eval/tests/test_runlog.py": {
+    "mtime": 1781646520.0099597,
+    "ast_hash": "5df0398db718be69d33ea82a5ab0d134",
+    "semantic_hash": "5df0398db718be69d33ea82a5ab0d134"
+  },
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/CLAUDE.md": {
+    "mtime": 1781646519.8330424,
+    "ast_hash": "e077437a9b99a43f8f7d1298da8e95a4",
+    "semantic_hash": "e077437a9b99a43f8f7d1298da8e95a4"
+  },
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/README.md": {
+    "mtime": 1781646519.836248,
+    "ast_hash": "f122b0cc3e3e429a1f6c63a61edd62a6",
+    "semantic_hash": "f122b0cc3e3e429a1f6c63a61edd62a6"
+  },
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/STATUS.md": {
+    "mtime": 1781648745.8169796,
+    "ast_hash": "ba68ef774f004eb81801197ae5486cd3",
+    "semantic_hash": "ba68ef774f004eb81801197ae5486cd3"
+  },
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/apps/api/README.md": {
+    "mtime": 1781646519.846338,
+    "ast_hash": "9a8f5f54ac78d9bbc6dfb1f7c63c0438",
+    "semantic_hash": "9a8f5f54ac78d9bbc6dfb1f7c63c0438"
+  },
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/apps/api/tests/fixtures/skeleton_sample.md": {
+    "mtime": 1781646519.904503,
+    "ast_hash": "ccc5f072f34381c165737fd866e17975",
+    "semantic_hash": "ccc5f072f34381c165737fd866e17975"
+  },
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/docker-compose.yml": {
+    "mtime": 1781646519.941783,
+    "ast_hash": "8d4d70260c4cb702964fbdc2b24826d0",
+    "semantic_hash": "8d4d70260c4cb702964fbdc2b24826d0"
+  },
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/docs/adr/0001-project-identity-and-mvp-validation-hypothesis.md": {
+    "mtime": 1781646519.9441597,
+    "ast_hash": "3f16ba6fb6e152e45c180a2a6db814d2",
+    "semantic_hash": "3f16ba6fb6e152e45c180a2a6db814d2"
+  },
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/docs/adr/0002-mvp-scope-boundaries.md": {
+    "mtime": 1781646519.9461277,
+    "ast_hash": "b5bdabab15becca97551361826a88812",
+    "semantic_hash": "b5bdabab15becca97551361826a88812"
+  },
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/docs/adr/0003-graph-entry-point-strategy-hybrid-lexical-dense.md": {
+    "mtime": 1781646519.9479914,
+    "ast_hash": "0a0fd934245dba8589ab461fc7c4b846",
+    "semantic_hash": "0a0fd934245dba8589ab461fc7c4b846"
+  },
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/docs/adr/0004-vector-infra-graph-db-internal-index.md": {
+    "mtime": 1781646519.949548,
+    "ast_hash": "0a7144f918d6ba665b75b300177f9429",
+    "semantic_hash": "0a7144f918d6ba665b75b300177f9429"
+  },
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/docs/adr/0005-measurement-methodology-accuracy-tokens-latency.md": {
+    "mtime": 1781646519.951332,
+    "ast_hash": "b95022a277f0a05a00f5fde15697a571",
+    "semantic_hash": "b95022a277f0a05a00f5fde15697a571"
+  },
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/docs/adr/0006-mcp-rest-primitives-surface.md": {
+    "mtime": 1781646519.9531736,
+    "ast_hash": "c9ada980d0c83e30eade1a69089b0001",
+    "semantic_hash": "c9ada980d0c83e30eade1a69089b0001"
+  },
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/docs/adr/README.md": {
+    "mtime": 1781646519.954872,
+    "ast_hash": "1c4ee0db619ce57786d55ded6eea0eed",
+    "semantic_hash": "1c4ee0db619ce57786d55ded6eea0eed"
+  },
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/docs/prd/1_mvp.md": {
+    "mtime": 1781646519.9566221,
+    "ast_hash": "ab0dd1495284f853243d547485f752f0",
+    "semantic_hash": "ab0dd1495284f853243d547485f752f0"
+  },
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/docs/prd/2_ingest.md": {
+    "mtime": 1781646519.9583821,
+    "ast_hash": "ec0d1ce13839c541eb4aaf65560bf48f",
+    "semantic_hash": "ec0d1ce13839c541eb4aaf65560bf48f"
+  },
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/docs/prd/3_graph_primitives.md": {
+    "mtime": 1781646519.9600563,
+    "ast_hash": "069b2e8ad184ccf86468c4a7cba6658a",
+    "semantic_hash": "069b2e8ad184ccf86468c4a7cba6658a"
+  },
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/docs/prd/4_evaluation_harness.md": {
+    "mtime": 1781646519.9618378,
+    "ast_hash": "ffc316c6b543f32b5f9e65e440cb9790",
+    "semantic_hash": "ffc316c6b543f32b5f9e65e440cb9790"
+  },
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/docs/prd/5_data_format.md": {
+    "mtime": 1781646519.9636765,
+    "ast_hash": "3a390ef66633bc775e230555645e77d2",
+    "semantic_hash": "3a390ef66633bc775e230555645e77d2"
+  },
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/eval/README.md": {
+    "mtime": 1781646519.9655514,
+    "ast_hash": "c3a5ffb46ee9faf3de3eb3ba29ea17aa",
+    "semantic_hash": "c3a5ffb46ee9faf3de3eb3ba29ea17aa"
+  },
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/eval/tests/fixtures/corpus_tiny/catalog.md": {
+    "mtime": 1781646519.9938378,
+    "ast_hash": "c7384daa748c5b08395cf16368f07576",
+    "semantic_hash": "c7384daa748c5b08395cf16368f07576"
+  },
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/eval/tests/fixtures/corpus_tiny/coupon.md": {
+    "mtime": 1781646519.9956775,
+    "ast_hash": "8deb5a8b8a61519e2ce833429f889ab5",
+    "semantic_hash": "8deb5a8b8a61519e2ce833429f889ab5"
+  },
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/eval/tests/fixtures/corpus_tiny/promotion.md": {
+    "mtime": 1781646519.9972117,
+    "ast_hash": "2651d661a0bb198a3483459ca735fd24",
+    "semantic_hash": "2651d661a0bb198a3483459ca735fd24"
+  },
+  "/Users/jungho1000/workspace/private/opentology-worktrees/ingest-crawl-chunk/eval/tests/fixtures/questions_tiny.yaml": {
+    "mtime": 1781646519.9987898,
+    "ast_hash": "34e1d6ba084878d5ef1bb61320497cb5",
+    "semantic_hash": "34e1d6ba084878d5ef1bb61320497cb5"
+  }
+}
