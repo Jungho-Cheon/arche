@@ -144,7 +144,22 @@ def test_ingest_and_find_by_keyword(repo, tmp_path: Path):
     assert any(h.node.name == "여름 환영 쿠폰" for h in hits_alias)
 
 
-def test_find_entities_dense_is_stub(repo):
-    with pytest.raises(NotImplementedError) as exc:
-        repo.find_entities_dense(keywords=["x"], limit=5)
-    assert "#6" in str(exc.value)
+def test_find_entities_dense_returns_dense_hits(repo):
+    """#6 — dense path 활성화. 임의 query vector 에 대해 ANN 결과 (혹은 빈) 반환.
+
+    cosine 매치를 강제할 fixture 가 없으므로 result 의 *형태* 만 확인 (NotImpl
+    이 raise 되지 않음 + DenseHit 또는 빈 리스트).
+    """
+    # 1536-dim 임의 벡터 (코퍼스에 같은 dim 의 embedding 이 살아 있어야 동작).
+    vec = [0.0] * 1536
+    vec[0] = 1.0
+    hits = repo.find_entities_dense(
+        query_embedding=vec, matched_keyword="x", limit=5
+    )
+    assert isinstance(hits, list)
+    # 매치가 있으면 DenseHit 필드 형태 확인.
+    for h in hits:
+        assert hasattr(h, "node")
+        assert hasattr(h, "raw_score")
+        assert h.matched_keyword == "x"
+        assert 0.0 <= h.raw_score <= 1.0

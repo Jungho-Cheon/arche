@@ -5,7 +5,16 @@ from __future__ import annotations
 from fastapi.testclient import TestClient
 
 from opentology_api.adapters.embedding import EmbeddingProvider
-from opentology_api.adapters.graph import GraphRepository, KeywordHit
+from opentology_api.adapters.graph import (
+    DenseHit,
+    EntityTypeStat,
+    EntityWithCounts,
+    GraphRepository,
+    KeywordHit,
+    NeighborhoodResult,
+    PathResult,
+    RelationTypeStat,
+)
 from opentology_api.adapters.llm import LLMProvider
 from opentology_api.api.deps import (
     embedding_provider_dep,
@@ -115,8 +124,60 @@ class StubGraph(GraphRepository):
             )
         return hits
 
-    def find_entities_dense(self, *, keywords, limit):
-        raise NotImplementedError
+    def find_entities_dense(  # noqa: D401
+        self, *, query_embedding, matched_keyword, limit
+    ) -> list[DenseHit]:
+        # 본 stub 은 dense 신호 미공급. 라우터의 RRF 결합은 lexical-only 입력
+        # 으로도 동작해야 한다.
+        return []
+
+    def get_schema_summary(self, *, examples_per_type=5):  # noqa: D401
+        return ([], [])
+
+    def get_entity_with_counts(self, *, entity_id):  # noqa: D401
+        for n in self._nodes:
+            if n.id == entity_id:
+                return EntityWithCounts(node=n, outgoing={}, incoming={})
+        return None
+
+    def expand_neighbors(  # noqa: D401
+        self,
+        *,
+        entry_id,
+        relation_types,
+        direction,
+        hops,
+        max_nodes,
+    ) -> NeighborhoodResult:
+        for n in self._nodes:
+            if n.id == entry_id:
+                return NeighborhoodResult(nodes=[n], edges=[], truncated=False)
+        return NeighborhoodResult(nodes=[], edges=[], truncated=False)
+
+    def expand_subgraph(  # noqa: D401
+        self,
+        *,
+        entry_ids,
+        relation_types,
+        hops,
+        max_nodes,
+    ) -> NeighborhoodResult:
+        kept = [n for n in self._nodes if n.id in set(entry_ids)]
+        return NeighborhoodResult(nodes=kept, edges=[], truncated=False)
+
+    def find_shortest_paths(  # noqa: D401
+        self,
+        *,
+        from_id,
+        to_id,
+        max_hops,
+        max_paths,
+        relation_types,
+    ) -> list[PathResult]:
+        return []
+
+    def entity_exists(self, *, entity_id) -> bool:  # noqa: D401
+        return any(n.id == entity_id for n in self._nodes)
 
     def close(self) -> None:
         pass

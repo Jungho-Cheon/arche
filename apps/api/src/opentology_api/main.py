@@ -11,7 +11,14 @@ from fastapi.responses import JSONResponse
 
 from .api.admin_tasks import IngestTaskRegistry
 from .api.deps import build_default_components
-from .api.routers import admin_router, entities_router, health_router
+from .api.routers import (
+    admin_router,
+    entities_router,
+    health_router,
+    paths_router,
+    schema_router,
+    subgraph_router,
+)
 from .api.schemas import ErrorBody, ErrorEnvelope
 from .config import get_settings
 from .domain.errors import OpentologyError
@@ -51,12 +58,18 @@ def create_app() -> FastAPI:
     app = FastAPI(
         title="Opentology API",
         version="0.1.0",
-        description="Walking skeleton — single-file ingest → Neo4j → find_entities",
+        description=(
+            "Graph primitives — get_schema / find_entities (hybrid + RRF) / "
+            "get_entity / get_neighbors / find_path / get_subgraph + admin ingest."
+        ),
         lifespan=lifespan,
     )
 
     app.include_router(health_router)
+    app.include_router(schema_router)
     app.include_router(entities_router)
+    app.include_router(paths_router)
+    app.include_router(subgraph_router)
     app.include_router(admin_router)
 
     @app.exception_handler(OpentologyError)

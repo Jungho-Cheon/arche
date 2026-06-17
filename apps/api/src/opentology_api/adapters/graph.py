@@ -26,6 +26,7 @@ from neo4j import GraphDatabase
 from ..config import Settings
 from ..domain.errors import DependencyUnavailableError
 from ..domain.models import (
+    Edge,
     MergeMutation,
     Node,
     SourceRef,
@@ -68,6 +69,74 @@ class KeywordHit:
     node: Node
     raw_score: float
     matched_keyword: str
+
+
+@dataclass(frozen=True)
+class DenseHit:
+    """단일 query embedding 의 vector ANN 매치 한 건.
+
+    WHY 별도 타입: KeywordHit 와 의미가 다르다. raw_score 는 *cosine similarity*
+    (0..1 범위). RRF fusion 에서 rank 만 쓰지만, include_scores=true 일 때 raw
+    값을 그대로 노출하므로 lexical 의 BM25 점수와 의미상 분리.
+    """
+
+    node: Node
+    raw_score: float  # cosine similarity 0..1
+    matched_keyword: str
+
+
+# ---------- get_schema 보조 dataclass ----------
+
+
+@dataclass(frozen=True)
+class EntityTypeStat:
+    type: str
+    count: int
+    examples: list[tuple[str, str]]  # (id, name)
+
+
+@dataclass(frozen=True)
+class RelationTypeStat:
+    type: str
+    count: int
+    common_pairs: list[tuple[str, str, int]]  # (from_type, to_type, count)
+
+
+# ---------- get_entity 보조 dataclass ----------
+
+
+@dataclass(frozen=True)
+class EntityWithCounts:
+    node: Node
+    outgoing: dict[str, int]
+    incoming: dict[str, int]
+
+
+# ---------- neighbors/subgraph 결과 ----------
+
+
+@dataclass(frozen=True)
+class NeighborhoodResult:
+    """확장 결과 — 진입점 포함 노드 + 이번 확장 경계 내 엣지.
+
+    truncated 는 max_nodes 초과 여부. 어댑터가 *진입점에서 거리 가까운 순* 으로
+    잘랐다는 사실은 신호로만 전달, 거리 정보는 응답에 노출 안 함 (PRD 3 §5.4
+    의 스키마와 정합).
+    """
+
+    nodes: list[Node]
+    edges: list[Edge]
+    truncated: bool
+
+
+# ---------- path 결과 ----------
+
+
+@dataclass(frozen=True)
+class PathResult:
+    nodes: list[Node]
+    edges: list[Edge]
+    length: int
 
 
 logger = logging.getLogger(__name__)
@@ -205,8 +274,89 @@ class GraphRepository(ABC):
 
     @abstractmethod
     def find_entities_dense(
-        self, *, keywords: list[str], limit: int
-    ) -> list[Node]: ...
+        self,
+        *,
+        query_embedding: list[float],
+        matched_keyword: str,
+        limit: int,
+    ) -> list[DenseHit]:
+        """단일 query embedding 에 대한 ANN top-k 결과.
+
+        WHY keyword 단위로 호출: PRD 3 §3.4 의 `matched_keyword` 는 어느 input
+        keyword 가 노드를 surface 시켰는지 보고해야 한다. 라우터가 keyword 별로
+        본 메서드를 부르고 결과에 keyword 를 태깅한다 — fulltext 경로와 구조 동일.
+
+        raw_score = cosine similarity (0..1). Neo4j vector index 의 score 가
+        cosine 모드면 그대로 사용.
+        """
+
+    # ----- 5 primitive read 보조 (PRD 3 §2-7) -----
+
+    @abstractmethod
+    def get_schema_summary(
+        self, *, examples_per_type: int = 5
+    ) -> tuple[list[EntityTypeStat], list[RelationTypeStat]]:
+        """get_schema 의 entity_types + relation_types 통계.
+
+        examples_per_type — 각 엔티티 타입에서 노출할 example 노드 수 (PRD 3 §2.3
+        maxItems 5). 결정 (선택 기준) 은 어댑터 내부에 둔다 (id 사전순, 또는 가장
+        최근 갱신).
+        """
+
+    @abstractmethod
+    def get_entity_with_counts(self, *, entity_id: str) -> EntityWithCounts | None:
+        """단일 노드 + 인접 엣지의 (방향 × type) 카운트. 없으면 None."""
+
+    @abstractmethod
+    def expand_neighbors(
+        self,
+        *,
+        entry_id: str,
+        relation_types: list[str] | None,
+        direction: str,
+        hops: int,
+        max_nodes: int,
+    ) -> NeighborhoodResult:
+        """진입점 1 개의 N-hop 이웃 + 경계 엣지. 진입점 포함.
+
+        잘림 정책: 진입점에서 *거리 가까운 순* (BFS hop level) 정렬 후 max_nodes
+        에서 절단. 그래프 DB 의 native 한도가 더 작으면 절단도 자연스럽게 그대로.
+        """
+
+    @abstractmethod
+    def expand_subgraph(
+        self,
+        *,
+        entry_ids: list[str],
+        relation_types: list[str] | None,
+        hops: int,
+        max_nodes: int,
+    ) -> NeighborhoodResult:
+        """여러 진입점 N-hop union. 노드/엣지 dedupe.
+
+        잘림 정책: 진입점들 중 *최단 거리* 기준 (multi-source BFS) 가까운 순.
+        """
+
+    @abstractmethod
+    def find_shortest_paths(
+        self,
+        *,
+        from_id: str,
+        to_id: str,
+        max_hops: int,
+        max_paths: int,
+        relation_types: list[str] | None,
+    ) -> list[PathResult]:
+        """from → to 의 k-shortest paths. 경로 없으면 빈 리스트.
+
+        from/to 의 존재 여부 자체는 호출자가 별도 확인 (entity_not_found 매핑이
+        라우터 책임). 본 메서드는 *경로가 없을 때* 와 *노드가 없을 때* 를 둘 다
+        빈 리스트로 돌릴 수 있으므로 라우터가 노드 존재 여부를 별도 검증한다.
+        """
+
+    @abstractmethod
+    def entity_exists(self, *, entity_id: str) -> bool:
+        """단일 ID 가 그래프에 존재하는지 — find_path / get_neighbors 의 사전 검증."""
 
     @abstractmethod
     def close(self) -> None: ...
@@ -773,16 +923,355 @@ class Neo4jGraphRepository(GraphRepository):
         return hits
 
     def find_entities_dense(
-        self, *, keywords: list[str], limit: int
-    ) -> list[Node]:
-        """dense 매칭 — walking skeleton 에서는 미구현.
+        self,
+        *,
+        query_embedding: list[float],
+        matched_keyword: str,
+        limit: int,
+    ) -> list[DenseHit]:
+        """단일 keyword 의 dense ANN — PRD 3 §3.5 의 dense path.
 
-        WHY stub: PRD 3 §3.5 + ADR-0003 D1 의 하이브리드는 #6 follow-up. 인터페이스
-        와 인덱스 (1536-dim cosine) 는 *지금* 박아 두고, 호출 경로만 막아 둔다.
+        Neo4j 5.15 의 vector index 에서 cosine similarity 모드의 score 는 0..1
+        범위로 직접 비교 가능 (정확히는 (1 + cos)/2 가 아니라 cos 자체. Neo4j
+        5.15 문서 기준 cosine 모드 score 는 cosine similarity 그대로).
+
+        WHY 별도 한도 검증 없이 limit 그대로: ANN 호출은 빠르고 결과는 어차피
+        fusion 단계에서 다시 잘려 나가므로 적당한 후보 풀 (limit) 을 그대로 사용.
         """
-        raise NotImplementedError(
-            "hybrid retrieval pending — lexical + dense fusion is follow-up issue #6"
+        if not query_embedding:
+            return []
+        with self._driver.session() as s:
+            rows = s.run(
+                "CALL db.index.vector.queryNodes($idx, $k, $vec) "
+                "YIELD node, score "
+                f"WHERE node:{ENTITY_LABEL} "
+                "RETURN node, score ORDER BY score DESC LIMIT $limit",
+                parameters={
+                    "idx": VECTOR_INDEX,
+                    "k": limit,
+                    "vec": query_embedding,
+                    "limit": limit,
+                },
+            ).data()
+        return [
+            DenseHit(
+                node=_node_to_response(r["node"]),
+                # WHY clamp [0, 1]: 부동소수 오차로 1.0 을 살짝 넘는 경우 PRD 3
+                # §3.4 의 maximum 1 위반. 0 미만은 cosine 정의상 가능 (반대 방향)
+                # 이지만 우리 응답 계약은 0..1 이라 동일하게 clamp.
+                raw_score=max(0.0, min(1.0, float(r["score"]))),
+                matched_keyword=matched_keyword,
+            )
+            for r in rows
+        ]
+
+    # ---------- 5 primitive read (PRD 3 §2-7) ----------
+
+    def get_schema_summary(
+        self, *, examples_per_type: int = 5
+    ) -> tuple[list[EntityTypeStat], list[RelationTypeStat]]:
+        """엔티티/관계 통계 + 타입별 example 노드.
+
+        WHY 한 메서드에 두 통계: get_schema 가 한 번 호출되면 두 통계 모두 필요
+        (PRD 3 §2.3). 두 쿼리를 분리하면 라우터에서 다시 묶어야 함 — 어댑터에서
+        한 번에 묶어 반환.
+
+        Examples 선택 기준: 각 type 별 가장 최근에 갱신된 노드 5 개 (updated_at
+        DESC). WHY: 그래프 운영자가 "지금 살아있는 데이터" 의 모양을 확인하려는
+        목적에 가장 가까운 신호.
+        """
+        entity_stats: list[EntityTypeStat] = []
+        relation_stats: list[RelationTypeStat] = []
+        with self._driver.session() as s:
+            # 엔티티 타입 카운트
+            type_rows = s.run(
+                f"MATCH (n:{ENTITY_LABEL}) "
+                "RETURN n.type AS type, count(*) AS count "
+                "ORDER BY type"
+            ).data()
+            for row in type_rows:
+                examples = s.run(
+                    f"MATCH (n:{ENTITY_LABEL}) WHERE n.type = $t "
+                    "RETURN n.id AS id, n.name AS name "
+                    "ORDER BY n.updated_at DESC LIMIT $k",
+                    t=row["type"],
+                    k=examples_per_type,
+                ).data()
+                entity_stats.append(
+                    EntityTypeStat(
+                        type=row["type"],
+                        count=int(row["count"]),
+                        examples=[(e["id"], e["name"]) for e in examples],
+                    )
+                )
+
+            # 관계 타입 카운트 — 단일 RELATES_TO 라벨 + type 속성 (graph.py 상단
+            # WHY 라벨 단일화 코멘트 참조).
+            rel_rows = s.run(
+                f"MATCH ()-[r:{RELATION_TYPE_LABEL_DEFAULT}]->() "
+                "RETURN r.type AS type, count(*) AS count "
+                "ORDER BY type"
+            ).data()
+            for row in rel_rows:
+                pairs = s.run(
+                    f"MATCH (a:{ENTITY_LABEL})-[r:{RELATION_TYPE_LABEL_DEFAULT}]->(b:{ENTITY_LABEL}) "
+                    "WHERE r.type = $t "
+                    "RETURN a.type AS from_type, b.type AS to_type, count(*) AS c "
+                    "ORDER BY c DESC LIMIT 5",
+                    t=row["type"],
+                ).data()
+                relation_stats.append(
+                    RelationTypeStat(
+                        type=row["type"],
+                        count=int(row["count"]),
+                        common_pairs=[
+                            (p["from_type"], p["to_type"], int(p["c"])) for p in pairs
+                        ],
+                    )
+                )
+        return entity_stats, relation_stats
+
+    def entity_exists(self, *, entity_id: str) -> bool:
+        with self._driver.session() as s:
+            rec = s.run(
+                f"MATCH (n:{ENTITY_LABEL} {{id: $id}}) RETURN n.id AS id",
+                id=entity_id,
+            ).single()
+        return rec is not None
+
+    def get_entity_with_counts(
+        self, *, entity_id: str
+    ) -> EntityWithCounts | None:
+        """단일 노드 + outgoing/incoming relation type 카운트.
+
+        WHY 한 트랜잭션 / 세 쿼리: pydantic 모델 변환은 라우터가 하지만, neo4j
+        의 한 세션 안에서 3 호출을 묶어 일관된 스냅샷을 본다 (이론적으로 다른
+        트랜잭션이 끼면 카운트가 노드와 어긋날 수 있지만 MVP 단일 사용자 가정
+        아래에서는 비결정적 결과가 발생할 가능성 매우 낮음).
+        """
+        with self._driver.session() as s:
+            node_row = s.run(
+                f"MATCH (n:{ENTITY_LABEL} {{id: $id}}) RETURN n",
+                id=entity_id,
+            ).single()
+            if node_row is None:
+                return None
+            node = _node_to_response(node_row["n"])
+            out_rows = s.run(
+                f"MATCH (n:{ENTITY_LABEL} {{id: $id}})-[r:{RELATION_TYPE_LABEL_DEFAULT}]->() "
+                "RETURN r.type AS type, count(*) AS c",
+                id=entity_id,
+            ).data()
+            in_rows = s.run(
+                f"MATCH (n:{ENTITY_LABEL} {{id: $id}})<-[r:{RELATION_TYPE_LABEL_DEFAULT}]-() "
+                "RETURN r.type AS type, count(*) AS c",
+                id=entity_id,
+            ).data()
+        outgoing = {row["type"]: int(row["c"]) for row in out_rows}
+        incoming = {row["type"]: int(row["c"]) for row in in_rows}
+        return EntityWithCounts(node=node, outgoing=outgoing, incoming=incoming)
+
+    def expand_neighbors(
+        self,
+        *,
+        entry_id: str,
+        relation_types: list[str] | None,
+        direction: str,
+        hops: int,
+        max_nodes: int,
+    ) -> NeighborhoodResult:
+        """N-hop BFS — 진입점에서 거리 가까운 순으로 max_nodes 절단.
+
+        WHY variable-length match 가 아닌 BFS 직접 구현 (Python side): Cypher 의
+        `*1..N` 패턴은 "한 노드를 여러 번 방문" 하는 경로를 모두 돌려준다. 우리
+        에게 필요한 건 *고유 노드 집합* 이고 그것을 *거리 순* 으로 절단하는 것.
+        Python BFS 가 가장 직관적이고 변동 없는 잘림 정책을 보장.
+        """
+        # 진입점 노드부터 시작 — 존재 확인은 호출자 책임.
+        visited_nodes: dict[str, Node] = {}
+        boundary_edges: dict[str, Edge] = {}
+        # frontier 는 (id, level) 튜플들의 리스트 — BFS 의 한 레벨씩 확장.
+        with self._driver.session() as s:
+            # 진입점 노드 자체 — PRD 3 §5.4 의 "nodes 에 진입점 포함" 충족.
+            row = s.run(
+                f"MATCH (n:{ENTITY_LABEL} {{id: $id}}) RETURN n",
+                id=entry_id,
+            ).single()
+            if row is None:
+                return NeighborhoodResult(nodes=[], edges=[], truncated=False)
+            visited_nodes[entry_id] = _node_to_response(row["n"])
+
+            frontier_ids = [entry_id]
+            truncated = False
+            for _hop in range(hops):
+                if not frontier_ids:
+                    break
+                # 각 hop 에서 frontier 의 *전체* 를 한 쿼리로 확장 — N+1 회피.
+                rows = s.run(
+                    _build_neighbor_expand_cypher(direction),
+                    frontier=frontier_ids,
+                    rel_types=relation_types,
+                    use_rel_filter=bool(relation_types),
+                ).data()
+                next_frontier: list[str] = []
+                for r in rows:
+                    edge = _record_to_edge(r["r"], r["a_id"], r["b_id"])
+                    if edge.id not in boundary_edges:
+                        boundary_edges[edge.id] = edge
+                    other_node_data = r["other"]
+                    other_id = other_node_data["id"]
+                    if other_id in visited_nodes:
+                        continue
+                    if len(visited_nodes) >= max_nodes:
+                        truncated = True
+                        break
+                    visited_nodes[other_id] = _node_to_response(other_node_data)
+                    next_frontier.append(other_id)
+                if truncated:
+                    break
+                frontier_ids = next_frontier
+        # 경계 엣지에서 양쪽 노드가 visited 인 것만 응답에 남긴다 — 한쪽이 잘림
+        # 으로 제외된 엣지가 dangling 으로 남지 않도록.
+        edges = [
+            e for e in boundary_edges.values()
+            if e.from_ in visited_nodes and e.to in visited_nodes
+        ]
+        return NeighborhoodResult(
+            nodes=list(visited_nodes.values()),
+            edges=edges,
+            truncated=truncated,
         )
+
+    def expand_subgraph(
+        self,
+        *,
+        entry_ids: list[str],
+        relation_types: list[str] | None,
+        hops: int,
+        max_nodes: int,
+    ) -> NeighborhoodResult:
+        """multi-source BFS — 여러 진입점에서 동시에 확장.
+
+        잘림 정책: *진입점 집합으로부터의 최단 거리* 기준 가까운 순. 즉 진입점
+        A 에서 1-hop 노드는 다른 진입점 B 에서 5-hop 떨어진 노드보다 먼저 채워
+        진다 (multi-source BFS 의 level 정의).
+        """
+        visited_nodes: dict[str, Node] = {}
+        boundary_edges: dict[str, Edge] = {}
+        with self._driver.session() as s:
+            # 진입점 노드들 (PRD 3 §7.4 — 진입점 포함, dedupe).
+            rows = s.run(
+                f"MATCH (n:{ENTITY_LABEL}) WHERE n.id IN $ids RETURN n",
+                ids=entry_ids,
+            ).data()
+            for r in rows:
+                node = _node_to_response(r["n"])
+                visited_nodes[node.id] = node
+
+            frontier_ids = list(visited_nodes.keys())
+            truncated = False
+            for _hop in range(hops):
+                if not frontier_ids:
+                    break
+                rows = s.run(
+                    _build_neighbor_expand_cypher("both"),
+                    frontier=frontier_ids,
+                    rel_types=relation_types,
+                    use_rel_filter=bool(relation_types),
+                ).data()
+                next_frontier: list[str] = []
+                for r in rows:
+                    edge = _record_to_edge(r["r"], r["a_id"], r["b_id"])
+                    if edge.id not in boundary_edges:
+                        boundary_edges[edge.id] = edge
+                    other_data = r["other"]
+                    other_id = other_data["id"]
+                    if other_id in visited_nodes:
+                        continue
+                    if len(visited_nodes) >= max_nodes:
+                        truncated = True
+                        break
+                    visited_nodes[other_id] = _node_to_response(other_data)
+                    next_frontier.append(other_id)
+                if truncated:
+                    break
+                frontier_ids = next_frontier
+        edges = [
+            e for e in boundary_edges.values()
+            if e.from_ in visited_nodes and e.to in visited_nodes
+        ]
+        return NeighborhoodResult(
+            nodes=list(visited_nodes.values()),
+            edges=edges,
+            truncated=truncated,
+        )
+
+    def find_shortest_paths(
+        self,
+        *,
+        from_id: str,
+        to_id: str,
+        max_hops: int,
+        max_paths: int,
+        relation_types: list[str] | None,
+    ) -> list[PathResult]:
+        """k-shortest paths — Cypher `allShortestPaths` + 길이 정렬.
+
+        WHY allShortestPaths (variable-length): native 단일 호출로 *모든* 최단
+        경로를 받는다. 더 긴 경로까지 필요할 가능성이 있어 별도 *2..N* hop 패스
+        를 추가하는 옵션도 있지만, MVP 는 단일 cypher 로 시작 — 측정 결과 부족
+        하면 본 메서드만 교체 (라우터 인터페이스 불변).
+
+        relation_types 가 비어 있지 않으면 경로의 *모든* 엣지가 그 타입에 포함
+        되어야 한다. Cypher 의 list 비교로 표현.
+        """
+        # WHY apoc.algo.allSimplePaths 가 아닌 native shortestPath 변형: APOC 가
+        # 없을 수 있음. 5.15 native 만으로 동작 보장. allShortestPath 는 다중 결과
+        # 를 반환 (모두 같은 길이). 더 긴 경로는 max_hops 안에서 별도 패턴 추가
+        # 호출로 보충.
+        cypher = """
+        MATCH (a:Entity {id: $from_id}), (b:Entity {id: $to_id})
+        MATCH p = allShortestPaths((a)-[*1..%d]-(b))
+        WITH p,
+             [r IN relationships(p) | r.type] AS rel_types,
+             length(p) AS len
+        WHERE ($filter_rels = false OR all(t IN rel_types WHERE t IN $rel_types))
+        RETURN nodes(p) AS nodes, relationships(p) AS rels, len AS length
+        ORDER BY length ASC
+        LIMIT $max_paths
+        """ % int(max_hops)
+        with self._driver.session() as s:
+            rows = s.run(
+                cypher,
+                from_id=from_id,
+                to_id=to_id,
+                filter_rels=bool(relation_types),
+                rel_types=relation_types or [],
+                max_paths=max_paths,
+            ).data()
+        paths: list[PathResult] = []
+        for row in rows:
+            node_objs = [_node_to_response(n) for n in row["nodes"]]
+            # 엣지 방향 정규화 — Cypher 의 양방향 패턴 (-[]-) 은 r.start/end
+            # node 가 path 의 traversal 방향과 어긋날 수 있다. _record_to_edge
+            # 가 항상 r 의 from/to 를 fixed 로 채워주므로 edges[i] 의 방향성은
+            # *실제 엣지의 저장 방향* 을 반영 (path traversal 의 진행 방향과는
+            # 무관). PRD 3 §6.4 의 "edges[i] 는 nodes[i] → nodes[i+1]" 보장을
+            # 위해 traversal 시 from/to 를 path 순서로 재정의한다.
+            edges: list[Edge] = []
+            for i, r in enumerate(row["rels"]):
+                # neo4j Relationship 객체에서 raw element ids 얻기
+                edges.append(
+                    _record_to_edge(
+                        r,
+                        from_id_override=node_objs[i].id,
+                        to_id_override=node_objs[i + 1].id,
+                    )
+                )
+            paths.append(
+                PathResult(nodes=node_objs, edges=edges, length=int(row["length"]))
+            )
+        return paths
 
 
 # ---------- helpers ----------
@@ -849,6 +1338,90 @@ def _extract_source_refs(node: Any) -> list[SourceRef]:
             tc = None
         refs.append(SourceRef(source_path=p, chunk_index=ci, total_chunks=tc))
     return refs
+
+
+def _build_neighbor_expand_cypher(direction: str) -> str:
+    """frontier 노드 집합에서 한 hop 을 확장하는 cypher.
+
+    WHY pattern 을 direction 별로 분기: Cypher 의 `-[r]-` (양방향) 은 *어느 쪽이
+    a* 인지 결정적이지 않다. outgoing / incoming 이 의미를 가지려면 명시적
+    화살표가 필요.
+
+    relation_types 필터는 cypher 파라미터 `use_rel_filter` (bool) 와 `rel_types`
+    (list) 를 함께 받아 조건문에서 분기 — list 가 비었을 때 IN 검사가 항상 false
+    가 되는 함정을 피한다.
+
+    출력 컬럼: r (relationship), a_id (frontier 쪽), b_id (확장 대상 쪽), other
+    (확장 대상 노드 raw).
+    """
+    if direction == "outgoing":
+        pattern = f"(a:{ENTITY_LABEL})-[r:{RELATION_TYPE_LABEL_DEFAULT}]->(b:{ENTITY_LABEL})"
+        select = "a.id AS a_id, b.id AS b_id, b AS other"
+        where_frontier = "a.id IN $frontier"
+    elif direction == "incoming":
+        pattern = f"(a:{ENTITY_LABEL})-[r:{RELATION_TYPE_LABEL_DEFAULT}]->(b:{ENTITY_LABEL})"
+        select = "a.id AS a_id, b.id AS b_id, a AS other"
+        where_frontier = "b.id IN $frontier"
+    else:
+        # both — Cypher 의 한 쿼리에서 양방향을 한 번에 받으려면 UNION 또는
+        # CASE 식이 필요. 가장 단순한 형태로 UNION 사용.
+        return (
+            f"MATCH (a:{ENTITY_LABEL})-[r:{RELATION_TYPE_LABEL_DEFAULT}]->(b:{ENTITY_LABEL}) "
+            "WHERE a.id IN $frontier "
+            "AND ($use_rel_filter = false OR r.type IN $rel_types) "
+            "RETURN a.id AS a_id, b.id AS b_id, b AS other, r AS r "
+            "UNION "
+            f"MATCH (a:{ENTITY_LABEL})-[r:{RELATION_TYPE_LABEL_DEFAULT}]->(b:{ENTITY_LABEL}) "
+            "WHERE b.id IN $frontier "
+            "AND ($use_rel_filter = false OR r.type IN $rel_types) "
+            "RETURN a.id AS a_id, b.id AS b_id, a AS other, r AS r"
+        )
+    return (
+        f"MATCH {pattern} "
+        f"WHERE {where_frontier} "
+        "AND ($use_rel_filter = false OR r.type IN $rel_types) "
+        f"RETURN {select}, r AS r"
+    )
+
+
+def _record_to_edge(
+    r: Any,
+    from_id_override: str | None = None,
+    to_id_override: str | None = None,
+) -> Edge:
+    """neo4j Relationship → 응답 Edge.
+
+    from_id/to_id override 가 주어지면 그 값을 사용 (find_shortest_paths 가 path
+    traversal 방향과 저장 방향의 차이를 흡수할 때 사용). 아니면 r.start_node /
+    r.end_node 의 id 속성에서 추출.
+    """
+    if from_id_override is not None:
+        from_id = from_id_override
+    else:
+        # r.start_node 가 neo4j Node 객체. id 속성은 우리가 직접 박은 ULID.
+        from_id = r.start_node["id"]
+    if to_id_override is not None:
+        to_id = to_id_override
+    else:
+        to_id = r.end_node["id"]
+
+    rel_id = r.get("id") if hasattr(r, "get") else r["id"]
+    rel_type = r.get("type") if hasattr(r, "get") else r["type"]
+    created_at = r.get("created_at") if hasattr(r, "get") else r["created_at"]
+    updated_at = r.get("updated_at") if hasattr(r, "get") else r["updated_at"]
+    source_paths = list(
+        (r.get("source_paths") if hasattr(r, "get") else r["source_paths"]) or []
+    )
+    return Edge(
+        id=rel_id,
+        **{"from": from_id},
+        to=to_id,
+        type=rel_type or RELATION_TYPE_LABEL_DEFAULT,
+        properties={},
+        source_refs=[SourceRef(source_path=sp) for sp in source_paths],
+        created_at=created_at,
+        updated_at=updated_at,
+    )
 
 
 _LUCENE_SPECIAL = '+-&|!(){}[]^"~*?:\\/'
