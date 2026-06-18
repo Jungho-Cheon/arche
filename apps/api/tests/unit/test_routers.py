@@ -361,3 +361,54 @@ def test_find_entities_rejects_limit_over_max():
         "/entities/find", json={"keywords": ["x"], "limit": 999}
     )
     assert r.status_code == 422
+
+
+# ---------- get_neighbors body id 정책 (이슈 #27 회귀 1) ----------
+
+
+def test_get_neighbors_accepts_body_without_id():
+    """기본 — body 에 id 없이 path 만으로 호출. 200."""
+    node = _make_node(node_id="01HZX0G7M8N0RT0V0COUPON000")
+    client = _client_with(StubGraph(nodes=[node]))
+    r = client.post(
+        "/entities/01HZX0G7M8N0RT0V0COUPON000/neighbors",
+        json={"hops": 1},
+    )
+    assert r.status_code == 200
+
+
+def test_get_neighbors_accepts_matching_body_id():
+    """REST + MCP 1:1 매핑 — body 의 id 가 path 와 일치하면 허용 (PRD 3 §0.1)."""
+    node = _make_node(node_id="01HZX0G7M8N0RT0V0COUPON000")
+    client = _client_with(StubGraph(nodes=[node]))
+    r = client.post(
+        "/entities/01HZX0G7M8N0RT0V0COUPON000/neighbors",
+        json={"id": "01HZX0G7M8N0RT0V0COUPON000", "hops": 1},
+    )
+    assert r.status_code == 200, r.text
+
+
+def test_get_neighbors_rejects_mismatched_body_id():
+    """path 와 body 의 id 가 다르면 invalid_input 400 envelope."""
+    node = _make_node(node_id="01HZX0G7M8N0RT0V0COUPON000")
+    client = _client_with(StubGraph(nodes=[node]))
+    r = client.post(
+        "/entities/01HZX0G7M8N0RT0V0COUPON000/neighbors",
+        json={"id": "01HZX0G7M8N0RT0V0PRODUCT00", "hops": 1},
+    )
+    assert r.status_code == 400
+    body = r.json()
+    assert body["error"]["code"] == "invalid_input"
+    assert body["error"]["details"]["path_entity_id"] == "01HZX0G7M8N0RT0V0COUPON000"
+    assert body["error"]["details"]["body_id"] == "01HZX0G7M8N0RT0V0PRODUCT00"
+
+
+def test_get_neighbors_rejects_unknown_extra_field():
+    """extra='forbid' 는 그대로 — id 외의 추가 키는 여전히 422 로 거부."""
+    node = _make_node(node_id="01HZX0G7M8N0RT0V0COUPON000")
+    client = _client_with(StubGraph(nodes=[node]))
+    r = client.post(
+        "/entities/01HZX0G7M8N0RT0V0COUPON000/neighbors",
+        json={"id": "01HZX0G7M8N0RT0V0COUPON000", "bogus": 1},
+    )
+    assert r.status_code == 422
