@@ -121,14 +121,21 @@ class GetEntityResponse(BaseModel):
 
 
 class GetNeighborsRequest(BaseModel):
-    """PRD 3 §5.3 입력. URL path 의 {id} 와는 별개의 body 입력 필드.
+    """PRD 3 §5.3 입력.
 
-    WHY id 를 body 에도 두지 않는 이유: REST 의 path `/entities/{id}/neighbors`
-    가 ID 의 단일 진실의 원천. body 에 또 두면 둘이 어긋날 때 정의가 모호.
+    WHY id 가 *선택* (path 가 우선): PRD 3 §0.1 의 REST + MCP 1:1 매핑 때문.
+    REST 호출 (`POST /entities/{entity_id}/neighbors`) 은 path 의 entity_id 가
+    진입점이고, MCP 호출 (`tools/call get_neighbors {id: ...}`) 은 body 의 id
+    가 진입점이다. 두 표면이 *같은 입력 스키마* 를 공유하도록 body 에도 id 를
+    선택 필드로 허용한다.
+
+    REST 라우터는 path 와 body 둘 다 set 이면 일치 검증 — 불일치 시
+    `invalid_input` 400 envelope 으로 분기한다 (이슈 #27 회귀 1).
     """
 
     model_config = ConfigDict(extra="forbid")
 
+    id: str | None = Field(default=None, pattern=r"^[0-9A-Z]{26}$")
     relation_types: list[str] | None = None
     direction: str = Field(default="both", pattern=r"^(outgoing|incoming|both)$")
     hops: int = Field(default=1, ge=1, le=5)

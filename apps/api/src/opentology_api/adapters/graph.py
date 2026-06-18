@@ -1115,7 +1115,15 @@ class Neo4jGraphRepository(GraphRepository):
                 ).data()
                 next_frontier: list[str] = []
                 for r in rows:
-                    edge = _record_to_edge(r["r"], r["a_id"], r["b_id"])
+                    edge = _record_to_edge(
+                        rel_id=r["rel_id"],
+                        rel_type=r["rel_type"],
+                        rel_created_at=r["rel_created_at"],
+                        rel_updated_at=r["rel_updated_at"],
+                        rel_source_paths=r["rel_source_paths"],
+                        from_id=r["a_id"],
+                        to_id=r["b_id"],
+                    )
                     if edge.id not in boundary_edges:
                         boundary_edges[edge.id] = edge
                     other_node_data = r["other"]
@@ -1181,7 +1189,15 @@ class Neo4jGraphRepository(GraphRepository):
                 ).data()
                 next_frontier: list[str] = []
                 for r in rows:
-                    edge = _record_to_edge(r["r"], r["a_id"], r["b_id"])
+                    edge = _record_to_edge(
+                        rel_id=r["rel_id"],
+                        rel_type=r["rel_type"],
+                        rel_created_at=r["rel_created_at"],
+                        rel_updated_at=r["rel_updated_at"],
+                        rel_source_paths=r["rel_source_paths"],
+                        from_id=r["a_id"],
+                        to_id=r["b_id"],
+                    )
                     if edge.id not in boundary_edges:
                         boundary_edges[edge.id] = edge
                     other_data = r["other"]
@@ -1229,6 +1245,11 @@ class Neo4jGraphRepository(GraphRepository):
         # 없을 수 있음. 5.15 native 만으로 동작 보장. allShortestPath 는 다중 결과
         # 를 반환 (모두 같은 길이). 더 긴 경로는 max_hops 안에서 별도 패턴 추가
         # 호출로 보충.
+        #
+        # WHY relationship 을 *properties-only* 로 RETURN: 이슈 #27 회귀 2 와
+        # 동일 원인. driver 가 relationships(p) 리스트를 dict/객체 어느 한 형태
+        # 로 일관 직렬화하지 않을 수 있다. 노드 → 노드 사이의 엣지 속성만 꺼내
+        # 원시 값으로 묶는다.
         cypher = """
         MATCH (a:Entity {id: $from_id}), (b:Entity {id: $to_id})
         MATCH p = allShortestPaths((a)-[*1..%d]-(b))
@@ -1236,7 +1257,15 @@ class Neo4jGraphRepository(GraphRepository):
              [r IN relationships(p) | r.type] AS rel_types,
              length(p) AS len
         WHERE ($filter_rels = false OR all(t IN rel_types WHERE t IN $rel_types))
-        RETURN nodes(p) AS nodes, relationships(p) AS rels, len AS length
+        RETURN nodes(p) AS nodes,
+               [r IN relationships(p) | {
+                   id: r.id,
+                   type: r.type,
+                   created_at: r.created_at,
+                   updated_at: r.updated_at,
+                   source_paths: r.source_paths
+               }] AS rels,
+               len AS length
         ORDER BY length ASC
         LIMIT $max_paths
         """ % int(max_hops)
@@ -1252,20 +1281,21 @@ class Neo4jGraphRepository(GraphRepository):
         paths: list[PathResult] = []
         for row in rows:
             node_objs = [_node_to_response(n) for n in row["nodes"]]
-            # 엣지 방향 정규화 — Cypher 의 양방향 패턴 (-[]-) 은 r.start/end
-            # node 가 path 의 traversal 방향과 어긋날 수 있다. _record_to_edge
-            # 가 항상 r 의 from/to 를 fixed 로 채워주므로 edges[i] 의 방향성은
-            # *실제 엣지의 저장 방향* 을 반영 (path traversal 의 진행 방향과는
-            # 무관). PRD 3 §6.4 의 "edges[i] 는 nodes[i] → nodes[i+1]" 보장을
-            # 위해 traversal 시 from/to 를 path 순서로 재정의한다.
+            # 엣지 방향 정규화 — Cypher 의 양방향 패턴 (-[]-) 은 r 의 start/end
+            # 가 path 의 traversal 방향과 어긋날 수 있다. PRD 3 §6.4 의
+            # "edges[i] 는 nodes[i] → nodes[i+1]" 보장을 위해 traversal 시
+            # from/to 를 path 순서로 재정의한다.
             edges: list[Edge] = []
-            for i, r in enumerate(row["rels"]):
-                # neo4j Relationship 객체에서 raw element ids 얻기
+            for i, rel_props in enumerate(row["rels"]):
                 edges.append(
                     _record_to_edge(
-                        r,
-                        from_id_override=node_objs[i].id,
-                        to_id_override=node_objs[i + 1].id,
+                        rel_id=rel_props["id"],
+                        rel_type=rel_props.get("type"),
+                        rel_created_at=rel_props.get("created_at"),
+                        rel_updated_at=rel_props.get("updated_at"),
+                        rel_source_paths=rel_props.get("source_paths"),
+                        from_id=node_objs[i].id,
+                        to_id=node_objs[i + 1].id,
                     )
                 )
             paths.append(
@@ -1351,16 +1381,29 @@ def _build_neighbor_expand_cypher(direction: str) -> str:
     (list) 를 함께 받아 조건문에서 분기 — list 가 비었을 때 IN 검사가 항상 false
     가 되는 함정을 피한다.
 
-    출력 컬럼: r (relationship), a_id (frontier 쪽), b_id (확장 대상 쪽), other
-    (확장 대상 노드 raw).
+    WHY 관계를 *properties-only select* 로: `s.run(...).data()` 가 relationship
+    객체를 dict 로 일관 직렬화하지 않는 경로가 있다 (특히 UNION 쿼리). 특히
+    Neo4j 5.x + neo4j-driver 5.x 에서 UNION 결과의 relationship 이 tuple 로
+    변환되어 `_record_to_edge` 가 `TypeError: tuple indices must be integers`
+    로 깨졌다 (이슈 #27 회귀 2). 해결: cypher 가 *원시 값* 만 RETURN 한다.
+    driver 의 객체 직렬화 quirk 가 사라진다.
+
+    출력 컬럼: a_id (from 쪽), b_id (to 쪽), other (확장 대상 노드 raw),
+    rel_id / rel_type / rel_created_at / rel_updated_at / rel_source_paths
+    (relationship 속성을 풀어둠).
     """
+    rel_select = (
+        "r.id AS rel_id, r.type AS rel_type, "
+        "r.created_at AS rel_created_at, r.updated_at AS rel_updated_at, "
+        "r.source_paths AS rel_source_paths"
+    )
     if direction == "outgoing":
         pattern = f"(a:{ENTITY_LABEL})-[r:{RELATION_TYPE_LABEL_DEFAULT}]->(b:{ENTITY_LABEL})"
-        select = "a.id AS a_id, b.id AS b_id, b AS other"
+        select = f"a.id AS a_id, b.id AS b_id, b AS other, {rel_select}"
         where_frontier = "a.id IN $frontier"
     elif direction == "incoming":
         pattern = f"(a:{ENTITY_LABEL})-[r:{RELATION_TYPE_LABEL_DEFAULT}]->(b:{ENTITY_LABEL})"
-        select = "a.id AS a_id, b.id AS b_id, a AS other"
+        select = f"a.id AS a_id, b.id AS b_id, a AS other, {rel_select}"
         where_frontier = "b.id IN $frontier"
     else:
         # both — Cypher 의 한 쿼리에서 양방향을 한 번에 받으려면 UNION 또는
@@ -1369,58 +1412,52 @@ def _build_neighbor_expand_cypher(direction: str) -> str:
             f"MATCH (a:{ENTITY_LABEL})-[r:{RELATION_TYPE_LABEL_DEFAULT}]->(b:{ENTITY_LABEL}) "
             "WHERE a.id IN $frontier "
             "AND ($use_rel_filter = false OR r.type IN $rel_types) "
-            "RETURN a.id AS a_id, b.id AS b_id, b AS other, r AS r "
+            f"RETURN a.id AS a_id, b.id AS b_id, b AS other, {rel_select} "
             "UNION "
             f"MATCH (a:{ENTITY_LABEL})-[r:{RELATION_TYPE_LABEL_DEFAULT}]->(b:{ENTITY_LABEL}) "
             "WHERE b.id IN $frontier "
             "AND ($use_rel_filter = false OR r.type IN $rel_types) "
-            "RETURN a.id AS a_id, b.id AS b_id, a AS other, r AS r"
+            f"RETURN a.id AS a_id, b.id AS b_id, a AS other, {rel_select}"
         )
     return (
         f"MATCH {pattern} "
         f"WHERE {where_frontier} "
         "AND ($use_rel_filter = false OR r.type IN $rel_types) "
-        f"RETURN {select}, r AS r"
+        f"RETURN {select}"
     )
 
 
 def _record_to_edge(
-    r: Any,
-    from_id_override: str | None = None,
-    to_id_override: str | None = None,
+    *,
+    rel_id: str,
+    rel_type: str | None,
+    rel_created_at: Any,
+    rel_updated_at: Any,
+    rel_source_paths: list[str] | None,
+    from_id: str,
+    to_id: str,
 ) -> Edge:
-    """neo4j Relationship → 응답 Edge.
+    """relationship properties → 응답 Edge.
 
-    from_id/to_id override 가 주어지면 그 값을 사용 (find_shortest_paths 가 path
-    traversal 방향과 저장 방향의 차이를 흡수할 때 사용). 아니면 r.start_node /
-    r.end_node 의 id 속성에서 추출.
+    WHY *키워드 전용 primitive 인자* 로 단순화: 이전엔 neo4j Relationship 객체
+    (`r.get`/`r.start_node` 등) 를 그대로 받았으나, `s.run(...).data()` 가 일부
+    경로에서 relationship 을 tuple 로 직렬화해 `TypeError: tuple indices must be
+    integers` 가 발생했다 (이슈 #27 회귀 2). 이제 cypher 가 properties-only
+    select 로 *원시 값* 만 RETURN 하고, 호출자가 그 값을 그대로 전달한다.
+    driver 의 객체 직렬화 quirk 가 완전히 사라진다.
+
+    from_id / to_id 는 호출자가 명시 — 양방향 path traversal 에서 *진행 방향* 에
+    맞춰 from/to 를 재정의할 때도 같은 함수를 쓰기 위함.
     """
-    if from_id_override is not None:
-        from_id = from_id_override
-    else:
-        # r.start_node 가 neo4j Node 객체. id 속성은 우리가 직접 박은 ULID.
-        from_id = r.start_node["id"]
-    if to_id_override is not None:
-        to_id = to_id_override
-    else:
-        to_id = r.end_node["id"]
-
-    rel_id = r.get("id") if hasattr(r, "get") else r["id"]
-    rel_type = r.get("type") if hasattr(r, "get") else r["type"]
-    created_at = r.get("created_at") if hasattr(r, "get") else r["created_at"]
-    updated_at = r.get("updated_at") if hasattr(r, "get") else r["updated_at"]
-    source_paths = list(
-        (r.get("source_paths") if hasattr(r, "get") else r["source_paths"]) or []
-    )
     return Edge(
         id=rel_id,
         **{"from": from_id},
         to=to_id,
         type=rel_type or RELATION_TYPE_LABEL_DEFAULT,
         properties={},
-        source_refs=[SourceRef(source_path=sp) for sp in source_paths],
-        created_at=created_at,
-        updated_at=updated_at,
+        source_refs=[SourceRef(source_path=sp) for sp in (rel_source_paths or [])],
+        created_at=rel_created_at,
+        updated_at=rel_updated_at,
     )
 
 

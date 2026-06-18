@@ -23,6 +23,7 @@ from fastapi import APIRouter, Depends, HTTPException, Response
 
 from ..adapters.embedding import EmbeddingProvider
 from ..adapters.graph import GraphRepository
+from ..domain.errors import InvalidInputError
 from ..domain.ingest import IngestService
 from . import services
 from .admin_tasks import (
@@ -145,7 +146,17 @@ def get_neighbors(
     body: GetNeighborsRequest,
     graph: GraphRepository = Depends(graph_repo_dep),
 ) -> DataEnvelope[GetNeighborsResponse]:
-    """진입점의 N-hop 이웃 — services.get_neighbors 위임."""
+    """진입점의 N-hop 이웃 — services.get_neighbors 위임.
+
+    WHY path + body id 일치 검증: PRD 3 §0.1 의 REST + MCP 1:1 매핑 때문 body 에
+    도 id 를 *선택* 으로 받는다. REST 호출이 body 의 id 까지 보냈는데 path 의
+    entity_id 와 다르면 진입점이 모호해진다 — `invalid_input` 400 으로 분기.
+    """
+    if body.id is not None and body.id != entity_id:
+        raise InvalidInputError(
+            f"path entity_id and body id mismatch",
+            details={"path_entity_id": entity_id, "body_id": body.id},
+        )
     payload = services.get_neighbors(entity_id=entity_id, body=body, graph=graph)
     return DataEnvelope(data=payload)
 
