@@ -70,7 +70,11 @@ class OpenAIProvider:
         from openai import OpenAI
 
         self.model_id = model_id
-        self._client = OpenAI(api_key=api_key)
+        # WHY max_retries 상향: TPM rate limit (gpt-4o-mini=200K) 처럼 일시적 429
+        # 가 측정 중 다발할 때 SDK 기본 2회 재시도는 부족. 8회로 늘리면 12s 권고
+        # 대기를 backoff 안에서 흡수해 측정이 중단되지 않는다. 영구 오류는 8회
+        # 이내에도 그대로 raise 되므로 진짜 문제는 묻히지 않는다.
+        self._client = OpenAI(api_key=api_key, max_retries=8)
 
     def complete(
         self,
@@ -214,7 +218,7 @@ class OpenAIEmbeddingProvider:
         from openai import OpenAI
 
         self.model_id = model_id
-        self._client = OpenAI(api_key=api_key)
+        self._client = OpenAI(api_key=api_key, max_retries=8)
 
     def embed(self, texts: list[str]) -> EmbeddingResult:
         if not texts:
