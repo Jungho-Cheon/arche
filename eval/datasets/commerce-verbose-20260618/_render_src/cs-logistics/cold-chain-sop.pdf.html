@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>오로라마켓 신선식품 콜드체인 사고 처리 SOP</title>
+<style>
+  body { font-family: 'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif; font-size: 11pt; line-height: 1.6; margin: 25mm; color: #1a1a1a; }
+  h1 { font-size: 22pt; border-bottom: 3px solid #0b6e4f; padding-bottom: 8px; }
+  h2 { font-size: 15pt; color: #0b6e4f; margin-top: 28px; border-left: 5px solid #0b6e4f; padding-left: 10px; }
+  h3 { font-size: 12.5pt; color: #333; margin-top: 18px; }
+  .cover { text-align: center; padding: 60px 0; border: 1px solid #ccc; margin-bottom: 30px; background: #f6faf8; }
+  .cover .sub { color: #555; font-size: 12pt; margin-top: 10px; }
+  .meta { font-size: 9.5pt; color: #666; margin-top: 24px; }
+  table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 10.5pt; }
+  th, td { border: 1px solid #bbb; padding: 7px 9px; text-align: left; }
+  th { background: #0b6e4f; color: #fff; }
+  .callout { background: #fff6e5; border: 1px solid #e0b057; border-radius: 6px; padding: 12px 16px; margin: 16px 0; }
+  .callout.warn { background: #fdecec; border-color: #d9534f; }
+  .callout strong { color: #b8430f; }
+  .toc { background: #f4f4f4; padding: 16px 24px; border-radius: 6px; }
+  .toc li { margin: 4px 0; }
+  code { background: #eef2f0; padding: 1px 5px; border-radius: 3px; font-size: 10pt; }
+  ol.foot { font-size: 9pt; color: #555; border-top: 1px solid #ccc; padding-top: 10px; margin-top: 30px; }
+  sup { color: #0b6e4f; }
+</style>
+</head>
+<body>
+
+<div class="cover">
+  <h1 style="border:none;">신선식품 콜드체인 사고 처리 SOP</h1>
+  <div class="sub">저온 유통 온도 이탈 시 환불/손실 귀속 표준 작업 절차</div>
+  <div class="meta">
+    문서번호 SOP-FRESH-COLD-014<br>
+    CS/물류 본부 / 개정 2026-06-12 (운영회의 CSOPS-2026-051)<br>
+    작성 강유진 (CS/물류 리드) / 검토 물류품질 라인 (한도윤)
+  </div>
+</div>
+
+<div class="toc">
+  <strong>목차</strong>
+  <ol>
+    <li>이 SOP 가 다루는 범위</li>
+    <li>핵심 원칙 — 환불 불가가 기본</li>
+    <li>예외 3 요건 판정 흐름</li>
+    <li>손실 귀속 — 셀러 유형별 분기</li>
+    <li>케이스 모음</li>
+    <li>에스컬레이션 경로</li>
+  </ol>
+</div>
+
+<h2>1. 이 SOP 가 다루는 범위</h2>
+<p>오로라마켓에서 식품과 신선 카테고리(이하 신선식품)는 배송 전 구간에서 정해진 저온이 유지되어야 안전이 보장된다. 이 저온 유통 구간을 콜드체인(cold chain)이라고 부른다. 운송 중 온도가 기준을 벗어나면(온도 이탈) 상품 안전을 보장할 수 없으므로, 단순 변심과 달리 별도의 사고 처리 절차를 탄다. 이 문서는 그 사고가 접수됐을 때 1선 상담과 물류품질 담당이 따라야 할 표준 작업 절차(SOP)를 정의한다.</p>
+<p>전화/채팅 1선에서 신선식품 환불 문의가 들어오면 상담사는 응대 매크로 CS-MCRO-203 을 먼저 띄우고, 콜드체인 사고로 판정되면 이 SOP 로 넘어온다.</p>
+
+<h2>2. 핵심 원칙 — 환불 불가가 기본</h2>
+<p>신선식품은 <strong>환불 불가가 원칙</strong>이다. 수령 후 변심, 입맛 차이, 단순 양 부족 등은 환불 대상이 아니다. 본사 정책팀이 식품 안전과 위생 재판매 불가라는 특성을 근거로 정한 기준이며, 상담사가 임의로 환불을 약속하면 안 된다.</p>
+
+<div class="callout warn">
+  <strong>유일한 예외</strong> — 다음 세 가지가 <strong>모두</strong> 성립할 때만 100% 환불한다. 하나라도 빠지면 예외 미성립이며 환불 불가로 안내한다.
+  <ol>
+    <li>회원 등급이 <strong>VV 회원</strong>(최상위 등급)일 것</li>
+    <li>결제 시점으로부터 <strong>7 일 이내</strong>일 것</li>
+    <li><strong>콜드체인 사고(온도 이탈) 증빙</strong>이 확인될 것</li>
+  </ol>
+</div>
+
+<p>세 요건은 AND 조건이다. 예를 들어 V 회원(상위 등급이지만 최상위는 아님)이 온도 이탈을 증빙해도 등급 요건이 빠져 예외가 성립하지 않는다. VV 회원이라도 결제 후 8 일이 지났으면 시간 요건이 빠져 불가다. 콜드체인 증빙 없이 "맛이 이상하다"만으로도 증빙 요건이 빠져 불가다.</p>
+
+<h2>3. 예외 3 요건 판정 흐름</h2>
+<table>
+  <tr><th>단계</th><th>확인 항목</th><th>통과 기준</th><th>실패 시</th></tr>
+  <tr><td>① 등급</td><td>회원 등급 = VV 회원</td><td>VV 면 다음 단계</td><td>환불 불가 안내 (종결)</td></tr>
+  <tr><td>② 기간</td><td>결제일 기준 경과일</td><td>7 일 이내면 다음 단계</td><td>환불 불가 안내 (종결)</td></tr>
+  <tr><td>③ 증빙</td><td>온도 이탈/포장 손상 사진, 수령 상태</td><td>콜드체인 사고로 확인되면 환불 진행</td><td>증빙 보완 요청 후 미확인 시 불가</td></tr>
+</table>
+
+<div class="callout">
+  세 단계를 모두 통과하면 <strong>100% 전액 환불</strong>한다. 부분 환불 협상이나 쿠폰 대체로 갈음하지 않는다 — 콜드체인 사고는 안전 이슈이므로 전액 환불이 표준이다.
+</div>
+
+<h2>4. 손실 귀속 — 셀러 유형별 분기</h2>
+<p>환불이 확정되면 그 손실을 누가 부담하는지가 셀러 유형에 따라 갈린다. 이 분기는 셀러팀 정산 기준과 직접 연결되므로 정확히 태깅해야 한다.<sup>1</sup></p>
+
+<table>
+  <tr><th>셀러 유형 (CS 호칭)</th><th>정식 명칭</th><th>콜드체인 사고 손실 귀속</th></tr>
+  <tr><td>컨사인</td><td>Consignment (위탁)</td><td><strong>셀러 차감</strong></td></tr>
+  <tr><td>사입</td><td>1P (직매입)</td><td><strong>본사 손실</strong></td></tr>
+  <tr><td>MP</td><td>Marketplace (입점사)</td><td><strong>셀러 차감</strong> (셀러 보증보험으로 충당)</td></tr>
+</table>
+
+<p>사입(직매입) 상품은 오로라마켓이 직접 매입해 보유한 재고이므로 사고 손실도 본사가 진다. 반면 컨사인(위탁)과 MP(입점사)는 상품 소유/판매 주체가 셀러이므로 셀러가 차감을 부담하되, MP 는 입점 시 가입한 셀러 보증보험으로 충당하는 점이 다르다. 상담사는 손실 귀속을 결정할 권한이 없고, 셀러 유형만 정확히 식별해 정산팀으로 넘긴다.</p>
+
+<h2>5. 케이스 모음</h2>
+
+<h3>케이스 A — 정상 예외 성립 (컨사인)</h3>
+<p>VV 회원이 결제 4 일 차에 위탁 셀러 냉동 식품을 수령, 박스 내부 보냉팩이 모두 녹아 있고 포장 결로 사진을 제출. 3 요건 모두 충족 → 100% 환불. 손실은 컨사인 셀러 차감. VOC 코드 <code>FRESH-COLDCHAIN</code>, 정산팀에 셀러 차감 티켓 생성.</p>
+
+<h3>케이스 B — 등급 요건 미달</h3>
+<p>V 회원이 결제 2 일 차에 온도 이탈을 증빙. 기간/증빙은 충족이나 등급이 VV 가 아니므로 예외 미성립. 환불 불가 안내. 단 명백한 배송 품질 결함이 동반되면 물류품질 라인으로 별도 보상(쿠폰) 검토만 가능하며, 이는 콜드체인 100% 환불과 다른 트랙이다.</p>
+
+<h3>케이스 C — 기간 초과</h3>
+<p>VV 회원, 콜드체인 증빙 명확하나 결제 후 9 일 차 접수. 시간 요건 미달로 환불 불가. 다만 상해/위생 피해가 의심되면 안전 이슈로 격상해 법무/리스크팀에 별도 이관한다(환불 트랙과 무관한 안전 보고).</p>
+
+<h3>케이스 D — 증빙 불충분 (사입)</h3>
+<p>VV 회원, 결제 3 일 차, "맛이 이상하다"만 진술하고 온도 이탈/포장 손상 증빙 없음. 증빙 요건 미충족으로 보완 요청. 보완돼 사입(직매입) 상품의 콜드체인 사고로 확인되면 환불하고 손실은 본사가 부담한다.</p>
+
+<h2>6. 에스컬레이션 경로</h2>
+<ul>
+  <li><strong>1선 상담</strong> — CS-MCRO-203 발화, 3 요건 1 차 판정, 증빙 수집.</li>
+  <li><strong>물류품질 라인</strong> — 온도 이탈 증빙 진위/배송 구간 책임 판정. 운송사 콜드체인 로그 대조.</li>
+  <li><strong>정산팀</strong> — 손실 귀속 확정(컨사인/MP 셀러 차감, 사입 본사 손실) 후 정산 반영.</li>
+  <li><strong>법무/리스크팀</strong> — 위생/상해 피해 의심 시 안전 이슈로 별도 격상(환불 트랙과 분리).</li>
+</ul>
+
+<div class="callout">
+  반복 사고가 같은 셀러/같은 운송 구간에서 누적되면 물류품질 라인이 분기 리뷰에서 해당 콜드체인 구간을 점검 대상으로 올린다. 단건 환불 처리로 끝내지 말고 사고 패턴을 VOC 대시보드에 남길 것.
+</div>
+
+<ol class="foot">
+  <li>손실 귀속 규칙(컨사인 셀러 차감 / 사입 본사 손실 / MP 셀러 보증보험)은 교차 도메인 규칙에 묶인 고정 값으로, SOP 개정 회의 외에는 변경하지 않는다.</li>
+</ol>
+
+</body>
+</html>

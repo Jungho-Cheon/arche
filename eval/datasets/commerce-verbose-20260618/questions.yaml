@@ -1,0 +1,1085 @@
+dataset_id: commerce-verbose-20260618
+questions:
+  - id: Q01
+    question: >-
+      로열티팀이 "골드 등급" 이라 부르는 회원이 명품을 샀다. 그런데 이 회원은 "비활성 등급" 에서 골드로 복귀한 지 20 일째다.
+      이 명품의 반품 가능 기간은 며칠인가?
+    domain_pattern: multi_hop
+    hops_required: 3
+    options:
+      - id: a
+        text: 30 일. 골드(VIP) 가 명품을 사면 R2 에 따라 반품이 7 일에서 30 일로 연장되기 때문이다.
+        is_correct: false
+        failure_mode_tested: missed_hop
+      - id: b
+        text: 7 일. 휴면(비활성)에서 골드로 복귀한 지 30 일 이내라 명품 반품 연장이 적용되지 않고 기본 7 일이다.
+        is_correct: true
+        failure_mode_tested: null
+      - id: c
+        text: 30 일. 복귀 회원도 골드이기만 하면 카테고리 무관하게 30 일이 보장된다.
+        is_correct: false
+        failure_mode_tested: synonym_confusion
+      - id: d
+        text: 14 일. 복귀 30 일 이내 명품은 기본의 절반인 14 일로 처리된다.
+        is_correct: false
+        failure_mode_tested: numeric_error
+      - id: e
+        text: 정보 부족 / 알 수 없음. 복귀 시점과 반품 한도의 관계가 코퍼스에 명시되지 않았다.
+        is_correct: false
+        failure_mode_tested: retrieval_failure
+    reference_reasoning: >-
+      loyalty tier-rulebook §5.2 (비활성→골드 복귀 30 일 유예) → hq-pm policy-matrix §3 (R2 휴면 복귀 예외) →
+      cs-logistics return-refund-flowchart §3 (명품+V회원 복귀 30 일 이내는 7 일). "골드 등급"="비활성 등급" 별칭을
+      VIP/Dormant 로 환원하고, 복귀 30 일 이내 예외 조항을 결합해야 7 일이 나온다.
+    expected_sources:
+      - corpus/loyalty/tier-rulebook.md
+      - corpus/hq-pm/policy-matrix.md
+      - corpus/cs-logistics/return-refund-flowchart.md
+    tags:
+      - R2
+      - 휴면복귀
+      - 명품반품
+      - 별칭
+  - id: Q02
+    question: >-
+      마케팅팀이 "다이아 등급" 이라 부르는 회원이 명품 가방을 샀고, 그 셀러는 MP 셀러다.
+      이 거래의 셀러 정산은 구매 확정일 기준 며칠 뒤(D+N)에 이루어지나?
+    domain_pattern: synonym_alias
+    hops_required: 3
+    options:
+      - id: a
+        text: D+30. MP 셀러의 기본 정산 주기 그대로다.
+        is_correct: false
+        failure_mode_tested: missed_hop
+      - id: b
+        text: D+44. MP 기본 D+30 에 VVIP 명품 거래의 +14 일 hold 가 더해진다.
+        is_correct: true
+        failure_mode_tested: null
+      - id: c
+        text: D+14. VVIP 명품은 기본 주기를 대체해 D+14 가 된다.
+        is_correct: false
+        failure_mode_tested: numeric_error
+      - id: d
+        text: D+21. 사입(1P) D+7 에 +14 일 hold 가 더해진 값이다.
+        is_correct: false
+        failure_mode_tested: wrong_relation
+      - id: e
+        text: 정보 부족 / 알 수 없음. MP 명품 거래의 정산일은 코퍼스에 없다.
+        is_correct: false
+        failure_mode_tested: retrieval_failure
+    reference_reasoning: >-
+      marketing _GLOSSARY("다이아 등급"=VVIP) → seller-ops settlement-faq Q3 (VVIP 명품은 기본 주기 +14 일,
+      MP=D+44) → seller-agreement-annex 제3조 동일 값. 별칭 환원 후 R7 의 +14 일이 대체가 아니라 가산임을 적용.
+    expected_sources:
+      - corpus/marketing/_GLOSSARY.md
+      - corpus/seller-ops/settlement-faq.md
+      - corpus/seller-ops/seller-agreement-annex.pdf
+    tags:
+      - R7
+      - 정산hold
+      - VVIP명품
+      - 별칭
+  - id: Q03
+    question: 베트남(VN)에서 회원이 결제할 때 디지털상품권과 BNPL(후불결제)을 쓸 수 있나?
+    domain_pattern: cross_source
+    hops_required: 2
+    options:
+      - id: a
+        text: 둘 다 불가. 디지털상품권은 외환법, BNPL 은 금융법으로 VN 에서 모두 미허용이다.
+        is_correct: true
+        failure_mode_tested: null
+      - id: b
+        text: 디지털상품권은 가능하지만 BNPL 만 금융법으로 불가하다.
+        is_correct: false
+        failure_mode_tested: missed_hop
+      - id: c
+        text: BNPL 은 가능하지만 디지털상품권만 외환법으로 불가하다.
+        is_correct: false
+        failure_mode_tested: missed_hop
+      - id: d
+        text: 둘 다 가능. VN 은 5 개 운영국이므로 본사 공통 결제 카탈로그를 그대로 따른다.
+        is_correct: false
+        failure_mode_tested: overgeneralization
+      - id: e
+        text: 정보 부족 / 알 수 없음. VN 결제수단 규제는 코퍼스에 없다.
+        is_correct: false
+        failure_mode_tested: retrieval_failure
+    reference_reasoning: >-
+      global-pm country-policy-matrix §4-5 (VN 디지털상품권/BNPL 둘 다 미허용) ↔ legal-risk risk-checklist §8
+      결제수단 매트릭스(VN BNPL/선불 디지털상품권 불가, R9). 두 부서가 같은 R9 결론을 명시.
+    expected_sources:
+      - corpus/global-pm/country-policy-matrix.md
+      - corpus/legal-risk/risk-checklist.md
+    tags:
+      - R9
+      - VN결제규제
+  - id: Q04
+    question: >-
+      한 B2B 엔터프라이즈 주문에 CPN-B2B 쿠폰을 여러 장 쌓아 누적 할인율이 35% 가 되었다.
+      이 stacking 은 어떻게 처리되나?
+    domain_pattern: single_doc
+    hops_required: 1
+    options:
+      - id: a
+        text: 정상 적용된다. CPN-B2B 끼리는 중복이 허용되므로 누적 35% 도 그대로 적용된다.
+        is_correct: false
+        failure_mode_tested: missed_hop
+      - id: b
+        text: 누적 30% 상한을 초과하므로 마지막 쿠폰부터 자동 차단되어 30% 이하만 적용된다.
+        is_correct: true
+        failure_mode_tested: null
+      - id: c
+        text: 누적 상한 20% 를 넘었으므로 전체 쿠폰이 무효화된다.
+        is_correct: false
+        failure_mode_tested: numeric_error
+      - id: d
+        text: B2C 쿠폰과 혼용된 것으로 간주되어 B2C 쿠폰만 무효화된다.
+        is_correct: false
+        failure_mode_tested: wrong_relation
+      - id: e
+        text: 정보 부족 / 알 수 없음. B2B 쿠폰 누적 상한이 코퍼스에 명시되지 않았다.
+        is_correct: false
+        failure_mode_tested: retrieval_failure
+    reference_reasoning: >-
+      b2b b2b-coupon-policy §2 (B2B stacking 3 원칙: 끼리 허용, B2C 결합 금지, 누적 상한 30%, 초과 시 마지막
+      쿠폰부터 자동 차단). 35% 는 30% 초과이므로 30% 이하가 될 때까지 떨궈낸다.
+    expected_sources:
+      - corpus/b2b/b2b-coupon-policy.md
+    tags:
+      - R5
+      - B2B쿠폰
+      - 누적상한
+  - id: Q05
+    question: 마케팅팀의 "다이아 등급" 은 로열티팀 호칭으로는 어느 등급에 해당하나?
+    domain_pattern: synonym_alias
+    hops_required: 2
+    options:
+      - id: a
+        text: 이너 서클(INNER). 다이아 등급=VVIP=로열티팀 이너 서클이다.
+        is_correct: true
+        failure_mode_tested: null
+      - id: b
+        text: 골드 등급. 다이아 등급은 VIP 에 해당하므로 로열티팀 골드다.
+        is_correct: false
+        failure_mode_tested: synonym_confusion
+      - id: c
+        text: 실버 등급. 다이아 등급은 기본 등급의 마케팅 명칭이다.
+        is_correct: false
+        failure_mode_tested: synonym_confusion
+      - id: d
+        text: 비활성 등급. 다이아 등급은 휴면 회원의 마케팅 명칭이다.
+        is_correct: false
+        failure_mode_tested: synonym_confusion
+      - id: e
+        text: 정보 부족 / 알 수 없음. 두 부서 호칭 매핑이 코퍼스에 없다.
+        is_correct: false
+        failure_mode_tested: retrieval_failure
+    reference_reasoning: >-
+      marketing _GLOSSARY(다이아 등급=VVIP) → loyalty _GLOSSARY(VVIP=이너 서클/INNER). 정식 명칭 VVIP 를
+      경유해 두 부서 별칭을 잇는다.
+    expected_sources:
+      - corpus/marketing/_GLOSSARY.md
+      - corpus/loyalty/_GLOSSARY.md
+    tags:
+      - 별칭
+      - VVIP
+  - id: Q06
+    question: 독일(DE)에서 맥주를 구매할 수 있는 최소 연령은 몇 세인가?
+    domain_pattern: single_doc
+    hops_required: 1
+    options:
+      - id: a
+        text: 16 세. DE 는 맥주 16 세, 증류주 18 세로 주종에 따라 갈린다.
+        is_correct: true
+        failure_mode_tested: null
+      - id: b
+        text: 18 세. DE 는 모든 주류를 18 세 단일 기준으로 적용한다.
+        is_correct: false
+        failure_mode_tested: numeric_error
+      - id: c
+        text: 19 세. DE 는 KR/JP 와 동일하게 19 세 기준이다.
+        is_correct: false
+        failure_mode_tested: numeric_error
+      - id: d
+        text: 21 세. DE 는 US 와 동일하게 21 세 기준이다.
+        is_correct: false
+        failure_mode_tested: numeric_error
+      - id: e
+        text: 정보 부족 / 알 수 없음. DE 맥주 연령 기준은 코퍼스에 없다.
+        is_correct: false
+        failure_mode_tested: retrieval_failure
+    reference_reasoning: >-
+      legal-risk kyc-age-verification-memo §3 (R1 매트릭스: DE 맥주 16 세 / 증류주 18 세). DE 만 주종 분기.
+    expected_sources:
+      - corpus/legal-risk/kyc-age-verification-memo.pdf
+    tags:
+      - R1
+      - 주류연령
+      - DE
+  - id: Q07
+    question: >-
+      미국 블랙프라이데이(CMP-US-BFM2026)에서 컨사인(위탁) 셀러가 파는 명품에도 추가 5% 할인이 적용되나?
+    domain_pattern: multi_hop
+    hops_required: 2
+    options:
+      - id: a
+        text: 제외된다. US BFM 추가 5% 할인은 명품+1P(사입)에만 적용되고 MP 와 컨사인은 제외다.
+        is_correct: true
+        failure_mode_tested: null
+      - id: b
+        text: 적용된다. 명품 카테고리이기만 하면 셀러 유형과 무관하게 추가 5% 가 붙는다.
+        is_correct: false
+        failure_mode_tested: wrong_promotion_filter
+      - id: c
+        text: 적용된다. 컨사인은 MP 와 달리 추가 할인 대상에 포함된다.
+        is_correct: false
+        failure_mode_tested: wrong_promotion_filter
+      - id: d
+        text: 휴면 회원이면 적용되고 아니면 제외된다.
+        is_correct: false
+        failure_mode_tested: wrong_promotion_filter
+      - id: e
+        text: 정보 부족 / 알 수 없음. US BFM 의 셀러 유형 제외 조건이 코퍼스에 없다.
+        is_correct: false
+        failure_mode_tested: retrieval_failure
+    reference_reasoning: >-
+      hq-pm policy-matrix §7 (CMP-US-BFM2026 명품+1P 추가 5%, Marketplace/Consignment 제외, R10) ↔
+      seller-ops settlement-faq Q11 (US 추가 할인은 사입 1P 거래에만, MP/컨사인 제외). 컨사인은 제외 대상.
+    expected_sources:
+      - corpus/hq-pm/policy-matrix.md
+      - corpus/seller-ops/settlement-faq.md
+    tags:
+      - R10
+      - US BFM
+      - 셀러유형필터
+  - id: Q08
+    question: >-
+      신선식품이 1P(직매입) 셀러 상품인데 콜드체인 사고로 환불이 확정되었다. 그 환불 손실은 누가 부담하나?
+    domain_pattern: multi_hop
+    hops_required: 2
+    options:
+      - id: a
+        text: 본사 손실. 1P 는 매입으로 재고 소유권이 회사에 있어 회사가 전액 부담하고 셀러 차감이 없다.
+        is_correct: true
+        failure_mode_tested: null
+      - id: b
+        text: 셀러 차감. 콜드체인 사고는 셀러 유형과 무관하게 모두 셀러가 부담한다.
+        is_correct: false
+        failure_mode_tested: overgeneralization
+      - id: c
+        text: 셀러 차감 후 셀러 보증보험으로 보전된다.
+        is_correct: false
+        failure_mode_tested: wrong_relation
+      - id: d
+        text: 셀러 차감. 1P 는 위탁 상품이므로 보관 책임이 셀러에게 있다.
+        is_correct: false
+        failure_mode_tested: synonym_confusion
+      - id: e
+        text: 정보 부족 / 알 수 없음. 1P 사고 손실 귀속은 코퍼스에 없다.
+        is_correct: false
+        failure_mode_tested: retrieval_failure
+    reference_reasoning: >-
+      seller-ops settlement-faq Q5-Q6 (1P=본사 손실, 셀러 차감 없음) ↔ cs-logistics cold-chain-sop §4
+      (사입 1P=본사 손실). R3 손실 귀속의 1P 분기.
+    expected_sources:
+      - corpus/seller-ops/settlement-faq.md
+      - corpus/cs-logistics/cold-chain-sop.pdf
+    tags:
+      - R3
+      - 콜드체인
+      - 손실귀속
+      - 1P
+  - id: Q09
+    question: 일본(JP)에서 JIS 인증이 없는 가전 상품은 어떻게 처리되나?
+    domain_pattern: single_doc
+    hops_required: 1
+    options:
+      - id: a
+        text: 자동 비노출 처리된다. 미인증 가전/디지털은 검색과 카테고리에서 자동으로 가려진다.
+        is_correct: true
+        failure_mode_tested: null
+      - id: b
+        text: 그대로 노출되지만 구매 시 경고 문구만 표시된다.
+        is_correct: false
+        failure_mode_tested: overgeneralization
+      - id: c
+        text: 인증 없이도 30 일간은 노출되고 그 후 비노출된다.
+        is_correct: false
+        failure_mode_tested: numeric_error
+      - id: d
+        text: KR 을 포함한 모든 운영국에서 자동 비노출된다.
+        is_correct: false
+        failure_mode_tested: overgeneralization
+      - id: e
+        text: 정보 부족 / 알 수 없음. JP JIS 미인증 처리는 코퍼스에 없다.
+        is_correct: false
+        failure_mode_tested: retrieval_failure
+    reference_reasoning: >-
+      global-pm country-policy-matrix §3 (R8: JP 가전/디지털 JIS 미인증 자동 비노출). JIS 요건은 JP 한정.
+    expected_sources:
+      - corpus/global-pm/country-policy-matrix.md
+    tags:
+      - R8
+      - JIS
+      - JP
+  - id: Q10
+    question: 디지털콘텐츠 상품을 BNPL(후불결제)로 결제할 수 있나?
+    domain_pattern: single_doc
+    hops_required: 1
+    options:
+      - id: a
+        text: 불가. 디지털콘텐츠와 BNPL 의 결합은 전면 금지되어 결제 화면에서 BNPL 이 비활성화된다.
+        is_correct: true
+        failure_mode_tested: null
+      - id: b
+        text: 가능. 디지털콘텐츠는 즉시 소비되므로 BNPL 과 잘 어울린다.
+        is_correct: false
+        failure_mode_tested: wrong_relation
+      - id: c
+        text: VN 에서만 불가하고 다른 국가에서는 가능하다.
+        is_correct: false
+        failure_mode_tested: overgeneralization
+      - id: d
+        text: VVIP 회원만 BNPL 로 디지털콘텐츠를 결제할 수 있다.
+        is_correct: false
+        failure_mode_tested: synonym_confusion
+      - id: e
+        text: 정보 부족 / 알 수 없음. 디지털콘텐츠와 BNPL 결합 규칙은 코퍼스에 없다.
+        is_correct: false
+        failure_mode_tested: retrieval_failure
+    reference_reasoning: >-
+      hq-pm policy-matrix §6 (R4: 디지털콘텐츠 BNPL 결합 전면 금지). 결제 단계 차단. 국가 무관 전면 금지.
+    expected_sources:
+      - corpus/hq-pm/policy-matrix.md
+    tags:
+      - R4
+      - BNPL
+      - 디지털콘텐츠
+  - id: Q11
+    question: >-
+      CS팀이 "VV 회원" 이라 부르는 회원이 결제 후 5 일 만에 신선식품의 콜드체인 사고 증빙을 제출했다.
+      환불이 인정되나?
+    domain_pattern: synonym_alias
+    hops_required: 2
+    options:
+      - id: a
+        text: 인정된다. VV 회원(VVIP)+결제 7 일 이내+콜드체인 증빙 3 요건을 모두 충족해 100% 환불이다.
+        is_correct: true
+        failure_mode_tested: null
+      - id: b
+        text: 불가. 신선식품은 어떤 경우에도 환불되지 않는다.
+        is_correct: false
+        failure_mode_tested: overgeneralization
+      - id: c
+        text: 인정되지만 VV 회원은 V 회원과 같으므로 결제 7 일이 아니라 30 일 이내면 된다.
+        is_correct: false
+        failure_mode_tested: synonym_confusion
+      - id: d
+        text: 50% 부분 환불만 가능하다.
+        is_correct: false
+        failure_mode_tested: numeric_error
+      - id: e
+        text: 정보 부족 / 알 수 없음. VV 회원 신선식품 환불 요건이 코퍼스에 없다.
+        is_correct: false
+        failure_mode_tested: retrieval_failure
+    reference_reasoning: >-
+      cs-logistics _GLOSSARY(VV 회원=VVIP) → cs-macro-manual CS-MCRO-203 (VVIP+결제 7 일 이내+콜드체인 증빙
+      3 요건 100% 환불, R3). 별칭 환원 후 5 일은 7 일 이내라 충족.
+    expected_sources:
+      - corpus/cs-logistics/_GLOSSARY.md
+      - corpus/cs-logistics/cs-macro-manual.md
+    tags:
+      - R3
+      - 신선식품
+      - VVIP
+      - 별칭
+  - id: Q12
+    question: >-
+      이너 서클(VVIP)로 승급하려면 어떤 조건을 충족해야 하나?
+    domain_pattern: single_doc
+    hops_required: 1
+    options:
+      - id: a
+        text: 12 개월 누적 결제액 500 만 원 이상 AND 최근 NPS 9 이상. 두 조건을 모두 충족해야 한다.
+        is_correct: true
+        failure_mode_tested: null
+      - id: b
+        text: 12 개월 누적 500 만 원 이상 OR NPS 9 이상. 둘 중 하나만 충족하면 된다.
+        is_correct: false
+        failure_mode_tested: wrong_relation
+      - id: c
+        text: 12 개월 누적 120 만 원 이상 AND NPS 9 이상.
+        is_correct: false
+        failure_mode_tested: numeric_error
+      - id: d
+        text: 12 개월 누적 500 만 원 이상이면 NPS 와 무관하게 승급한다.
+        is_correct: false
+        failure_mode_tested: missed_hop
+      - id: e
+        text: 정보 부족 / 알 수 없음. 이너 서클 승급 조건이 코퍼스에 없다.
+        is_correct: false
+        failure_mode_tested: retrieval_failure
+    reference_reasoning: >-
+      loyalty tier-rulebook §2.3 / §4.1 (이너 서클=12 개월 누적 500 만 원 AND NPS 9 이상, 두 하드 조건 AND).
+      골드는 OR, 이너 서클은 AND 인 점이 결정적 차이.
+    expected_sources:
+      - corpus/loyalty/tier-rulebook.md
+    tags:
+      - VVIP승급
+      - NPS
+      - 로열티
+  - id: Q13
+    question: >-
+      독일(DE) 회원이 탈퇴하면서 개인정보 완전 삭제를 요구했다. 그런데 회계법은 거래 기록 10 년 보존을 요구한다.
+      이 충돌은 어떻게 해소되나?
+    domain_pattern: cross_source
+    hops_required: 2
+    options:
+      - id: a
+        text: 거래 기록은 회원 ID 만 남기고 PII 를 제거한 비식별 형태로 10 년 보존한다.
+        is_correct: true
+        failure_mode_tested: null
+      - id: b
+        text: GDPR 이 우선하므로 거래 기록을 통째로 삭제한다.
+        is_correct: false
+        failure_mode_tested: wrong_relation
+      - id: c
+        text: 회계법이 우선하므로 PII 를 포함한 거래 기록을 그대로 10 년 보존한다.
+        is_correct: false
+        failure_mode_tested: wrong_relation
+      - id: d
+        text: 거래 기록을 회원 ID 까지 모두 익명화해 영구 보존한다.
+        is_correct: false
+        failure_mode_tested: numeric_error
+      - id: e
+        text: 정보 부족 / 알 수 없음. DE 탈퇴 시 데이터 처리 방식이 코퍼스에 없다.
+        is_correct: false
+        failure_mode_tested: retrieval_failure
+    reference_reasoning: >-
+      legal-risk gdpr-de-memo §5 (R6 결론: 회원 ID 만 남긴 비식별 형태로 10 년 보존) ↔ hq-pm policy-matrix §8
+      (DE 특례 비식별화). 회원 ID 는 유지, 나머지 PII 만 제거.
+    expected_sources:
+      - corpus/legal-risk/gdpr-de-memo.pdf
+      - corpus/hq-pm/policy-matrix.md
+    tags:
+      - R6
+      - GDPR
+      - DE
+      - 비식별화
+  - id: Q14
+    question: >-
+      마케팅팀이 "프리미엄 멤버" 라 부르는 회원이 명품을 샀고, 휴면 복귀 이력이 전혀 없는 정상 회원이다.
+      이 명품의 반품 가능 기간은?
+    domain_pattern: synonym_alias
+    hops_required: 2
+    options:
+      - id: a
+        text: 30 일. 프리미엄 멤버(VIP)가 명품을 사면 R2 에 따라 반품이 7 일에서 30 일로 연장된다.
+        is_correct: true
+        failure_mode_tested: null
+      - id: b
+        text: 7 일. VIP 라도 명품 반품 연장 혜택은 없다.
+        is_correct: false
+        failure_mode_tested: missed_hop
+      - id: c
+        text: 30 일. 프리미엄 멤버는 모든 카테고리에서 30 일 반품이다.
+        is_correct: false
+        failure_mode_tested: synonym_confusion
+      - id: d
+        text: 14 일. 명품 반품은 기본 7 일의 두 배인 14 일로 연장된다.
+        is_correct: false
+        failure_mode_tested: numeric_error
+      - id: e
+        text: 정보 부족 / 알 수 없음. 프리미엄 멤버 명품 반품 기간은 코퍼스에 없다.
+        is_correct: false
+        failure_mode_tested: retrieval_failure
+    reference_reasoning: >-
+      marketing _GLOSSARY(프리미엄 멤버=VIP) → hq-pm policy-matrix §3 (VIP 명품 정상 30 일, R2). 휴면 복귀
+      이력이 없으므로 예외 미적용, 정상 30 일. VVIP 의 전 카테고리 30 일(c)과 혼동하면 오답.
+    expected_sources:
+      - corpus/marketing/_GLOSSARY.md
+      - corpus/hq-pm/policy-matrix.md
+    tags:
+      - R2
+      - VIP명품
+      - 별칭
+  - id: Q15
+    question: >-
+      VVIP 회원이 명품이 아닌 패션 상품을 컨사인(위탁) 셀러로부터 샀다. 이 거래의 정산일은?
+    domain_pattern: single_doc
+    hops_required: 2
+    options:
+      - id: a
+        text: D+15. VVIP 여도 명품이 아니므로 +14 일 hold 가 걸리지 않고 컨사인 기본 주기 그대로다.
+        is_correct: true
+        failure_mode_tested: null
+      - id: b
+        text: D+29. VVIP 회원 거래는 카테고리와 무관하게 +14 일 hold 가 걸린다.
+        is_correct: false
+        failure_mode_tested: missed_category_hop
+      - id: c
+        text: D+30. 컨사인도 MP 와 동일한 기본 주기를 적용받는다.
+        is_correct: false
+        failure_mode_tested: numeric_error
+      - id: d
+        text: D+44. VVIP 거래는 최장 주기인 D+44 로 일괄 처리된다.
+        is_correct: false
+        failure_mode_tested: synonym_confusion
+      - id: e
+        text: 정보 부족 / 알 수 없음. VVIP 비명품 거래의 정산일은 코퍼스에 없다.
+        is_correct: false
+        failure_mode_tested: retrieval_failure
+    reference_reasoning: >-
+      seller-ops settlement-faq Q4 (+14 hold 는 VVIP 회원 AND 명품 두 조건 동시 충족 시에만) + Q1 (컨사인
+      D+15). 명품이 아니므로 hold 미적용, 컨사인 기본 D+15. R7 의 카테고리 게이트를 놓치면 D+29 로 오답.
+    expected_sources:
+      - corpus/seller-ops/settlement-faq.md
+    tags:
+      - R7
+      - 정산
+      - 카테고리게이트
+  - id: Q16
+    question: >-
+      CS팀이 "수면 고객" 이라 부르는 회원이 한국 블랙프라이데이(CMP-KR-BFM2026) 기간에 5,000 원 부활 쿠폰을
+      받지 못했다. 이 회원이 "제한 회원" 으로 지정되어 있다면 그 이유로 설명되나?
+    domain_pattern: synonym_alias
+    hops_required: 3
+    options:
+      - id: a
+        text: 그렇다. KR BFM 은 휴면 회원을 자동 활성화하고 부활 쿠폰을 주지만 Restricted(제한 회원)는 제외 대상이다.
+        is_correct: true
+        failure_mode_tested: null
+      - id: b
+        text: 아니다. KR BFM 은 모든 휴면 회원에게 예외 없이 부활 쿠폰을 지급한다.
+        is_correct: false
+        failure_mode_tested: overgeneralization
+      - id: c
+        text: 아니다. 부활 쿠폰은 VVIP 등급에게만 지급되므로 등급 제한과 무관하다.
+        is_correct: false
+        failure_mode_tested: synonym_confusion
+      - id: d
+        text: 아니다. 제한 회원 제외는 US BFM 에만 적용되고 KR BFM 과는 무관하다.
+        is_correct: false
+        failure_mode_tested: wrong_promotion_filter
+      - id: e
+        text: 정보 부족 / 알 수 없음. 제한 회원의 부활 쿠폰 수령 여부는 코퍼스에 없다.
+        is_correct: false
+        failure_mode_tested: retrieval_failure
+    reference_reasoning: >-
+      cs-logistics _GLOSSARY(수면 고객=Dormant, 제한 회원=Restricted) → cs-macro-manual CS-MCRO-503
+      (제한 회원 미지급) → hq-pm policy-matrix §7 (CMP-KR-BFM2026 Restricted 제외, R10). 별칭 환원 후 제외 조항 적용.
+    expected_sources:
+      - corpus/cs-logistics/_GLOSSARY.md
+      - corpus/cs-logistics/cs-macro-manual.md
+      - corpus/hq-pm/policy-matrix.md
+    tags:
+      - R10
+      - KR BFM
+      - Restricted
+      - 별칭
+  - id: Q17
+    question: >-
+      마케팅이 BNPL(후불결제)을 결제 수단으로 내세운 캠페인을 설계할 때 디지털콘텐츠 카테고리는 어떻게 처리해야 하나?
+    domain_pattern: cross_source
+    hops_required: 2
+    options:
+      - id: a
+        text: 디지털콘텐츠를 캠페인 대상 상품에서 자동 제외해야 한다. 누락하면 캠페인 발행이 반려된다.
+        is_correct: true
+        failure_mode_tested: null
+      - id: b
+        text: 디지털콘텐츠를 포함하되 BNPL 결제 시 경고만 표시하면 된다.
+        is_correct: false
+        failure_mode_tested: wrong_relation
+      - id: c
+        text: VVIP 회원에게만 디지털콘텐츠를 BNPL 로 노출한다.
+        is_correct: false
+        failure_mode_tested: synonym_confusion
+      - id: d
+        text: VN 캠페인에서만 디지털콘텐츠를 제외하고 다른 국가는 그대로 둔다.
+        is_correct: false
+        failure_mode_tested: overgeneralization
+      - id: e
+        text: 정보 부족 / 알 수 없음. BNPL 캠페인의 디지털콘텐츠 처리는 코퍼스에 없다.
+        is_correct: false
+        failure_mode_tested: retrieval_failure
+    reference_reasoning: >-
+      marketing campaign-playbook §4 (BNPL 캠페인 디지털콘텐츠 자동 제외, 누락 시 발행 반려, R4) ↔ hq-pm
+      policy-matrix §6 (R4 자동 제외 필수 요건). 두 부서가 R4 의 마케팅 집행을 명시.
+    expected_sources:
+      - corpus/marketing/campaign-playbook.md
+      - corpus/hq-pm/policy-matrix.md
+    tags:
+      - R4
+      - BNPL
+      - 마케팅캠페인
+  - id: Q18
+    question: >-
+      마케팅 쿠폰 중 웰컴 쿠폰(CPN-WELCOME)과 장바구니 쿠폰(CPN-CART)을 한 주문에 같이 쓸 수 있나?
+    domain_pattern: single_doc
+    hops_required: 1
+    options:
+      - id: a
+        text: 같이 쓸 수 있다. 웰컴+장바구니 조합은 같은 프로모션 내에서도 허용되는 유일한 자유 결합 예외다.
+        is_correct: true
+        failure_mode_tested: null
+      - id: b
+        text: 불가. 같은 프로모션 쿠폰은 예외 없이 한 장만 적용된다.
+        is_correct: false
+        failure_mode_tested: overgeneralization
+      - id: c
+        text: 부활 쿠폰과 묶을 때만 같이 쓸 수 있다.
+        is_correct: false
+        failure_mode_tested: wrong_relation
+      - id: d
+        text: B2B 쿠폰과 함께 써야만 결합이 허용된다.
+        is_correct: false
+        failure_mode_tested: synonym_confusion
+      - id: e
+        text: 정보 부족 / 알 수 없음. 웰컴+장바구니 결합 규칙은 코퍼스에 없다.
+        is_correct: false
+        failure_mode_tested: retrieval_failure
+    reference_reasoning: >-
+      marketing coupon-stacking-guide §2.1 (WELCOME+CART=O, 유일한 자유 결합, R5 예외 1). 부활 쿠폰은 단독.
+    expected_sources:
+      - corpus/marketing/coupon-stacking-guide.md
+    tags:
+      - R5
+      - 쿠폰스태킹
+      - 웰컴카트
+  - id: Q19
+    question: >-
+      JP, DE, VN 중 2026 블랙프라이데이(BFM)에 참여하는 국가는?
+    domain_pattern: cross_source
+    hops_required: 2
+    options:
+      - id: a
+        text: 셋 다 미참여다. BFM 2026 은 KR 과 US 만 참여하고 JP/DE/VN 은 모두 비참여다.
+        is_correct: true
+        failure_mode_tested: null
+      - id: b
+        text: JP 만 참여한다.
+        is_correct: false
+        failure_mode_tested: wrong_promotion_filter
+      - id: c
+        text: DE 만 참여한다.
+        is_correct: false
+        failure_mode_tested: wrong_promotion_filter
+      - id: d
+        text: JP 와 VN 이 참여하고 DE 만 빠진다.
+        is_correct: false
+        failure_mode_tested: wrong_promotion_filter
+      - id: e
+        text: 정보 부족 / 알 수 없음. BFM 참여국 정보가 코퍼스에 없다.
+        is_correct: false
+        failure_mode_tested: retrieval_failure
+    reference_reasoning: >-
+      global-pm country-policy-matrix §6 (BFM KR/US 참여, JP/DE/VN 비참여) ↔ marketing bfm2026-brief
+      (참여국 KR/US, 미참여 JP/DE/VN, R10). 셋 다 미참여.
+    expected_sources:
+      - corpus/global-pm/country-policy-matrix.md
+      - corpus/marketing/bfm2026-brief.pdf
+    tags:
+      - R10
+      - BFM참여국
+  - id: Q20
+    question: >-
+      VVIP 회원이 산 명품 거래에 14 일 정산 보류(hold)가 걸렸다. 14 일이 지났는데도 정산이 풀리지 않는다면
+      반드시 시스템 오류인가?
+    domain_pattern: single_doc
+    hops_required: 1
+    options:
+      - id: a
+        text: 아니다. 같은 거래에 분쟁/클레임 플래그가 함께 걸려 있으면 14 일이 지나도 분쟁이 종결될 때까지 정산이 멈춘다.
+        is_correct: true
+        failure_mode_tested: null
+      - id: b
+        text: 그렇다. 14 일 보류는 상한이므로 14 일이 지나면 무조건 자동 해제된다.
+        is_correct: false
+        failure_mode_tested: overgeneralization
+      - id: c
+        text: 그렇다. hold 는 7 일이 정상이므로 14 일이면 이미 오류다.
+        is_correct: false
+        failure_mode_tested: numeric_error
+      - id: d
+        text: 아니다. 셀러가 정산기획팀에 해제 요청을 넣지 않아서다.
+        is_correct: false
+        failure_mode_tested: wrong_relation
+      - id: e
+        text: 정보 부족 / 알 수 없음. 14 일 경과 후 보류 지속 사유는 코퍼스에 없다.
+        is_correct: false
+        failure_mode_tested: retrieval_failure
+    reference_reasoning: >-
+      seller-ops settlement-faq Q15 (14 일은 최소 보류이지 상한이 아님, 분쟁 플래그 시 분쟁 종결까지 정산 멈춤).
+      자동 해제는 분쟁이 없을 때만.
+    expected_sources:
+      - corpus/seller-ops/settlement-faq.md
+    tags:
+      - R7
+      - 정산hold
+      - 분쟁
+  - id: Q21
+    question: >-
+      엔터프라이즈(B2B) 신선식품 거래에서 콜드체인 사고가 났을 때, B2C 의 "VVIP+7 일 이내+증빙" 환불 예외가
+      그대로 적용되나?
+    domain_pattern: multi_hop
+    hops_required: 2
+    options:
+      - id: a
+        text: 그대로 적용되지 않는다. B2C 예외는 등급 기반이라 B2B 에는 적용되지 않고, 대신 SLA 보장 항목이면 등급 무관 전액 크레딧 차감한다.
+        is_correct: true
+        failure_mode_tested: null
+      - id: b
+        text: 그대로 적용된다. 신선식품 환불 예외는 B2C 와 B2B 가 동일하다.
+        is_correct: false
+        failure_mode_tested: overgeneralization
+      - id: c
+        text: B2B 에는 어떤 신선식품 환불도 없으므로 사고 물량은 보전되지 않는다.
+        is_correct: false
+        failure_mode_tested: missed_hop
+      - id: d
+        text: B2B 도 VVIP 등급 회원이 주문한 경우에만 환불된다.
+        is_correct: false
+        failure_mode_tested: synonym_confusion
+      - id: e
+        text: 정보 부족 / 알 수 없음. B2B 신선식품 환불 처리는 코퍼스에 없다.
+        is_correct: false
+        failure_mode_tested: retrieval_failure
+    reference_reasoning: >-
+      b2b b2b-ops-guide §4 (B2C 등급 기반 예외는 B2B 미적용, 대신 SLA 보장 시 등급 무관 전액 크레딧 차감, R3 연계) ↔
+      hq-pm policy-matrix §4 (R3 원칙). 손실 귀속은 본사 원칙(컨사인/MP 차감, 1P 본사).
+    expected_sources:
+      - corpus/b2b/b2b-ops-guide.md
+      - corpus/hq-pm/policy-matrix.md
+    tags:
+      - R3
+      - B2B
+      - SLA
+      - 신선식품
+  - id: Q22
+    question: >-
+      "거래 제한 회원" 은 로열티팀 동적 등급 산식으로 승급하거나 복귀할 수 있나?
+    domain_pattern: synonym_alias
+    hops_required: 2
+    options:
+      - id: a
+        text: 없다. 등급 제한(Restricted)은 법무/CS 가 강제 부여하는 정적 등급으로 모든 승급/복귀 경로에서 제외된다.
+        is_correct: true
+        failure_mode_tested: null
+      - id: b
+        text: 있다. 누적 결제액이 500 만 원을 넘으면 이너 서클로 승급할 수 있다.
+        is_correct: false
+        failure_mode_tested: wrong_relation
+      - id: c
+        text: 있다. 유효 주문 1 건이면 실버로 자동 복귀한다.
+        is_correct: false
+        failure_mode_tested: synonym_confusion
+      - id: d
+        text: 매월 정기 재평가에서 자동으로 골드까지 승급된다.
+        is_correct: false
+        failure_mode_tested: overgeneralization
+      - id: e
+        text: 정보 부족 / 알 수 없음. 제한 회원의 등급 전환 가능 여부는 코퍼스에 없다.
+        is_correct: false
+        failure_mode_tested: retrieval_failure
+    reference_reasoning: >-
+      legal-risk _GLOSSARY(거래 제한 회원=Restricted) → loyalty tier-rulebook §2.5/§6 (등급 제한은 정적 등급,
+      모든 동적 재평가/승급/복귀에서 제외, 해제는 법무팀 절차 후). 별칭 환원 후 정적 등급 규칙 적용.
+    expected_sources:
+      - corpus/legal-risk/_GLOSSARY.md
+      - corpus/loyalty/tier-rulebook.md
+    tags:
+      - Restricted
+      - 등급제한
+      - 별칭
+  - id: Q23
+    question: >-
+      셀러 입장에서 미국 블랙프라이데이(CMP-US-BFM2026) 추가 5% 할인이 사입(1P) 명품 거래에 적용되면,
+      셀러가 정산받는 금액은 할인된 금액 기준인가?
+    domain_pattern: cross_source
+    hops_required: 2
+    options:
+      - id: a
+        text: 아니다. 추가 5% 할인 부담은 회사 마케팅 예산이 충당하므로 셀러 정산 기준액은 정상가 그대로다.
+        is_correct: true
+        failure_mode_tested: null
+      - id: b
+        text: 그렇다. 구매자가 결제한 할인 후 금액 기준으로 셀러 정산이 산정된다.
+        is_correct: false
+        failure_mode_tested: wrong_relation
+      - id: c
+        text: 셀러와 회사가 할인분 5% 를 절반씩 부담한다.
+        is_correct: false
+        failure_mode_tested: numeric_error
+      - id: d
+        text: MP 셀러는 정상가, 사입 셀러만 할인가 기준으로 정산받는다.
+        is_correct: false
+        failure_mode_tested: synonym_confusion
+      - id: e
+        text: 정보 부족 / 알 수 없음. US BFM 할인의 정산 반영 방식은 코퍼스에 없다.
+        is_correct: false
+        failure_mode_tested: retrieval_failure
+    reference_reasoning: >-
+      seller-ops settlement-faq Q10 (추가 5% 할인은 회사 마케팅 예산 부담, 셀러 정산 기준액은 정상가) ↔
+      seller-agreement-annex 제6조 (할인 부담분은 마케팅 예산, 셀러 정산금 미차감, R10). 구매자 결제액과 셀러 정산액 분리.
+    expected_sources:
+      - corpus/seller-ops/settlement-faq.md
+      - corpus/seller-ops/seller-agreement-annex.pdf
+    tags:
+      - R10
+      - US BFM
+      - 정산
+  - id: Q24
+    question: >-
+      독일(DE)에 거주하는 회원이 17 세 계정으로 증류주를 주문했다. 이 주문은 어떻게 처리되나?
+    domain_pattern: multi_hop
+    hops_required: 2
+    options:
+      - id: a
+        text: 자동 취소된다. DE 증류주는 18 세 기준이라 17 세는 연령 검증에 실패해 자동 취소 후 환불된다.
+        is_correct: true
+        failure_mode_tested: null
+      - id: b
+        text: 통과된다. DE 는 맥주든 증류주든 16 세 기준이므로 17 세는 문제없다.
+        is_correct: false
+        failure_mode_tested: missed_category_hop
+      - id: c
+        text: 통과된다. DE 주류 연령은 단일 16 세 기준이다.
+        is_correct: false
+        failure_mode_tested: numeric_error
+      - id: d
+        text: 보류 후 부모 동의를 받으면 출고된다.
+        is_correct: false
+        failure_mode_tested: wrong_relation
+      - id: e
+        text: 정보 부족 / 알 수 없음. DE 증류주 17 세 주문 처리는 코퍼스에 없다.
+        is_correct: false
+        failure_mode_tested: retrieval_failure
+    reference_reasoning: >-
+      global-pm country-policy-matrix §2 (DE 맥주 16/증류주 18, 17 세 증류주는 검증 실패 자동 취소) +
+      kyc-age-verification-memo §3-4 (검증 실패 자동 취소+환불, R1). 주종 분기를 놓치면 통과로 오답.
+    expected_sources:
+      - corpus/global-pm/country-policy-matrix.md
+      - corpus/legal-risk/kyc-age-verification-memo.pdf
+    tags:
+      - R1
+      - DE증류주
+      - 연령검증
+  - id: Q25
+    question: >-
+      신선식품 콜드체인 사고로 환불이 확정된 MP(입점사) 셀러 상품의 손실은 어떻게 처리되나?
+    domain_pattern: cross_source
+    hops_required: 2
+    options:
+      - id: a
+        text: 셀러 정산금에서 먼저 차감되고, 그 차감분은 입점 시 의무 가입한 셀러 보증보험으로 보전된다.
+        is_correct: true
+        failure_mode_tested: null
+      - id: b
+        text: 본사가 전액 부담하고 셀러 정산에는 영향이 없다.
+        is_correct: false
+        failure_mode_tested: wrong_relation
+      - id: c
+        text: 셀러 차감만 일어나고 보증보험 보전은 없다. 컨사인과 동일하다.
+        is_correct: false
+        failure_mode_tested: synonym_confusion
+      - id: d
+        text: 보증보험이 먼저 지급되고 나서 셀러 정산금을 차감한다.
+        is_correct: false
+        failure_mode_tested: wrong_relation
+      - id: e
+        text: 정보 부족 / 알 수 없음. MP 콜드체인 사고 손실 처리 순서는 코퍼스에 없다.
+        is_correct: false
+        failure_mode_tested: retrieval_failure
+    reference_reasoning: >-
+      seller-ops settlement-faq Q5/Q17 (MP=셀러 차감 후 보증보험 보전, 차감 선행 보험 사후) ↔ cs-logistics
+      cold-chain-sop §4 (MP=셀러 차감, 보증보험 충당). 컨사인은 차감으로 끝(보험 없음)이라 구별. R3.
+    expected_sources:
+      - corpus/seller-ops/settlement-faq.md
+      - corpus/cs-logistics/cold-chain-sop.pdf
+    tags:
+      - R3
+      - MP
+      - 보증보험
+      - 콜드체인
+  - id: Q26
+    question: >-
+      B2B 엔터프라이즈 쿠폰(CPN-B2B)을 신규 가입 웰컴 쿠폰(CPN-WELCOME)과 한 주문에 함께 담으면 어떻게 되나?
+    domain_pattern: multi_hop
+    hops_required: 2
+    options:
+      - id: a
+        text: B2C 쿠폰이 자동 무효화되고 B2B 쿠폰만 적용된다. B2B 와 B2C 쿠폰은 결합 금지다.
+        is_correct: true
+        failure_mode_tested: null
+      - id: b
+        text: 둘 다 정상 적용된다. 웰컴 쿠폰은 어떤 쿠폰과도 결합되는 예외다.
+        is_correct: false
+        failure_mode_tested: wrong_relation
+      - id: c
+        text: B2B 쿠폰이 무효화되고 웰컴 쿠폰만 적용된다.
+        is_correct: false
+        failure_mode_tested: wrong_relation
+      - id: d
+        text: 누적 30% 이하이면 둘 다 적용된다.
+        is_correct: false
+        failure_mode_tested: missed_hop
+      - id: e
+        text: 정보 부족 / 알 수 없음. B2B 와 웰컴 쿠폰 결합 시 처리는 코퍼스에 없다.
+        is_correct: false
+        failure_mode_tested: retrieval_failure
+    reference_reasoning: >-
+      b2b b2b-coupon-policy §2/§3 (B2C 결합 금지, 함께 담으면 B2C 쿠폰 자동 무효화) ↔ hq-pm policy-matrix §5
+      (CPN-B2B 별도 체계, 일반 스태킹 대상 아님, R5 예외 2). B2C 쿠폰이 무효화되는 방향에 주의.
+    expected_sources:
+      - corpus/b2b/b2b-coupon-policy.md
+      - corpus/hq-pm/policy-matrix.md
+    tags:
+      - R5
+      - B2B쿠폰
+      - B2C결합금지
+  - id: Q27
+    question: >-
+      셀러팀 문서에서 "다이렉트 소싱" 이라 부르는 셀러 유형의 콜드체인 사고 손실은 누가 부담하나?
+    domain_pattern: synonym_alias
+    hops_required: 2
+    options:
+      - id: a
+        text: 본사 손실. 다이렉트 소싱은 1P(직매입)이고, 1P 콜드체인 사고는 본사가 흡수한다.
+        is_correct: true
+        failure_mode_tested: null
+      - id: b
+        text: 셀러 차감. 다이렉트 소싱은 위탁(컨사인)이므로 셀러가 부담한다.
+        is_correct: false
+        failure_mode_tested: synonym_confusion
+      - id: c
+        text: 셀러 차감 후 보증보험으로 보전된다. 다이렉트 소싱은 MP 다.
+        is_correct: false
+        failure_mode_tested: synonym_confusion
+      - id: d
+        text: 본사와 셀러가 절반씩 부담한다.
+        is_correct: false
+        failure_mode_tested: numeric_error
+      - id: e
+        text: 정보 부족 / 알 수 없음. 다이렉트 소싱의 손실 귀속은 코퍼스에 없다.
+        is_correct: false
+        failure_mode_tested: retrieval_failure
+    reference_reasoning: >-
+      seller-ops _GLOSSARY(다이렉트 소싱=1P 직매입) → seller-ops settlement-faq Q6 (1P=본사 손실). 셀러팀의
+      "다이렉트 소싱" 별칭을 1P 로 환원해야 본사 손실이 나온다. 컨사인/MP 별칭과 혼동하면 오답.
+    expected_sources:
+      - corpus/seller-ops/_GLOSSARY.md
+      - corpus/seller-ops/settlement-faq.md
+    tags:
+      - R3
+      - 1P
+      - 다이렉트소싱
+      - 별칭
+  - id: Q28
+    question: >-
+      독일(DE) 회원이 탈퇴해 PII 가 비식별화된 거래 기록을 마케팅 리타겟팅 광고 모수로 쓸 수 있나?
+    domain_pattern: multi_hop
+    hops_required: 2
+    options:
+      - id: a
+        text: 쓸 수 없다. 비식별화 거래 기록을 광고 모수로 역추적하는 시도 자체가 GDPR 위반 소지가 있어 금지된다.
+        is_correct: true
+        failure_mode_tested: null
+      - id: b
+        text: 쓸 수 있다. 비식별화된 데이터는 개인정보가 아니므로 자유롭게 활용 가능하다.
+        is_correct: false
+        failure_mode_tested: overgeneralization
+      - id: c
+        text: 회원 ID 가 남아 있으므로 그 ID 로 타겟팅하면 된다.
+        is_correct: false
+        failure_mode_tested: wrong_relation
+      - id: d
+        text: VVIP 회원의 비식별 기록만 광고에 쓸 수 있다.
+        is_correct: false
+        failure_mode_tested: synonym_confusion
+      - id: e
+        text: 정보 부족 / 알 수 없음. 비식별 기록의 광고 활용 가부는 코퍼스에 없다.
+        is_correct: false
+        failure_mode_tested: retrieval_failure
+    reference_reasoning: >-
+      marketing campaign-playbook §3.7 (탈퇴 회원/비식별 거래 기록을 광고 모수로 역추적 금지, GDPR 위반 소지) ↔
+      legal-risk gdpr-de-memo / hq-pm policy-matrix §8 (R6 비식별화 보존). 보존 목적은 회계이지 마케팅이 아님.
+    expected_sources:
+      - corpus/marketing/campaign-playbook.md
+      - corpus/legal-risk/gdpr-de-memo.pdf
+    tags:
+      - R6
+      - GDPR
+      - 리타겟팅
+  - id: Q29
+    question: >-
+      엔터프라이즈(B2B) 계정은 한국/미국 블랙프라이데이(CMP-KR-BFM2026, CMP-US-BFM2026) 캠페인에 참여하나?
+    domain_pattern: multi_hop
+    hops_required: 2
+    options:
+      - id: a
+        text: 참여하지 않는다. BFM 은 소비자 대상이고 B2B 는 계약 단가가 이미 협상되어 별도 전략 계정 캠페인을 운영한다.
+        is_correct: true
+        failure_mode_tested: null
+      - id: b
+        text: 참여한다. KR/US 캠페인은 B2C 와 B2B 를 모두 포함한다.
+        is_correct: false
+        failure_mode_tested: overgeneralization
+      - id: c
+        text: US BFM 의 명품+1P 추가 5% 할인에만 B2B 가 참여한다.
+        is_correct: false
+        failure_mode_tested: wrong_promotion_filter
+      - id: d
+        text: 휴면 상태인 B2B 계정만 KR BFM 부활 쿠폰을 받는다.
+        is_correct: false
+        failure_mode_tested: synonym_confusion
+      - id: e
+        text: 정보 부족 / 알 수 없음. B2B 의 BFM 참여 여부는 코퍼스에 없다.
+        is_correct: false
+        failure_mode_tested: retrieval_failure
+    reference_reasoning: >-
+      b2b b2b-ops-guide §6 / b2b-coupon-policy §4 (B2B 는 BFM 미참여, 별도 전략 계정 캠페인 CMP-KR-SAQ4
+      운영) ↔ hq-pm policy-matrix §7 (BFM 은 소비자 대상, R10). B2B 비참여 + 별도 캠페인 결합.
+    expected_sources:
+      - corpus/b2b/b2b-ops-guide.md
+      - corpus/hq-pm/policy-matrix.md
+    tags:
+      - R10
+      - B2B
+      - BFM비참여
+  - id: Q30
+    question: >-
+      한 회원이 12 개월 누적 결제액 600 만 원이지만 최근 NPS 응답이 7 점이다. 이 회원은 이너 서클(VVIP)로 승급하나?
+    domain_pattern: multi_hop
+    hops_required: 2
+    options:
+      - id: a
+        text: 승급하지 않는다. 이너 서클은 500 만 원 AND NPS 9 이상이 모두 필요한데 NPS 7 은 게이트를 통과하지 못한다.
+        is_correct: true
+        failure_mode_tested: null
+      - id: b
+        text: 승급한다. 누적 600 만 원으로 금액 조건을 넘었으므로 NPS 와 무관하게 승급된다.
+        is_correct: false
+        failure_mode_tested: missed_hop
+      - id: c
+        text: 승급한다. 500 만 원 또는 NPS 9 중 하나만 충족하면 되는데 금액을 충족했다.
+        is_correct: false
+        failure_mode_tested: wrong_relation
+      - id: d
+        text: 승급한다. NPS 7 도 추천 고객 기준(7 점 이상)을 충족한다.
+        is_correct: false
+        failure_mode_tested: numeric_error
+      - id: e
+        text: 정보 부족 / 알 수 없음. NPS 7 회원의 승급 여부는 코퍼스에 없다.
+        is_correct: false
+        failure_mode_tested: retrieval_failure
+    reference_reasoning: >-
+      loyalty tier-rulebook §2.3/부록 A (이너 서클 게이트=500 만 원 AND NPS 9, 금액 충족해도 NPS 9 미만이면
+      승급 불가) ↔ tier-transition-rulebook (금액만 높고 NPS 8 이하면 승급 보류). NPS 7 은 9 미달이라 보류.
+    expected_sources:
+      - corpus/loyalty/tier-rulebook.md
+      - corpus/loyalty/tier-transition-rulebook.pdf
+    tags:
+      - VVIP승급
+      - NPS게이트
+      - 로열티

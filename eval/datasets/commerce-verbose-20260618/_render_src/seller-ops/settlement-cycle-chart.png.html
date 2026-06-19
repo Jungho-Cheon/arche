@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>정산 주기 비교 + 콜드체인 책임 매트릭스</title>
+<style>
+  body {
+    width: 1200px;
+    height: 800px;
+    margin: 0;
+    padding: 24px;
+    background: white;
+    font-family: 'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif;
+    box-sizing: border-box;
+    color: #1a2238;
+  }
+  .header { border-bottom: 4px solid #2b3a67; padding-bottom: 10px; margin-bottom: 18px; }
+  .header .kicker { font-size: 14px; letter-spacing: 3px; color: #6b7280; }
+  .header h1 { font-size: 28px; margin: 4px 0 0 0; color: #2b3a67; }
+  .columns { display: flex; gap: 22px; }
+  .panel { flex: 1; }
+  .panel h2 { font-size: 19px; margin: 0 0 14px 0; color: #2b3a67; border-left: 6px solid #2b3a67; padding-left: 10px; }
+
+  /* cycle bars */
+  .bar-row { display: flex; align-items: center; margin-bottom: 16px; }
+  .bar-label { width: 150px; font-size: 16px; font-weight: 600; }
+  .bar-track { flex: 1; height: 38px; background: #eef1f8; border-radius: 6px; position: relative; }
+  .bar-base { position: absolute; top: 0; left: 0; height: 38px; border-radius: 6px; display: flex; align-items: center; justify-content: flex-end; padding-right: 10px; color: white; font-size: 15px; font-weight: 700; box-sizing: border-box; }
+  .bar-hold { position: absolute; top: 0; height: 38px; border-radius: 0 6px 6px 0; background: repeating-linear-gradient(45deg, #c0392b, #c0392b 7px, #a83227 7px, #a83227 14px); display: flex; align-items: center; justify-content: center; color: white; font-size: 13px; font-weight: 700; box-sizing: border-box; }
+  .c-mp { background: #2b3a67; }
+  .c-1p { background: #2f8f5b; }
+  .c-cs { background: #b8860b; }
+  .scale { display: flex; justify-content: space-between; margin: 6px 0 0 150px; font-size: 12px; color: #888; }
+  .legend { margin-top: 18px; font-size: 14px; line-height: 1.9; }
+  .swatch { display: inline-block; width: 22px; height: 14px; vertical-align: middle; margin-right: 6px; border-radius: 3px; }
+  .swatch.hold { background: repeating-linear-gradient(45deg, #c0392b, #c0392b 5px, #a83227 5px, #a83227 10px); }
+
+  /* matrix */
+  table { border-collapse: collapse; width: 100%; font-size: 15px; }
+  th, td { border: 1px solid #b9c0d4; padding: 11px 10px; text-align: center; }
+  th { background: #2b3a67; color: white; font-size: 15px; }
+  td.type { font-weight: 700; background: #eef1f8; text-align: left; padding-left: 14px; }
+  .seller { color: #c0392b; font-weight: 700; }
+  .house { color: #2f8f5b; font-weight: 700; }
+  .note { margin-top: 12px; font-size: 13px; color: #555; line-height: 1.7; background: #f7f7f4; border-left: 4px solid #2b6cb0; padding: 10px 12px; }
+  .foot { position: absolute; bottom: 18px; left: 24px; font-size: 12px; color: #999; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="kicker">AURORA MARKET / SELLER-OPS</div>
+  <h1>정산 주기 비교 &amp; 콜드체인 사고 책임 매트릭스</h1>
+</div>
+
+<div class="columns">
+
+  <div class="panel">
+    <h2>정산 주기 (D 기산)</h2>
+
+    <div class="bar-row">
+      <div class="bar-label">MP (Marketplace)</div>
+      <div class="bar-track">
+        <div class="bar-base c-mp" style="width: 68%;">D+30</div>
+        <div class="bar-hold" style="left: 68%; width: 32%;">+14 hold</div>
+      </div>
+    </div>
+
+    <div class="bar-row">
+      <div class="bar-label">컨사인 (Consign.)</div>
+      <div class="bar-track">
+        <div class="bar-base c-cs" style="width: 34%;">D+15</div>
+        <div class="bar-hold" style="left: 34%; width: 32%;">+14 hold</div>
+      </div>
+    </div>
+
+    <div class="bar-row">
+      <div class="bar-label">사입 (1P)</div>
+      <div class="bar-track">
+        <div class="bar-base c-1p" style="width: 16%;">D+7</div>
+        <div class="bar-hold" style="left: 16%; width: 32%;">+14 hold</div>
+      </div>
+    </div>
+
+    <div class="scale">
+      <span>D+0</span><span>D+15</span><span>D+30</span><span>D+44</span>
+    </div>
+
+    <div class="legend">
+      <span class="swatch c-mp"></span>기본 주기 (분쟁 노출도에 따른 차등)<br>
+      <span class="swatch hold"></span><b>+14일 hold</b> — VVIP 회원이 산 <b>명품</b> 거래에만 추가<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;→ MP D+44 &nbsp;|&nbsp; 컨사인 D+29 &nbsp;|&nbsp; 사입 D+21
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>콜드체인 사고 책임</h2>
+    <table>
+      <tr>
+        <th>셀러 유형</th>
+        <th>환불 손실 귀속</th>
+        <th>담보</th>
+      </tr>
+      <tr>
+        <td class="type">컨사인<br><span style="font-weight:400;font-size:12px;color:#666;">Consignment</span></td>
+        <td class="seller">▲ 셀러 차감</td>
+        <td>위탁 보관 책임</td>
+      </tr>
+      <tr>
+        <td class="type">사입<br><span style="font-weight:400;font-size:12px;color:#666;">1P</span></td>
+        <td class="house">● 본사 손실</td>
+        <td>재고 소유 회사</td>
+      </tr>
+      <tr>
+        <td class="type">MP<br><span style="font-weight:400;font-size:12px;color:#666;">Marketplace</span></td>
+        <td class="seller">▲ 셀러 차감</td>
+        <td>셀러 보증보험</td>
+      </tr>
+    </table>
+
+    <div class="note">
+      <b>읽는 법</b> — 신선식품 콜드체인 사고로 환불이 확정된 뒤의 손실을 <b>누가 부담</b>하는지의 매트릭스. 사입만 회사가 흡수하고, 컨사인/MP 는 셀러 차감이다. 환불 인정 요건 자체 (등급/기한/증빙) 는 본사 정책팀과 CS팀 기준이 정한다.
+    </div>
+
+    <div class="note" style="border-left-color:#c0392b;">
+      <b>JP 가전/디지털</b> — 입점 심사 시 JIS 인증서 필수. 갱신 누락 시 24시간 내 자동 비노출.
+    </div>
+  </div>
+
+</div>
+
+<div class="foot">출처 — 입점 계약 부속서 제3호 rev.4 (SOC-2026-04, 2026-05-22) / 셀러운영실 정산기획팀</div>
+
+</body>
+</html>
