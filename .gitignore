@@ -58,6 +58,5 @@ config.local.yaml
 # Brainstorming mockups (Visual Companion)
 .superpowers/
 
-# graphify — 그래프 산출물·캐시는 commit, 머신 로컬 경로 마커만 제외
-graphify-out/.graphify_python
-graphify-out/.graphify_root
+# graphify — 더 이상 사용하지 않음. 산출물 디렉토리 자체 제외
+graphify-out/
