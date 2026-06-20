@@ -1,0 +1,109 @@
+{
+  "column": "opentology",
+  "question_id": "Q14",
+  "run_index": 1,
+  "anchor_extraction": {
+    "input_tokens": 507,
+    "output_tokens": 37,
+    "latency_ms": 738,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"AMEX\",\"aliases\":[\"AMEX\",\"American Express\"]},{\"canonical\":\"operating margin\",\"aliases\":[\"operating margin\",\"operating margin profile\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "AMEX",
+          "aliases": [
+            "AMEX",
+            "American Express"
+          ]
+        },
+        {
+          "canonical": "operating margin",
+          "aliases": [
+            "operating margin",
+            "operating margin profile"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 814,
+      "input": {
+        "keywords": [
+          "AMEX",
+          "American Express",
+          "operating margin",
+          "operating margin profile"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 764,
+      "input": {
+        "entry_ids": [
+          "01KVHQ6DQPAJW348FTN1QJYKSS",
+          "01KVHQ35FHXZAN8YTHCW401SGJ",
+          "01KVHQ4YF143PN4051T9DB6BEA",
+          "01KVHQ6N8MJCASDRC21RJKT9GA",
+          "01KVHQ34S1RVGEVVV811BATHF9",
+          "01KVHQ4XHWTMV1A77164WH2QAD",
+          "01KVHPWE2BT376J2H5SP31CR2H",
+          "01KVHQ1PDRZMTB7JX9EB8H98D4",
+          "01KVHPWFNCTS3KADRBN6WWTMD3",
+          "01KVHQ0YF498YQJNFBXGQZSVTK"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 80,
+        "edges": 73,
+        "truncated": true
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVHQ6DQPAJW348FTN1QJYKSS",
+    "01KVHQ35FHXZAN8YTHCW401SGJ",
+    "01KVHQ4YF143PN4051T9DB6BEA",
+    "01KVHQ6N8MJCASDRC21RJKT9GA",
+    "01KVHQ34S1RVGEVVV811BATHF9",
+    "01KVHQ4XHWTMV1A77164WH2QAD",
+    "01KVHPWE2BT376J2H5SP31CR2H",
+    "01KVHQ1PDRZMTB7JX9EB8H98D4",
+    "01KVHPWFNCTS3KADRBN6WWTMD3",
+    "01KVHQ0YF498YQJNFBXGQZSVTK"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 36703,
+  "answer_generation": {
+    "input_tokens": 12621,
+    "output_tokens": 87,
+    "latency_ms": 1162,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\": \"e\", \"reasoning\": \"The provided domain graph does not contain any information about AMEX's (American Express Company's) operating margin, its trend, or whether operating margin is a useful metric for evaluating AMEX's performance. There are no relationships or attributes in the graph that address operating margin or its relevance for AMEX. Therefore, the only correct answer is '정보 부족 / 알 수 없음'.\"}",
+    "parsed": {
+      "choice": "e",
+      "reasoning": "The provided domain graph does not contain any information about AMEX's (American Express Company's) operating margin, its trend, or whether operating margin is a useful metric for evaluating AMEX's performance. There are no relationships or attributes in the graph that address operating margin or its relevance for AMEX. Therefore, the only correct answer is '정보 부족 / 알 수 없음'."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 32,
+  "total_input_tokens": 13128,
+  "total_output_tokens": 124,
+  "total_tokens": 13284,
+  "total_latency_ms": 3478
+}

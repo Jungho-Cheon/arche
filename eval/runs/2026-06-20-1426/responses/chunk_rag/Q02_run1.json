@@ -1,0 +1,65 @@
+{
+  "column": "chunk_rag",
+  "question_id": "Q02",
+  "run_index": 1,
+  "input_tokens": 7054,
+  "output_tokens": 162,
+  "embedding_tokens": 29794,
+  "embedding_tokens_breakdown": {
+    "question_embedding": 22,
+    "setup_amortized": 29772,
+    "setup_total": 982504,
+    "questions_count_for_amortization": 33
+  },
+  "total_tokens": 37010,
+  "latency_ms": 2117,
+  "model": "gpt-4.1",
+  "retrieved_chunks": [
+    {
+      "source_path": "AMCOR_2023_10K.md",
+      "chunk_index": 28,
+      "score": 0.6951639810426139
+    },
+    {
+      "source_path": "AMCOR_2023_10K.md",
+      "chunk_index": 35,
+      "score": 0.653974747674222
+    },
+    {
+      "source_path": "AMCOR_2023_10K.md",
+      "chunk_index": 8,
+      "score": 0.6477075438358474
+    },
+    {
+      "source_path": "AMCOR_2023_10K.md",
+      "chunk_index": 27,
+      "score": 0.6422916344921334
+    },
+    {
+      "source_path": "AMCOR_2023_10K.md",
+      "chunk_index": 1,
+      "score": 0.6320510296759155
+    },
+    {
+      "source_path": "AMCOR_2023_10K.md",
+      "chunk_index": 46,
+      "score": 0.6313731381766775
+    },
+    {
+      "source_path": "AMCOR_2023_10K.md",
+      "chunk_index": 41,
+      "score": 0.6313634712946641
+    },
+    {
+      "source_path": "AMCOR_2023_10K.md",
+      "chunk_index": 99,
+      "score": 0.6310795048007876
+    }
+  ],
+  "raw_response": "{\"choice\":\"e\",\"reasoning\":\"제공된 발췌들(청크 1~8)에서는 Amcor의 FY2023, FY2022, FY2021 기간 동안의 주요 인수(acquisitions)에 대한 구체적인 언급이나 리스트가 나오지 않습니다. 청크 8에서 2023년 8월 인도 내 소규모 유연 포장 제조업체 인수에 대한 언급이 있으나, 이는 FY2024에 해당하며, FY2023~2021 기간의 체코, 상하이, 뉴질랜드 기업 인수에 대한 직접적인 언급은 없습니다. 따라서 보기 중 어느 것도 명확히 뒷받침할 수 있는 근거가 발췌에 없습니다.\"}",
+  "parsed": {
+    "choice": "e",
+    "reasoning": "제공된 발췌들(청크 1~8)에서는 Amcor의 FY2023, FY2022, FY2021 기간 동안의 주요 인수(acquisitions)에 대한 구체적인 언급이나 리스트가 나오지 않습니다. 청크 8에서 2023년 8월 인도 내 소규모 유연 포장 제조업체 인수에 대한 언급이 있으나, 이는 FY2024에 해당하며, FY2023~2021 기간의 체코, 상하이, 뉴질랜드 기업 인수에 대한 직접적인 언급은 없습니다. 따라서 보기 중 어느 것도 명확히 뒷받침할 수 있는 근거가 발췌에 없습니다."
+  },
+  "parse_error": null
+}

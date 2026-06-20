@@ -1,0 +1,65 @@
+{
+  "column": "chunk_rag",
+  "question_id": "Q33",
+  "run_index": 0,
+  "input_tokens": 6808,
+  "output_tokens": 285,
+  "embedding_tokens": 29834,
+  "embedding_tokens_breakdown": {
+    "question_embedding": 62,
+    "setup_amortized": 29772,
+    "setup_total": 982504,
+    "questions_count_for_amortization": 33
+  },
+  "total_tokens": 36927,
+  "latency_ms": 2938,
+  "model": "gpt-4.1",
+  "retrieved_chunks": [
+    {
+      "source_path": "PEPSICO_2022_10K.md",
+      "chunk_index": 52,
+      "score": 0.6094058237404139
+    },
+    {
+      "source_path": "PEPSICO_2022_10K.md",
+      "chunk_index": 112,
+      "score": 0.6034260031392765
+    },
+    {
+      "source_path": "PEPSICO_2022_10K.md",
+      "chunk_index": 76,
+      "score": 0.5839421625410265
+    },
+    {
+      "source_path": "PEPSICO_2022_10K.md",
+      "chunk_index": 51,
+      "score": 0.5826188586956416
+    },
+    {
+      "source_path": "PEPSICO_2022_10K.md",
+      "chunk_index": 53,
+      "score": 0.5713849498582279
+    },
+    {
+      "source_path": "PEPSICO_2022_10K.md",
+      "chunk_index": 67,
+      "score": 0.5708525642463995
+    },
+    {
+      "source_path": "PEPSICO_2022_10K.md",
+      "chunk_index": 57,
+      "score": 0.5704542201726734
+    },
+    {
+      "source_path": "PEPSICO_2022_10K.md",
+      "chunk_index": 74,
+      "score": 0.5688686017751804
+    }
+  ],
+  "raw_response": "{\n  \"choice\": \"c\",\n  \"reasoning\": \"To calculate the FY2022 unadjusted EBITDA % margin for PepsiCo, we need unadjusted operating income (GAAP operating profit), depreciation & amortization (D&A), and net revenue for 2022. From 청크 5, the reported (GAAP) operating profit for 2022 is $11,512 million. From 청크 6, depreciation and amortization for 2022 is $2,763 million. From 청크 5, net revenue (cost of sales + gross profit) is $86,392 million ($40,576M + $45,816M), but more accurately, PepsiCo's net revenue for 2022 is $86,392 million (as per their 10-K, though not directly shown in the provided chunks, this is the sum of cost of sales and gross profit, which matches the structure of their P&L). Unadjusted EBITDA = Operating Profit + D&A = $11,512M + $2,763M = $14,275M. EBITDA margin = $14,275M / $86,392M = 16.5%. This matches option c. The other options are either based on the wrong year, wrong calculation, or use adjusted numbers. Therefore, the correct answer is c) 16.5%.\"\n}",
+  "parsed": {
+    "choice": "c",
+    "reasoning": "To calculate the FY2022 unadjusted EBITDA % margin for PepsiCo, we need unadjusted operating income (GAAP operating profit), depreciation & amortization (D&A), and net revenue for 2022. From 청크 5, the reported (GAAP) operating profit for 2022 is $11,512 million. From 청크 6, depreciation and amortization for 2022 is $2,763 million. From 청크 5, net revenue (cost of sales + gross profit) is $86,392 million ($40,576M + $45,816M), but more accurately, PepsiCo's net revenue for 2022 is $86,392 million (as per their 10-K, though not directly shown in the provided chunks, this is the sum of cost of sales and gross profit, which matches the structure of their P&L). Unadjusted EBITDA = Operating Profit + D&A = $11,512M + $2,763M = $14,275M. EBITDA margin = $14,275M / $86,392M = 16.5%. This matches option c. The other options are either based on the wrong year, wrong calculation, or use adjusted numbers. Therefore, the correct answer is c) 16.5%."
+  },
+  "parse_error": null
+}

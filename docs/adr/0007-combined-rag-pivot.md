@@ -1,7 +1,9 @@
 # ADR-0007: Combined RAG 채택 — Opentology 의 정체성 변경
 
-Status: accepted
+Status: accepted (amended by ADR-0008)
 Date: 2026-06-20
+
+> **Amendment (ADR-0008, 2026-06-20)**: 본 ADR 의 D2 가 정의한 1M 시점 재검증 (M6.5) 결과 Combined ≈ chunk (+0pp). 그러나 진단 결과 graph 데이터가 catastrophic over-merge 로 부패해 측정 자체가 무효. ADR-0008 이 *EntityConsolidator 를 M7 gating 으로 격상* 하고 ADR-0007 D2 의 *결정 분기 시점을 지연* 한다. 정체성 (D1) 과 기술 결정 (D3-D6) 은 유지. 자세한 evidence 는 [`eval/reports/2026-06-20-financebench-1M/CONCLUSION.md`](../../eval/reports/2026-06-20-financebench-1M/CONCLUSION.md).
 
 ## TL;DR
 

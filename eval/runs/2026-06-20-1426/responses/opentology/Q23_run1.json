@@ -1,0 +1,107 @@
+{
+  "column": "opentology",
+  "question_id": "Q23",
+  "run_index": 1,
+  "anchor_extraction": {
+    "input_tokens": 480,
+    "output_tokens": 34,
+    "latency_ms": 954,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"Boeing\",\"aliases\":[\"Boeing\"]},{\"canonical\":\"cyclicality\",\"aliases\":[\"cyclicality\",\"business cycle\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "Boeing",
+          "aliases": [
+            "Boeing"
+          ]
+        },
+        {
+          "canonical": "cyclicality",
+          "aliases": [
+            "cyclicality",
+            "business cycle"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 653,
+      "input": {
+        "keywords": [
+          "Boeing",
+          "cyclicality",
+          "business cycle"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 47,
+      "input": {
+        "entry_ids": [
+          "01KVHQ88T4JV63PKEJKH4ZAXCA",
+          "01KVHQ9E9FN6GB2DSB2TE5NPGR",
+          "01KVHQ9H129ZF86BHQCT8P88CB",
+          "01KVHQE6MSS6MRR0FQHA3CJB1V",
+          "01KVHQ38JKAVQRM9G07EXFK9KR",
+          "01KVHQ9ZQGWJP3D1VYHVARS0R6",
+          "01KVHQ9GBC13RS0J18RZWG7CTP",
+          "01KVHQHWC03C4WR43X1VXVCSN9",
+          "01KVHQA2RE8SA27A3Q1HJS9FX6",
+          "01KVHQ9FJHJSY18P3Q75NHSCHK"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 13,
+        "edges": 10,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVHQ88T4JV63PKEJKH4ZAXCA",
+    "01KVHQ9E9FN6GB2DSB2TE5NPGR",
+    "01KVHQ9H129ZF86BHQCT8P88CB",
+    "01KVHQE6MSS6MRR0FQHA3CJB1V",
+    "01KVHQ38JKAVQRM9G07EXFK9KR",
+    "01KVHQ9ZQGWJP3D1VYHVARS0R6",
+    "01KVHQ9GBC13RS0J18RZWG7CTP",
+    "01KVHQHWC03C4WR43X1VXVCSN9",
+    "01KVHQA2RE8SA27A3Q1HJS9FX6",
+    "01KVHQ9FJHJSY18P3Q75NHSCHK"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 6718,
+  "answer_generation": {
+    "input_tokens": 2493,
+    "output_tokens": 106,
+    "latency_ms": 1864,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"e\",\"reasoning\":\"제공된 그래프에는 Boeing의 사업이 경기순환성(cyclicality)에 노출되어 있는지에 대한 직접적인 정보가 없다. 엔티티와 관계는 Boeing의 사업 부문, 정책, 플랜, 가치, 웹사이트, 그리고 일부 지원하는 그룹 등에 대한 설명만 포함하고 있으며, 경기순환성이나 항공산업의 경기 민감성에 대한 언급은 없다. 따라서 정답은 정보 부족(e)이다.\"}",
+    "parsed": {
+      "choice": "e",
+      "reasoning": "제공된 그래프에는 Boeing의 사업이 경기순환성(cyclicality)에 노출되어 있는지에 대한 직접적인 정보가 없다. 엔티티와 관계는 Boeing의 사업 부문, 정책, 플랜, 가치, 웹사이트, 그리고 일부 지원하는 그룹 등에 대한 설명만 포함하고 있으며, 경기순환성이나 항공산업의 경기 민감성에 대한 언급은 없다. 따라서 정답은 정보 부족(e)이다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 24,
+  "total_input_tokens": 2973,
+  "total_output_tokens": 140,
+  "total_tokens": 3137,
+  "total_latency_ms": 3518
+}

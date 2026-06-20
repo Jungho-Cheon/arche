@@ -1,0 +1,65 @@
+{
+  "column": "chunk_rag",
+  "question_id": "Q13",
+  "run_index": 1,
+  "input_tokens": 5279,
+  "output_tokens": 166,
+  "embedding_tokens": 29789,
+  "embedding_tokens_breakdown": {
+    "question_embedding": 17,
+    "setup_amortized": 29772,
+    "setup_total": 982504,
+    "questions_count_for_amortization": 33
+  },
+  "total_tokens": 35234,
+  "latency_ms": 1925,
+  "model": "gpt-4.1",
+  "retrieved_chunks": [
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 6,
+      "score": 0.6906732304308199
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 4,
+      "score": 0.6838434649872712
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 5,
+      "score": 0.6784436467328375
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 165,
+      "score": 0.6561015521598221
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 3,
+      "score": 0.6476672110386512
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 260,
+      "score": 0.6228941904917218
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 7,
+      "score": 0.6085093085237565
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 48,
+      "score": 0.6077538231173956
+    }
+  ],
+  "raw_response": "{\"choice\":\"a\",\"reasoning\":\"청크 2에서 'Jurisdictions that represent a significant portion of our billed business outside of the United States include the United Kingdom (UK), the European Union (EU), Australia, Japan, Canada and Mexico.'라고 명시되어 있습니다. 이로부터 미국(United States), 유럽(UK, EU), 아시아(일본, 호주 포함), 라틴 아메리카(멕시코 포함)가 주요 운영 지역임을 알 수 있습니다. 따라서 보기 a) United States, Europe, Asia, and Latin America가 가장 정확하게 해당 내용을 반영합니다. 다른 보기에 언급된 EMEA, APAC, LACC 등은 발췌에서 직접적으로 언급되지 않았으므로 a가 가장 적합합니다.\"}",
+  "parsed": {
+    "choice": "a",
+    "reasoning": "청크 2에서 'Jurisdictions that represent a significant portion of our billed business outside of the United States include the United Kingdom (UK), the European Union (EU), Australia, Japan, Canada and Mexico.'라고 명시되어 있습니다. 이로부터 미국(United States), 유럽(UK, EU), 아시아(일본, 호주 포함), 라틴 아메리카(멕시코 포함)가 주요 운영 지역임을 알 수 있습니다. 따라서 보기 a) United States, Europe, Asia, and Latin America가 가장 정확하게 해당 내용을 반영합니다. 다른 보기에 언급된 EMEA, APAC, LACC 등은 발췌에서 직접적으로 언급되지 않았으므로 a가 가장 적합합니다."
+  },
+  "parse_error": null
+}

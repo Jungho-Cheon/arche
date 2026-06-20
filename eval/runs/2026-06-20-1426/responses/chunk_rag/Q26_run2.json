@@ -1,0 +1,65 @@
+{
+  "column": "chunk_rag",
+  "question_id": "Q26",
+  "run_index": 2,
+  "input_tokens": 7152,
+  "output_tokens": 259,
+  "embedding_tokens": 29789,
+  "embedding_tokens_breakdown": {
+    "question_embedding": 17,
+    "setup_amortized": 29772,
+    "setup_total": 982504,
+    "questions_count_for_amortization": 33
+  },
+  "total_tokens": 37200,
+  "latency_ms": 4799,
+  "model": "gpt-4.1",
+  "retrieved_chunks": [
+    {
+      "source_path": "JOHNSON_JOHNSON_2022_10K.md",
+      "chunk_index": 30,
+      "score": 0.6309813076841895
+    },
+    {
+      "source_path": "JOHNSON_JOHNSON_2022_10K.md",
+      "chunk_index": 138,
+      "score": 0.6162781383255879
+    },
+    {
+      "source_path": "JOHNSON_JOHNSON_2022_10K.md",
+      "chunk_index": 58,
+      "score": 0.6008889054584008
+    },
+    {
+      "source_path": "JOHNSON_JOHNSON_2022_10K.md",
+      "chunk_index": 132,
+      "score": 0.5942221163600107
+    },
+    {
+      "source_path": "JOHNSON_JOHNSON_2022_10K.md",
+      "chunk_index": 0,
+      "score": 0.5803136546083976
+    },
+    {
+      "source_path": "JOHNSON_JOHNSON_2022_10K.md",
+      "chunk_index": 52,
+      "score": 0.5691170510433126
+    },
+    {
+      "source_path": "JOHNSON_JOHNSON_2022_10K.md",
+      "chunk_index": 40,
+      "score": 0.5615444303657656
+    },
+    {
+      "source_path": "JOHNSON_JOHNSON_2022_10K.md",
+      "chunk_index": 91,
+      "score": 0.560885223581568
+    }
+  ],
+  "raw_response": "{\"choice\":\"d\",\"reasoning\":\"제공된 발췌에서는 Johnson & Johnson의 FY2022 재무정보에 대해 구체적인 성장률 수치(예: 매출 증가율, 순이익 증가율 등)는 명시되어 있지 않으나, 보기 d)에서 언급된 'sales grew by only 1.3% in FY2022'라는 수치가 다른 보기들과 비교해 상대적으로 낮은 성장임을 시사한다. 또한, 청크 1과 3에서 J&J가 다양한 사업 부문에서 활동하고 있고, 혁신과 연구개발에 투자하고 있지만, 'high growth company'로 분류될 만한 두 자릿수 성장률(예: 13% 등)에 대한 언급은 없다. 만약 FY2022에 13%의 매출 증가가 있었다면, 이는 분명히 발췌 내에서 강조되었을 것이다. 따라서, 1.3%의 매출 성장률은 일반적으로 'high growth'로 간주되지 않으므로, 보기 d)가 가장 적합하다. 이는 제공된 정보(특히 보기의 수치와 일반적인 성장률 기준)에 근거한 판단이다.\"}",
+  "parsed": {
+    "choice": "d",
+    "reasoning": "제공된 발췌에서는 Johnson & Johnson의 FY2022 재무정보에 대해 구체적인 성장률 수치(예: 매출 증가율, 순이익 증가율 등)는 명시되어 있지 않으나, 보기 d)에서 언급된 'sales grew by only 1.3% in FY2022'라는 수치가 다른 보기들과 비교해 상대적으로 낮은 성장임을 시사한다. 또한, 청크 1과 3에서 J&J가 다양한 사업 부문에서 활동하고 있고, 혁신과 연구개발에 투자하고 있지만, 'high growth company'로 분류될 만한 두 자릿수 성장률(예: 13% 등)에 대한 언급은 없다. 만약 FY2022에 13%의 매출 증가가 있었다면, 이는 분명히 발췌 내에서 강조되었을 것이다. 따라서, 1.3%의 매출 성장률은 일반적으로 'high growth'로 간주되지 않으므로, 보기 d)가 가장 적합하다. 이는 제공된 정보(특히 보기의 수치와 일반적인 성장률 기준)에 근거한 판단이다."
+  },
+  "parse_error": null
+}

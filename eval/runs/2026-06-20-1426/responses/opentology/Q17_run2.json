@@ -1,0 +1,112 @@
+{
+  "column": "opentology",
+  "question_id": "Q17",
+  "run_index": 2,
+  "anchor_extraction": {
+    "input_tokens": 487,
+    "output_tokens": 38,
+    "latency_ms": 1005,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"American Express\",\"aliases\":[\"American Express\"]},{\"canonical\":\"Balance Sheet\",\"aliases\":[\"Balance Sheet\"]},{\"canonical\":\"liability\",\"aliases\":[\"liability\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "American Express",
+          "aliases": [
+            "American Express"
+          ]
+        },
+        {
+          "canonical": "Balance Sheet",
+          "aliases": [
+            "Balance Sheet"
+          ]
+        },
+        {
+          "canonical": "liability",
+          "aliases": [
+            "liability"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 816,
+      "input": {
+        "keywords": [
+          "American Express",
+          "Balance Sheet",
+          "liability"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 90,
+      "input": {
+        "entry_ids": [
+          "01KVHQ35FHXZAN8YTHCW401SGJ",
+          "01KVHQ6DQPAJW348FTN1QJYKSS",
+          "01KVHQ4YF143PN4051T9DB6BEA",
+          "01KVHQHR2H6KAHN4NVN15QJSHB",
+          "01KVHQ34S1RVGEVVV811BATHF9",
+          "01KVHQ6N8MJCASDRC21RJKT9GA",
+          "01KVHQ4XHWTMV1A77164WH2QAD",
+          "01KVHQE9ZJPMT9RVKWWSGM1M7Y",
+          "01KVHQAD505D18HJSNW1RVDY10",
+          "01KVHQH40RY6PS8BVH1HGMABNG"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 33,
+        "edges": 29,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVHQ35FHXZAN8YTHCW401SGJ",
+    "01KVHQ6DQPAJW348FTN1QJYKSS",
+    "01KVHQ4YF143PN4051T9DB6BEA",
+    "01KVHQHR2H6KAHN4NVN15QJSHB",
+    "01KVHQ34S1RVGEVVV811BATHF9",
+    "01KVHQ6N8MJCASDRC21RJKT9GA",
+    "01KVHQ4XHWTMV1A77164WH2QAD",
+    "01KVHQE9ZJPMT9RVKWWSGM1M7Y",
+    "01KVHQAD505D18HJSNW1RVDY10",
+    "01KVHQH40RY6PS8BVH1HGMABNG"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 18408,
+  "answer_generation": {
+    "input_tokens": 5873,
+    "output_tokens": 142,
+    "latency_ms": 1630,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"e\",\"reasoning\":\"제공된 도메인 그래프에는 American Express의 2022년 재무상태표(대차대조표)에서 가장 큰 부채 항목이 무엇인지에 대한 정보가 포함되어 있지 않습니다. 엔티티와 관계는 주로 회사 구조, 플랜, 규제, 감독 기관, 그리고 일부 플랜의 세부 내용에 관한 것이며, 구체적인 재무제표 항목(예: 장기부채, 매입채무, 발생비용, 고객예치금 등)에 대한 언급이 없습니다. 따라서 정답은 '정보 부족 / 알 수 없음'입니다.\"}",
+    "parsed": {
+      "choice": "e",
+      "reasoning": "제공된 도메인 그래프에는 American Express의 2022년 재무상태표(대차대조표)에서 가장 큰 부채 항목이 무엇인지에 대한 정보가 포함되어 있지 않습니다. 엔티티와 관계는 주로 회사 구조, 플랜, 규제, 감독 기관, 그리고 일부 플랜의 세부 내용에 관한 것이며, 구체적인 재무제표 항목(예: 장기부채, 매입채무, 발생비용, 고객예치금 등)에 대한 언급이 없습니다. 따라서 정답은 '정보 부족 / 알 수 없음'입니다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 24,
+  "total_input_tokens": 6360,
+  "total_output_tokens": 180,
+  "total_tokens": 6564,
+  "total_latency_ms": 3541
+}

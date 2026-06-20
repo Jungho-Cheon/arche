@@ -1,0 +1,65 @@
+{
+  "column": "chunk_rag",
+  "question_id": "Q25",
+  "run_index": 1,
+  "input_tokens": 6417,
+  "output_tokens": 161,
+  "embedding_tokens": 29789,
+  "embedding_tokens_breakdown": {
+    "question_embedding": 17,
+    "setup_amortized": 29772,
+    "setup_total": 982504,
+    "questions_count_for_amortization": 33
+  },
+  "total_tokens": 36367,
+  "latency_ms": 1872,
+  "model": "gpt-4.1",
+  "retrieved_chunks": [
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 59,
+      "score": 0.6106279328841301
+    },
+    {
+      "source_path": "JOHNSON_JOHNSON_2022_10K.md",
+      "chunk_index": 76,
+      "score": 0.6092131689358034
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 55,
+      "score": 0.6088133707972482
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 26,
+      "score": 0.5972130042891924
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 27,
+      "score": 0.5971158354332934
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 24,
+      "score": 0.5920169626239471
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 54,
+      "score": 0.5811962157422487
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 56,
+      "score": 0.5811313339397806
+    }
+  ],
+  "raw_response": "{\"choice\":\"d\",\"reasoning\":\"청크 6(BOEING_2022_10K.md:24)에 따르면, Boeing의 FY2022 유효세율(effective income tax rate)은 0.6%이고, FY2021 유효세율은 14.8%입니다. 보기에서 소수점 두 자리를 반올림한 0.62%와 -14.76%가 제시되어 있는데, 2021년 수치가 음수로 표기된 점을 제외하면 2022년 0.62%와 2021년 -14.76%가 가장 근접합니다. 실제 보고서 수치와 가장 일치하는 보기는 d)입니다. 따라서 정답은 d)입니다.\"}",
+  "parsed": {
+    "choice": "d",
+    "reasoning": "청크 6(BOEING_2022_10K.md:24)에 따르면, Boeing의 FY2022 유효세율(effective income tax rate)은 0.6%이고, FY2021 유효세율은 14.8%입니다. 보기에서 소수점 두 자리를 반올림한 0.62%와 -14.76%가 제시되어 있는데, 2021년 수치가 음수로 표기된 점을 제외하면 2022년 0.62%와 2021년 -14.76%가 가장 근접합니다. 실제 보고서 수치와 가장 일치하는 보기는 d)입니다. 따라서 정답은 d)입니다."
+  },
+  "parse_error": null
+}

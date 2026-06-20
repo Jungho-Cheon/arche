@@ -1,0 +1,179 @@
+{
+  "column": "combined",
+  "question_id": "Q01",
+  "run_index": 2,
+  "anchor_extraction": {
+    "input_tokens": 515,
+    "output_tokens": 76,
+    "latency_ms": 982,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"AMCOR\",\"aliases\":[\"AMCOR\"]},{\"canonical\":\"quick ratio\",\"aliases\":[\"quick ratio\"]},{\"canonical\":\"FY2023\",\"aliases\":[\"FY2023\",\"Fiscal Year 2023\"]},{\"canonical\":\"FY2022\",\"aliases\":[\"FY2022\",\"Fiscal Year 2022\"]},{\"canonical\":\"financial analyst\",\"aliases\":[\"financial analyst\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "AMCOR",
+          "aliases": [
+            "AMCOR"
+          ]
+        },
+        {
+          "canonical": "quick ratio",
+          "aliases": [
+            "quick ratio"
+          ]
+        },
+        {
+          "canonical": "FY2023",
+          "aliases": [
+            "FY2023",
+            "Fiscal Year 2023"
+          ]
+        },
+        {
+          "canonical": "FY2022",
+          "aliases": [
+            "FY2022",
+            "Fiscal Year 2022"
+          ]
+        },
+        {
+          "canonical": "financial analyst",
+          "aliases": [
+            "financial analyst"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 1259,
+      "input": {
+        "keywords": [
+          "AMCOR",
+          "quick ratio",
+          "FY2023",
+          "Fiscal Year 2023",
+          "FY2022",
+          "Fiscal Year 2022",
+          "financial analyst"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 51,
+      "input": {
+        "entry_ids": [
+          "01KVHQHWC03C4WR43X1VXVCSN9",
+          "01KVHQG0KZ68Z7GY7CZXSGE84V",
+          "01KVHQ6EZ1AKSG0V7ST2KCY531",
+          "01KVHQ53GYXW040QQJS0NXZVBA",
+          "01KVHQ6EF00W1Q3G5D06410H48",
+          "01KVHQ56RSSXB4VP7WW59H919J",
+          "01KVHPXPDEDWBDG5RAMC0AX6SY",
+          "01KVHQ91WW3YB87J3R2APKYXTG",
+          "01KVHPWWS3TW493GJSKJ4S0RFW",
+          "01KVHPX5NF0Y985QKEG5SRHY53"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 14,
+        "edges": 11,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVHQHWC03C4WR43X1VXVCSN9",
+    "01KVHQG0KZ68Z7GY7CZXSGE84V",
+    "01KVHQ6EZ1AKSG0V7ST2KCY531",
+    "01KVHQ53GYXW040QQJS0NXZVBA",
+    "01KVHQ6EF00W1Q3G5D06410H48",
+    "01KVHQ56RSSXB4VP7WW59H919J",
+    "01KVHPXPDEDWBDG5RAMC0AX6SY",
+    "01KVHQ91WW3YB87J3R2APKYXTG",
+    "01KVHPWWS3TW493GJSKJ4S0RFW",
+    "01KVHPX5NF0Y985QKEG5SRHY53"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 7649,
+  "retrieved_chunks": [
+    {
+      "source_path": "AMCOR_2023_10K.md",
+      "chunk_index": 0,
+      "score": 0.5844607279709566
+    },
+    {
+      "source_path": "AMCOR_2023_10K.md",
+      "chunk_index": 28,
+      "score": 0.5822169122000139
+    },
+    {
+      "source_path": "AMCOR_2023_10K.md",
+      "chunk_index": 46,
+      "score": 0.5693605440830323
+    },
+    {
+      "source_path": "AMCOR_2023_10K.md",
+      "chunk_index": 99,
+      "score": 0.5619877338525645
+    },
+    {
+      "source_path": "AMCOR_2023_10K.md",
+      "chunk_index": 1,
+      "score": 0.5575579860028381
+    },
+    {
+      "source_path": "AMCOR_2023_10K.md",
+      "chunk_index": 49,
+      "score": 0.5511965533681722
+    },
+    {
+      "source_path": "AMCOR_2023_10K.md",
+      "chunk_index": 26,
+      "score": 0.5468232236419744
+    },
+    {
+      "source_path": "AMCOR_2023_10K.md",
+      "chunk_index": 11,
+      "score": 0.5455495344715922
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 9918,
+    "output_tokens": 125,
+    "latency_ms": 1965,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"e\",\"reasoning\":\"Neither (A) the document excerpts nor (B) the domain graph provides the actual quick ratio values or the underlying current asset and current liability breakdowns needed to calculate the quick ratio for Amcor for FY2022 and FY2023. While there are some balance sheet figures in the excerpts, they are not detailed enough to compute the quick ratio (which excludes inventories and other non-liquid current assets). The domain graph also does not reference the quick ratio or provide relevant financial statement line items. Therefore, the only justifiable answer is (e) 정보 부족 / 알 수 없음.\"}",
+    "parsed": {
+      "choice": "e",
+      "reasoning": "Neither (A) the document excerpts nor (B) the domain graph provides the actual quick ratio values or the underlying current asset and current liability breakdowns needed to calculate the quick ratio for Amcor for FY2022 and FY2023. While there are some balance sheet figures in the excerpts, they are not detailed enough to compute the quick ratio (which excludes inventories and other non-liquid current assets). The domain graph also does not reference the quick ratio or provide relevant financial statement line items. Therefore, the only justifiable answer is (e) 정보 부족 / 알 수 없음."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 29872,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 44,
+    "chunk_setup_amortized": 29772,
+    "chunk_setup_total": 982504,
+    "graph_keyword_estimated": 56,
+    "questions_count_for_amortization": 33
+  },
+  "total_input_tokens": 10433,
+  "total_output_tokens": 201,
+  "total_tokens": 40506,
+  "total_latency_ms": 4257
+}

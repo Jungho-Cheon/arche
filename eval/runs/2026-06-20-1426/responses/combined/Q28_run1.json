@@ -1,0 +1,165 @@
+{
+  "column": "combined",
+  "question_id": "Q28",
+  "run_index": 1,
+  "anchor_extraction": {
+    "input_tokens": 514,
+    "output_tokens": 51,
+    "latency_ms": 1306,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"JnJ\",\"aliases\":[\"JnJ\",\"Johnson & Johnson\"]},{\"canonical\":\"inventory turnover ratio\",\"aliases\":[\"inventory turnover ratio\",\"inventory turnover\"]},{\"canonical\":\"conventional inventory management\",\"aliases\":[\"conventional inventory management\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "JnJ",
+          "aliases": [
+            "JnJ",
+            "Johnson & Johnson"
+          ]
+        },
+        {
+          "canonical": "inventory turnover ratio",
+          "aliases": [
+            "inventory turnover ratio",
+            "inventory turnover"
+          ]
+        },
+        {
+          "canonical": "conventional inventory management",
+          "aliases": [
+            "conventional inventory management"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 1145,
+      "input": {
+        "keywords": [
+          "JnJ",
+          "Johnson & Johnson",
+          "inventory turnover ratio",
+          "inventory turnover",
+          "conventional inventory management"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 73,
+      "input": {
+        "entry_ids": [
+          "01KVHQEB532TDKAYHFTJSDW7N5",
+          "01KVHQDDDQKMZNTGA8C8V0T1VH",
+          "01KVHQHXN054DA3SKYGJ7A8HQJ",
+          "01KVHQE28QG3SNZGBGWX0PEFN3",
+          "01KVHQBJ5MWNRA3D3P7DMDCNBX",
+          "01KVHQ48Y40Z54P140BJ355TBC",
+          "01KVHQE48RPVPGS9ATVAHC64YR",
+          "01KVHQE1GJX20PT55JRX5VMTTC",
+          "01KVHPXKF3DZ8M4BFTX87PH305",
+          "01KVHQAC049WQ9H60C408EK6ZT"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 23,
+        "edges": 20,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVHQEB532TDKAYHFTJSDW7N5",
+    "01KVHQDDDQKMZNTGA8C8V0T1VH",
+    "01KVHQHXN054DA3SKYGJ7A8HQJ",
+    "01KVHQE28QG3SNZGBGWX0PEFN3",
+    "01KVHQBJ5MWNRA3D3P7DMDCNBX",
+    "01KVHQ48Y40Z54P140BJ355TBC",
+    "01KVHQE48RPVPGS9ATVAHC64YR",
+    "01KVHQE1GJX20PT55JRX5VMTTC",
+    "01KVHPXKF3DZ8M4BFTX87PH305",
+    "01KVHQAC049WQ9H60C408EK6ZT"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 12151,
+  "retrieved_chunks": [
+    {
+      "source_path": "JOHNSON_JOHNSON_2022_10K.md",
+      "chunk_index": 90,
+      "score": 0.57294909462432
+    },
+    {
+      "source_path": "JOHNSON_JOHNSON_2022_10K.md",
+      "chunk_index": 132,
+      "score": 0.566647185749402
+    },
+    {
+      "source_path": "JOHNSON_JOHNSON_2022_10K.md",
+      "chunk_index": 58,
+      "score": 0.5651047612568162
+    },
+    {
+      "source_path": "JOHNSON_JOHNSON_2022_10K.md",
+      "chunk_index": 30,
+      "score": 0.5615692968665145
+    },
+    {
+      "source_path": "JOHNSON_JOHNSON_2022_10K.md",
+      "chunk_index": 29,
+      "score": 0.5548613533976271
+    },
+    {
+      "source_path": "JOHNSON_JOHNSON_2022_10K.md",
+      "chunk_index": 52,
+      "score": 0.5456443733188512
+    },
+    {
+      "source_path": "JOHNSON_JOHNSON_2022_10K.md",
+      "chunk_index": 138,
+      "score": 0.5438902922497703
+    },
+    {
+      "source_path": "JOHNSON_JOHNSON_2022_10K.md",
+      "chunk_index": 91,
+      "score": 0.5438334216463875
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 11102,
+    "output_tokens": 189,
+    "latency_ms": 2671,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"e\",\"reasoning\":\"(A) 검색된 문서 발췌에서는 Johnson & Johnson의 FY2022 매출원가(COGS)나 기초/기말 재고(inventory) 잔액이 명시적으로 제공되지 않습니다. 이 두 수치가 있어야 inventory turnover ratio(매출원가/평균재고)를 계산할 수 있습니다. 제공된 청크들은 사업부 설명, 주식보상, 현금흐름, 주주환원, 리스크, 주가성과, 구조조정 등 다양한 정보를 담고 있으나, 재고 관련 구체적 수치가 없습니다. (B) 도메인 그래프 역시 inventory나 turnover ratio에 대한 엔티티/관계가 없습니다. 따라서 어떠한 선택지도 명확히 뒷받침할 수 없으므로 정보 부족(e)이 정답입니다.\"}",
+    "parsed": {
+      "choice": "e",
+      "reasoning": "(A) 검색된 문서 발췌에서는 Johnson & Johnson의 FY2022 매출원가(COGS)나 기초/기말 재고(inventory) 잔액이 명시적으로 제공되지 않습니다. 이 두 수치가 있어야 inventory turnover ratio(매출원가/평균재고)를 계산할 수 있습니다. 제공된 청크들은 사업부 설명, 주식보상, 현금흐름, 주주환원, 리스크, 주가성과, 구조조정 등 다양한 정보를 담고 있으나, 재고 관련 구체적 수치가 없습니다. (B) 도메인 그래프 역시 inventory나 turnover ratio에 대한 엔티티/관계가 없습니다. 따라서 어떠한 선택지도 명확히 뒷받침할 수 없으므로 정보 부족(e)이 정답입니다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 29856,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 44,
+    "chunk_setup_amortized": 29772,
+    "chunk_setup_total": 982504,
+    "graph_keyword_estimated": 40,
+    "questions_count_for_amortization": 33
+  },
+  "total_input_tokens": 11616,
+  "total_output_tokens": 240,
+  "total_tokens": 41712,
+  "total_latency_ms": 5195
+}

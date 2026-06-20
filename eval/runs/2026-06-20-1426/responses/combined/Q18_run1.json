@@ -1,0 +1,154 @@
+{
+  "column": "combined",
+  "question_id": "Q18",
+  "run_index": 1,
+  "anchor_extraction": {
+    "input_tokens": 484,
+    "output_tokens": 27,
+    "latency_ms": 841,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"American Express\",\"aliases\":[\"American Express\"]},{\"canonical\":\"card members\",\"aliases\":[\"card members\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "American Express",
+          "aliases": [
+            "American Express"
+          ]
+        },
+        {
+          "canonical": "card members",
+          "aliases": [
+            "card members"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 607,
+      "input": {
+        "keywords": [
+          "American Express",
+          "card members"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 83,
+      "input": {
+        "entry_ids": [
+          "01KVHQ35FHXZAN8YTHCW401SGJ",
+          "01KVHQ3PC95GFP085RA868XP9Q",
+          "01KVHQ6DQPAJW348FTN1QJYKSS",
+          "01KVHQ4YF143PN4051T9DB6BEA",
+          "01KVHQ6N8MJCASDRC21RJKT9GA",
+          "01KVHQ34S1RVGEVVV811BATHF9",
+          "01KVHQ3XBGB3RYEV57PWPXAR71",
+          "01KVHQ3ZB23NX8AF84CKQETR0V",
+          "01KVHQ4XHWTMV1A77164WH2QAD",
+          "01KVHQ3THB60T7JKQ6363EWZMK"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 28,
+        "edges": 26,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVHQ35FHXZAN8YTHCW401SGJ",
+    "01KVHQ3PC95GFP085RA868XP9Q",
+    "01KVHQ6DQPAJW348FTN1QJYKSS",
+    "01KVHQ4YF143PN4051T9DB6BEA",
+    "01KVHQ6N8MJCASDRC21RJKT9GA",
+    "01KVHQ34S1RVGEVVV811BATHF9",
+    "01KVHQ3XBGB3RYEV57PWPXAR71",
+    "01KVHQ3ZB23NX8AF84CKQETR0V",
+    "01KVHQ4XHWTMV1A77164WH2QAD",
+    "01KVHQ3THB60T7JKQ6363EWZMK"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 16285,
+  "retrieved_chunks": [
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 54,
+      "score": 0.6252907481136231
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 6,
+      "score": 0.6178771366507546
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 53,
+      "score": 0.6109168587133122
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 99,
+      "score": 0.5883229722268922
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 72,
+      "score": 0.5792011244350403
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 4,
+      "score": 0.5788586595828755
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 32,
+      "score": 0.5728452816540859
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 57,
+      "score": 0.569164470378901
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 11719,
+    "output_tokens": 177,
+    "latency_ms": 2085,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"b\",\"reasoning\":\"(A) 검색된 문서 발췌에서 여러 곳(특히 청크 1, 3)에서 2022년에 American Express가 신규 카드 발급이 기록적인 수준에 도달했고, 카드 회원 유지(card member retention)가 높게 유지되었다고 명시적으로 언급하고 있습니다. 예를 들어, 'Net card fees increased 17 percent year over-year, as new card acquisitions reached record levels in 2022 and Card Member retention remained high...'라는 문장이 있습니다. 이는 2022년에도 카드 회원을 성공적으로 유지했음을 명확히 보여줍니다. (B) 도메인 그래프에는 카드 회원 유지에 대한 직접적인 정보가 없습니다. 따라서 (A)의 명시적이고 구체적인 진술이 결정적 근거입니다.\"}",
+    "parsed": {
+      "choice": "b",
+      "reasoning": "(A) 검색된 문서 발췌에서 여러 곳(특히 청크 1, 3)에서 2022년에 American Express가 신규 카드 발급이 기록적인 수준에 도달했고, 카드 회원 유지(card member retention)가 높게 유지되었다고 명시적으로 언급하고 있습니다. 예를 들어, 'Net card fees increased 17 percent year over-year, as new card acquisitions reached record levels in 2022 and Card Member retention remained high...'라는 문장이 있습니다. 이는 2022년에도 카드 회원을 성공적으로 유지했음을 명확히 보여줍니다. (B) 도메인 그래프에는 카드 회원 유지에 대한 직접적인 정보가 없습니다. 따라서 (A)의 명시적이고 구체적인 진술이 결정적 근거입니다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 29801,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 13,
+    "chunk_setup_amortized": 29772,
+    "chunk_setup_total": 982504,
+    "graph_keyword_estimated": 16,
+    "questions_count_for_amortization": 33
+  },
+  "total_input_tokens": 12203,
+  "total_output_tokens": 204,
+  "total_tokens": 42208,
+  "total_latency_ms": 3616
+}

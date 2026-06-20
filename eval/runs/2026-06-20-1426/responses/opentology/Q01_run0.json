@@ -1,0 +1,130 @@
+{
+  "column": "opentology",
+  "question_id": "Q01",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 515,
+    "output_tokens": 76,
+    "latency_ms": 1632,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"AMCOR\",\"aliases\":[\"AMCOR\"]},{\"canonical\":\"quick ratio\",\"aliases\":[\"quick ratio\"]},{\"canonical\":\"FY2023\",\"aliases\":[\"FY2023\",\"Fiscal Year 2023\"]},{\"canonical\":\"FY2022\",\"aliases\":[\"FY2022\",\"Fiscal Year 2022\"]},{\"canonical\":\"financial analyst\",\"aliases\":[\"financial analyst\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "AMCOR",
+          "aliases": [
+            "AMCOR"
+          ]
+        },
+        {
+          "canonical": "quick ratio",
+          "aliases": [
+            "quick ratio"
+          ]
+        },
+        {
+          "canonical": "FY2023",
+          "aliases": [
+            "FY2023",
+            "Fiscal Year 2023"
+          ]
+        },
+        {
+          "canonical": "FY2022",
+          "aliases": [
+            "FY2022",
+            "Fiscal Year 2022"
+          ]
+        },
+        {
+          "canonical": "financial analyst",
+          "aliases": [
+            "financial analyst"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 1634,
+      "input": {
+        "keywords": [
+          "AMCOR",
+          "quick ratio",
+          "FY2023",
+          "Fiscal Year 2023",
+          "FY2022",
+          "Fiscal Year 2022",
+          "financial analyst"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 53,
+      "input": {
+        "entry_ids": [
+          "01KVHQHWC03C4WR43X1VXVCSN9",
+          "01KVHQG0KZ68Z7GY7CZXSGE84V",
+          "01KVHQ6EZ1AKSG0V7ST2KCY531",
+          "01KVHQ53GYXW040QQJS0NXZVBA",
+          "01KVHQ6EF00W1Q3G5D06410H48",
+          "01KVHQ56RSSXB4VP7WW59H919J",
+          "01KVHPXPDEDWBDG5RAMC0AX6SY",
+          "01KVHQ91WW3YB87J3R2APKYXTG",
+          "01KVHPWWS3TW493GJSKJ4S0RFW",
+          "01KVHPX5NF0Y985QKEG5SRHY53"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 14,
+        "edges": 11,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVHQHWC03C4WR43X1VXVCSN9",
+    "01KVHQG0KZ68Z7GY7CZXSGE84V",
+    "01KVHQ6EZ1AKSG0V7ST2KCY531",
+    "01KVHQ53GYXW040QQJS0NXZVBA",
+    "01KVHQ6EF00W1Q3G5D06410H48",
+    "01KVHQ56RSSXB4VP7WW59H919J",
+    "01KVHPXPDEDWBDG5RAMC0AX6SY",
+    "01KVHQ91WW3YB87J3R2APKYXTG",
+    "01KVHPWWS3TW493GJSKJ4S0RFW",
+    "01KVHPX5NF0Y985QKEG5SRHY53"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 7649,
+  "answer_generation": {
+    "input_tokens": 2903,
+    "output_tokens": 107,
+    "latency_ms": 1745,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"e\",\"reasoning\":\"그래프 내에는 AMCOR의 quick ratio(당좌비율)에 대한 수치나 FY2022, FY2023의 관련 데이터가 전혀 제공되어 있지 않습니다. 제공된 엔티티와 관계는 주로 문서 참조, 계획, 법률 적용, 계정 구조 등에 관한 것이며, 유동비율 또는 당좌비율에 대한 언급이 없습니다. 따라서 보기 e) 정보 부족 / 알 수 없음이 정답입니다.\"}",
+    "parsed": {
+      "choice": "e",
+      "reasoning": "그래프 내에는 AMCOR의 quick ratio(당좌비율)에 대한 수치나 FY2022, FY2023의 관련 데이터가 전혀 제공되어 있지 않습니다. 제공된 엔티티와 관계는 주로 문서 참조, 계획, 법률 적용, 계정 구조 등에 관한 것이며, 유동비율 또는 당좌비율에 대한 언급이 없습니다. 따라서 보기 e) 정보 부족 / 알 수 없음이 정답입니다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 56,
+  "total_input_tokens": 3418,
+  "total_output_tokens": 183,
+  "total_tokens": 3657,
+  "total_latency_ms": 5064
+}

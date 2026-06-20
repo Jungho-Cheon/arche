@@ -1,0 +1,65 @@
+{
+  "column": "chunk_rag",
+  "question_id": "Q31",
+  "run_index": 1,
+  "input_tokens": 6310,
+  "output_tokens": 91,
+  "embedding_tokens": 29805,
+  "embedding_tokens_breakdown": {
+    "question_embedding": 33,
+    "setup_amortized": 29772,
+    "setup_total": 982504,
+    "questions_count_for_amortization": 33
+  },
+  "total_tokens": 36206,
+  "latency_ms": 1458,
+  "model": "gpt-4.1",
+  "retrieved_chunks": [
+    {
+      "source_path": "PEPSICO_2022_10K.md",
+      "chunk_index": 83,
+      "score": 0.6809055765051172
+    },
+    {
+      "source_path": "PEPSICO_2022_10K.md",
+      "chunk_index": 82,
+      "score": 0.6253781065292723
+    },
+    {
+      "source_path": "PEPSICO_2022_10K.md",
+      "chunk_index": 53,
+      "score": 0.6084319233587171
+    },
+    {
+      "source_path": "PEPSICO_2022_10K.md",
+      "chunk_index": 52,
+      "score": 0.5962883199098782
+    },
+    {
+      "source_path": "PEPSICO_2022_10K.md",
+      "chunk_index": 75,
+      "score": 0.588354092516067
+    },
+    {
+      "source_path": "PEPSICO_2022_10K.md",
+      "chunk_index": 74,
+      "score": 0.586435483552636
+    },
+    {
+      "source_path": "PEPSICO_2022_10K.md",
+      "chunk_index": 112,
+      "score": 0.5754780838822039
+    },
+    {
+      "source_path": "PEPSICO_2022_10K.md",
+      "chunk_index": 76,
+      "score": 0.57485993170975
+    }
+  ],
+  "raw_response": "{\"choice\":\"a\",\"reasoning\":\"청크 1과 청크 2에서 2022년 Pepsico의 'Total restructuring and impairment charges'가 $411 million임이 명확히 명시되어 있습니다. 이 수치는 2019 Productivity Plan 관련 표와 설명에서 확인할 수 있으며, 'Total restructuring and impairment charges $411'로 직접적으로 언급되어 있습니다. 따라서 보기 a)가 정답입니다.\"}",
+  "parsed": {
+    "choice": "a",
+    "reasoning": "청크 1과 청크 2에서 2022년 Pepsico의 'Total restructuring and impairment charges'가 $411 million임이 명확히 명시되어 있습니다. 이 수치는 2019 Productivity Plan 관련 표와 설명에서 확인할 수 있으며, 'Total restructuring and impairment charges $411'로 직접적으로 언급되어 있습니다. 따라서 보기 a)가 정답입니다."
+  },
+  "parse_error": null
+}

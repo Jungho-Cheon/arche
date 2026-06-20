@@ -7,7 +7,6 @@ from __future__ import annotations
 
 import os
 import shutil
-import time
 from datetime import datetime
 from pathlib import Path
 from typing import Annotated
@@ -257,19 +256,11 @@ def run(
     loader = FileLoader(corpus)
     llm = OpenAIProvider(model_id=cfg.llm_model_id, api_key=cfg.openai_api_key)
 
-    # WHY 컬럼 간 sleep: full_context 컬럼이 큰 입력(코퍼스 전체)을 짧은 시간에
-    # 다 소비해 OpenAI TPM 버킷을 포화시킨다. 다음 컬럼 (chunk_rag) 첫 호출이
-    # 곧바로 429 로 떨어지지 않게 60 초 휴지를 둔다. SDK 의 max_retries 만으론
-    # 분 단위 회복을 흡수하지 못한다.
-    _intercolumn_sleep_s = int(os.environ.get("OPENTOLOGY_EVAL_INTERCOLUMN_SLEEP_S", "60"))
-    _completed_first = False
-
-    def _pause_between_columns(label: str) -> None:
-        nonlocal _completed_first
-        if _completed_first and _intercolumn_sleep_s > 0:
-            typer.echo(f"[pause] {_intercolumn_sleep_s}s before {label} (TPM 회복 대기)")
-            time.sleep(_intercolumn_sleep_s)
-        _completed_first = True
+    # 컬럼 간 sleep 은 Tier 1 TPM 회피용이었으나 Tier 2 승급으로 제거.
+    # 429 가 재발하면 SDK max_retries + exponential backoff 로 흡수하고,
+    # 그래도 안 되면 이 자리에 env-driven pause 를 다시 추가한다.
+    def _pause_between_columns(label: str) -> None:  # noqa: ARG001 — 인터페이스 호환용 stub
+        return None
 
     # WHY 응답 파일 존재 시 건너뛰기 (resume): N=3 본 측정처럼 호출 수가 많을 때
     # 환경 SIGTERM/네트워크 중단으로 중간에 죽으면 비싼 LLM 호출이 사라진다.

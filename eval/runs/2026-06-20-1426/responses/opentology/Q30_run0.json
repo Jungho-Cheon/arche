@@ -1,0 +1,127 @@
+{
+  "column": "opentology",
+  "question_id": "Q30",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 491,
+    "output_tokens": 77,
+    "latency_ms": 1379,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"Pepsico\",\"aliases\":[\"Pepsico\"]},{\"canonical\":\"FY2022\",\"aliases\":[\"FY2022\",\"Fiscal Year 2022\"]},{\"canonical\":\"FY2021\",\"aliases\":[\"FY2021\",\"Fiscal Year 2021\"]},{\"canonical\":\"ongoing legal battles\",\"aliases\":[\"ongoing legal battles\",\"legal battles\",\"legal disputes\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "Pepsico",
+          "aliases": [
+            "Pepsico"
+          ]
+        },
+        {
+          "canonical": "FY2022",
+          "aliases": [
+            "FY2022",
+            "Fiscal Year 2022"
+          ]
+        },
+        {
+          "canonical": "FY2021",
+          "aliases": [
+            "FY2021",
+            "Fiscal Year 2021"
+          ]
+        },
+        {
+          "canonical": "ongoing legal battles",
+          "aliases": [
+            "ongoing legal battles",
+            "legal battles",
+            "legal disputes"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 1537,
+      "input": {
+        "keywords": [
+          "Pepsico",
+          "FY2022",
+          "Fiscal Year 2022",
+          "FY2021",
+          "Fiscal Year 2021",
+          "ongoing legal battles",
+          "legal battles",
+          "legal disputes"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 54,
+      "input": {
+        "entry_ids": [
+          "01KVHPX8K2VZASZ3VN1W3CHBQM",
+          "01KVHQHWC03C4WR43X1VXVCSN9",
+          "01KVHQG0KZ68Z7GY7CZXSGE84V",
+          "01KVHQ53GYXW040QQJS0NXZVBA",
+          "01KVHQ6EF00W1Q3G5D06410H48",
+          "01KVHQ6EZ1AKSG0V7ST2KCY531",
+          "01KVHQ56RSSXB4VP7WW59H919J",
+          "01KVHQ4D5BRJYB78RE3SB92YBW",
+          "01KVHQ91WW3YB87J3R2APKYXTG",
+          "01KVHQ4FF2NPAV69HYV00ACSDA"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 14,
+        "edges": 12,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVHPX8K2VZASZ3VN1W3CHBQM",
+    "01KVHQHWC03C4WR43X1VXVCSN9",
+    "01KVHQG0KZ68Z7GY7CZXSGE84V",
+    "01KVHQ53GYXW040QQJS0NXZVBA",
+    "01KVHQ6EF00W1Q3G5D06410H48",
+    "01KVHQ6EZ1AKSG0V7ST2KCY531",
+    "01KVHQ56RSSXB4VP7WW59H919J",
+    "01KVHQ4D5BRJYB78RE3SB92YBW",
+    "01KVHQ91WW3YB87J3R2APKYXTG",
+    "01KVHQ4FF2NPAV69HYV00ACSDA"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 7919,
+  "answer_generation": {
+    "input_tokens": 2956,
+    "output_tokens": 108,
+    "latency_ms": 1415,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"e\",\"reasoning\":\"그래프에 따르면 Amcor plc와 관련된 법적 절차(Contingencies and Legal Proceedings)에 대한 노트가 있지만, Pepsico가 FY2022 및 FY2021에 중요한 법적 분쟁을 보고했는지에 대한 정보는 제공되지 않습니다. Pepsico와 법적 분쟁 관련 엔티티나 관계가 그래프에 나타나 있지 않으므로, 해당 질문에 대해 답을 내릴 수 있는 정보가 부족합니다.\"}",
+    "parsed": {
+      "choice": "e",
+      "reasoning": "그래프에 따르면 Amcor plc와 관련된 법적 절차(Contingencies and Legal Proceedings)에 대한 노트가 있지만, Pepsico가 FY2022 및 FY2021에 중요한 법적 분쟁을 보고했는지에 대한 정보는 제공되지 않습니다. Pepsico와 법적 분쟁 관련 엔티티나 관계가 그래프에 나타나 있지 않으므로, 해당 질문에 대해 답을 내릴 수 있는 정보가 부족합니다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 64,
+  "total_input_tokens": 3447,
+  "total_output_tokens": 185,
+  "total_tokens": 3696,
+  "total_latency_ms": 4385
+}

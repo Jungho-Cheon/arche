@@ -2,9 +2,9 @@
 
 > 이 파일의 위치: 본 저장소에 기여하는 모두를 위한 **단일 진입점**. 마일스톤 진행도 / 다음 액션 / 알려진 stub 표가 한 페이지에 모인다.
 
-## 현재 상태 — MVP 피벗 확정: Combined RAG (chunk + graph 단일 호출)
+## 현재 상태 — M6.5 종료, M6.5b (EntityConsolidator) 신설 gating
 
-M1-M6 모든 마일스톤 완료. 2026-06-19 본 측정 (Pareto 우월 가설 미달) 후 2026-06-20 후속 검증에서 **Combined RAG 가 100% 정확도 + Full-context 의 1/5 비용** 으로 가장 합리적 방향임이 확인되었다.
+M1-M6 모든 마일스톤 완료. 2026-06-19 본 측정 (Pareto 우월 가설 미달) → 2026-06-20 95K 후속 검증 (**Combined RAG 100%** , ADR-0007 채택) → 2026-06-20 1M FinanceBench 재검증 (M6.5) 에서 **graph catastrophic over-merge** 발견. ADR-0008 로 EntityConsolidator 를 M7 gating (M6.5b) 으로 격상.
 
 | 컬럼 | Accuracy | 오답 | 토큰(중앙값) | 지연(중앙값) | 비용 (90 호출) |
 |---|---|---|---|---|---|
@@ -49,11 +49,12 @@ Opentology = LLM·AI 에이전트가 *도메인 지식의 관계* 를 *최소한
 | M2 | Ingest 파이프라인 (소스 → 엔티티/관계 → 그래프, idempotent) | 완료 |
 | M3 | Graph Primitives (REST + MCP) | 완료 — REST 6 primitive (#19) + MCP stdio (#7). HTTP+SSE 는 post-MVP |
 | M4 | 베이스라인 하니스 (full-context + 청크 RAG) | 완료 (#10, #15) |
-| M5 | 평가 데이터 (상거래 검증 도메인 소스 + 30 MCQ) | 완료 — commerce-verbose-20260618 (33 파일 95K 토큰, 30 MCQ, lint green) |
+| M5 | 평가 데이터 (상거래 검증 도메인 소스 + 30 MCQ) | 완료 — commerce-verbose-20260618 (33 파일 95K 토큰, 30 MCQ, lint green) + financebench-2026-06-20 (6 파일 980K 토큰, 33 MCQ, lint green) |
 | M6 | 3-way 측정 + 보고서 1 회 | 완료 — 2026-06-19-2126 (gpt-4.1 N=3) + 후속 Combined 검증 2026-06-20-0923 (Combined RAG 100% 달성, 피벗 확정) |
-| **M6.5** | **1M corpus 3-way 재검증 (gating)** | **pending** — ADR-0007 의 1M 시점 검증. M7 productization 의 직접 gate |
-| M7 | Combined RAG productization | pending (M6.5 종료 후) |
-| M8 | Combined 품질·비용 최적화 | pending (M7 종료 후) |
+| M6.5 | 1M corpus 3-way 재검증 (gating) | 완료 — `eval/reports/2026-06-20-financebench-1M/CONCLUSION.md`. Combined ≈ chunk (+0pp), 그러나 graph 부패로 측정 무효. ADR-0008 |
+| **M6.5b** | **EntityConsolidator + 1M 재측정 (신규 gating)** | **pending** — ADR-0008 신설. EntityConsolidator 구현 → 1M 재 ingest → opentology + combined 재측정 → ADR-0007 D2 진짜 분기 결정 |
+| M7 | Combined RAG productization | pending (M6.5b 종료 후) |
+| M8 | Combined 품질·비용 최적화 (잔여) | pending (M7 종료 후, EntityConsolidator 는 M6.5b 로 이동) |
 | M9 | Scale·다도메인·외부 비교 | pending (M8 종료 후) |
 
 위 골격은 *구현 계획서* 가 확정되면 그 결정에 맞춰 갱신된다.
@@ -64,18 +65,19 @@ Opentology = LLM·AI 에이전트가 *도메인 지식의 관계* 를 *최소한
 |---|---|---|
 | (없음 — M1 완료) | | |
 
-## 다음 액션 (Combined RAG 피벗 이후) — 마일스톤 M6.5 → M7 → M8 → M9
+## 다음 액션 (M6.5 결과 반영) — M6.5b → M7 → M8 → M9
 
 | 마일스톤 | 종료 조건 | 핵심 이슈 |
 |---|---|---|
-| **M6.5 — 1M corpus 3-way 검증 (gating)** | FinanceBench 1M 에서 chunk vs opentology vs combined 측정 보고서. 결과로 ADR-0007 유지/수정/피벗 결정 | #44 dataset, #45 ingest 안정화, #46 측정 |
+| M6.5 — 1M corpus 3-way 재검증 | 완료. 보고서 — `eval/reports/2026-06-20-financebench-1M/CONCLUSION.md`. 결과: Combined ≈ chunk (+0pp). graph 부패로 직접 분기 결정 보류. ADR-0008 신설 | #44 ✓ / #45 (deferred) / #46 ✓ |
+| **M6.5b — EntityConsolidator + 1M 재측정 (gating)** | post-ingest ANN + LLM 검증 dedup 구현 + 1M corpus 재 ingest 후 over-merge 감소 evidence + opentology/combined 재측정 → ADR-0007 D2 진짜 분기 결정 | (신규) #40 EntityConsolidator 를 M8 → M6.5b 로 이동 + 1M 재측정 이슈 신설 |
 | M7 — Combined RAG productization | docker-compose up + ingest + `curl /answer` 만으로 외부 사용자가 답 받기 | #33 /answer, #34 /retrieve, #35 provenance, #36 노브, #37 Getting Started, #38 identity refresh, #39 service mode |
-| M8 — Combined 품질·비용 최적화 | 95K 재측정: 토큰 ≤ 10K, latency ≤ 3.5s, 정확도 100% 유지 | #40 EntityConsolidator (post-ingest), #41 retrieval anchor, #42 subgraph reranking, #43 budget allocator |
+| M8 — Combined 품질·비용 최적화 (잔여) | 95K 재측정 토큰 ≤ 10K / latency ≤ 3.5s / 정확도 100% 유지 | #41 retrieval anchor, #42 subgraph reranking, #43 budget allocator (#40 은 M6.5b 로 이동) |
 | M9 — Scale·다도메인·외부 비교 | 1M 자체 한국어 corpus 측정 + 외부 도구 (LangChain Hybrid / Microsoft GraphRAG) 비교 evidence | TBD (M8 종료 후 도출) |
 
-상세 — `docs/prd/6_post_mvp_combined.md` §4. ADR-0007 (정체성 피벗) 이 본 마일스톤 트리의 결정 기반.
+상세 — `docs/prd/6_post_mvp_combined.md` §4 + ADR-0008. ADR-0007 의 정체성/기술 결정은 유지되며 ADR-0008 이 D2 의 *결정 시점만 지연*.
 
-**M6.5 가 gating** — M7-M9 작업은 M6.5 결과에 따라 *형태/우선순위가 분기*. 본 마일스톤 종료 전에 M7-M9 의 *코드 작업* 은 착수하지 않음 (설계 문서/이슈 다듬기는 병행 가능).
+**M6.5b 가 gating** — M7-M9 의 *코드 작업* 은 M6.5b 종료 전까지 착수하지 않음. 설계 문서/이슈 정리는 병행 가능. M6.5 의 *직접 결과* (Combined ≈ chunk) 만으로 ADR-0007 D2 의 "M7 단순화" 분기에 들어가는 것은 *graph 부패가 측정에 영향* 을 줬으므로 거부 (ADR-0008 D1).
 
 ## 갱신 정책
 

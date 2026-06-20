@@ -1,0 +1,65 @@
+{
+  "column": "chunk_rag",
+  "question_id": "Q08",
+  "run_index": 0,
+  "input_tokens": 7572,
+  "output_tokens": 115,
+  "embedding_tokens": 29807,
+  "embedding_tokens_breakdown": {
+    "question_embedding": 35,
+    "setup_amortized": 29772,
+    "setup_total": 982504,
+    "questions_count_for_amortization": 33
+  },
+  "total_tokens": 37494,
+  "latency_ms": 1593,
+  "model": "gpt-4.1",
+  "retrieved_chunks": [
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 47,
+      "score": 0.5931201677607411
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 46,
+      "score": 0.5928808972108613
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 3,
+      "score": 0.571578897566881
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 14,
+      "score": 0.5636437934002243
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 13,
+      "score": 0.5634274334986279
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 2,
+      "score": 0.5622325222775966
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 64,
+      "score": 0.5503617449125477
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 4,
+      "score": 0.5413186958734493
+    }
+  ],
+  "raw_response": "{\"choice\":\"b\",\"reasoning\":\"청크 1에서 'The decrease in operating income was primarily driven by amortization of intangible assets associated with the Xilinx acquisition.'라는 명확한 설명이 있다. 이는 FY22의 영업이익 감소(operating margin change)가 Xilinx 인수와 관련된 무형자산 상각 때문임을 의미한다. 다른 보기(a, c, d)는 발췌에서 근거를 찾을 수 없으며, b가 명확하게 발췌 내용과 일치한다.\"}",
+  "parsed": {
+    "choice": "b",
+    "reasoning": "청크 1에서 'The decrease in operating income was primarily driven by amortization of intangible assets associated with the Xilinx acquisition.'라는 명확한 설명이 있다. 이는 FY22의 영업이익 감소(operating margin change)가 Xilinx 인수와 관련된 무형자산 상각 때문임을 의미한다. 다른 보기(a, c, d)는 발췌에서 근거를 찾을 수 없으며, b가 명확하게 발췌 내용과 일치한다."
+  },
+  "parse_error": null
+}

@@ -1,0 +1,148 @@
+{
+  "column": "opentology",
+  "question_id": "Q33",
+  "run_index": 1,
+  "anchor_extraction": {
+    "input_tokens": 532,
+    "output_tokens": 142,
+    "latency_ms": 1216,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"PepsiCo\",\"aliases\":[\"PepsiCo\"]},{\"canonical\":\"FY2022 unadjusted EBITDA % margin\",\"aliases\":[\"FY2022 unadjusted EBITDA % margin\",\"unadjusted EBITDA margin for FY2022\"]},{\"canonical\":\"unadjusted EBITDA\",\"aliases\":[\"unadjusted EBITDA\"]},{\"canonical\":\"unadjusted operating income\",\"aliases\":[\"unadjusted operating income\"]},{\"canonical\":\"D&A\",\"aliases\":[\"D&A\",\"depreciation and amortization\"]},{\"canonical\":\"statement of cash flows\",\"aliases\":[\"statement of cash flows\",\"cash flow statement\"]},{\"canonical\":\"P&L statement\",\"aliases\":[\"P&L statement\",\"profit and loss statement\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "PepsiCo",
+          "aliases": [
+            "PepsiCo"
+          ]
+        },
+        {
+          "canonical": "FY2022 unadjusted EBITDA % margin",
+          "aliases": [
+            "FY2022 unadjusted EBITDA % margin",
+            "unadjusted EBITDA margin for FY2022"
+          ]
+        },
+        {
+          "canonical": "unadjusted EBITDA",
+          "aliases": [
+            "unadjusted EBITDA"
+          ]
+        },
+        {
+          "canonical": "unadjusted operating income",
+          "aliases": [
+            "unadjusted operating income"
+          ]
+        },
+        {
+          "canonical": "D&A",
+          "aliases": [
+            "D&A",
+            "depreciation and amortization"
+          ]
+        },
+        {
+          "canonical": "statement of cash flows",
+          "aliases": [
+            "statement of cash flows",
+            "cash flow statement"
+          ]
+        },
+        {
+          "canonical": "P&L statement",
+          "aliases": [
+            "P&L statement",
+            "profit and loss statement"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 1635,
+      "input": {
+        "keywords": [
+          "PepsiCo",
+          "FY2022 unadjusted EBITDA % margin",
+          "unadjusted EBITDA margin for FY2022",
+          "unadjusted EBITDA",
+          "unadjusted operating income",
+          "D&A",
+          "depreciation and amortization",
+          "statement of cash flows",
+          "cash flow statement",
+          "P&L statement",
+          "profit and loss statement"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 73,
+      "input": {
+        "entry_ids": [
+          "01KVHPXPDEDWBDG5RAMC0AX6SY",
+          "01KVHPXA5JS100MY71CWNJP9CF",
+          "01KVHQFVCGN6TCBX7KSSK8XKNP",
+          "01KVHPX78JMM95P1CEFA8ZZSBR",
+          "01KVHPX5NF0Y985QKEG5SRHY53",
+          "01KVHPXG8SJ7MAECEC2VQR0XW5",
+          "01KVHQ48F1E74RSHN7PQRS131N",
+          "01KVHQ6D15MA29XKWZQR2WVJYJ",
+          "01KVHQ6RF2R6SWGB17PDR2KFQR",
+          "01KVHQHR2H6KAHN4NVN15QJSHB"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 23,
+        "edges": 20,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVHPXPDEDWBDG5RAMC0AX6SY",
+    "01KVHPXA5JS100MY71CWNJP9CF",
+    "01KVHQFVCGN6TCBX7KSSK8XKNP",
+    "01KVHPX78JMM95P1CEFA8ZZSBR",
+    "01KVHPX5NF0Y985QKEG5SRHY53",
+    "01KVHPXG8SJ7MAECEC2VQR0XW5",
+    "01KVHQ48F1E74RSHN7PQRS131N",
+    "01KVHQ6D15MA29XKWZQR2WVJYJ",
+    "01KVHQ6RF2R6SWGB17PDR2KFQR",
+    "01KVHQHR2H6KAHN4NVN15QJSHB"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 12694,
+  "answer_generation": {
+    "input_tokens": 4320,
+    "output_tokens": 93,
+    "latency_ms": 1475,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"e\",\"reasoning\":\"그래프에 PepsiCo의 FY2022 손익계산서(P&L) 또는 현금흐름표의 구체적인 수치(영업이익, 감가상각비, 매출 등)가 포함되어 있지 않습니다. 따라서 FY2022의 unadjusted EBITDA % margin을 계산할 수 있는 정보가 제공되지 않았으므로, 정답은 정보 부족입니다.\"}",
+    "parsed": {
+      "choice": "e",
+      "reasoning": "그래프에 PepsiCo의 FY2022 손익계산서(P&L) 또는 현금흐름표의 구체적인 수치(영업이익, 감가상각비, 매출 등)가 포함되어 있지 않습니다. 따라서 FY2022의 unadjusted EBITDA % margin을 계산할 수 있는 정보가 제공되지 않았으므로, 정답은 정보 부족입니다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 88,
+  "total_input_tokens": 4852,
+  "total_output_tokens": 235,
+  "total_tokens": 5175,
+  "total_latency_ms": 4399
+}

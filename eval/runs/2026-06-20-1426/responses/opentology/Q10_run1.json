@@ -1,0 +1,130 @@
+{
+  "column": "opentology",
+  "question_id": "Q10",
+  "run_index": 1,
+  "anchor_extraction": {
+    "input_tokens": 494,
+    "output_tokens": 67,
+    "latency_ms": 1049,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"FY21\",\"aliases\":[\"FY21\"]},{\"canonical\":\"FY22\",\"aliases\":[\"FY22\"]},{\"canonical\":\"Embedded\",\"aliases\":[\"Embedded\"]},{\"canonical\":\"AMD reporting segment\",\"aliases\":[\"AMD reporting segment\",\"AMD segment\"]},{\"canonical\":\"sales proportion\",\"aliases\":[\"sales proportion\",\"sales proportionally\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "FY21",
+          "aliases": [
+            "FY21"
+          ]
+        },
+        {
+          "canonical": "FY22",
+          "aliases": [
+            "FY22"
+          ]
+        },
+        {
+          "canonical": "Embedded",
+          "aliases": [
+            "Embedded"
+          ]
+        },
+        {
+          "canonical": "AMD reporting segment",
+          "aliases": [
+            "AMD reporting segment",
+            "AMD segment"
+          ]
+        },
+        {
+          "canonical": "sales proportion",
+          "aliases": [
+            "sales proportion",
+            "sales proportionally"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 1086,
+      "input": {
+        "keywords": [
+          "FY21",
+          "FY22",
+          "Embedded",
+          "AMD reporting segment",
+          "AMD segment",
+          "sales proportion",
+          "sales proportionally"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 71,
+      "input": {
+        "entry_ids": [
+          "01KVHQ0Z6JMC0M8GWA2KB3RMV6",
+          "01KVHQ1BQVYX94D32FE2BAGQP8",
+          "01KVHPX78JMM95P1CEFA8ZZSBR",
+          "01KVHQ0XJ4E0C2CG65KPA6WYK7",
+          "01KVHQ127QHKQ13QPGAM6XWYRC",
+          "01KVHQ11QY301M0VTEFN0KD95D",
+          "01KVHQ10MB80HXF27X5H3P91S1",
+          "01KVHQ1A5RHRGR20N2R5VQ1CYD",
+          "01KVHQ118G8MBJ14CEZXKBVTD7",
+          "01KVHQ0YF498YQJNFBXGQZSVTK"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 20,
+        "edges": 18,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVHQ0Z6JMC0M8GWA2KB3RMV6",
+    "01KVHQ1BQVYX94D32FE2BAGQP8",
+    "01KVHPX78JMM95P1CEFA8ZZSBR",
+    "01KVHQ0XJ4E0C2CG65KPA6WYK7",
+    "01KVHQ127QHKQ13QPGAM6XWYRC",
+    "01KVHQ11QY301M0VTEFN0KD95D",
+    "01KVHQ10MB80HXF27X5H3P91S1",
+    "01KVHQ1A5RHRGR20N2R5VQ1CYD",
+    "01KVHQ118G8MBJ14CEZXKBVTD7",
+    "01KVHQ0YF498YQJNFBXGQZSVTK"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 9218,
+  "answer_generation": {
+    "input_tokens": 3346,
+    "output_tokens": 127,
+    "latency_ms": 1741,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\": \"e\", \"reasoning\": \"그래프에는 각 사업 부문(FY21~FY22)별 매출 증가율 또는 비율에 대한 정보가 전혀 제공되어 있지 않습니다. 각 세그먼트의 정의와 포함된 제품, 그리고 Amcor plc(실제로는 AMD로 보임)가 운영하는 세그먼트에 대한 정보만 있을 뿐, 실제 매출 수치나 증감률 데이터는 없습니다. 따라서 보기 중 어느 세그먼트가 Embedded를 제외하고 가장 큰 비율로 매출이 증가했는지 판단할 수 없습니다.\"}",
+    "parsed": {
+      "choice": "e",
+      "reasoning": "그래프에는 각 사업 부문(FY21~FY22)별 매출 증가율 또는 비율에 대한 정보가 전혀 제공되어 있지 않습니다. 각 세그먼트의 정의와 포함된 제품, 그리고 Amcor plc(실제로는 AMD로 보임)가 운영하는 세그먼트에 대한 정보만 있을 뿐, 실제 매출 수치나 증감률 데이터는 없습니다. 따라서 보기 중 어느 세그먼트가 Embedded를 제외하고 가장 큰 비율로 매출이 증가했는지 판단할 수 없습니다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 56,
+  "total_input_tokens": 3840,
+  "total_output_tokens": 194,
+  "total_tokens": 4090,
+  "total_latency_ms": 3947
+}

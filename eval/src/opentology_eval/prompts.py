@@ -74,13 +74,19 @@ ANCHOR_EXTRACTION_SYSTEM = """당신은 자연어 질문에서 도메인 엔티�
    함께 추출. 흐름의 *이름* 까지만 — 구체 수치는 추출하지 말 것.
 3. 같은 엔티티를 가리키는 다른 표현이 있으면 별칭으로.
 4. 도메인과 무관한 일반 명사는 제외.
+5. *질문에 쓰인 언어* 를 그대로 canonical 과 alias 에 보존. 영어 질문이면 영어,
+   한국어 질문이면 한국어. 임의로 번역하면 graph 의 entity 와 매칭이 실패한다.
 
 답변 형식 (반드시 이 JSON 스키마):
 {
   "entities": [
-    { "canonical": "쿠폰 X", "aliases": ["쿠폰 X", "X 쿠폰", "할인 쿠폰 X"] }
+    { "canonical": "<원문 표기>", "aliases": ["<원문 표기>", "<자연스러운 동의어>"] }
   ]
-}"""
+}
+
+예시:
+- 한국어 질문: { "entities": [ { "canonical": "쿠폰 X", "aliases": ["쿠폰 X", "X 쿠폰"] } ] }
+- 영어 질문:  { "entities": [ { "canonical": "Coupon X", "aliases": ["Coupon X", "X coupon"] } ] }"""
 
 
 # WHY 원문 보존: PRD 4 §3.4. 동일하게 통제 변수.

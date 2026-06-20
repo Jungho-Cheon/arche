@@ -1,0 +1,147 @@
+{
+  "column": "combined",
+  "question_id": "Q13",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 488,
+    "output_tokens": 16,
+    "latency_ms": 666,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"American Express\",\"aliases\":[\"American Express\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "American Express",
+          "aliases": [
+            "American Express"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 472,
+      "input": {
+        "keywords": [
+          "American Express"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 91,
+      "input": {
+        "entry_ids": [
+          "01KVHQ35FHXZAN8YTHCW401SGJ",
+          "01KVHQ6DQPAJW348FTN1QJYKSS",
+          "01KVHQ4YF143PN4051T9DB6BEA",
+          "01KVHQ34S1RVGEVVV811BATHF9",
+          "01KVHQ6N8MJCASDRC21RJKT9GA",
+          "01KVHQ4XHWTMV1A77164WH2QAD",
+          "01KVHQ38JKAVQRM9G07EXFK9KR",
+          "01KVHQ3XBGB3RYEV57PWPXAR71",
+          "01KVHQ5626WP5D8TC8BXHAYCBJ",
+          "01KVHQ3ZB23NX8AF84CKQETR0V"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 29,
+        "edges": 28,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVHQ35FHXZAN8YTHCW401SGJ",
+    "01KVHQ6DQPAJW348FTN1QJYKSS",
+    "01KVHQ4YF143PN4051T9DB6BEA",
+    "01KVHQ34S1RVGEVVV811BATHF9",
+    "01KVHQ6N8MJCASDRC21RJKT9GA",
+    "01KVHQ4XHWTMV1A77164WH2QAD",
+    "01KVHQ38JKAVQRM9G07EXFK9KR",
+    "01KVHQ3XBGB3RYEV57PWPXAR71",
+    "01KVHQ5626WP5D8TC8BXHAYCBJ",
+    "01KVHQ3ZB23NX8AF84CKQETR0V"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 17199,
+  "retrieved_chunks": [
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 6,
+      "score": 0.6906732304308199
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 4,
+      "score": 0.6838434649872712
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 5,
+      "score": 0.6784436467328375
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 165,
+      "score": 0.656163308980826
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 3,
+      "score": 0.6476672110386512
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 260,
+      "score": 0.6228941904917218
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 7,
+      "score": 0.6085093085237565
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 48,
+      "score": 0.6077538231173956
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 10537,
+    "output_tokens": 173,
+    "latency_ms": 2398,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"a\",\"reasoning\":\"(A) 검색된 문서 발췌에서 'Jurisdictions that represent a significant portion of our billed business outside of the United States include the United Kingdom (UK), the European Union (EU), Australia, Japan, Canada and Mexico.' 이라는 구체적 언급이 있습니다. 이로부터 미국(United States), 유럽(Europe: UK, EU), 아시아(Asia: Japan, Australia), 그리고 라틴 아메리카(멕시코 포함, Latin America)에서 주로 사업을 운영함을 알 수 있습니다. (B) 도메인 그래프에는 지역 구분에 대한 직접적인 정보가 없습니다. 따라서 (A)의 구체적 근거에 따라 a) United States, Europe, Asia, and Latin America가 정답입니다.\"}",
+    "parsed": {
+      "choice": "a",
+      "reasoning": "(A) 검색된 문서 발췌에서 'Jurisdictions that represent a significant portion of our billed business outside of the United States include the United Kingdom (UK), the European Union (EU), Australia, Japan, Canada and Mexico.' 이라는 구체적 언급이 있습니다. 이로부터 미국(United States), 유럽(Europe: UK, EU), 아시아(Asia: Japan, Australia), 그리고 라틴 아메리카(멕시코 포함, Latin America)에서 주로 사업을 운영함을 알 수 있습니다. (B) 도메인 그래프에는 지역 구분에 대한 직접적인 정보가 없습니다. 따라서 (A)의 구체적 근거에 따라 a) United States, Europe, Asia, and Latin America가 정답입니다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 29797,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 17,
+    "chunk_setup_amortized": 29772,
+    "chunk_setup_total": 982504,
+    "graph_keyword_estimated": 8,
+    "questions_count_for_amortization": 33
+  },
+  "total_input_tokens": 11025,
+  "total_output_tokens": 189,
+  "total_tokens": 41011,
+  "total_latency_ms": 3627
+}

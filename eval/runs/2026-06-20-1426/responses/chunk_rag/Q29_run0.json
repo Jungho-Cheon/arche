@@ -1,0 +1,65 @@
+{
+  "column": "chunk_rag",
+  "question_id": "Q29",
+  "run_index": 0,
+  "input_tokens": 6446,
+  "output_tokens": 175,
+  "embedding_tokens": 29790,
+  "embedding_tokens_breakdown": {
+    "question_embedding": 18,
+    "setup_amortized": 29772,
+    "setup_total": 982504,
+    "questions_count_for_amortization": 33
+  },
+  "total_tokens": 36411,
+  "latency_ms": 2254,
+  "model": "gpt-4.1",
+  "retrieved_chunks": [
+    {
+      "source_path": "PEPSICO_2022_10K.md",
+      "chunk_index": 36,
+      "score": 0.6621897773241315
+    },
+    {
+      "source_path": "PEPSICO_2022_10K.md",
+      "chunk_index": 3,
+      "score": 0.6297431833865582
+    },
+    {
+      "source_path": "PEPSICO_2022_10K.md",
+      "chunk_index": 15,
+      "score": 0.6190429598483884
+    },
+    {
+      "source_path": "PEPSICO_2022_10K.md",
+      "chunk_index": 35,
+      "score": 0.6136453563510507
+    },
+    {
+      "source_path": "PEPSICO_2022_10K.md",
+      "chunk_index": 401,
+      "score": 0.609782048149492
+    },
+    {
+      "source_path": "PEPSICO_2022_10K.md",
+      "chunk_index": 402,
+      "score": 0.6093388410538955
+    },
+    {
+      "source_path": "PEPSICO_2022_10K.md",
+      "chunk_index": 7,
+      "score": 0.608386843275169
+    },
+    {
+      "source_path": "PEPSICO_2022_10K.md",
+      "chunk_index": 403,
+      "score": 0.60313306523974
+    }
+  ],
+  "raw_response": "{\"choice\":\"d\",\"reasoning\":\"청크 2에서 PepsiCo의 사업 부문(division) 구성이 명확히 언급되어 있습니다. 7개의 보고 부문은 Frito-Lay North America (FLNA), Quaker Foods North America (QFNA), PepsiCo Beverages North America (PBNA), Latin America (LatAm), Europe, Africa, Middle East and South Asia (AMESA), 그리고 Asia Pacific, Australia and New Zealand and China (APAC)입니다. 이로써 PepsiCo는 North America, Latin America, Europe, Africa, Middle East, South Asia, Asia Pacific, Australia, New Zealand, 그리고 China에서 주로 사업을 영위함을 알 수 있습니다. 각 보기 중 d)만이 이 모든 지역을 정확히 포함하고 있습니다. 따라서 정답은 d)입니다.\"}",
+  "parsed": {
+    "choice": "d",
+    "reasoning": "청크 2에서 PepsiCo의 사업 부문(division) 구성이 명확히 언급되어 있습니다. 7개의 보고 부문은 Frito-Lay North America (FLNA), Quaker Foods North America (QFNA), PepsiCo Beverages North America (PBNA), Latin America (LatAm), Europe, Africa, Middle East and South Asia (AMESA), 그리고 Asia Pacific, Australia and New Zealand and China (APAC)입니다. 이로써 PepsiCo는 North America, Latin America, Europe, Africa, Middle East, South Asia, Asia Pacific, Australia, New Zealand, 그리고 China에서 주로 사업을 영위함을 알 수 있습니다. 각 보기 중 d)만이 이 모든 지역을 정확히 포함하고 있습니다. 따라서 정답은 d)입니다."
+  },
+  "parse_error": null
+}

@@ -1,0 +1,114 @@
+{
+  "column": "opentology",
+  "question_id": "Q04",
+  "run_index": 1,
+  "anchor_extraction": {
+    "input_tokens": 507,
+    "output_tokens": 44,
+    "latency_ms": 806,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"AMCOR\",\"aliases\":[\"AMCOR\"]},{\"canonical\":\"gross margin\",\"aliases\":[\"gross margin\",\"gross margin profile\"]},{\"canonical\":\"FY2023\",\"aliases\":[\"FY2023\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "AMCOR",
+          "aliases": [
+            "AMCOR"
+          ]
+        },
+        {
+          "canonical": "gross margin",
+          "aliases": [
+            "gross margin",
+            "gross margin profile"
+          ]
+        },
+        {
+          "canonical": "FY2023",
+          "aliases": [
+            "FY2023"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 1186,
+      "input": {
+        "keywords": [
+          "AMCOR",
+          "gross margin",
+          "gross margin profile",
+          "FY2023"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 762,
+      "input": {
+        "entry_ids": [
+          "01KVHPXPDEDWBDG5RAMC0AX6SY",
+          "01KVHQ1PDRZMTB7JX9EB8H98D4",
+          "01KVHPWE2BT376J2H5SP31CR2H",
+          "01KVHQ3QNDC8DP94Z4HFQXZ254",
+          "01KVHPWR8PGX2HNPVKRSEBE989",
+          "01KVHPWQ8QHRHX65DQJFJ23Y21",
+          "01KVHQHV05H43B5M03GNQQKXHY",
+          "01KVHPWNGYK6KBMZDBKZJPFJVR",
+          "01KVHPWS6E9PJGQ8Q5S6FCMA0A",
+          "01KVHPWFNCTS3KADRBN6WWTMD3"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 80,
+        "edges": 70,
+        "truncated": true
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVHPXPDEDWBDG5RAMC0AX6SY",
+    "01KVHQ1PDRZMTB7JX9EB8H98D4",
+    "01KVHPWE2BT376J2H5SP31CR2H",
+    "01KVHQ3QNDC8DP94Z4HFQXZ254",
+    "01KVHPWR8PGX2HNPVKRSEBE989",
+    "01KVHPWQ8QHRHX65DQJFJ23Y21",
+    "01KVHQHV05H43B5M03GNQQKXHY",
+    "01KVHPWNGYK6KBMZDBKZJPFJVR",
+    "01KVHPWS6E9PJGQ8Q5S6FCMA0A",
+    "01KVHPWFNCTS3KADRBN6WWTMD3"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 34325,
+  "answer_generation": {
+    "input_tokens": 12302,
+    "output_tokens": 113,
+    "latency_ms": 1390,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\": \"e\", \"reasoning\": \"제공된 도메인 그래프에는 AMCOR의 FY2023년 총이익률(gross margin) 수치나 그 변화에 대한 정보가 포함되어 있지 않습니다. AMCOR의 재무제표 주석, 현금흐름 정보, 또는 총이익률이 유의미하지 않다는 설명 등도 그래프에 나타나 있지 않습니다. 따라서 gross margin의 개선 여부나 유용성에 대해 판단할 수 있는 근거가 없습니다.\"}",
+    "parsed": {
+      "choice": "e",
+      "reasoning": "제공된 도메인 그래프에는 AMCOR의 FY2023년 총이익률(gross margin) 수치나 그 변화에 대한 정보가 포함되어 있지 않습니다. AMCOR의 재무제표 주석, 현금흐름 정보, 또는 총이익률이 유의미하지 않다는 설명 등도 그래프에 나타나 있지 않습니다. 따라서 gross margin의 개선 여부나 유용성에 대해 판단할 수 있는 근거가 없습니다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 32,
+  "total_input_tokens": 12809,
+  "total_output_tokens": 157,
+  "total_tokens": 12998,
+  "total_latency_ms": 4144
+}

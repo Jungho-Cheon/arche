@@ -1,0 +1,116 @@
+{
+  "column": "opentology",
+  "question_id": "Q20",
+  "run_index": 2,
+  "anchor_extraction": {
+    "input_tokens": 485,
+    "output_tokens": 55,
+    "latency_ms": 1021,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"Boeing\",\"aliases\":[\"Boeing\"]},{\"canonical\":\"FY2022\",\"aliases\":[\"FY2022\",\"Fiscal Year 2022\"]},{\"canonical\":\"ongoing legal battles\",\"aliases\":[\"ongoing legal battles\",\"legal battles\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "Boeing",
+          "aliases": [
+            "Boeing"
+          ]
+        },
+        {
+          "canonical": "FY2022",
+          "aliases": [
+            "FY2022",
+            "Fiscal Year 2022"
+          ]
+        },
+        {
+          "canonical": "ongoing legal battles",
+          "aliases": [
+            "ongoing legal battles",
+            "legal battles"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 881,
+      "input": {
+        "keywords": [
+          "Boeing",
+          "FY2022",
+          "Fiscal Year 2022",
+          "ongoing legal battles",
+          "legal battles"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 49,
+      "input": {
+        "entry_ids": [
+          "01KVHPX8K2VZASZ3VN1W3CHBQM",
+          "01KVHQ4D5BRJYB78RE3SB92YBW",
+          "01KVHQHWC03C4WR43X1VXVCSN9",
+          "01KVHQG0KZ68Z7GY7CZXSGE84V",
+          "01KVHQ6EZ1AKSG0V7ST2KCY531",
+          "01KVHQ53GYXW040QQJS0NXZVBA",
+          "01KVHQ6EF00W1Q3G5D06410H48",
+          "01KVHQ56RSSXB4VP7WW59H919J",
+          "01KVHQ91WW3YB87J3R2APKYXTG",
+          "01KVHQ9H129ZF86BHQCT8P88CB"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 14,
+        "edges": 12,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVHPX8K2VZASZ3VN1W3CHBQM",
+    "01KVHQ4D5BRJYB78RE3SB92YBW",
+    "01KVHQHWC03C4WR43X1VXVCSN9",
+    "01KVHQG0KZ68Z7GY7CZXSGE84V",
+    "01KVHQ6EZ1AKSG0V7ST2KCY531",
+    "01KVHQ53GYXW040QQJS0NXZVBA",
+    "01KVHQ6EF00W1Q3G5D06410H48",
+    "01KVHQ56RSSXB4VP7WW59H919J",
+    "01KVHQ91WW3YB87J3R2APKYXTG",
+    "01KVHQ9H129ZF86BHQCT8P88CB"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 7872,
+  "answer_generation": {
+    "input_tokens": 2930,
+    "output_tokens": 115,
+    "latency_ms": 1528,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\": \"e\", \"reasoning\": \"그래프에서 Boeing의 FY2022 법적 분쟁(legal battles)에 대한 정보는 제공되지 않습니다. Boeing과 관련된 엔티티 및 관계로는 'Consolidated Appropriations Act, 2023'의 적용, Boeing website에 대한 정보 제공, Amcor plc와의 관계 등이 있으나, Boeing의 ongoing legal battles 또는 소송에 대한 언급이나 세부 내용은 없습니다. 따라서 보기 중에서 정답은 '정보 부족 / 알 수 없음'입니다.\"}",
+    "parsed": {
+      "choice": "e",
+      "reasoning": "그래프에서 Boeing의 FY2022 법적 분쟁(legal battles)에 대한 정보는 제공되지 않습니다. Boeing과 관련된 엔티티 및 관계로는 'Consolidated Appropriations Act, 2023'의 적용, Boeing website에 대한 정보 제공, Amcor plc와의 관계 등이 있으나, Boeing의 ongoing legal battles 또는 소송에 대한 언급이나 세부 내용은 없습니다. 따라서 보기 중에서 정답은 '정보 부족 / 알 수 없음'입니다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 40,
+  "total_input_tokens": 3415,
+  "total_output_tokens": 170,
+  "total_tokens": 3625,
+  "total_latency_ms": 3479
+}

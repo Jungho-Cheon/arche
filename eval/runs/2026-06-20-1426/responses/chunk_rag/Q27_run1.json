@@ -1,0 +1,65 @@
+{
+  "column": "chunk_rag",
+  "question_id": "Q27",
+  "run_index": 1,
+  "input_tokens": 7324,
+  "output_tokens": 155,
+  "embedding_tokens": 29809,
+  "embedding_tokens_breakdown": {
+    "question_embedding": 37,
+    "setup_amortized": 29772,
+    "setup_total": 982504,
+    "questions_count_for_amortization": 33
+  },
+  "total_tokens": 37288,
+  "latency_ms": 1878,
+  "model": "gpt-4.1",
+  "retrieved_chunks": [
+    {
+      "source_path": "JOHNSON_JOHNSON_2022_10K.md",
+      "chunk_index": 4,
+      "score": 0.6045328758653662
+    },
+    {
+      "source_path": "JOHNSON_JOHNSON_2022_10K.md",
+      "chunk_index": 30,
+      "score": 0.5892888902687068
+    },
+    {
+      "source_path": "JOHNSON_JOHNSON_2022_10K.md",
+      "chunk_index": 132,
+      "score": 0.5751597176783854
+    },
+    {
+      "source_path": "JOHNSON_JOHNSON_2022_10K.md",
+      "chunk_index": 52,
+      "score": 0.5736440588361554
+    },
+    {
+      "source_path": "JOHNSON_JOHNSON_2022_10K.md",
+      "chunk_index": 58,
+      "score": 0.5624159730593146
+    },
+    {
+      "source_path": "JOHNSON_JOHNSON_2022_10K.md",
+      "chunk_index": 138,
+      "score": 0.5595531056031536
+    },
+    {
+      "source_path": "JOHNSON_JOHNSON_2022_10K.md",
+      "chunk_index": 40,
+      "score": 0.5460572014988148
+    },
+    {
+      "source_path": "JOHNSON_JOHNSON_2022_10K.md",
+      "chunk_index": 8,
+      "score": 0.5436166804291624
+    }
+  ],
+  "raw_response": "{\"choice\":\"d\",\"reasoning\":\"The provided excerpts do not directly state the gross margin drivers in a single summary, but in 청크 7, there is mention of 'one-time COVID-19 vaccine manufacturing exit related costs' and 'changes in the fair value of securities,' as well as 'commodity inflation' and 'currency impacts' in the discussion of segment results. The combination of COVID-19 vaccine exit costs, currency impacts, and commodity inflation aligns with option d. There is no evidence in the excerpts that gross margin was primarily driven by sales volume, R&D, or marketing cost changes (as in a or b), nor is there a statement that gross margin is not a useful metric. Therefore, option d is the best supported by the corpus.\"}",
+  "parsed": {
+    "choice": "d",
+    "reasoning": "The provided excerpts do not directly state the gross margin drivers in a single summary, but in 청크 7, there is mention of 'one-time COVID-19 vaccine manufacturing exit related costs' and 'changes in the fair value of securities,' as well as 'commodity inflation' and 'currency impacts' in the discussion of segment results. The combination of COVID-19 vaccine exit costs, currency impacts, and commodity inflation aligns with option d. There is no evidence in the excerpts that gross margin was primarily driven by sales volume, R&D, or marketing cost changes (as in a or b), nor is there a statement that gross margin is not a useful metric. Therefore, option d is the best supported by the corpus."
+  },
+  "parse_error": null
+}

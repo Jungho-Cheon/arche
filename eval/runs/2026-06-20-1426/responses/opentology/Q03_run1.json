@@ -1,0 +1,98 @@
+{
+  "column": "opentology",
+  "question_id": "Q03",
+  "run_index": 1,
+  "anchor_extraction": {
+    "input_tokens": 480,
+    "output_tokens": 16,
+    "latency_ms": 703,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"AMCOR\",\"aliases\":[\"AMCOR\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "AMCOR",
+          "aliases": [
+            "AMCOR"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 203,
+      "input": {
+        "keywords": [
+          "AMCOR"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 821,
+      "input": {
+        "entry_ids": [
+          "01KVHPWE2BT376J2H5SP31CR2H",
+          "01KVHPWR8PGX2HNPVKRSEBE989",
+          "01KVHPWQ8QHRHX65DQJFJ23Y21",
+          "01KVHPWNGYK6KBMZDBKZJPFJVR",
+          "01KVHPWS6E9PJGQ8Q5S6FCMA0A",
+          "01KVHPWP8N9XWP71P03AZDR3V2",
+          "01KVHPX1EWGSD9E8SE7PGYWYTK",
+          "01KVHQ1PDRZMTB7JX9EB8H98D4",
+          "01KVHQDCMX3G8Q5B07XVF5K782",
+          "01KVHQ17B93K4PZRCNR2Q5P9HD"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 80,
+        "edges": 71,
+        "truncated": true
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVHPWE2BT376J2H5SP31CR2H",
+    "01KVHPWR8PGX2HNPVKRSEBE989",
+    "01KVHPWQ8QHRHX65DQJFJ23Y21",
+    "01KVHPWNGYK6KBMZDBKZJPFJVR",
+    "01KVHPWS6E9PJGQ8Q5S6FCMA0A",
+    "01KVHPWP8N9XWP71P03AZDR3V2",
+    "01KVHPX1EWGSD9E8SE7PGYWYTK",
+    "01KVHQ1PDRZMTB7JX9EB8H98D4",
+    "01KVHQDCMX3G8Q5B07XVF5K782",
+    "01KVHQ17B93K4PZRCNR2Q5P9HD"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 34468,
+  "answer_generation": {
+    "input_tokens": 12322,
+    "output_tokens": 134,
+    "latency_ms": 1493,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"e\",\"reasoning\":\"그래프에서 AMCOR(Amcor plc)에 대한 설명은 'A globally integrated payments company, incorporated in New York, providing credit and charge cards, merchant acquisition, network services, and other financial products and services.'로 되어 있으나, 이는 실제 Amcor의 산업(포장재 산업)과 일치하지 않습니다. 또한, 그래프 내의 관계 및 엔티티 정보에서도 AMCOR가 포장재 산업에 종사한다는 직접적인 언급이 없습니다. 따라서 제공된 그래프 정보만으로는 AMCOR가 주로 어떤 산업에서 활동하는지 확정할 수 없습니다.\"}",
+    "parsed": {
+      "choice": "e",
+      "reasoning": "그래프에서 AMCOR(Amcor plc)에 대한 설명은 'A globally integrated payments company, incorporated in New York, providing credit and charge cards, merchant acquisition, network services, and other financial products and services.'로 되어 있으나, 이는 실제 Amcor의 산업(포장재 산업)과 일치하지 않습니다. 또한, 그래프 내의 관계 및 엔티티 정보에서도 AMCOR가 포장재 산업에 종사한다는 직접적인 언급이 없습니다. 따라서 제공된 그래프 정보만으로는 AMCOR가 주로 어떤 산업에서 활동하는지 확정할 수 없습니다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 8,
+  "total_input_tokens": 12802,
+  "total_output_tokens": 150,
+  "total_tokens": 12960,
+  "total_latency_ms": 3220
+}

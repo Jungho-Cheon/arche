@@ -1,0 +1,65 @@
+{
+  "column": "chunk_rag",
+  "question_id": "Q25",
+  "run_index": 0,
+  "input_tokens": 6417,
+  "output_tokens": 214,
+  "embedding_tokens": 29789,
+  "embedding_tokens_breakdown": {
+    "question_embedding": 17,
+    "setup_amortized": 29772,
+    "setup_total": 982504,
+    "questions_count_for_amortization": 33
+  },
+  "total_tokens": 36420,
+  "latency_ms": 2423,
+  "model": "gpt-4.1",
+  "retrieved_chunks": [
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 59,
+      "score": 0.6105636705401736
+    },
+    {
+      "source_path": "JOHNSON_JOHNSON_2022_10K.md",
+      "chunk_index": 76,
+      "score": 0.6090862471370174
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 55,
+      "score": 0.6087344844523565
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 26,
+      "score": 0.5971546038890185
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 27,
+      "score": 0.5970343811477489
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 24,
+      "score": 0.5919499079278935
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 54,
+      "score": 0.581125349341183
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 56,
+      "score": 0.5810555899795191
+    }
+  ],
+  "raw_response": "{\"choice\":\"d\",\"reasoning\":\"청크 6(BOEING_2022_10K.md:24)에 따르면, Boeing의 FY2022 유효세율(effective income tax rate)은 0.6%이고, FY2021 유효세율은 14.8%입니다. 보기에서 소수점 두 자리를 반영한 0.62%와 -14.76%가 가장 근접한 값입니다. 다만, 2021년의 유효세율이 음수(-14.76%)로 제시된 보기가 있으나, 실제 발췌에서는 14.8%로 양수입니다. 그러나 주어진 보기 중 가장 수치가 근접하고, 2022년이 0.62%로 2021년보다 낮다는 점에서 d)가 가장 적합합니다. 실제 수치는 0.6%와 14.8%이지만, 보기의 수치 오차를 감안하면 d)가 정답입니다.\"}",
+  "parsed": {
+    "choice": "d",
+    "reasoning": "청크 6(BOEING_2022_10K.md:24)에 따르면, Boeing의 FY2022 유효세율(effective income tax rate)은 0.6%이고, FY2021 유효세율은 14.8%입니다. 보기에서 소수점 두 자리를 반영한 0.62%와 -14.76%가 가장 근접한 값입니다. 다만, 2021년의 유효세율이 음수(-14.76%)로 제시된 보기가 있으나, 실제 발췌에서는 14.8%로 양수입니다. 그러나 주어진 보기 중 가장 수치가 근접하고, 2022년이 0.62%로 2021년보다 낮다는 점에서 d)가 가장 적합합니다. 실제 수치는 0.6%와 14.8%이지만, 보기의 수치 오차를 감안하면 d)가 정답입니다."
+  },
+  "parse_error": null
+}

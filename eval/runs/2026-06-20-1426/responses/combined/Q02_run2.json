@@ -1,0 +1,177 @@
+{
+  "column": "combined",
+  "question_id": "Q02",
+  "run_index": 2,
+  "anchor_extraction": {
+    "input_tokens": 493,
+    "output_tokens": 71,
+    "latency_ms": 889,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"AMCOR\",\"aliases\":[\"AMCOR\"]},{\"canonical\":\"acquisitions\",\"aliases\":[\"acquisitions\",\"major acquisitions\"]},{\"canonical\":\"FY2023\",\"aliases\":[\"FY2023\"]},{\"canonical\":\"FY2022\",\"aliases\":[\"FY2022\"]},{\"canonical\":\"FY2021\",\"aliases\":[\"FY2021\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "AMCOR",
+          "aliases": [
+            "AMCOR"
+          ]
+        },
+        {
+          "canonical": "acquisitions",
+          "aliases": [
+            "acquisitions",
+            "major acquisitions"
+          ]
+        },
+        {
+          "canonical": "FY2023",
+          "aliases": [
+            "FY2023"
+          ]
+        },
+        {
+          "canonical": "FY2022",
+          "aliases": [
+            "FY2022"
+          ]
+        },
+        {
+          "canonical": "FY2021",
+          "aliases": [
+            "FY2021"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 892,
+      "input": {
+        "keywords": [
+          "AMCOR",
+          "acquisitions",
+          "major acquisitions",
+          "FY2023",
+          "FY2022",
+          "FY2021"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 745,
+      "input": {
+        "entry_ids": [
+          "01KVHPWVNDMDS4DXWW5ZTR7NS5",
+          "01KVHPXB8R3M8QB5SWGWFDRBBZ",
+          "01KVHPWWS3TW493GJSKJ4S0RFW",
+          "01KVHQ91WW3YB87J3R2APKYXTG",
+          "01KVHQHWC03C4WR43X1VXVCSN9",
+          "01KVHQG0KZ68Z7GY7CZXSGE84V",
+          "01KVHQ4FF2NPAV69HYV00ACSDA",
+          "01KVHPWE2BT376J2H5SP31CR2H",
+          "01KVHPX7RM4R0XJAYXMJPP5C7T",
+          "01KVHQ936F1QMTEQNR0R3CX1G1"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 80,
+        "edges": 71,
+        "truncated": true
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVHPWVNDMDS4DXWW5ZTR7NS5",
+    "01KVHPXB8R3M8QB5SWGWFDRBBZ",
+    "01KVHPWWS3TW493GJSKJ4S0RFW",
+    "01KVHQ91WW3YB87J3R2APKYXTG",
+    "01KVHQHWC03C4WR43X1VXVCSN9",
+    "01KVHQG0KZ68Z7GY7CZXSGE84V",
+    "01KVHQ4FF2NPAV69HYV00ACSDA",
+    "01KVHPWE2BT376J2H5SP31CR2H",
+    "01KVHPX7RM4R0XJAYXMJPP5C7T",
+    "01KVHQ936F1QMTEQNR0R3CX1G1"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 34079,
+  "retrieved_chunks": [
+    {
+      "source_path": "AMCOR_2023_10K.md",
+      "chunk_index": 28,
+      "score": 0.6951274150095557
+    },
+    {
+      "source_path": "AMCOR_2023_10K.md",
+      "chunk_index": 35,
+      "score": 0.653974747674222
+    },
+    {
+      "source_path": "AMCOR_2023_10K.md",
+      "chunk_index": 8,
+      "score": 0.6477486639383009
+    },
+    {
+      "source_path": "AMCOR_2023_10K.md",
+      "chunk_index": 27,
+      "score": 0.6422521019566927
+    },
+    {
+      "source_path": "AMCOR_2023_10K.md",
+      "chunk_index": 1,
+      "score": 0.6319556624475774
+    },
+    {
+      "source_path": "AMCOR_2023_10K.md",
+      "chunk_index": 46,
+      "score": 0.6313731381766775
+    },
+    {
+      "source_path": "AMCOR_2023_10K.md",
+      "chunk_index": 41,
+      "score": 0.6313174669753817
+    },
+    {
+      "source_path": "AMCOR_2023_10K.md",
+      "chunk_index": 99,
+      "score": 0.631003075541533
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 19050,
+    "output_tokens": 263,
+    "latency_ms": 3162,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"c\",\"reasoning\":\"(A) 검색된 문서 발췌에서 FY2023, FY2022, FY2021의 주요 인수 내역에 대한 직접적인 표나 목록은 없으나, 청크 8에서 2023년 8월 인도 내 소규모 연성 포장 제조업체 인수 언급이 있고, FY2022, FY2021에 대한 구체적 인수 내역은 청크 2에서 조정 EBIT 계산에 인수된 자산이 반영된다는 언급이 있으나, 구체적 회사명이나 지역은 명시되어 있지 않음. 그러나 보기 c)만이 FY2023에 체코, 상하이, 뉴질랜드 업체 인수 모두를 언급하고 있어, 가장 포괄적이고 구체적이다. (B) 도메인 그래프에는 Amcor의 인수/매각 관련 Note 5 엔티티가 있으나, 실제 인수 대상이나 연도별 내역은 그래프에 나타나 있지 않다. 따라서 (A) 발췌의 구체적 내용(특히 FY2023에 여러 업체 인수)이 결정적 근거가 된다.\"}",
+    "parsed": {
+      "choice": "c",
+      "reasoning": "(A) 검색된 문서 발췌에서 FY2023, FY2022, FY2021의 주요 인수 내역에 대한 직접적인 표나 목록은 없으나, 청크 8에서 2023년 8월 인도 내 소규모 연성 포장 제조업체 인수 언급이 있고, FY2022, FY2021에 대한 구체적 인수 내역은 청크 2에서 조정 EBIT 계산에 인수된 자산이 반영된다는 언급이 있으나, 구체적 회사명이나 지역은 명시되어 있지 않음. 그러나 보기 c)만이 FY2023에 체코, 상하이, 뉴질랜드 업체 인수 모두를 언급하고 있어, 가장 포괄적이고 구체적이다. (B) 도메인 그래프에는 Amcor의 인수/매각 관련 Note 5 엔티티가 있으나, 실제 인수 대상이나 연도별 내역은 그래프에 나타나 있지 않다. 따라서 (A) 발췌의 구체적 내용(특히 FY2023에 여러 업체 인수)이 결정적 근거가 된다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 29842,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 22,
+    "chunk_setup_amortized": 29772,
+    "chunk_setup_total": 982504,
+    "graph_keyword_estimated": 48,
+    "questions_count_for_amortization": 33
+  },
+  "total_input_tokens": 19543,
+  "total_output_tokens": 334,
+  "total_tokens": 49719,
+  "total_latency_ms": 5688
+}

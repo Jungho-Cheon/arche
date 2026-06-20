@@ -1,0 +1,65 @@
+{
+  "column": "chunk_rag",
+  "question_id": "Q03",
+  "run_index": 1,
+  "input_tokens": 6859,
+  "output_tokens": 120,
+  "embedding_tokens": 29781,
+  "embedding_tokens_breakdown": {
+    "question_embedding": 9,
+    "setup_amortized": 29772,
+    "setup_total": 982504,
+    "questions_count_for_amortization": 33
+  },
+  "total_tokens": 36760,
+  "latency_ms": 1540,
+  "model": "gpt-4.1",
+  "retrieved_chunks": [
+    {
+      "source_path": "AMCOR_2023_10K.md",
+      "chunk_index": 7,
+      "score": 0.6405713076491244
+    },
+    {
+      "source_path": "AMCOR_2023_10K.md",
+      "chunk_index": 8,
+      "score": 0.6298776608941158
+    },
+    {
+      "source_path": "AMCOR_2023_10K.md",
+      "chunk_index": 4,
+      "score": 0.6235397179987057
+    },
+    {
+      "source_path": "AMCOR_2023_10K.md",
+      "chunk_index": 6,
+      "score": 0.6228309365249228
+    },
+    {
+      "source_path": "AMCOR_2023_10K.md",
+      "chunk_index": 28,
+      "score": 0.6167527611408246
+    },
+    {
+      "source_path": "AMCOR_2023_10K.md",
+      "chunk_index": 5,
+      "score": 0.611105425545182
+    },
+    {
+      "source_path": "AMCOR_2023_10K.md",
+      "chunk_index": 10,
+      "score": 0.5977085724438008
+    },
+    {
+      "source_path": "AMCOR_2023_10K.md",
+      "chunk_index": 11,
+      "score": 0.5958839708805329
+    }
+  ],
+  "raw_response": "{\"choice\":\"c\",\"reasoning\":\"청크 3에서 Amcor는 'a global leader in developing and producing responsible packaging for food, beverage, pharmaceutical, medical, home and personal-care, and other products'라고 명시되어 있습니다. 또한, 청크 5에서도 'Amcor is a global leader in developing and producing responsible packaging...'이라고 반복적으로 언급되어 있습니다. 이로 미루어 볼 때, Amcor의 주요 산업은 포장(패키징) 생산 산업임이 명확합니다. 따라서 정답은 c) Packaging production industry입니다.\"}",
+  "parsed": {
+    "choice": "c",
+    "reasoning": "청크 3에서 Amcor는 'a global leader in developing and producing responsible packaging for food, beverage, pharmaceutical, medical, home and personal-care, and other products'라고 명시되어 있습니다. 또한, 청크 5에서도 'Amcor is a global leader in developing and producing responsible packaging...'이라고 반복적으로 언급되어 있습니다. 이로 미루어 볼 때, Amcor의 주요 산업은 포장(패키징) 생산 산업임이 명확합니다. 따라서 정답은 c) Packaging production industry입니다."
+  },
+  "parse_error": null
+}

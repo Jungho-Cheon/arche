@@ -1,0 +1,65 @@
+{
+  "column": "chunk_rag",
+  "question_id": "Q30",
+  "run_index": 1,
+  "input_tokens": 6856,
+  "output_tokens": 167,
+  "embedding_tokens": 29792,
+  "embedding_tokens_breakdown": {
+    "question_embedding": 20,
+    "setup_amortized": 29772,
+    "setup_total": 982504,
+    "questions_count_for_amortization": 33
+  },
+  "total_tokens": 36815,
+  "latency_ms": 1712,
+  "model": "gpt-4.1",
+  "retrieved_chunks": [
+    {
+      "source_path": "PEPSICO_2022_10K.md",
+      "chunk_index": 15,
+      "score": 0.6819655490627337
+    },
+    {
+      "source_path": "PEPSICO_2022_10K.md",
+      "chunk_index": 36,
+      "score": 0.6386994084552184
+    },
+    {
+      "source_path": "PEPSICO_2022_10K.md",
+      "chunk_index": 0,
+      "score": 0.6369754795935836
+    },
+    {
+      "source_path": "PEPSICO_2022_10K.md",
+      "chunk_index": 13,
+      "score": 0.6319461935412792
+    },
+    {
+      "source_path": "PEPSICO_2022_10K.md",
+      "chunk_index": 1,
+      "score": 0.6275844650597314
+    },
+    {
+      "source_path": "PEPSICO_2022_10K.md",
+      "chunk_index": 35,
+      "score": 0.6229297540867587
+    },
+    {
+      "source_path": "PEPSICO_2022_10K.md",
+      "chunk_index": 29,
+      "score": 0.6189470412543671
+    },
+    {
+      "source_path": "PEPSICO_2022_10K.md",
+      "chunk_index": 40,
+      "score": 0.6151709506075742
+    }
+  ],
+  "raw_response": "{\"choice\":\"b\",\"reasoning\":\"청크 7에서 'We and our subsidiaries are party to a variety of litigation, claims, legal or regulatory proceedings, inquiries and investigations. While the results of such litigation, claims, legal or regulatory proceedings, inquiries and investigations cannot be predicted with certainty, management believes that the final outcome of the foregoing will not have a material adverse effect on our financial condition, results of operations or cash flows.'라고 명시되어 있습니다. 즉, 소송 등은 있으나, 경영진은 이들이 재무 상태, 영업 실적, 현금 흐름에 중대한 영향을 미치지 않을 것이라고 보고 있습니다. 따라서 보기 b) 'Pepsico reported minor legal disputes, but none were material in FY2022 and FY2021.'이 정답입니다.\"}",
+  "parsed": {
+    "choice": "b",
+    "reasoning": "청크 7에서 'We and our subsidiaries are party to a variety of litigation, claims, legal or regulatory proceedings, inquiries and investigations. While the results of such litigation, claims, legal or regulatory proceedings, inquiries and investigations cannot be predicted with certainty, management believes that the final outcome of the foregoing will not have a material adverse effect on our financial condition, results of operations or cash flows.'라고 명시되어 있습니다. 즉, 소송 등은 있으나, 경영진은 이들이 재무 상태, 영업 실적, 현금 흐름에 중대한 영향을 미치지 않을 것이라고 보고 있습니다. 따라서 보기 b) 'Pepsico reported minor legal disputes, but none were material in FY2022 and FY2021.'이 정답입니다."
+  },
+  "parse_error": null
+}

@@ -1,0 +1,65 @@
+{
+  "column": "chunk_rag",
+  "question_id": "Q18",
+  "run_index": 0,
+  "input_tokens": 6724,
+  "output_tokens": 109,
+  "embedding_tokens": 29785,
+  "embedding_tokens_breakdown": {
+    "question_embedding": 13,
+    "setup_amortized": 29772,
+    "setup_total": 982504,
+    "questions_count_for_amortization": 33
+  },
+  "total_tokens": 36618,
+  "latency_ms": 2239,
+  "model": "gpt-4.1",
+  "retrieved_chunks": [
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 54,
+      "score": 0.6252907481136231
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 6,
+      "score": 0.6178771366507546
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 53,
+      "score": 0.6109168587133122
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 99,
+      "score": 0.5882135575209241
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 72,
+      "score": 0.5792011244350403
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 4,
+      "score": 0.5788586595828755
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 32,
+      "score": 0.5728452816540859
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 57,
+      "score": 0.569164470378901
+    }
+  ],
+  "raw_response": "{\"choice\":\"b\",\"reasoning\":\"청크 1과 청크 3에서 2022년 동안 American Express의 카드 회원 유지율이 높았다는 언급이 명확히 있다. 청크 1에서는 'Card Member retention remained high, demonstrating the impact of investments we have made in our premium value propositions.'라고 하였고, 청크 3에서도 'Card Member retention remained high'라는 표현이 반복된다. 따라서 2022년에 카드 회원을 성공적으로 유지했음을 알 수 있다.\"}",
+  "parsed": {
+    "choice": "b",
+    "reasoning": "청크 1과 청크 3에서 2022년 동안 American Express의 카드 회원 유지율이 높았다는 언급이 명확히 있다. 청크 1에서는 'Card Member retention remained high, demonstrating the impact of investments we have made in our premium value propositions.'라고 하였고, 청크 3에서도 'Card Member retention remained high'라는 표현이 반복된다. 따라서 2022년에 카드 회원을 성공적으로 유지했음을 알 수 있다."
+  },
+  "parse_error": null
+}

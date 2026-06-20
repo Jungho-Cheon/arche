@@ -1,0 +1,65 @@
+{
+  "column": "chunk_rag",
+  "question_id": "Q26",
+  "run_index": 0,
+  "input_tokens": 7152,
+  "output_tokens": 269,
+  "embedding_tokens": 29789,
+  "embedding_tokens_breakdown": {
+    "question_embedding": 17,
+    "setup_amortized": 29772,
+    "setup_total": 982504,
+    "questions_count_for_amortization": 33
+  },
+  "total_tokens": 37210,
+  "latency_ms": 2821,
+  "model": "gpt-4.1",
+  "retrieved_chunks": [
+    {
+      "source_path": "JOHNSON_JOHNSON_2022_10K.md",
+      "chunk_index": 30,
+      "score": 0.6309813076841895
+    },
+    {
+      "source_path": "JOHNSON_JOHNSON_2022_10K.md",
+      "chunk_index": 138,
+      "score": 0.6162781383255879
+    },
+    {
+      "source_path": "JOHNSON_JOHNSON_2022_10K.md",
+      "chunk_index": 58,
+      "score": 0.6008889054584008
+    },
+    {
+      "source_path": "JOHNSON_JOHNSON_2022_10K.md",
+      "chunk_index": 132,
+      "score": 0.5942221163600107
+    },
+    {
+      "source_path": "JOHNSON_JOHNSON_2022_10K.md",
+      "chunk_index": 0,
+      "score": 0.5803136546083976
+    },
+    {
+      "source_path": "JOHNSON_JOHNSON_2022_10K.md",
+      "chunk_index": 52,
+      "score": 0.5691170510433126
+    },
+    {
+      "source_path": "JOHNSON_JOHNSON_2022_10K.md",
+      "chunk_index": 40,
+      "score": 0.5615444303657656
+    },
+    {
+      "source_path": "JOHNSON_JOHNSON_2022_10K.md",
+      "chunk_index": 91,
+      "score": 0.560885223581568
+    }
+  ],
+  "raw_response": "{\"choice\":\"d\",\"reasoning\":\"제공된 발췌에서는 Johnson & Johnson의 FY2022 재무성과에 대한 구체적인 성장률 수치(예: 매출 증가율, 순이익 증가율 등)가 명확히 언급되어 있지 않지만, 고성장(high growth) 기업의 기준은 일반적으로 두 자릿수(10% 이상)의 매출 성장률을 의미합니다. 발췌 중 청크 1과 3에서 J&J의 사업 구조와 최근 5년간 신제품 매출 비중(2022년 매출의 약 25%) 등은 언급되지만, FY2022의 매출 성장률이 1.3%에 불과하다는 선택지(d)의 내용이 다른 선택지에 비해 가장 보수적이고, 고성장 기업의 정의에 부합하지 않는다는 점에서 타당합니다. 또한, 다른 선택지(a, b, c)는 13% 또는 'steady growth' 등 구체적 수치나 근거가 발췌에 없으므로 부적절합니다. 따라서, FY2022의 1.3% 매출 성장률은 고성장 기업으로 보기 어렵다는 d번이 가장 적합합니다.\"}",
+  "parsed": {
+    "choice": "d",
+    "reasoning": "제공된 발췌에서는 Johnson & Johnson의 FY2022 재무성과에 대한 구체적인 성장률 수치(예: 매출 증가율, 순이익 증가율 등)가 명확히 언급되어 있지 않지만, 고성장(high growth) 기업의 기준은 일반적으로 두 자릿수(10% 이상)의 매출 성장률을 의미합니다. 발췌 중 청크 1과 3에서 J&J의 사업 구조와 최근 5년간 신제품 매출 비중(2022년 매출의 약 25%) 등은 언급되지만, FY2022의 매출 성장률이 1.3%에 불과하다는 선택지(d)의 내용이 다른 선택지에 비해 가장 보수적이고, 고성장 기업의 정의에 부합하지 않는다는 점에서 타당합니다. 또한, 다른 선택지(a, b, c)는 13% 또는 'steady growth' 등 구체적 수치나 근거가 발췌에 없으므로 부적절합니다. 따라서, FY2022의 1.3% 매출 성장률은 고성장 기업으로 보기 어렵다는 d번이 가장 적합합니다."
+  },
+  "parse_error": null
+}

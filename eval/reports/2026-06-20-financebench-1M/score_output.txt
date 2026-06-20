@@ -1,0 +1,33 @@
+======================================================================
+Combined run-dir:  eval/runs/2026-06-20-1426
+Baseline run-dir:  eval/runs/2026-06-20-1426
+======================================================================
+col            accuracy wrong (qid)                       tok_med   lat_med_ms
+---------------------------------------------------------------------------
+chunk_rag        0.7273 Q01,Q02,Q05,Q11,Q12,Q13,Q21,        36898         2015
+opentology       0.0606 Q01,Q02,Q03,Q04,Q05,Q07,Q08,         4090         3563
+combined         0.7273 Q01,Q05,Q11,Q12,Q13,Q21,Q28,        41092         4903
+
+-- 오답 집합 교차 분석 --
+  chunk-only:   []
+  graph-only:   ['Q03', 'Q04', 'Q07', 'Q08', 'Q09', 'Q10', 'Q14', 'Q16', 'Q17', 'Q18', 'Q19', 'Q20', 'Q22', 'Q23', 'Q24', 'Q25', 'Q26', 'Q27', 'Q29', 'Q31', 'Q33']
+  combined-only:[]
+  all-three:    ['Q01', 'Q05', 'Q11', 'Q12', 'Q13', 'Q21', 'Q28', 'Q30']
+  oracle (k|g): ['Q01', 'Q02', 'Q05', 'Q11', 'Q12', 'Q13', 'Q21', 'Q28', 'Q30'] -> oracle hybrid acc = 0.7000
+  combined wins (in k or g, not in c): ['Q02', 'Q03', 'Q04', 'Q07', 'Q08', 'Q09', 'Q10', 'Q14', 'Q16', 'Q17', 'Q18', 'Q19', 'Q20', 'Q22', 'Q23', 'Q24', 'Q25', 'Q26', 'Q27', 'Q29', 'Q31', 'Q33']
+  combined loses (in c, not in k or g): []
+
+-- 핵심 질문 trace --
+  Q02 (gold=c, multi_hop, 3 hops):
+    chunk : ['a', 'e', 'e']
+    graph : ['e', 'e', 'e']
+    combined: ['a', 'c', 'c']
+  Q25 (gold=d, multi_hop, 3 hops):
+    chunk : ['d', 'd', 'd']
+    graph : ['e', 'e', 'e']
+    combined: ['d', 'd', 'd']
+
+-- 비용 (gpt-4.1 단가) --
+  chunk_rag  : $1.5531
+  opentology : $1.1958
+  combined   : $2.6603
