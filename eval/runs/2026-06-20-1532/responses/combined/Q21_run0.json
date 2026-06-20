@@ -1,0 +1,172 @@
+{
+  "column": "combined",
+  "question_id": "Q21",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 488,
+    "output_tokens": 71,
+    "latency_ms": 1330,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"Boeing\",\"aliases\":[\"Boeing\"]},{\"canonical\":\"effective tax rate\",\"aliases\":[\"effective tax rate\"]},{\"canonical\":\"FY2022\",\"aliases\":[\"FY2022\",\"fiscal year 2022\"]},{\"canonical\":\"FY2021\",\"aliases\":[\"FY2021\",\"fiscal year 2021\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "Boeing",
+          "aliases": [
+            "Boeing"
+          ]
+        },
+        {
+          "canonical": "effective tax rate",
+          "aliases": [
+            "effective tax rate"
+          ]
+        },
+        {
+          "canonical": "FY2022",
+          "aliases": [
+            "FY2022",
+            "fiscal year 2022"
+          ]
+        },
+        {
+          "canonical": "FY2021",
+          "aliases": [
+            "FY2021",
+            "fiscal year 2021"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 898,
+      "input": {
+        "keywords": [
+          "Boeing",
+          "effective tax rate",
+          "FY2022",
+          "fiscal year 2022",
+          "FY2021",
+          "fiscal year 2021"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 50,
+      "input": {
+        "entry_ids": [
+          "01KVHVEPF8H0HSM6NSPNHFFZ17",
+          "01KVHVFRZ8XBW6BQJBF8XDTXMS",
+          "01KVHVJAC0HJ24RDC9RT5V52EP",
+          "01KVHVJB12EN4X3PKS7Z835PEE",
+          "01KVHVKCFYHWZAQF8E21NKKBEB",
+          "01KVHVHGM15GM1MGSYPCXT9Z2S",
+          "01KVHVHJ5QKFB2A19QG1TVPWVZ",
+          "01KVHVDXCW8KVVQYQDFHD0MRP5",
+          "01KVHVBNC3VCCP6WQD2GBP9JE9",
+          "01KVHVHK6CXQGFX8QPGJT5RADF"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 18,
+        "edges": 12,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVHVEPF8H0HSM6NSPNHFFZ17",
+    "01KVHVFRZ8XBW6BQJBF8XDTXMS",
+    "01KVHVJAC0HJ24RDC9RT5V52EP",
+    "01KVHVJB12EN4X3PKS7Z835PEE",
+    "01KVHVKCFYHWZAQF8E21NKKBEB",
+    "01KVHVHGM15GM1MGSYPCXT9Z2S",
+    "01KVHVHJ5QKFB2A19QG1TVPWVZ",
+    "01KVHVDXCW8KVVQYQDFHD0MRP5",
+    "01KVHVBNC3VCCP6WQD2GBP9JE9",
+    "01KVHVHK6CXQGFX8QPGJT5RADF"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 8324,
+  "retrieved_chunks": [
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 59,
+      "score": 0.6106279328841301
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 55,
+      "score": 0.6088133707972482
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 26,
+      "score": 0.5972130042891924
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 27,
+      "score": 0.5969732963451736
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 24,
+      "score": 0.5920553583356803
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 54,
+      "score": 0.5811962157422487
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 56,
+      "score": 0.5811313339397806
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 43,
+      "score": 0.5767850284111934
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 8966,
+    "output_tokens": 153,
+    "latency_ms": 2466,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"e\",\"reasoning\":\"(A) 검색된 문서 발췌에서 Boeing의 FY2022와 FY2021의 effective tax rate가 명시적으로 제시되어 있습니다: 'Effective income tax rate (0.6)% 14.8 % 17.5 %' (청크 5). 즉, 2022년은 -0.6%, 2021년은 14.8%입니다. 하지만 보기의 숫자(0.62%, -14.76% 등)와 일치하지 않습니다. (B) 도메인 그래프에는 세율 관련 정보가 없습니다. 따라서 주어진 보기 중 정확히 일치하는 선택지가 없어 정보 부족(e)을 선택합니다.\"}",
+    "parsed": {
+      "choice": "e",
+      "reasoning": "(A) 검색된 문서 발췌에서 Boeing의 FY2022와 FY2021의 effective tax rate가 명시적으로 제시되어 있습니다: 'Effective income tax rate (0.6)% 14.8 % 17.5 %' (청크 5). 즉, 2022년은 -0.6%, 2021년은 14.8%입니다. 하지만 보기의 숫자(0.62%, -14.76% 등)와 일치하지 않습니다. (B) 도메인 그래프에는 세율 관련 정보가 없습니다. 따라서 주어진 보기 중 정확히 일치하는 선택지가 없어 정보 부족(e)을 선택합니다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 20396,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 17,
+    "chunk_setup_amortized": 20331,
+    "chunk_setup_total": 426971,
+    "graph_keyword_estimated": 48,
+    "questions_count_for_amortization": 21
+  },
+  "total_input_tokens": 9454,
+  "total_output_tokens": 224,
+  "total_tokens": 30074,
+  "total_latency_ms": 4744
+}

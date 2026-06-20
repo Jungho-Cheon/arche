@@ -1,0 +1,130 @@
+{
+  "column": "opentology",
+  "question_id": "Q06",
+  "run_index": 1,
+  "anchor_extraction": {
+    "input_tokens": 494,
+    "output_tokens": 67,
+    "latency_ms": 1049,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"FY21\",\"aliases\":[\"FY21\"]},{\"canonical\":\"FY22\",\"aliases\":[\"FY22\"]},{\"canonical\":\"Embedded\",\"aliases\":[\"Embedded\"]},{\"canonical\":\"AMD reporting segment\",\"aliases\":[\"AMD reporting segment\",\"AMD segment\"]},{\"canonical\":\"sales proportion\",\"aliases\":[\"sales proportion\",\"sales proportionally\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "FY21",
+          "aliases": [
+            "FY21"
+          ]
+        },
+        {
+          "canonical": "FY22",
+          "aliases": [
+            "FY22"
+          ]
+        },
+        {
+          "canonical": "Embedded",
+          "aliases": [
+            "Embedded"
+          ]
+        },
+        {
+          "canonical": "AMD reporting segment",
+          "aliases": [
+            "AMD reporting segment",
+            "AMD segment"
+          ]
+        },
+        {
+          "canonical": "sales proportion",
+          "aliases": [
+            "sales proportion",
+            "sales proportionally"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 877,
+      "input": {
+        "keywords": [
+          "FY21",
+          "FY22",
+          "Embedded",
+          "AMD reporting segment",
+          "AMD segment",
+          "sales proportion",
+          "sales proportionally"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 156,
+      "input": {
+        "entry_ids": [
+          "01KVHV95CFXH4TPGP6D6A8VD88",
+          "01KVHV94VGG7VDVVCDH5KCATB3",
+          "01KVHVBCMJKKASP9YDYHW4GCCZ",
+          "01KVHV8TWX6BRMKWKKK5N8EF0W",
+          "01KVHVAVRZ0QCYRS3C2E15M0VK",
+          "01KVHV99K0MJYZQXRKN8KSA80E",
+          "01KVHV9EJJ9X60SHPAYR83K8X5",
+          "01KVHVB3Z96QEBZZC0YYRF0TPX",
+          "01KVHVB0PXPED74SEFYRGSRDV4",
+          "01KVHV9A6CQ81GES6M916T5876"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 80,
+        "edges": 76,
+        "truncated": true
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVHV95CFXH4TPGP6D6A8VD88",
+    "01KVHV94VGG7VDVVCDH5KCATB3",
+    "01KVHVBCMJKKASP9YDYHW4GCCZ",
+    "01KVHV8TWX6BRMKWKKK5N8EF0W",
+    "01KVHVAVRZ0QCYRS3C2E15M0VK",
+    "01KVHV99K0MJYZQXRKN8KSA80E",
+    "01KVHV9EJJ9X60SHPAYR83K8X5",
+    "01KVHVB3Z96QEBZZC0YYRF0TPX",
+    "01KVHVB0PXPED74SEFYRGSRDV4",
+    "01KVHV9A6CQ81GES6M916T5876"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 32093,
+  "answer_generation": {
+    "input_tokens": 10042,
+    "output_tokens": 116,
+    "latency_ms": 1802,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"e\",\"reasoning\":\"그래프에는 각 사업 부문(예: Data Center, Client, Gaming, Embedded 등)에 대한 정의와 AMD가 보유한 사업 부문 목록은 있으나, FY21과 FY22의 각 사업 부문별 매출 비중(혹은 증가율)에 대한 수치 또는 비교 정보가 포함되어 있지 않습니다. 따라서 FY21~FY22 기간 동안 Embedded를 제외한 어느 사업 부문에서 매출 비중이 가장 많이 증가했는지 판단할 수 있는 근거가 없습니다.\"}",
+    "parsed": {
+      "choice": "e",
+      "reasoning": "그래프에는 각 사업 부문(예: Data Center, Client, Gaming, Embedded 등)에 대한 정의와 AMD가 보유한 사업 부문 목록은 있으나, FY21과 FY22의 각 사업 부문별 매출 비중(혹은 증가율)에 대한 수치 또는 비교 정보가 포함되어 있지 않습니다. 따라서 FY21~FY22 기간 동안 Embedded를 제외한 어느 사업 부문에서 매출 비중이 가장 많이 증가했는지 판단할 수 있는 근거가 없습니다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 56,
+  "total_input_tokens": 10536,
+  "total_output_tokens": 183,
+  "total_tokens": 10775,
+  "total_latency_ms": 3884
+}

@@ -1,0 +1,114 @@
+{
+  "column": "opentology",
+  "question_id": "Q20",
+  "run_index": 1,
+  "anchor_extraction": {
+    "input_tokens": 483,
+    "output_tokens": 46,
+    "latency_ms": 1152,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"Boeing\",\"aliases\":[\"Boeing\"]},{\"canonical\":\"production rate\",\"aliases\":[\"production rate\",\"production rate changes\"]},{\"canonical\":\"FY2023\",\"aliases\":[\"FY2023\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "Boeing",
+          "aliases": [
+            "Boeing"
+          ]
+        },
+        {
+          "canonical": "production rate",
+          "aliases": [
+            "production rate",
+            "production rate changes"
+          ]
+        },
+        {
+          "canonical": "FY2023",
+          "aliases": [
+            "FY2023"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 606,
+      "input": {
+        "keywords": [
+          "Boeing",
+          "production rate",
+          "production rate changes",
+          "FY2023"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 109,
+      "input": {
+        "entry_ids": [
+          "01KVHVFY5SR7S5GEXTEQGVVZMZ",
+          "01KVHVJAC0HJ24RDC9RT5V52EP",
+          "01KVHVJBQAPSNGY7DA2MFPKKKV",
+          "01KVHVJB12EN4X3PKS7Z835PEE",
+          "01KVHVES5P6EXF3HFMS5AXFZEP",
+          "01KVHVGTZATSJA08Y3MYCK8ZMY",
+          "01KVHVGY5W8J69ASESMFEDW7WW",
+          "01KVHVK01S8MD3KQXYVHTHFTJ5",
+          "01KVHVETT52D58KMX4B4TBDPE0",
+          "01KVHVJ2RATVW2DWJ726TTH4WS"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 62,
+        "edges": 59,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVHVFY5SR7S5GEXTEQGVVZMZ",
+    "01KVHVJAC0HJ24RDC9RT5V52EP",
+    "01KVHVJBQAPSNGY7DA2MFPKKKV",
+    "01KVHVJB12EN4X3PKS7Z835PEE",
+    "01KVHVES5P6EXF3HFMS5AXFZEP",
+    "01KVHVGTZATSJA08Y3MYCK8ZMY",
+    "01KVHVGY5W8J69ASESMFEDW7WW",
+    "01KVHVK01S8MD3KQXYVHTHFTJ5",
+    "01KVHVETT52D58KMX4B4TBDPE0",
+    "01KVHVJ2RATVW2DWJ726TTH4WS"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 27371,
+  "answer_generation": {
+    "input_tokens": 8958,
+    "output_tokens": 130,
+    "latency_ms": 2557,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\": \"e\", \"reasoning\": \"제공된 도메인 그래프에는 Boeing이 2023년(또는 FY2023)에 737, 777X, 787 등 특정 기종의 생산량(Production Rate)에 대해 예측하거나 변경을 언급한 정보가 없다. 그래프에는 Boeing이 여러 기종을 생산 또는 개발한다는 사실만 명시되어 있으며, 생산량 변화(증가/감소/유지)에 대한 예측이나 계획은 포함되어 있지 않다. 따라서 보기 중 '정보 부족 / 알 수 없음'이 정답이다.\"}",
+    "parsed": {
+      "choice": "e",
+      "reasoning": "제공된 도메인 그래프에는 Boeing이 2023년(또는 FY2023)에 737, 777X, 787 등 특정 기종의 생산량(Production Rate)에 대해 예측하거나 변경을 언급한 정보가 없다. 그래프에는 Boeing이 여러 기종을 생산 또는 개발한다는 사실만 명시되어 있으며, 생산량 변화(증가/감소/유지)에 대한 예측이나 계획은 포함되어 있지 않다. 따라서 보기 중 '정보 부족 / 알 수 없음'이 정답이다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 32,
+  "total_input_tokens": 9441,
+  "total_output_tokens": 176,
+  "total_tokens": 9649,
+  "total_latency_ms": 4424
+}

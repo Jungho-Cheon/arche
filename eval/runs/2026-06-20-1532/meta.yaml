@@ -1,0 +1,25 @@
+measurement_id: 2026-06-20-1532
+timestamp: '2026-06-20T15:32:38+09:00'
+runs: 3
+columns:
+- chunk_rag
+- opentology
+- combined
+models:
+  llm: openai/gpt-4.1
+  embedding: openai/text-embedding-3-small
+hyperparameters:
+  temperature: 0
+  chunk_size: 800
+  chunk_overlap: 100
+  chunk_top_k: 8
+  find_entities_limit: 10
+  subgraph_hops: 2
+  subgraph_max_nodes: 80
+  find_path_max_hops: 4
+  find_path_max_paths: 5
+corpus_hash: sha256:c425350b37935f29985e3321d4361b75b114905e347cb35c90b6b00cc9934f72
+questions_hash: sha256:da8d518e7a7eef2cdf150417611b71bb3323a3dc3133d98891f97244c4033348
+notes: 'chunk_rag 응답 JSON 은 PRD 4 §1.5 기본 스키마에 embedding_tokens (질문 임베딩 + amortized
+  setup 임베딩) 필드를 *확장* 한다. PRD 4 §2.7 의 토큰 카운트 규칙을 응답 단위로 직렬화하기 위한 확장. judge / report
+  컬럼은 본 PR 의 범위 밖 (issue #11).'

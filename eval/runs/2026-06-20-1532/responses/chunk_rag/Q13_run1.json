@@ -1,0 +1,65 @@
+{
+  "column": "chunk_rag",
+  "question_id": "Q13",
+  "run_index": 1,
+  "input_tokens": 6449,
+  "output_tokens": 140,
+  "embedding_tokens": 20347,
+  "embedding_tokens_breakdown": {
+    "question_embedding": 16,
+    "setup_amortized": 20331,
+    "setup_total": 426971,
+    "questions_count_for_amortization": 21
+  },
+  "total_tokens": 26936,
+  "latency_ms": 2237,
+  "model": "gpt-4.1",
+  "retrieved_chunks": [
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 77,
+      "score": 0.6824459113751863
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 137,
+      "score": 0.6694014806918115
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 151,
+      "score": 0.6660343963677496
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 72,
+      "score": 0.6534701892175202
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 164,
+      "score": 0.6421725353600571
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 136,
+      "score": 0.6361374650397575
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 177,
+      "score": 0.6173713191547353
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 6,
+      "score": 0.6114198436986567
+    }
+  ],
+  "raw_response": "{\n  \"choice\": \"e\",\n  \"reasoning\": \"The provided excerpts discuss various liabilities such as long-term debt (e.g., $42.6 billion as of December 31, 2022 in 청크 1 and 청크 6), customer deposits (e.g., $16 billion in 청크 3), and mention other liabilities like accounts payable and accrued expenses in general terms. However, none of the excerpts provide a full balance sheet or a direct comparison of all liability categories. Therefore, while we know the amounts for some liabilities, we cannot definitively determine which is the largest liability on the balance sheet in 2022 based solely on the provided information.\"\n}",
+  "parsed": {
+    "choice": "e",
+    "reasoning": "The provided excerpts discuss various liabilities such as long-term debt (e.g., $42.6 billion as of December 31, 2022 in 청크 1 and 청크 6), customer deposits (e.g., $16 billion in 청크 3), and mention other liabilities like accounts payable and accrued expenses in general terms. However, none of the excerpts provide a full balance sheet or a direct comparison of all liability categories. Therefore, while we know the amounts for some liabilities, we cannot definitively determine which is the largest liability on the balance sheet in 2022 based solely on the provided information."
+  },
+  "parse_error": null
+}

@@ -1,0 +1,65 @@
+{
+  "column": "chunk_rag",
+  "question_id": "Q05",
+  "run_index": 2,
+  "input_tokens": 7004,
+  "output_tokens": 186,
+  "embedding_tokens": 20359,
+  "embedding_tokens_breakdown": {
+    "question_embedding": 28,
+    "setup_amortized": 20331,
+    "setup_total": 426971,
+    "questions_count_for_amortization": 21
+  },
+  "total_tokens": 27549,
+  "latency_ms": 1960,
+  "model": "gpt-4.1",
+  "retrieved_chunks": [
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 58,
+      "score": 0.6723096930818399
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 46,
+      "score": 0.6613860489513467
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 47,
+      "score": 0.6592317939651732
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 64,
+      "score": 0.6265780814746232
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 63,
+      "score": 0.624609230618442
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 55,
+      "score": 0.6201252162418359
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 45,
+      "score": 0.6054168799887027
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 44,
+      "score": 0.6017582432558466
+    }
+  ],
+  "raw_response": "{\"choice\":\"a\",\"reasoning\":\"청크 5와 청크 4에서 AMD의 2022년 현금흐름표가 명확히 제시되어 있다. 2022년 영업활동(operations)에서 발생한 순현금 유입은 $3,565 million, 투자활동(investing activities)에서 순현금 유입은 $1,999 million, 재무활동(financing activities)에서는 순현금 유출이 $3,264 million임을 알 수 있다. 즉, 영업활동이 가장 많은 현금 유입을 가져왔으며, 투자활동도 현금 유입이 있었으나 영업활동이 더 많았다. 재무활동은 오히려 현금 유출이었다. 따라서 정답은 a) Operations brought in the most cash flow for AMD in FY22 이다.\"}",
+  "parsed": {
+    "choice": "a",
+    "reasoning": "청크 5와 청크 4에서 AMD의 2022년 현금흐름표가 명확히 제시되어 있다. 2022년 영업활동(operations)에서 발생한 순현금 유입은 $3,565 million, 투자활동(investing activities)에서 순현금 유입은 $1,999 million, 재무활동(financing activities)에서는 순현금 유출이 $3,264 million임을 알 수 있다. 즉, 영업활동이 가장 많은 현금 유입을 가져왔으며, 투자활동도 현금 유입이 있었으나 영업활동이 더 많았다. 재무활동은 오히려 현금 유출이었다. 따라서 정답은 a) Operations brought in the most cash flow for AMD in FY22 이다."
+  },
+  "parse_error": null
+}

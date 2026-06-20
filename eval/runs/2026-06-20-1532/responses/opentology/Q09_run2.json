@@ -1,0 +1,100 @@
+{
+  "column": "opentology",
+  "question_id": "Q09",
+  "run_index": 2,
+  "anchor_extraction": {
+    "input_tokens": 488,
+    "output_tokens": 19,
+    "latency_ms": 1122,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"American Express\",\"aliases\":[\"American Express\",\"Amex\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "American Express",
+          "aliases": [
+            "American Express",
+            "Amex"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 629,
+      "input": {
+        "keywords": [
+          "American Express",
+          "Amex"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 134,
+      "input": {
+        "entry_ids": [
+          "01KVHVCP9JF4XN5VCF0HAQ0ANF",
+          "01KVHVDZPRQR3K1QJF0YN81VYN",
+          "01KVHVFQJBHM6CJDY43KR672ME",
+          "01KVHVCQG19MMR0HZR7AP9FJ0M",
+          "01KVHVE080XFJH6AXRDM08FE1F",
+          "01KVHVFPRJK3HJNPANNJ47FG55",
+          "01KVHVEGQRTBB9ZNM04TFST0BE",
+          "01KVHVCPZJW2SENJEEKSYQQ4HB",
+          "01KVHVESTC9KMTJN4RT65BZK6H",
+          "01KVHVCZC1P9CA34G3APNJ4YWQ"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 69,
+        "edges": 71,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVHVCP9JF4XN5VCF0HAQ0ANF",
+    "01KVHVDZPRQR3K1QJF0YN81VYN",
+    "01KVHVFQJBHM6CJDY43KR672ME",
+    "01KVHVCQG19MMR0HZR7AP9FJ0M",
+    "01KVHVE080XFJH6AXRDM08FE1F",
+    "01KVHVFPRJK3HJNPANNJ47FG55",
+    "01KVHVEGQRTBB9ZNM04TFST0BE",
+    "01KVHVCPZJW2SENJEEKSYQQ4HB",
+    "01KVHVESTC9KMTJN4RT65BZK6H",
+    "01KVHVCZC1P9CA34G3APNJ4YWQ"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 33390,
+  "answer_generation": {
+    "input_tokens": 10032,
+    "output_tokens": 140,
+    "latency_ms": 2545,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"e\",\"reasoning\":\"제공된 도메인 그래프에는 American Express Company의 주요 운영 지역(geographies)에 대한 직접적인 정보가 포함되어 있지 않습니다. 엔티티 및 관계 정보는 사업 부문(예: U.S. Consumer Services, International Card Services 등)이나 cobrand 파트너, 경쟁사, 규제 기관 등에 대한 내용은 있으나, 구체적으로 American Express가 2022년 기준으로 주로 운영하는 지역(예: United States, EMEA, APAC, LACC 등)에 대한 명시적 언급은 없습니다. 따라서 정답은 '정보 부족 / 알 수 없음'입니다.\"}",
+    "parsed": {
+      "choice": "e",
+      "reasoning": "제공된 도메인 그래프에는 American Express Company의 주요 운영 지역(geographies)에 대한 직접적인 정보가 포함되어 있지 않습니다. 엔티티 및 관계 정보는 사업 부문(예: U.S. Consumer Services, International Card Services 등)이나 cobrand 파트너, 경쟁사, 규제 기관 등에 대한 내용은 있으나, 구체적으로 American Express가 2022년 기준으로 주로 운영하는 지역(예: United States, EMEA, APAC, LACC 등)에 대한 명시적 언급은 없습니다. 따라서 정답은 '정보 부족 / 알 수 없음'입니다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 16,
+  "total_input_tokens": 10520,
+  "total_output_tokens": 159,
+  "total_tokens": 10695,
+  "total_latency_ms": 4430
+}

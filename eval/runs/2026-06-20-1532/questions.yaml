@@ -1,0 +1,804 @@
+dataset_id: financebench-smoke-2026-06-20
+questions:
+- id: Q01
+  question: Does AMD have a reasonably healthy liquidity profile based on its quick
+    ratio for FY22? If the quick ratio is not relevant to measure liquidity, please
+    state that and explain why.
+  domain_pattern: single_doc
+  hops_required: 1
+  options:
+  - id: a
+    text: No, AMD's quick ratio is below 1, indicating poor liquidity and inability
+      to cover current liabilities quickly.
+    is_correct: false
+    failure_mode_tested: numeric_error
+  - id: b
+    text: Yes, AMD's quick ratio for FY22 is 1.57, indicating a reasonably healthy
+      liquidity profile based on cash, short-term investments, receivables, and current
+      liabilities.
+    is_correct: true
+    failure_mode_tested: null
+  - id: c
+    text: AMD's liquidity should be measured by the current ratio, which is 2.5, rather
+      than the quick ratio.
+    is_correct: false
+    failure_mode_tested: wrong_relation
+  - id: d
+    text: The quick ratio is not relevant because it excludes inventory, which is
+      the most important liquidity measure for AMD.
+    is_correct: false
+    failure_mode_tested: overgeneralization
+  - id: e
+    text: Insufficient information / cannot determine from the corpus. (정보 부족 / 알
+      수 없음)
+    is_correct: false
+    failure_mode_tested: retrieval_failure
+  reference_reasoning: 'FinanceBench gold answer: Yes. The quick ratio is 1.57, calculated
+    as (cash and cash equivalents+Short term investments+Accounts receivable, net+receivables
+    from related parties)/ (current liabilities).. Source: AMD_2022_10K (Logical reasoning
+    (based on numerical reasoning) OR Logical reasoning). Original justification: '
+  expected_sources:
+  - corpus/AMD_2022_10K.md
+  tags:
+  - AMD
+  - AMD_2022_10K
+  - domain-relevant
+- id: Q02
+  question: What are the major products and services that AMD sells as of FY22?
+  domain_pattern: single_doc
+  hops_required: 1
+  options:
+  - id: a
+    text: AMD sells server CPUs, GPUs, DPUs, FPGAs, Adaptive SoCs for data centers;
+      CPUs, APUs, chipsets for PCs; discrete GPUs, semi-custom SoCs, development services;
+      and embedded CPUs, GPUs, APUs, FPGAs, Adaptive SoCs.
+    is_correct: true
+    failure_mode_tested: null
+  - id: b
+    text: AMD sells CPUs, GPUs, and chipsets primarily for desktops and notebooks,
+      but does not provide semi-custom SoCs or development services.
+    is_correct: false
+    failure_mode_tested: wrong_relation
+  - id: c
+    text: AMD sells only CPUs and GPUs for personal computers and gaming consoles,
+      excluding data center and embedded products.
+    is_correct: false
+    failure_mode_tested: overgeneralization
+  - id: d
+    text: AMD's major products are server CPUs, GPUs, and chipsets for mobile devices,
+      but it does not offer FPGAs or Adaptive SoCs.
+    is_correct: false
+    failure_mode_tested: missed_hop
+  - id: e
+    text: Insufficient information / cannot determine from the corpus. (정보 부족 / 알
+      수 없음)
+    is_correct: false
+    failure_mode_tested: retrieval_failure
+  reference_reasoning: 'FinanceBench gold answer: AMD sells server microprocessors
+    (CPUs) and graphics processing units (GPUs), data processing units (DPUs), Field
+    Programmable Gate Arrays (FPGAs), and Adaptive System-on-Chip (SoC) products for
+    data centers; CPUs, accelerated processing units (APUs) that integrate CPUs and
+    GPUs, and chipsets for desktop and notebook personal computers; discrete GPUs,
+    and semi-custom SoC products and development services; and embedded CPUs, GPUs,
+    APUs, FPGAs, and Adaptive SoC products..'
+  expected_sources:
+  - corpus/AMD_2022_10K.md
+  tags:
+  - AMD
+  - AMD_2022_10K
+  - domain-relevant
+- id: Q03
+  question: What drove revenue change as of the FY22 for AMD?
+  domain_pattern: cross_source
+  hops_required: 2
+  options:
+  - id: a
+    text: Higher sales of EPYC server processors, increased semi-custom product sales,
+      and inclusion of Xilinx embedded product sales drove revenue change in FY22.
+    is_correct: true
+    failure_mode_tested: null
+  - id: b
+    text: Higher sales of EPYC server processors and semi-custom products, excluding
+      Xilinx embedded product sales, drove revenue change in FY22.
+    is_correct: false
+    failure_mode_tested: missed_hop
+  - id: c
+    text: Revenue change in FY22 was driven mainly by higher sales of consumer electronics
+      and software licensing.
+    is_correct: false
+    failure_mode_tested: overgeneralization
+  - id: d
+    text: Increased sales of Ryzen desktop processors and higher graphics card sales
+      drove revenue change in FY22.
+    is_correct: false
+    failure_mode_tested: wrong_relation
+  - id: e
+    text: Insufficient information / cannot determine from the corpus. (정보 부족 / 알
+      수 없음)
+    is_correct: false
+    failure_mode_tested: retrieval_failure
+  reference_reasoning: 'FinanceBench gold answer: In 2022, AMD reported Higher sales
+    of their EPYC server processors, higher semi-custom product sales, and the inclusion
+    of Xilinx embedded product sales. Source: AMD_2022_10K (Information extraction).
+    Original justification: '
+  expected_sources:
+  - corpus/AMD_2022_10K.md
+  tags:
+  - AMD
+  - AMD_2022_10K
+  - domain-relevant
+- id: Q04
+  question: What drove operating margin change as of the FY22 for AMD? If operating
+    margin is not a useful metric for a company like this, then please state that
+    and explain why.
+  domain_pattern: multi_hop
+  hops_required: 3
+  options:
+  - id: a
+    text: The operating margin change was mainly due to higher research and development
+      expenses unrelated to acquisitions.
+    is_correct: false
+    failure_mode_tested: overgeneralization
+  - id: b
+    text: The decrease in AMD's operating income was primarily driven by amortization
+      of intangible assets related to the Xilinx acquisition.
+    is_correct: true
+    failure_mode_tested: null
+  - id: c
+    text: Operating margin was not a useful metric because AMD's revenue fluctuated
+      significantly due to market volatility.
+    is_correct: false
+    failure_mode_tested: synonym_confusion
+  - id: d
+    text: The operating margin improved due to increased revenue from new product
+      launches in FY22.
+    is_correct: false
+    failure_mode_tested: wrong_relation
+  - id: e
+    text: Insufficient information / cannot determine from the corpus. (정보 부족 / 알
+      수 없음)
+    is_correct: false
+    failure_mode_tested: retrieval_failure
+  reference_reasoning: 'FinanceBench gold answer: The decrease in AMD''s operating
+    income was primarily driven by amortization of intangible assets associated with
+    the Xilinx acquisition. Source: AMD_2022_10K (Logical reasoning (based on numerical
+    reasoning) OR Numerical reasoning OR Logical reasoning). Original justification: '
+  expected_sources:
+  - corpus/AMD_2022_10K.md
+  tags:
+  - AMD
+  - AMD_2022_10K
+  - domain-relevant
+- id: Q05
+  question: Among operations, investing, and financing activities, which brought in
+    the most (or lost the least) cash flow for AMD in FY22?
+  domain_pattern: cross_source
+  hops_required: 2
+  options:
+  - id: a
+    text: Operations brought in the most cash flow for AMD in FY22
+    is_correct: true
+    failure_mode_tested: null
+  - id: b
+    text: Financing activities brought in the most cash flow for AMD in FY22
+    is_correct: false
+    failure_mode_tested: wrong_relation
+  - id: c
+    text: Investing activities brought in the most cash flow for AMD in FY22
+    is_correct: false
+    failure_mode_tested: wrong_relation
+  - id: d
+    text: AMD lost the least cash flow from investing activities in FY22
+    is_correct: false
+    failure_mode_tested: synonym_confusion
+  - id: e
+    text: Insufficient information / cannot determine from the corpus. (정보 부족 / 알
+      수 없음)
+    is_correct: false
+    failure_mode_tested: retrieval_failure
+  reference_reasoning: 'FinanceBench gold answer: In 2022, AMD brought in the most
+    cashflow from Operations. Source: AMD_2022_10K (Numerical reasoning). Original
+    justification: '
+  expected_sources:
+  - corpus/AMD_2022_10K.md
+  tags:
+  - AMD
+  - AMD_2022_10K
+  - domain-relevant
+- id: Q06
+  question: From FY21 to FY22, excluding Embedded, in which AMD reporting segment
+    did sales proportionally increase the most?
+  domain_pattern: multi_hop
+  hops_required: 3
+  options:
+  - id: a
+    text: Enterprise, Embedded and Semi-Custom segment had the largest proportional
+      sales increase from FY21 to FY22, excluding Embedded.
+    is_correct: false
+    failure_mode_tested: overgeneralization
+  - id: b
+    text: Sales proportionally increased the most in the Embedded segment from FY21
+      to FY22.
+    is_correct: false
+    failure_mode_tested: missed_hop
+  - id: c
+    text: Data Center segment had the largest proportional sales increase from FY21
+      to FY22, excluding Embedded.
+    is_correct: true
+    failure_mode_tested: null
+  - id: d
+    text: Computing and Graphics segment had the largest proportional sales increase
+      from FY21 to FY22, excluding Embedded.
+    is_correct: false
+    failure_mode_tested: wrong_relation
+  - id: e
+    text: Insufficient information / cannot determine from the corpus. (정보 부족 / 알
+      수 없음)
+    is_correct: false
+    failure_mode_tested: retrieval_failure
+  reference_reasoning: "Data center: \nFY22: 6,043\nFY21: 3,694 \n6,043/3,694-1 =\
+    \ 63,59%\n\nClient: \nFY22: 6,201\nFY21: 6,887 \n6,201/6,887-1 = -9,96%\n\n\n\
+    Gaming: \nFY22: 6,805\nFY21: 5,607 \n6,805/5,607-1 = 21,37%"
+  expected_sources:
+  - corpus/AMD_2022_10K.md
+  tags:
+  - AMD
+  - AMD_2022_10K
+  - novel-generated
+- id: Q07
+  question: Did AMD report customer concentration in FY22?
+  domain_pattern: cross_source
+  hops_required: 2
+  options:
+  - id: a
+    text: Yes, one customer accounted for 26% of consolidated net revenue in FY22
+    is_correct: false
+    failure_mode_tested: numeric_error
+  - id: b
+    text: Yes, two customers each accounted for 16% of consolidated net revenue in
+      FY22
+    is_correct: false
+    failure_mode_tested: wrong_relation
+  - id: c
+    text: Yes, one customer accounted for 16% of consolidated net revenue in FY22
+    is_correct: true
+    failure_mode_tested: null
+  - id: d
+    text: No, AMD did not report any significant customer concentration in FY22
+    is_correct: false
+    failure_mode_tested: wrong_relation
+  - id: e
+    text: Insufficient information / cannot determine from the corpus. (정보 부족 / 알
+      수 없음)
+    is_correct: false
+    failure_mode_tested: retrieval_failure
+  reference_reasoning: One customer ccounting for 16% of net evenue is a high customer
+    concenration
+  expected_sources:
+  - corpus/AMD_2022_10K.md
+  tags:
+  - AMD
+  - AMD_2022_10K
+  - novel-generated
+- id: Q08
+  question: Which debt securities are registered to trade on a national securities
+    exchange under American Express' name as of 2022?
+  domain_pattern: single_doc
+  hops_required: 1
+  options:
+  - id: a
+    text: Only one debt security is registered to trade on a national securities exchange
+      under American Express' name as of 2022
+    is_correct: false
+    failure_mode_tested: numeric_error
+  - id: b
+    text: Debt securities are registered but only on over-the-counter markets, not
+      on a national securities exchange as of 2022
+    is_correct: false
+    failure_mode_tested: wrong_relation
+  - id: c
+    text: American Express has multiple debt securities registered to trade on a national
+      securities exchange as of 2022
+    is_correct: false
+    failure_mode_tested: overgeneralization
+  - id: d
+    text: There are no debt securities registered to trade on a national securities
+      exchange under American Express' name as of 2022
+    is_correct: true
+    failure_mode_tested: null
+  - id: e
+    text: Insufficient information / cannot determine from the corpus. (정보 부족 / 알
+      수 없음)
+    is_correct: false
+    failure_mode_tested: retrieval_failure
+  reference_reasoning: No debt securities are listed under the securities registered
+    pursuant to Section 12(b) of the Act, which implies there are none
+  expected_sources:
+  - corpus/AMERICANEXPRESS_2022_10K.md
+  tags:
+  - American Express
+  - AMERICANEXPRESS_2022_10K
+  - domain-relevant
+- id: Q09
+  question: What are the geographies that American Express primarily operates in as
+    of 2022?
+  domain_pattern: single_doc
+  hops_required: 1
+  options:
+  - id: a
+    text: United States, Europe, Asia, and Latin America
+    is_correct: false
+    failure_mode_tested: synonym_confusion
+  - id: b
+    text: United States, EMEA, APAC, and LACC
+    is_correct: true
+    failure_mode_tested: null
+  - id: c
+    text: United States, APAC, and Canada
+    is_correct: false
+    failure_mode_tested: wrong_relation
+  - id: d
+    text: United States and EMEA only
+    is_correct: false
+    failure_mode_tested: overgeneralization
+  - id: e
+    text: Insufficient information / cannot determine from the corpus. (정보 부족 / 알
+      수 없음)
+    is_correct: false
+    failure_mode_tested: retrieval_failure
+  reference_reasoning: 'FinanceBench gold answer: United States, EMEA, APAC, and LACC.
+    Source: AMERICANEXPRESS_2022_10K (Information extraction). Original justification: '
+  expected_sources:
+  - corpus/AMERICANEXPRESS_2022_10K.md
+  tags:
+  - American Express
+  - AMERICANEXPRESS_2022_10K
+  - domain-relevant
+- id: Q10
+  question: Does AMEX have an improving operating margin profile as of 2022? If operating
+    margin is not a useful metric for a company like this, then state that and explain
+    why.
+  domain_pattern: multi_hop
+  hops_required: 3
+  options:
+  - id: a
+    text: Operating margin is the primary metric to evaluate AMEX's performance
+    is_correct: false
+    failure_mode_tested: overgeneralization
+  - id: b
+    text: Performance is not measured through operating margin for AMEX
+    is_correct: true
+    failure_mode_tested: null
+  - id: c
+    text: AMEX has an improving operating margin profile as of 2022
+    is_correct: false
+    failure_mode_tested: wrong_relation
+  - id: d
+    text: AMEX's operating margin has declined in 2022 compared to previous years
+    is_correct: false
+    failure_mode_tested: wrong_relation
+  - id: e
+    text: Insufficient information / cannot determine from the corpus. (정보 부족 / 알
+      수 없음)
+    is_correct: false
+    failure_mode_tested: retrieval_failure
+  reference_reasoning: It's a financial services company and performance is measured
+    through the Net Interest Margin.
+  expected_sources:
+  - corpus/AMERICANEXPRESS_2022_10K.md
+  tags:
+  - American Express
+  - AMERICANEXPRESS_2022_10K
+  - domain-relevant
+- id: Q11
+  question: What drove gross margin change as of the FY2022 for American Express?
+    If gross margin is not a useful metric for a company like this, then please state
+    that and explain why.
+  domain_pattern: multi_hop
+  hops_required: 3
+  options:
+  - id: a
+    text: Performance is not measured through gross margin for American Express
+    is_correct: true
+    failure_mode_tested: null
+  - id: b
+    text: Gross margin increased due to higher revenue and lower cost of goods sold
+    is_correct: false
+    failure_mode_tested: wrong_relation
+  - id: c
+    text: Gross margin remained stable as the company focused on maintaining cost
+      efficiency
+    is_correct: false
+    failure_mode_tested: synonym_confusion
+  - id: d
+    text: Gross margin decreased because of increased operating expenses
+    is_correct: false
+    failure_mode_tested: overgeneralization
+  - id: e
+    text: Insufficient information / cannot determine from the corpus. (정보 부족 / 알
+      수 없음)
+    is_correct: false
+    failure_mode_tested: retrieval_failure
+  reference_reasoning: It's a financial services company and performance is measured
+    through the Net Interest Margin.
+  expected_sources:
+  - corpus/AMERICANEXPRESS_2022_10K.md
+  tags:
+  - American Express
+  - AMERICANEXPRESS_2022_10K
+  - domain-relevant
+- id: Q12
+  question: How much has the effective tax rate of American Express changed between
+    FY2021 and FY2022?
+  domain_pattern: multi_hop
+  hops_required: 3
+  options:
+  - id: a
+    text: The effective tax rate changed from 24.6% in FY2020 to 21.6% in FY2021.
+    is_correct: false
+    failure_mode_tested: missed_hop
+  - id: b
+    text: The effective tax rate increased from 21.6% in FY2021 to 24.6% in FY2022.
+    is_correct: false
+    failure_mode_tested: wrong_relation
+  - id: c
+    text: The effective tax rate dropped from 24.6% in FY2021 to 21.6% in FY2022.
+    is_correct: true
+    failure_mode_tested: null
+  - id: d
+    text: The effective tax rate dropped by 10% from 24.6% to 22.1% between FY2021
+      and FY2022.
+    is_correct: false
+    failure_mode_tested: numeric_error
+  - id: e
+    text: Insufficient information / cannot determine from the corpus. (정보 부족 / 알
+      수 없음)
+    is_correct: false
+    failure_mode_tested: retrieval_failure
+  reference_reasoning: 'FinanceBench gold answer: The effective tax rate for American
+    Express has changed/dropped from 24.6% in FY 2021 to 21.6% in FY 2022.. Source:
+    AMERICANEXPRESS_2022_10K (Numerical reasoning). Original justification: '
+  expected_sources:
+  - corpus/AMERICANEXPRESS_2022_10K.md
+  tags:
+  - American Express
+  - AMERICANEXPRESS_2022_10K
+  - domain-relevant
+- id: Q13
+  question: What was the largest liability in American Express's Balance Sheet in
+    2022?
+  domain_pattern: cross_source
+  hops_required: 2
+  options:
+  - id: a
+    text: Long-term debt
+    is_correct: false
+    failure_mode_tested: wrong_relation
+  - id: b
+    text: Accounts payable
+    is_correct: false
+    failure_mode_tested: overgeneralization
+  - id: c
+    text: Accrued expenses
+    is_correct: false
+    failure_mode_tested: synonym_confusion
+  - id: d
+    text: Customer deposits
+    is_correct: true
+    failure_mode_tested: null
+  - id: e
+    text: Insufficient information / cannot determine from the corpus. (정보 부족 / 알
+      수 없음)
+    is_correct: false
+    failure_mode_tested: retrieval_failure
+  reference_reasoning: 'FinanceBench gold answer: Customer deposits. Source: AMERICANEXPRESS_2022_10K
+    (extraction). Original justification: '
+  expected_sources:
+  - corpus/AMERICANEXPRESS_2022_10K.md
+  tags:
+  - American Express
+  - AMERICANEXPRESS_2022_10K
+  - novel-generated
+- id: Q14
+  question: Was American Express able to retain card members during 2022?
+  domain_pattern: cross_source
+  hops_required: 2
+  options:
+  - id: a
+    text: No, American Express lost a significant number of card members in 2022.
+    is_correct: false
+    failure_mode_tested: wrong_relation
+  - id: b
+    text: Yes, American Express was able to retain card members during 2022.
+    is_correct: true
+    failure_mode_tested: null
+  - id: c
+    text: American Express retained some card members but overall membership declined
+      in 2022.
+    is_correct: false
+    failure_mode_tested: overgeneralization
+  - id: d
+    text: The data only shows card member retention for 2021, not 2022.
+    is_correct: false
+    failure_mode_tested: missed_hop
+  - id: e
+    text: Insufficient information / cannot determine from the corpus. (정보 부족 / 알
+      수 없음)
+    is_correct: false
+    failure_mode_tested: retrieval_failure
+  reference_reasoning: 'FinanceBench gold answer: Yes. Source: AMERICANEXPRESS_2022_10K
+    (extraction). Original justification: '
+  expected_sources:
+  - corpus/AMERICANEXPRESS_2022_10K.md
+  tags:
+  - American Express
+  - AMERICANEXPRESS_2022_10K
+  - novel-generated
+- id: Q15
+  question: Are there any product categories / service categories that represent more
+    than 20% of Boeing's revenue for FY2022?
+  domain_pattern: single_doc
+  hops_required: 1
+  options:
+  - id: a
+    text: Yes, Commercial Airplanes (39%), Defence (35%), and Services (26%) each
+      represent more than 20% of Boeing's revenue for FY2022.
+    is_correct: true
+    failure_mode_tested: null
+  - id: b
+    text: Only Commercial Airplanes represent more than 20% of Boeing's revenue for
+      FY2022, with 39%. Defence and Services are below 20%.
+    is_correct: false
+    failure_mode_tested: missed_hop
+  - id: c
+    text: Yes, but only Defence (35%) and Services (26%) represent more than 20% of
+      Boeing's revenue for FY2022; Commercial Airplanes is less than 20%.
+    is_correct: false
+    failure_mode_tested: wrong_relation
+  - id: d
+    text: No, none of the product or service categories represent more than 20% of
+      Boeing's revenue for FY2022.
+    is_correct: false
+    failure_mode_tested: overgeneralization
+  - id: e
+    text: Insufficient information / cannot determine from the corpus. (정보 부족 / 알
+      수 없음)
+    is_correct: false
+    failure_mode_tested: retrieval_failure
+  reference_reasoning: 'Commercial Airplanes%=Revenues: Commercial Airplanes/Total
+    revenues*100=25,867/66,608*100=39%. Defence%=Defense, Space & Security/Total revenues*100=23,162/66,608*100=35%.
+    Services%=Global Services/Total revenues*100=17,611/66,608*100=26%.'
+  expected_sources:
+  - corpus/BOEING_2022_10K.md
+  tags:
+  - Boeing
+  - BOEING_2022_10K
+  - domain-relevant
+- id: Q16
+  question: Has Boeing reported any materially important ongoing legal battles from
+    FY2022?
+  domain_pattern: single_doc
+  hops_required: 1
+  options:
+  - id: a
+    text: Yes. Boeing has multiple ongoing lawsuits related to the 2018 Lion Air and
+      2019 Ethiopian Airlines crashes.
+    is_correct: true
+    failure_mode_tested: null
+  - id: b
+    text: Yes. Boeing has ongoing legal issues but only minor claims unrelated to
+      any crashes.
+    is_correct: false
+    failure_mode_tested: overgeneralization
+  - id: c
+    text: Yes. Boeing only has lawsuits related to the 2020 grounding of the 737 MAX,
+      not the crashes.
+    is_correct: false
+    failure_mode_tested: wrong_relation
+  - id: d
+    text: No. Boeing reported no ongoing legal battles in FY2022.
+    is_correct: false
+    failure_mode_tested: wrong_relation
+  - id: e
+    text: Insufficient information / cannot determine from the corpus. (정보 부족 / 알
+      수 없음)
+    is_correct: false
+    failure_mode_tested: retrieval_failure
+  reference_reasoning: 'FinanceBench gold answer: Yes. Multiple lawsuits have been
+    filed against Boeing resulting from a 2018 Lion Air crash and a 2019 Ethiopian
+    Airlines crash.. Source: BOEING_2022_10K (Information extraction). Original justification: '
+  expected_sources:
+  - corpus/BOEING_2022_10K.md
+  tags:
+  - Boeing
+  - BOEING_2022_10K
+  - domain-relevant
+- id: Q17
+  question: Does Boeing have an improving gross margin profile as of FY2022? If gross
+    margin is not a useful metric for a company like this, then state that and explain
+    why.
+  domain_pattern: multi_hop
+  hops_required: 3
+  options:
+  - id: a
+    text: Boeing's gross margin remained flat at around 5% from FY2021 to FY2022,
+      with no significant improvement in gross profit.
+    is_correct: false
+    failure_mode_tested: wrong_relation
+  - id: b
+    text: Gross margin is not a useful metric for Boeing because the company primarily
+      reports operating margin for performance evaluation.
+    is_correct: false
+    failure_mode_tested: overgeneralization
+  - id: c
+    text: Yes, Boeing's gross margin improved from 4.8% in FY2021 to 5.3% in FY2022,
+      with gross profit increasing from $3,017 million to $3,502 million.
+    is_correct: true
+    failure_mode_tested: null
+  - id: d
+    text: No, Boeing's gross margin declined from 5.3% in FY2021 to 4.8% in FY2022
+      despite an increase in gross profit.
+    is_correct: false
+    failure_mode_tested: numeric_error
+  - id: e
+    text: Insufficient information / cannot determine from the corpus. (정보 부족 / 알
+      수 없음)
+    is_correct: false
+    failure_mode_tested: retrieval_failure
+  reference_reasoning: Gross margin%=Gross margin/Total revenues*100=3,502/66,608*100=5.3%
+    for 2022 and 3,017/62,286*100=4.8% for 2021.
+  expected_sources:
+  - corpus/BOEING_2022_10K.md
+  tags:
+  - Boeing
+  - BOEING_2022_10K
+  - domain-relevant
+- id: Q18
+  question: Who are the primary customers of Boeing as of FY2022?
+  domain_pattern: single_doc
+  hops_required: 1
+  options:
+  - id: a
+    text: Boeing's primary customers in FY2022 were mostly international airlines,
+      with the US government contributing less than 10% of revenues.
+    is_correct: false
+    failure_mode_tested: wrong_relation
+  - id: b
+    text: Boeing's primary customers in FY2022 were the US government and defense
+      contractors, with commercial airlines accounting for a minor share.
+    is_correct: false
+    failure_mode_tested: synonym_confusion
+  - id: c
+    text: Boeing's primary customers in FY2022 were a limited number of commercial
+      airlines and the US government, with the government accounting for 40% of total
+      revenues.
+    is_correct: true
+    failure_mode_tested: null
+  - id: d
+    text: Boeing's primary customers in FY2022 were commercial airlines only, with
+      no significant government contracts.
+    is_correct: false
+    failure_mode_tested: overgeneralization
+  - id: e
+    text: Insufficient information / cannot determine from the corpus. (정보 부족 / 알
+      수 없음)
+    is_correct: false
+    failure_mode_tested: retrieval_failure
+  reference_reasoning: 'FinanceBench gold answer: Boeing''s primary customers as of
+    FY2022 are a limited number of commercial airlines and the US government. The
+    US government accounted for 40% of Boeing''s total revenues in FY2022.. Source:
+    BOEING_2022_10K (Information extraction OR Logical reasoning). Original justification: '
+  expected_sources:
+  - corpus/BOEING_2022_10K.md
+  tags:
+  - Boeing
+  - BOEING_2022_10K
+  - domain-relevant
+- id: Q19
+  question: Is Boeing's business subject to cyclicality?
+  domain_pattern: cross_source
+  hops_required: 2
+  options:
+  - id: a
+    text: Yes, but only because of its defense contracts, which are cyclical.
+    is_correct: false
+    failure_mode_tested: wrong_relation
+  - id: b
+    text: Boeing's business is generally non-cyclical due to long-term government
+      contracts.
+    is_correct: false
+    failure_mode_tested: overgeneralization
+  - id: c
+    text: Yes, Boeing's business is subject to cyclicality because it is exposed to
+      the cyclical airline industry.
+    is_correct: true
+    failure_mode_tested: null
+  - id: d
+    text: No, Boeing's business is stable and not affected by economic cycles.
+    is_correct: false
+    failure_mode_tested: wrong_relation
+  - id: e
+    text: Insufficient information / cannot determine from the corpus. (정보 부족 / 알
+      수 없음)
+    is_correct: false
+    failure_mode_tested: retrieval_failure
+  reference_reasoning: A major portion of Boeing's revenue is derived from the sale
+    of aircraft to commercial airlines. The commercial airlines business is cyclical,
+    and subject to significant profit swings.
+  expected_sources:
+  - corpus/BOEING_2022_10K.md
+  tags:
+  - Boeing
+  - BOEING_2022_10K
+  - novel-generated
+- id: Q20
+  question: What production rate changes is Boeing forecasting for FY2023?
+  domain_pattern: cross_source
+  hops_required: 2
+  options:
+  - id: a
+    text: Boeing forecasts an increase only in the 737 production rate, with no changes
+      for the 777X and 787 in 2023.
+    is_correct: false
+    failure_mode_tested: missed_hop
+  - id: b
+    text: Boeing forecasts no change in production rates for any aircraft in 2023.
+    is_correct: false
+    failure_mode_tested: overgeneralization
+  - id: c
+    text: Boeing forecasts an increase in the production rates for the 737, 777X,
+      and 787 aircraft in 2023.
+    is_correct: true
+    failure_mode_tested: null
+  - id: d
+    text: Boeing forecasts a decrease in the production rates for the 737, 777X, and
+      787 aircraft in 2023.
+    is_correct: false
+    failure_mode_tested: wrong_relation
+  - id: e
+    text: Insufficient information / cannot determine from the corpus. (정보 부족 / 알
+      수 없음)
+    is_correct: false
+    failure_mode_tested: retrieval_failure
+  reference_reasoning: Boeing plans to gradually increase production rates for the
+    737 and 787 and to resume production of 777X.
+  expected_sources:
+  - corpus/BOEING_2022_10K.md
+  tags:
+  - Boeing
+  - BOEING_2022_10K
+  - novel-generated
+- id: Q21
+  question: How does Boeing's effective tax rate in FY2022 compare to FY2021?
+  domain_pattern: multi_hop
+  hops_required: 3
+  options:
+  - id: a
+    text: Effective tax rate in FY2022 was 6.2%, compared to -14.76% in FY2021.
+    is_correct: false
+    failure_mode_tested: numeric_error
+  - id: b
+    text: Effective tax rate in FY2022 was -14.76%, compared to 0.62% in FY2021.
+    is_correct: false
+    failure_mode_tested: wrong_relation
+  - id: c
+    text: Effective tax rate in FY2022 was 0.62%, compared to -1.476% in FY2021.
+    is_correct: false
+    failure_mode_tested: numeric_error
+  - id: d
+    text: Effective tax rate in FY2022 was 0.62%, compared to -14.76% in FY2021.
+    is_correct: true
+    failure_mode_tested: null
+  - id: e
+    text: Insufficient information / cannot determine from the corpus. (정보 부족 / 알
+      수 없음)
+    is_correct: false
+    failure_mode_tested: retrieval_failure
+  reference_reasoning: Effective tax rate=Income tax (expense) benefit/ Loss before
+    income taxes*100=(31)/(5,022)*100=0.62% in 2022 and 743/(5,033)*100=-14.76%.
+  expected_sources:
+  - corpus/BOEING_2022_10K.md
+  tags:
+  - Boeing
+  - BOEING_2022_10K
+  - novel-generated

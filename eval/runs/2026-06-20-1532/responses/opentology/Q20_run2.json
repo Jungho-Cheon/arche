@@ -1,0 +1,116 @@
+{
+  "column": "opentology",
+  "question_id": "Q20",
+  "run_index": 2,
+  "anchor_extraction": {
+    "input_tokens": 483,
+    "output_tokens": 52,
+    "latency_ms": 820,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"Boeing\",\"aliases\":[\"Boeing\"]},{\"canonical\":\"production rate\",\"aliases\":[\"production rate\",\"rate of production\"]},{\"canonical\":\"FY2023\",\"aliases\":[\"FY2023\",\"Fiscal Year 2023\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "Boeing",
+          "aliases": [
+            "Boeing"
+          ]
+        },
+        {
+          "canonical": "production rate",
+          "aliases": [
+            "production rate",
+            "rate of production"
+          ]
+        },
+        {
+          "canonical": "FY2023",
+          "aliases": [
+            "FY2023",
+            "Fiscal Year 2023"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 809,
+      "input": {
+        "keywords": [
+          "Boeing",
+          "production rate",
+          "rate of production",
+          "FY2023",
+          "Fiscal Year 2023"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 36,
+      "input": {
+        "entry_ids": [
+          "01KVHVJAC0HJ24RDC9RT5V52EP",
+          "01KVHVJB12EN4X3PKS7Z835PEE",
+          "01KVHVHGM15GM1MGSYPCXT9Z2S",
+          "01KVHVFY5SR7S5GEXTEQGVVZMZ",
+          "01KVHVJ2RATVW2DWJ726TTH4WS",
+          "01KVHVFRZ8XBW6BQJBF8XDTXMS",
+          "01KVHVEPF8H0HSM6NSPNHFFZ17",
+          "01KVHVDXCW8KVVQYQDFHD0MRP5",
+          "01KVHVAETBZWP34M0HH734SK6P",
+          "01KVHVJBQAPSNGY7DA2MFPKKKV"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 18,
+        "edges": 12,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVHVJAC0HJ24RDC9RT5V52EP",
+    "01KVHVJB12EN4X3PKS7Z835PEE",
+    "01KVHVHGM15GM1MGSYPCXT9Z2S",
+    "01KVHVFY5SR7S5GEXTEQGVVZMZ",
+    "01KVHVJ2RATVW2DWJ726TTH4WS",
+    "01KVHVFRZ8XBW6BQJBF8XDTXMS",
+    "01KVHVEPF8H0HSM6NSPNHFFZ17",
+    "01KVHVDXCW8KVVQYQDFHD0MRP5",
+    "01KVHVAETBZWP34M0HH734SK6P",
+    "01KVHVJBQAPSNGY7DA2MFPKKKV"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 8455,
+  "answer_generation": {
+    "input_tokens": 2790,
+    "output_tokens": 118,
+    "latency_ms": 1791,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\": \"e\", \"reasoning\": \"제공된 도메인 그래프에는 Boeing의 2023 회계연도(FY2023) 항공기 생산율(737, 777X, 787 등)에 대한 전망 또는 예측에 관한 정보가 포함되어 있지 않습니다. Boeing과 관련된 엔티티 및 정책, 법률, 보상 플랜 등은 나와 있으나, 생산율 변화에 대한 언급이나 관계는 없습니다. 따라서 보기 중 '정보 부족 / 알 수 없음'이 정답입니다.\"}",
+    "parsed": {
+      "choice": "e",
+      "reasoning": "제공된 도메인 그래프에는 Boeing의 2023 회계연도(FY2023) 항공기 생산율(737, 777X, 787 등)에 대한 전망 또는 예측에 관한 정보가 포함되어 있지 않습니다. Boeing과 관련된 엔티티 및 정책, 법률, 보상 플랜 등은 나와 있으나, 생산율 변화에 대한 언급이나 관계는 없습니다. 따라서 보기 중 '정보 부족 / 알 수 없음'이 정답입니다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 40,
+  "total_input_tokens": 3273,
+  "total_output_tokens": 170,
+  "total_tokens": 3483,
+  "total_latency_ms": 3456
+}

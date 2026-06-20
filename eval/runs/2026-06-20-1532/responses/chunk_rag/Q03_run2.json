@@ -1,0 +1,65 @@
+{
+  "column": "chunk_rag",
+  "question_id": "Q03",
+  "run_index": 2,
+  "input_tokens": 7588,
+  "output_tokens": 116,
+  "embedding_tokens": 20343,
+  "embedding_tokens_breakdown": {
+    "question_embedding": 12,
+    "setup_amortized": 20331,
+    "setup_total": 426971,
+    "questions_count_for_amortization": 21
+  },
+  "total_tokens": 28047,
+  "latency_ms": 1520,
+  "model": "gpt-4.1",
+  "retrieved_chunks": [
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 47,
+      "score": 0.6829650203916264
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 46,
+      "score": 0.6661280892735956
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 14,
+      "score": 0.6291655403901553
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 13,
+      "score": 0.6284677840318836
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 48,
+      "score": 0.6252878155288898
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 2,
+      "score": 0.6208889244032165
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 4,
+      "score": 0.6190694298308678
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 3,
+      "score": 0.6168456211600265
+    }
+  ],
+  "raw_response": "{\"choice\":\"a\",\"reasoning\":\"청크 1에서 'The increase in net revenue was driven by a 64% increase in Data Center segment revenue primarily due to higher sales of our EPYC™ server processors, a 21% increase in Gaming segment revenue primarily due to higher semi-custom product sales, and a significant increase in Embedded segment revenue from the prior year period driven by the inclusion of Xilinx embedded product sales.'라고 명확히 언급되어 있습니다. 따라서 보기 a)가 정확하게 FY22의 매출 변화 요인을 모두 포함하고 있습니다.\"}",
+  "parsed": {
+    "choice": "a",
+    "reasoning": "청크 1에서 'The increase in net revenue was driven by a 64% increase in Data Center segment revenue primarily due to higher sales of our EPYC™ server processors, a 21% increase in Gaming segment revenue primarily due to higher semi-custom product sales, and a significant increase in Embedded segment revenue from the prior year period driven by the inclusion of Xilinx embedded product sales.'라고 명확히 언급되어 있습니다. 따라서 보기 a)가 정확하게 FY22의 매출 변화 요인을 모두 포함하고 있습니다."
+  },
+  "parse_error": null
+}

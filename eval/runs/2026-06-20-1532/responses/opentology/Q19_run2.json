@@ -1,0 +1,107 @@
+{
+  "column": "opentology",
+  "question_id": "Q19",
+  "run_index": 2,
+  "anchor_extraction": {
+    "input_tokens": 480,
+    "output_tokens": 34,
+    "latency_ms": 674,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"Boeing\",\"aliases\":[\"Boeing\"]},{\"canonical\":\"cyclicality\",\"aliases\":[\"cyclicality\",\"business cycle\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "Boeing",
+          "aliases": [
+            "Boeing"
+          ]
+        },
+        {
+          "canonical": "cyclicality",
+          "aliases": [
+            "cyclicality",
+            "business cycle"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 655,
+      "input": {
+        "keywords": [
+          "Boeing",
+          "cyclicality",
+          "business cycle"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 108,
+      "input": {
+        "entry_ids": [
+          "01KVHVGY5W8J69ASESMFEDW7WW",
+          "01KVHVGTZATSJA08Y3MYCK8ZMY",
+          "01KVHVJ12EWBA2E6F4BFQ41FJD",
+          "01KVHVCTAQJG7W5EWB30M9SV7Z",
+          "01KVHVK01S8MD3KQXYVHTHFTJ5",
+          "01KVHVJ2RATVW2DWJ726TTH4WS",
+          "01KVHVJ95CG2CG4G5SV133ZA99",
+          "01KVHVK0RTQSYFZRSYDZAV1DWC",
+          "01KVHVJAC0HJ24RDC9RT5V52EP",
+          "01KVHVJC9JY0ZH02BCFT2AVPBJ"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 58,
+        "edges": 56,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVHVGY5W8J69ASESMFEDW7WW",
+    "01KVHVGTZATSJA08Y3MYCK8ZMY",
+    "01KVHVJ12EWBA2E6F4BFQ41FJD",
+    "01KVHVCTAQJG7W5EWB30M9SV7Z",
+    "01KVHVK01S8MD3KQXYVHTHFTJ5",
+    "01KVHVJ2RATVW2DWJ726TTH4WS",
+    "01KVHVJ95CG2CG4G5SV133ZA99",
+    "01KVHVK0RTQSYFZRSYDZAV1DWC",
+    "01KVHVJAC0HJ24RDC9RT5V52EP",
+    "01KVHVJC9JY0ZH02BCFT2AVPBJ"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 25537,
+  "answer_generation": {
+    "input_tokens": 8384,
+    "output_tokens": 165,
+    "latency_ms": 2657,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"c\",\"reasoning\":\"그래프에는 Boeing이 상업용 항공기(Commercial Airplanes, BCA) 부문을 포함하고 있으며, 이는 항공사 등 민간 시장에 항공기를 공급하는 사업임이 명시되어 있다. 상업용 항공기 산업은 일반적으로 경기 변동(사이클)에 민감한 항공사 산업에 노출되어 있다. 따라서 Boeing의 사업은 항공사 산업의 경기 변동성에 영향을 받으므로 cyclicality에 노출되어 있다고 볼 수 있다. 방위산업 부문도 있지만, 보기 c는 'cyclical airline industry'에 노출되어 있다는 점을 정확히 지적하고 있다. 제공된 그래프 정보로부터 이 추론이 가능하다.\"}",
+    "parsed": {
+      "choice": "c",
+      "reasoning": "그래프에는 Boeing이 상업용 항공기(Commercial Airplanes, BCA) 부문을 포함하고 있으며, 이는 항공사 등 민간 시장에 항공기를 공급하는 사업임이 명시되어 있다. 상업용 항공기 산업은 일반적으로 경기 변동(사이클)에 민감한 항공사 산업에 노출되어 있다. 따라서 Boeing의 사업은 항공사 산업의 경기 변동성에 영향을 받으므로 cyclicality에 노출되어 있다고 볼 수 있다. 방위산업 부문도 있지만, 보기 c는 'cyclical airline industry'에 노출되어 있다는 점을 정확히 지적하고 있다. 제공된 그래프 정보로부터 이 추론이 가능하다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 24,
+  "total_input_tokens": 8864,
+  "total_output_tokens": 199,
+  "total_tokens": 9087,
+  "total_latency_ms": 4094
+}

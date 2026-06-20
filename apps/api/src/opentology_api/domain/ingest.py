@@ -38,7 +38,12 @@ from ..adapters.pdf import PdfPage, extract_pdf
 from .chunking import Chunk, TOKEN_BUDGET_RATIO, chunk_text, count_tokens
 from .crawl import crawl
 from .errors import InvalidInputError, UnsupportedFileTypeError
-from .identity import EntityMatcher, EntityMerger, normalize
+from .identity import (
+    NON_IDENTIFYING_ALIAS_STOPLIST,
+    EntityMatcher,
+    EntityMerger,
+    normalize,
+)
 from .models import (
     ExtractedEntity,
     ExtractedGraph,
@@ -699,7 +704,10 @@ class IngestService:
                 embedding=embed_out[0],
                 normalized_name=normalize(e_new.name),
                 normalized_aliases=[
-                    normalize(a) for a in (e_new.aliases or []) if normalize(a)
+                    normalize(a)
+                    for a in (e_new.aliases or [])
+                    if normalize(a)
+                    and normalize(a) not in NON_IDENTIFYING_ALIAS_STOPLIST
                 ],
             )
             self._graph.create_entity(entity=stored)

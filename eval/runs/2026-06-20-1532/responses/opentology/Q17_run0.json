@@ -1,0 +1,107 @@
+{
+  "column": "opentology",
+  "question_id": "Q17",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 506,
+    "output_tokens": 33,
+    "latency_ms": 816,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"Boeing\",\"aliases\":[\"Boeing\"]},{\"canonical\":\"gross margin\",\"aliases\":[\"gross margin\",\"gross margin profile\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "Boeing",
+          "aliases": [
+            "Boeing"
+          ]
+        },
+        {
+          "canonical": "gross margin",
+          "aliases": [
+            "gross margin",
+            "gross margin profile"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 596,
+      "input": {
+        "keywords": [
+          "Boeing",
+          "gross margin",
+          "gross margin profile"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 107,
+      "input": {
+        "entry_ids": [
+          "01KVHVDK5KE0HAF8PGVK3QN090",
+          "01KVHVGTZATSJA08Y3MYCK8ZMY",
+          "01KVHVGY5W8J69ASESMFEDW7WW",
+          "01KVHV94VGG7VDVVCDH5KCATB3",
+          "01KVHVK01S8MD3KQXYVHTHFTJ5",
+          "01KVHV949NZP17TXM80K6G34R2",
+          "01KVHVDKZRA4EPKH4HEND45E10",
+          "01KVHVJ2RATVW2DWJ726TTH4WS",
+          "01KVHVJ95CG2CG4G5SV133ZA99",
+          "01KVHVK0RTQSYFZRSYDZAV1DWC"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 60,
+        "edges": 56,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVHVDK5KE0HAF8PGVK3QN090",
+    "01KVHVGTZATSJA08Y3MYCK8ZMY",
+    "01KVHVGY5W8J69ASESMFEDW7WW",
+    "01KVHV94VGG7VDVVCDH5KCATB3",
+    "01KVHVK01S8MD3KQXYVHTHFTJ5",
+    "01KVHV949NZP17TXM80K6G34R2",
+    "01KVHVDKZRA4EPKH4HEND45E10",
+    "01KVHVJ2RATVW2DWJ726TTH4WS",
+    "01KVHVJ95CG2CG4G5SV133ZA99",
+    "01KVHVK0RTQSYFZRSYDZAV1DWC"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 25898,
+  "answer_generation": {
+    "input_tokens": 8583,
+    "output_tokens": 118,
+    "latency_ms": 2082,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\": \"e\", \"reasoning\": \"제공된 도메인 그래프에는 Boeing의 FY2021 및 FY2022의 gross margin(매출총이익률) 또는 gross profit(매출총이익) 수치에 대한 정보가 포함되어 있지 않습니다. 또한, gross margin이 Boeing에 적합한 성과 지표인지에 대한 언급도 없습니다. 따라서 보기 a, c, d, b 중 어느 것도 그래프에 근거해 확정할 수 없으며, 정보 부족(e)이 정답입니다.\"}",
+    "parsed": {
+      "choice": "e",
+      "reasoning": "제공된 도메인 그래프에는 Boeing의 FY2021 및 FY2022의 gross margin(매출총이익률) 또는 gross profit(매출총이익) 수치에 대한 정보가 포함되어 있지 않습니다. 또한, gross margin이 Boeing에 적합한 성과 지표인지에 대한 언급도 없습니다. 따라서 보기 a, c, d, b 중 어느 것도 그래프에 근거해 확정할 수 없으며, 정보 부족(e)이 정답입니다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 24,
+  "total_input_tokens": 9089,
+  "total_output_tokens": 151,
+  "total_tokens": 9264,
+  "total_latency_ms": 3601
+}

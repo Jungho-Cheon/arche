@@ -1,0 +1,65 @@
+{
+  "column": "chunk_rag",
+  "question_id": "Q16",
+  "run_index": 1,
+  "input_tokens": 7083,
+  "output_tokens": 152,
+  "embedding_tokens": 20345,
+  "embedding_tokens_breakdown": {
+    "question_embedding": 14,
+    "setup_amortized": 20331,
+    "setup_total": 426971,
+    "questions_count_for_amortization": 21
+  },
+  "total_tokens": 27580,
+  "latency_ms": 1709,
+  "model": "gpt-4.1",
+  "retrieved_chunks": [
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 19,
+      "score": 0.6312957954787064
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 29,
+      "score": 0.6250832929948303
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 108,
+      "score": 0.6231839386182381
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 22,
+      "score": 0.6230154109465655
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 6,
+      "score": 0.6222907241142746
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 10,
+      "score": 0.6220237501191354
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 43,
+      "score": 0.6158752686815674
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 4,
+      "score": 0.6092456532045888
+    }
+  ],
+  "raw_response": "{\"choice\":\"a\",\"reasoning\":\"청크 3에서 'Multiple legal actions have been filed against us as a result of the October 29, 2018 accident of Lion Air Flight 610 and the March 10, 2019 accident of Ethiopian Airlines Flight 302.'라는 명확한 언급이 있다. 이는 2018년 Lion Air와 2019년 Ethiopian Airlines 추락 사고와 관련된 소송이 현재 진행 중임을 의미한다. 따라서 보기 a)가 정답이다. 다른 보기들은 이와 일치하지 않거나, 관련 소송의 존재를 부정하거나, 정보 부족을 주장하지만, 발췌에서 명확히 언급되고 있으므로 a)가 맞다.\"}",
+  "parsed": {
+    "choice": "a",
+    "reasoning": "청크 3에서 'Multiple legal actions have been filed against us as a result of the October 29, 2018 accident of Lion Air Flight 610 and the March 10, 2019 accident of Ethiopian Airlines Flight 302.'라는 명확한 언급이 있다. 이는 2018년 Lion Air와 2019년 Ethiopian Airlines 추락 사고와 관련된 소송이 현재 진행 중임을 의미한다. 따라서 보기 a)가 정답이다. 다른 보기들은 이와 일치하지 않거나, 관련 소송의 존재를 부정하거나, 정보 부족을 주장하지만, 발췌에서 명확히 언급되고 있으므로 a)가 맞다."
+  },
+  "parse_error": null
+}

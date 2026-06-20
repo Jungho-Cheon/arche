@@ -1,0 +1,29 @@
+======================================================================
+Combined run-dir:  eval/runs/2026-06-20-1532
+Baseline run-dir:  eval/runs/2026-06-20-1532
+======================================================================
+col            accuracy wrong (qid)                       tok_med   lat_med_ms
+---------------------------------------------------------------------------
+chunk_rag        0.7143 Q01,Q07,Q08,Q09,Q13,Q17             27450         2182
+opentology       0.3333 Q01,Q05,Q06,Q07,Q08,Q09,Q12,        10676         3711
+combined         0.8095 Q01,Q09,Q17,Q21                     37691         5195
+
+-- 오답 집합 교차 분석 --
+  chunk-only:   []
+  graph-only:   ['Q05', 'Q06', 'Q12', 'Q14', 'Q15', 'Q16', 'Q20']
+  combined-only:[]
+  all-three:    ['Q01', 'Q09', 'Q17']
+  oracle (k|g): ['Q01', 'Q07', 'Q08', 'Q09', 'Q13', 'Q17'] -> oracle hybrid acc = 0.8000
+  combined wins (in k or g, not in c): ['Q05', 'Q06', 'Q07', 'Q08', 'Q12', 'Q13', 'Q14', 'Q15', 'Q16', 'Q20']
+  combined loses (in c, not in k or g): []
+
+-- 핵심 질문 trace --
+  Q02 (gold=a, single_doc, 1 hops):
+    chunk : ['a', 'a', 'a']
+    graph : ['a', 'a', 'a']
+    combined: ['a', 'a', 'a']
+
+-- 비용 (gpt-4.1 단가) --
+  chunk_rag  : $0.9742
+  opentology : $1.2665
+  combined   : $2.1745

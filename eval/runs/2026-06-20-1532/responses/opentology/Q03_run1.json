@@ -1,0 +1,116 @@
+{
+  "column": "opentology",
+  "question_id": "Q03",
+  "run_index": 1,
+  "anchor_extraction": {
+    "input_tokens": 483,
+    "output_tokens": 49,
+    "latency_ms": 1125,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"revenue change\",\"aliases\":[\"revenue change\"]},{\"canonical\":\"FY22\",\"aliases\":[\"FY22\",\"fiscal year 2022\"]},{\"canonical\":\"AMD\",\"aliases\":[\"AMD\",\"Advanced Micro Devices\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "revenue change",
+          "aliases": [
+            "revenue change"
+          ]
+        },
+        {
+          "canonical": "FY22",
+          "aliases": [
+            "FY22",
+            "fiscal year 2022"
+          ]
+        },
+        {
+          "canonical": "AMD",
+          "aliases": [
+            "AMD",
+            "Advanced Micro Devices"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 613,
+      "input": {
+        "keywords": [
+          "revenue change",
+          "FY22",
+          "fiscal year 2022",
+          "AMD",
+          "Advanced Micro Devices"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 162,
+      "input": {
+        "entry_ids": [
+          "01KVHV8TWX6BRMKWKKK5N8EF0W",
+          "01KVHVFRZ8XBW6BQJBF8XDTXMS",
+          "01KVHV99K0MJYZQXRKN8KSA80E",
+          "01KVHVEPF8H0HSM6NSPNHFFZ17",
+          "01KVHVEHZ6YVWK3CR3ZP77WQ3H",
+          "01KVHVFTY7K05YK0B7NHW20QPN",
+          "01KVHVB0PXPED74SEFYRGSRDV4",
+          "01KVHV9EJJ9X60SHPAYR83K8X5",
+          "01KVHVB18NCVQ3WKHP2AJP5J72",
+          "01KVHVAVRZ0QCYRS3C2E15M0VK"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 80,
+        "edges": 72,
+        "truncated": true
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVHV8TWX6BRMKWKKK5N8EF0W",
+    "01KVHVFRZ8XBW6BQJBF8XDTXMS",
+    "01KVHV99K0MJYZQXRKN8KSA80E",
+    "01KVHVEPF8H0HSM6NSPNHFFZ17",
+    "01KVHVEHZ6YVWK3CR3ZP77WQ3H",
+    "01KVHVFTY7K05YK0B7NHW20QPN",
+    "01KVHVB0PXPED74SEFYRGSRDV4",
+    "01KVHV9EJJ9X60SHPAYR83K8X5",
+    "01KVHVB18NCVQ3WKHP2AJP5J72",
+    "01KVHVAVRZ0QCYRS3C2E15M0VK"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 31787,
+  "answer_generation": {
+    "input_tokens": 9959,
+    "output_tokens": 155,
+    "latency_ms": 1887,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\": \"a\", \"reasoning\": \"The domain graph shows that AMD acquired Xilinx, Inc. in 2022, which expanded AMD's portfolio to include FPGAs and Adaptive SoCs (embedded products). AMD also offers EPYC server processors and semi-custom products (which are used in game consoles like PlayStation, Xbox, and Steam Deck). There is no mention in the graph of consumer electronics or software licensing as primary revenue drivers, nor is there a specific emphasis on Ryzen desktop processors or graphics cards for FY22 revenue change. Therefore, the most accurate answer based on the graph is (a): Higher sales of EPYC server processors, increased semi-custom product sales, and inclusion of Xilinx embedded product sales drove revenue change in FY22.\"}",
+    "parsed": {
+      "choice": "a",
+      "reasoning": "The domain graph shows that AMD acquired Xilinx, Inc. in 2022, which expanded AMD's portfolio to include FPGAs and Adaptive SoCs (embedded products). AMD also offers EPYC server processors and semi-custom products (which are used in game consoles like PlayStation, Xbox, and Steam Deck). There is no mention in the graph of consumer electronics or software licensing as primary revenue drivers, nor is there a specific emphasis on Ryzen desktop processors or graphics cards for FY22 revenue change. Therefore, the most accurate answer based on the graph is (a): Higher sales of EPYC server processors, increased semi-custom product sales, and inclusion of Xilinx embedded product sales drove revenue change in FY22."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 40,
+  "total_input_tokens": 10442,
+  "total_output_tokens": 204,
+  "total_tokens": 10686,
+  "total_latency_ms": 3787
+}

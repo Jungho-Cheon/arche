@@ -1,0 +1,65 @@
+{
+  "column": "chunk_rag",
+  "question_id": "Q15",
+  "run_index": 0,
+  "input_tokens": 6826,
+  "output_tokens": 117,
+  "embedding_tokens": 20355,
+  "embedding_tokens_breakdown": {
+    "question_embedding": 24,
+    "setup_amortized": 20331,
+    "setup_total": 426971,
+    "questions_count_for_amortization": 21
+  },
+  "total_tokens": 27298,
+  "latency_ms": 1575,
+  "model": "gpt-4.1",
+  "retrieved_chunks": [
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 4,
+      "score": 0.6451734295632845
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 24,
+      "score": 0.6426046615839863
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 27,
+      "score": 0.638843029573503
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 22,
+      "score": 0.6367432250378765
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 3,
+      "score": 0.6359552841545434
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 29,
+      "score": 0.6357097700868013
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 112,
+      "score": 0.6297404390231978
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 60,
+      "score": 0.627561297193635
+    }
+  ],
+  "raw_response": "{\"choice\":\"a\",\"reasoning\":\"청크 2에서 2022년 각 사업부문의 매출이 명시되어 있습니다: Commercial Airplanes $25,867M, Defense, Space & Security $23,162M, Global Services $17,611M, Boeing Capital $199M, 전체 매출 $66,608M. 각각의 비율을 계산하면 Commercial Airplanes 약 39%, Defense 약 35%, Services(BGS) 약 26%로 모두 20%를 초과합니다. 따라서 보기 a)가 정확합니다.\"}",
+  "parsed": {
+    "choice": "a",
+    "reasoning": "청크 2에서 2022년 각 사업부문의 매출이 명시되어 있습니다: Commercial Airplanes $25,867M, Defense, Space & Security $23,162M, Global Services $17,611M, Boeing Capital $199M, 전체 매출 $66,608M. 각각의 비율을 계산하면 Commercial Airplanes 약 39%, Defense 약 35%, Services(BGS) 약 26%로 모두 20%를 초과합니다. 따라서 보기 a)가 정확합니다."
+  },
+  "parse_error": null
+}

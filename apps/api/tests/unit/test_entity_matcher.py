@@ -18,6 +18,7 @@ from opentology_api.domain.identity import (
 )
 from opentology_api.domain.models import (
     ExtractedEntity,
+    SourceRef,
     StoredEntity,
 )
 
@@ -158,3 +159,98 @@ def test_type_filter_blocks_match():
     result = matcher.match(ExtractedEntity(name="X", type="coupon"))
     # product 로 인덱싱된 노드는 coupon 입력에 안 잡힌다.
     assert result.step == 4
+
+
+# ---------- NON_IDENTIFYING_ALIAS_STOPLIST regression (ADR-0008) ----------
+
+
+def test_step2_skips_non_identifying_alias_stoplist():
+    """generic 자기지칭 ("the Company") alias 는 cross-doc Step 2 lookup 에서 제외.
+
+    M6.5 FinanceBench 1M 측정에서 직접 관찰된 catastrophic over-merge 의 원인.
+    AMCOR 의 normalized_aliases 에 "the company" 가 인덱싱된 상태에서 AMD 의 같은
+    alias 가 Step 2 lookup 으로 AMCOR 와 매칭되면 안 됨.
+    """
+    amcor = _entity("Amcor plc", type_="Company")
+    # 가정: 이전 ingest 에서 "the company" 가 (옛 코드의 버그로) 인덱싱돼 있었다.
+    # 본 fix 적용 후에는 인덱싱 자체가 안 되지만, *방어적으로* matcher 도
+    # stoplist alias 의 lookup 을 건너뛴다.
+    repo = FakeRepo(
+        norm_index={("the company", "Company"): amcor},
+        vector_pool=[],
+    )
+    embedder = FakeEmbedder()
+    matcher = EntityMatcher(repo=repo, embedder=embedder)
+
+    result = matcher.match(
+        ExtractedEntity(
+            name="Advanced Micro Devices, Inc.",
+            type="Company",
+            aliases=["AMD", "the Company", "we", "us"],
+        )
+    )
+    # AMCOR 와 매칭되지 않고 step 4 (신규) — 임베딩까지 갔지만 vector_pool 도 비어
+    # 결국 신규 entity.
+    assert result.step == 4
+    assert result.existing is None
+
+
+def test_step2_still_matches_identifying_alias():
+    """stoplist 가 아닌 일반 alias 는 종전대로 Step 2 매칭."""
+    coupon = _entity("쿠폰 X")
+    repo = FakeRepo(
+        norm_index={("여름 환영 쿠폰", "coupon"): coupon},
+        vector_pool=[],
+    )
+    embedder = FakeEmbedder()
+    matcher = EntityMatcher(repo=repo, embedder=embedder)
+
+    result = matcher.match(
+        ExtractedEntity(
+            name="다른 이름",
+            type="coupon",
+            aliases=["여름 환영 쿠폰", "the Company"],  # stoplist 와 일반 alias 혼합
+        )
+    )
+    # "여름 환영 쿠폰" 으로 Step 2 hit (the Company 는 건너뜀).
+    assert result.step == 2
+    assert result.existing is coupon
+
+
+def test_merger_excludes_stoplist_from_normalized_aliases():
+    """병합 후 normalized_aliases 인덱스에 stoplist alias 가 *들어가지 않음*."""
+    from opentology_api.domain.identity import EntityMerger
+
+    existing = _entity("Amcor plc", type_="Company")
+    existing = StoredEntity(
+        id=existing.id,
+        name=existing.name,
+        type=existing.type,
+        aliases=["Amcor"],
+        description=None,
+        properties={},
+        source_refs=[],
+        created_at=existing.created_at,
+        updated_at=existing.updated_at,
+        embedding=[],
+        normalized_name=existing.normalized_name,
+        normalized_aliases=["amcor"],
+    )
+    new = ExtractedEntity(
+        name="Amcor plc",
+        type="Company",
+        aliases=["the Company", "we", "us", "Australia operations"],
+    )
+    source_ref = SourceRef(source_path="x.md", chunk_index=0)
+    mutation = EntityMerger.merge(existing, new, source_ref, now="2026-06-20T00:00:00Z")
+
+    # 표시용 aliases 에는 stoplist alias 도 들어감 (사용자 가독성).
+    assert "the Company" in mutation.aliases
+    assert "we" in mutation.aliases
+    # normalized_aliases 인덱스에는 stoplist alias *없음*.
+    assert "the company" not in mutation.normalized_aliases
+    assert "we" not in mutation.normalized_aliases
+    assert "us" not in mutation.normalized_aliases
+    # 일반 alias 는 정상 인덱싱.
+    assert "amcor" in mutation.normalized_aliases
+    assert "australia operations" in mutation.normalized_aliases

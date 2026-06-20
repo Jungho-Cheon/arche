@@ -1,0 +1,116 @@
+{
+  "column": "opentology",
+  "question_id": "Q18",
+  "run_index": 1,
+  "anchor_extraction": {
+    "input_tokens": 484,
+    "output_tokens": 51,
+    "latency_ms": 993,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"Boeing\",\"aliases\":[\"Boeing\"]},{\"canonical\":\"primary customers\",\"aliases\":[\"primary customers\",\"main customers\"]},{\"canonical\":\"FY2022\",\"aliases\":[\"FY2022\",\"Fiscal Year 2022\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "Boeing",
+          "aliases": [
+            "Boeing"
+          ]
+        },
+        {
+          "canonical": "primary customers",
+          "aliases": [
+            "primary customers",
+            "main customers"
+          ]
+        },
+        {
+          "canonical": "FY2022",
+          "aliases": [
+            "FY2022",
+            "Fiscal Year 2022"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 950,
+      "input": {
+        "keywords": [
+          "Boeing",
+          "primary customers",
+          "main customers",
+          "FY2022",
+          "Fiscal Year 2022"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 122,
+      "input": {
+        "entry_ids": [
+          "01KVHVJAC0HJ24RDC9RT5V52EP",
+          "01KVHVJB12EN4X3PKS7Z835PEE",
+          "01KVHVFRZ8XBW6BQJBF8XDTXMS",
+          "01KVHVEPF8H0HSM6NSPNHFFZ17",
+          "01KVHVJ8EA0SQZ67W4GA85RCP3",
+          "01KVHVJZ8XZ0NTDF22581S4VGX",
+          "01KVHVHGM15GM1MGSYPCXT9Z2S",
+          "01KVHV949NZP17TXM80K6G34R2",
+          "01KVHVGTZATSJA08Y3MYCK8ZMY",
+          "01KVHVGY5W8J69ASESMFEDW7WW"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 72,
+        "edges": 67,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVHVJAC0HJ24RDC9RT5V52EP",
+    "01KVHVJB12EN4X3PKS7Z835PEE",
+    "01KVHVFRZ8XBW6BQJBF8XDTXMS",
+    "01KVHVEPF8H0HSM6NSPNHFFZ17",
+    "01KVHVJ8EA0SQZ67W4GA85RCP3",
+    "01KVHVJZ8XZ0NTDF22581S4VGX",
+    "01KVHVHGM15GM1MGSYPCXT9Z2S",
+    "01KVHV949NZP17TXM80K6G34R2",
+    "01KVHVGTZATSJA08Y3MYCK8ZMY",
+    "01KVHVGY5W8J69ASESMFEDW7WW"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 32135,
+  "answer_generation": {
+    "input_tokens": 10324,
+    "output_tokens": 292,
+    "latency_ms": 3443,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"c\",\"reasoning\":\"그래프에서 The Boeing Company [id=01KVHV]가 여러 군사 및 우주 프로그램(예: KC-46A Tanker, T-7A Red Hawk, MQ-25, Space Launch System 등)을 개발·생산하고, National Aeronautics and Space Administration (NASA), Department of Homeland Security 등 미국 정부 기관과 계약을 체결하며, Federal Aviation Administration (FAA), European Union Aviation Safety Agency 등 정부 기관의 규제를 받는 것으로 나타난다. 또한 경쟁사로 Airbus, COMAC 등 상업 항공기 제조사가 명시되어 있어 상업 항공사도 주요 고객임을 알 수 있다. 하지만 보기 a, b, d는 각각 정부 비중이 10% 미만, 상업 항공사 비중이 소수, 혹은 정부 계약이 없다고 단정하는데, 그래프상 정부와 상업 항공사가 모두 주요 고객임이 드러난다. 보기 c는 '상업 항공사와 미국 정부가 주요 고객이며, 정부가 전체 매출의 40%를 차지한다'고 명시하는데, 그래프에서 정부와 상업 항공사가 모두 주요 고객임이 확인되고, 40%라는 수치도 일반적으로 알려진 정보와 부합한다. 따라서 보기 c가 그래프 정보에 가장 부합한다.\"}",
+    "parsed": {
+      "choice": "c",
+      "reasoning": "그래프에서 The Boeing Company [id=01KVHV]가 여러 군사 및 우주 프로그램(예: KC-46A Tanker, T-7A Red Hawk, MQ-25, Space Launch System 등)을 개발·생산하고, National Aeronautics and Space Administration (NASA), Department of Homeland Security 등 미국 정부 기관과 계약을 체결하며, Federal Aviation Administration (FAA), European Union Aviation Safety Agency 등 정부 기관의 규제를 받는 것으로 나타난다. 또한 경쟁사로 Airbus, COMAC 등 상업 항공기 제조사가 명시되어 있어 상업 항공사도 주요 고객임을 알 수 있다. 하지만 보기 a, b, d는 각각 정부 비중이 10% 미만, 상업 항공사 비중이 소수, 혹은 정부 계약이 없다고 단정하는데, 그래프상 정부와 상업 항공사가 모두 주요 고객임이 드러난다. 보기 c는 '상업 항공사와 미국 정부가 주요 고객이며, 정부가 전체 매출의 40%를 차지한다'고 명시하는데, 그래프에서 정부와 상업 항공사가 모두 주요 고객임이 확인되고, 40%라는 수치도 일반적으로 알려진 정보와 부합한다. 따라서 보기 c가 그래프 정보에 가장 부합한다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 40,
+  "total_input_tokens": 10808,
+  "total_output_tokens": 343,
+  "total_tokens": 11191,
+  "total_latency_ms": 5508
+}

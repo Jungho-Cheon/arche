@@ -1,0 +1,161 @@
+{
+  "column": "combined",
+  "question_id": "Q02",
+  "run_index": 2,
+  "anchor_extraction": {
+    "input_tokens": 486,
+    "output_tokens": 32,
+    "latency_ms": 1466,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"AMD\",\"aliases\":[\"AMD\"]},{\"canonical\":\"products\",\"aliases\":[\"products\"]},{\"canonical\":\"services\",\"aliases\":[\"services\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "AMD",
+          "aliases": [
+            "AMD"
+          ]
+        },
+        {
+          "canonical": "products",
+          "aliases": [
+            "products"
+          ]
+        },
+        {
+          "canonical": "services",
+          "aliases": [
+            "services"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 729,
+      "input": {
+        "keywords": [
+          "AMD",
+          "products",
+          "services"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 222,
+      "input": {
+        "entry_ids": [
+          "01KVHVDH3619W87GXP9H13YJH9",
+          "01KVHVGX1D2SSPE30JBTW7YVN9",
+          "01KVHV8TWX6BRMKWKKK5N8EF0W",
+          "01KVHVDG2HH8NASWVJND7R7030",
+          "01KVHV99K0MJYZQXRKN8KSA80E",
+          "01KVHVETT52D58KMX4B4TBDPE0",
+          "01KVHVAWCP5E2D5CKYF2DXSZS9",
+          "01KVHVK3S5VKXBF4QYATTK53RM",
+          "01KVHVEVA4GM91VE8TCHY58H5V",
+          "01KVHVFXGCSD0ZZC4EKKE392V4"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 80,
+        "edges": 71,
+        "truncated": true
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVHVDH3619W87GXP9H13YJH9",
+    "01KVHVGX1D2SSPE30JBTW7YVN9",
+    "01KVHV8TWX6BRMKWKKK5N8EF0W",
+    "01KVHVDG2HH8NASWVJND7R7030",
+    "01KVHV99K0MJYZQXRKN8KSA80E",
+    "01KVHVETT52D58KMX4B4TBDPE0",
+    "01KVHVAWCP5E2D5CKYF2DXSZS9",
+    "01KVHVK3S5VKXBF4QYATTK53RM",
+    "01KVHVEVA4GM91VE8TCHY58H5V",
+    "01KVHVFXGCSD0ZZC4EKKE392V4"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 31374,
+  "retrieved_chunks": [
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 3,
+      "score": 0.6949071551202403
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 13,
+      "score": 0.693449802145358
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 10,
+      "score": 0.6857203211067443
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 4,
+      "score": 0.6735775429631151
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 2,
+      "score": 0.6703390978121893
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 48,
+      "score": 0.6649822182742322
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 47,
+      "score": 0.6639077045578893
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 46,
+      "score": 0.649953616908637
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 17172,
+    "output_tokens": 166,
+    "latency_ms": 2385,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"a\",\"reasoning\":\"Both (A) 검색된 문서 발췌 and (B) 도메인 그래프 provide clear and consistent evidence that AMD's major products and services as of FY22 include server CPUs, GPUs, DPUs, FPGAs, and Adaptive SoCs for data centers; CPUs, APUs, and chipsets for desktop and notebook PCs; discrete GPUs, semi-custom SoCs, and development services; and embedded CPUs, GPUs, APUs, FPGAs, and Adaptive SoCs. This is explicitly stated in multiple document excerpts (see especially 청크 1, 4, and 5) and is also reflected in the domain graph's entity and relationship structure. Therefore, choice (a) is correct, and the agreement between both sources is decisive.\"}",
+    "parsed": {
+      "choice": "a",
+      "reasoning": "Both (A) 검색된 문서 발췌 and (B) 도메인 그래프 provide clear and consistent evidence that AMD's major products and services as of FY22 include server CPUs, GPUs, DPUs, FPGAs, and Adaptive SoCs for data centers; CPUs, APUs, and chipsets for desktop and notebook PCs; discrete GPUs, semi-custom SoCs, and development services; and embedded CPUs, GPUs, APUs, FPGAs, and Adaptive SoCs. This is explicitly stated in multiple document excerpts (see especially 청크 1, 4, and 5) and is also reflected in the domain graph's entity and relationship structure. Therefore, choice (a) is correct, and the agreement between both sources is decisive."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 20370,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 15,
+    "chunk_setup_amortized": 20331,
+    "chunk_setup_total": 426971,
+    "graph_keyword_estimated": 24,
+    "questions_count_for_amortization": 21
+  },
+  "total_input_tokens": 17658,
+  "total_output_tokens": 198,
+  "total_tokens": 38226,
+  "total_latency_ms": 4802
+}

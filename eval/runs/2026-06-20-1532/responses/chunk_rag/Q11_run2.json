@@ -1,0 +1,65 @@
+{
+  "column": "chunk_rag",
+  "question_id": "Q11",
+  "run_index": 2,
+  "input_tokens": 6488,
+  "output_tokens": 159,
+  "embedding_tokens": 20368,
+  "embedding_tokens_breakdown": {
+    "question_embedding": 37,
+    "setup_amortized": 20331,
+    "setup_total": 426971,
+    "questions_count_for_amortization": 21
+  },
+  "total_tokens": 27015,
+  "latency_ms": 2595,
+  "model": "gpt-4.1",
+  "retrieved_chunks": [
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 72,
+      "score": 0.638829820835636
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 51,
+      "score": 0.6309442813787864
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 4,
+      "score": 0.6252159914691284
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 6,
+      "score": 0.6136194655704628
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 49,
+      "score": 0.5988632588716658
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 5,
+      "score": 0.5973117319550698
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 54,
+      "score": 0.5962724360171529
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 53,
+      "score": 0.5934037867113717
+    }
+  ],
+  "raw_response": "{\"choice\":\"a\",\"reasoning\":\"The provided excerpts from the American Express 2022 10-K repeatedly discuss performance metrics such as discount revenue, net card fees, service fees, net interest income, and operating expenses, but do not mention 'gross margin' as a relevant metric. In particular, chunk 2 (AMERICANEXPRESS_2022_10K.md:51) describes the company's revenue sources and expense structure, which are not based on a traditional cost of goods sold (COGS) model. Instead, American Express is a financial services company, and its performance is measured by metrics like net interest income, discount revenue, and operating efficiency, not gross margin. Therefore, the correct answer is (a): Performance is not measured through gross margin for American Express.\"}",
+  "parsed": {
+    "choice": "a",
+    "reasoning": "The provided excerpts from the American Express 2022 10-K repeatedly discuss performance metrics such as discount revenue, net card fees, service fees, net interest income, and operating expenses, but do not mention 'gross margin' as a relevant metric. In particular, chunk 2 (AMERICANEXPRESS_2022_10K.md:51) describes the company's revenue sources and expense structure, which are not based on a traditional cost of goods sold (COGS) model. Instead, American Express is a financial services company, and its performance is measured by metrics like net interest income, discount revenue, and operating efficiency, not gross margin. Therefore, the correct answer is (a): Performance is not measured through gross margin for American Express."
+  },
+  "parse_error": null
+}

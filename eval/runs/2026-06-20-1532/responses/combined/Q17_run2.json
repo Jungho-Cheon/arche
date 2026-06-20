@@ -1,0 +1,156 @@
+{
+  "column": "combined",
+  "question_id": "Q17",
+  "run_index": 2,
+  "anchor_extraction": {
+    "input_tokens": 506,
+    "output_tokens": 33,
+    "latency_ms": 837,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"Boeing\",\"aliases\":[\"Boeing\"]},{\"canonical\":\"gross margin\",\"aliases\":[\"gross margin\",\"gross margin profile\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "Boeing",
+          "aliases": [
+            "Boeing"
+          ]
+        },
+        {
+          "canonical": "gross margin",
+          "aliases": [
+            "gross margin",
+            "gross margin profile"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 973,
+      "input": {
+        "keywords": [
+          "Boeing",
+          "gross margin",
+          "gross margin profile"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 149,
+      "input": {
+        "entry_ids": [
+          "01KVHVDK5KE0HAF8PGVK3QN090",
+          "01KVHVGTZATSJA08Y3MYCK8ZMY",
+          "01KVHVGY5W8J69ASESMFEDW7WW",
+          "01KVHV94VGG7VDVVCDH5KCATB3",
+          "01KVHVK01S8MD3KQXYVHTHFTJ5",
+          "01KVHV949NZP17TXM80K6G34R2",
+          "01KVHVDKZRA4EPKH4HEND45E10",
+          "01KVHVJ2RATVW2DWJ726TTH4WS",
+          "01KVHVJ95CG2CG4G5SV133ZA99",
+          "01KVHVK0RTQSYFZRSYDZAV1DWC"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 60,
+        "edges": 56,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVHVDK5KE0HAF8PGVK3QN090",
+    "01KVHVGTZATSJA08Y3MYCK8ZMY",
+    "01KVHVGY5W8J69ASESMFEDW7WW",
+    "01KVHV94VGG7VDVVCDH5KCATB3",
+    "01KVHVK01S8MD3KQXYVHTHFTJ5",
+    "01KVHV949NZP17TXM80K6G34R2",
+    "01KVHVDKZRA4EPKH4HEND45E10",
+    "01KVHVJ2RATVW2DWJ726TTH4WS",
+    "01KVHVJ95CG2CG4G5SV133ZA99",
+    "01KVHVK0RTQSYFZRSYDZAV1DWC"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 25898,
+  "retrieved_chunks": [
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 22,
+      "score": 0.591216358687371
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 60,
+      "score": 0.5872210971543989
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 10,
+      "score": 0.5787714203708255
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 24,
+      "score": 0.577932792687177
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 27,
+      "score": 0.5752266908669927
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 26,
+      "score": 0.5747959876621171
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 54,
+      "score": 0.5741591014404079
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 4,
+      "score": 0.5727290381853226
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 15502,
+    "output_tokens": 324,
+    "latency_ms": 4314,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"b\",\"reasoning\":\"(A) 검색된 문서 발췌에서 Boeing의 재무제표와 경영진 논의(MD&A) 부분을 보면, 회사는 'gross margin'이라는 용어를 거의 사용하지 않고, 대신 'operating margin'과 'loss from operations' 등 영업이익률 지표를 중심으로 실적을 평가합니다. 실제로 Consolidated Statements of Operations(청크 7)에서 'cost of products'와 'cost of services'가 구분되어 있지만, Boeing은 복잡한 장기계약(특히 방산/우주/서비스 부문)과 프로그램 회계(상업기 부문)를 적용하기 때문에, 전통적인 제조업에서 사용하는 gross margin(매출총이익률)이 실질적인 성과 지표로 적합하지 않음을 명확히 알 수 있습니다. 또한, MD&A(청크 1, 4, 5 등)에서도 gross margin 대신 operating margin, segment별 영업이익률, 프로그램별 수익성 등으로 실적을 설명합니다. (B) 도메인 그래프에서도 Boeing의 주요 성과지표로 gross margin이 언급되지 않고, 사업구조상 gross margin이 의미가 없다는 근거가 명확히 드러나지는 않지만, (A)에서의 명시적 설명이 결정적입니다. 따라서 정답은 b) Gross margin is not a useful metric for Boeing because the company primarily reports operating margin for performance evaluation.\"}",
+    "parsed": {
+      "choice": "b",
+      "reasoning": "(A) 검색된 문서 발췌에서 Boeing의 재무제표와 경영진 논의(MD&A) 부분을 보면, 회사는 'gross margin'이라는 용어를 거의 사용하지 않고, 대신 'operating margin'과 'loss from operations' 등 영업이익률 지표를 중심으로 실적을 평가합니다. 실제로 Consolidated Statements of Operations(청크 7)에서 'cost of products'와 'cost of services'가 구분되어 있지만, Boeing은 복잡한 장기계약(특히 방산/우주/서비스 부문)과 프로그램 회계(상업기 부문)를 적용하기 때문에, 전통적인 제조업에서 사용하는 gross margin(매출총이익률)이 실질적인 성과 지표로 적합하지 않음을 명확히 알 수 있습니다. 또한, MD&A(청크 1, 4, 5 등)에서도 gross margin 대신 operating margin, segment별 영업이익률, 프로그램별 수익성 등으로 실적을 설명합니다. (B) 도메인 그래프에서도 Boeing의 주요 성과지표로 gross margin이 언급되지 않고, 사업구조상 gross margin이 의미가 없다는 근거가 명확히 드러나지는 않지만, (A)에서의 명시적 설명이 결정적입니다. 따라서 정답은 b) Gross margin is not a useful metric for Boeing because the company primarily reports operating margin for performance evaluation."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 20390,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 35,
+    "chunk_setup_amortized": 20331,
+    "chunk_setup_total": 426971,
+    "graph_keyword_estimated": 24,
+    "questions_count_for_amortization": 21
+  },
+  "total_input_tokens": 16008,
+  "total_output_tokens": 357,
+  "total_tokens": 36755,
+  "total_latency_ms": 6273
+}

@@ -32,6 +32,72 @@ _NORMALIZE_TRIM_CHARS = ".,-··'\"“”‘’`"
 _WS_RUNS = re.compile(r"\s+")
 
 
+# WHY generic 자기지칭 alias 의 *비-식별성 (non-identifying)* 분리:
+#
+# 10-K / 사업 보고서 / 연차 보고서 같은 *기업 자체* 가 1인칭으로 자기를 가리키는
+# 문체는 "the Company" / "we" / "our" / "us" / "Registrant" / "the Corporation" /
+# "management" 같은 표현을 *문서마다 동일하게* 사용한다. 이 표현은 *그 문서의
+# 주제 회사를 가리키지 globally 식별 가능한 엔티티 이름이 아니다*.
+#
+# 본 stoplist 가 *없을 때* 발생하는 문제 (M6.5 FinanceBench 1M 측정에서 직접
+# 관찰됨, ADR-0008 의 결정 evidence): AMCOR 가 먼저 ingest 되어 "the Company" 가
+# Amcor plc 의 alias 로 인덱싱되면, 다음 문서 (AMD_2022_10K) 의 같은 "the Company"
+# alias 가 Step 2 (alias 정확 일치) 에서 *AMCOR* 와 매칭 → AMD 가 Amcor plc 노드에
+# 흡수. 6 개 회사 (AMD / AXP / BA / JNJ / PEP) 가 모두 Amcor plc 한 노드에 흡수되는
+# catastrophic over-merge 발생.
+#
+# 본 stoplist 의 정책.
+#   1. 정규화 키 일치 (normalize(alias) ∈ stoplist) 인 alias 는
+#      `normalized_aliases` 인덱스에 *적재되지 않음* (matcher 의 Step 2 lookup
+#      대상에서 제외).
+#   2. 표시용 `aliases` 에는 *그대로 보존* — 사용자가 본문 어휘를 확인할 수 있게.
+#   3. matcher Step 2 의 in-loop 에서도 동일 alias 는 *건너뜀* (lookup 자체를
+#      안 함, 비용 절감).
+#
+# *측정 통제 변수* 임에 유의 — 본 stoplist 가 바뀌면 모든 측정 회차의 그래프가
+# 달라진다. 변경 시 ADR amend + 새 측정 회차 시작 필요.
+NON_IDENTIFYING_ALIAS_STOPLIST: frozenset[str] = frozenset(
+    {
+        # 영어 1인칭 / 자기지칭 (10-K, annual report 표준).
+        "we",
+        "us",
+        "our",
+        "the company",
+        "company",
+        "the corporation",
+        "corporation",
+        "the registrant",
+        "registrant",
+        "the parent",
+        "parent",
+        "the issuer",
+        "issuer",
+        "management",
+        "the board",
+        "board",
+        # 한국어 자기지칭 (사업보고서 / 정관 표준).
+        "당사",
+        "회사",
+        "본사",
+        "본 회사",
+        "본 법인",
+        "본인",
+        "주식회사",
+    }
+)
+
+
+def is_identifying_alias(alias: str) -> bool:
+    """이 alias 가 *식별성* 을 가지는가 (= 인덱스에 들어가도 되는가).
+
+    Returns:
+        False 이면 stoplist 의 generic 자기지칭. `normalized_aliases` 에 *적재
+        하지 않고*, matcher Step 2 의 lookup 도 *건너뛴다*. 표시용 aliases 에는
+        그대로 둔다.
+    """
+    return normalize(alias) not in NON_IDENTIFYING_ALIAS_STOPLIST
+
+
 def normalize(s: str) -> str:
     """엔티티 이름 정규화 — *측정 통제 변수* .
 
@@ -128,9 +194,15 @@ class EntityMatcher:
                 return MatchResult(existing=hit, step=1)
 
         # Step 2 — 별칭 정확 일치 (각 alias 도 정규화 후 lookup).
+        # WHY stoplist 건너뜀: NON_IDENTIFYING_ALIAS_STOPLIST 의 generic
+        # 자기지칭 ("the Company" 등) 은 cross-document 식별성이 없어 매칭
+        # 대상에서 제외. 자세한 동기는 NON_IDENTIFYING_ALIAS_STOPLIST 의
+        # WHY 코멘트 참조 (ADR-0008 의 직접 원인).
         for alias in e_new.aliases or []:
             normalized_alias = normalize(alias)
             if not normalized_alias:
+                continue
+            if normalized_alias in NON_IDENTIFYING_ALIAS_STOPLIST:
                 continue
             hit = self._repo.find_by_normalized_name(
                 normalized=normalized_alias, type_=e_new.type
@@ -183,8 +255,13 @@ class EntityMerger:
             existing.aliases or [], e_new.aliases or []
         )
         # 정규화된 alias 인덱스 사본도 동시 갱신 — Step 1·2 lookup 의 기반.
+        # WHY stoplist 제외: NON_IDENTIFYING_ALIAS_STOPLIST 의 alias 는
+        # 식별 lookup 의 대상이 되면 cross-document over-merge 의 원인이 된다
+        # (ADR-0008). 표시용 `aliases` 에는 남기고 *검색용 인덱스* 에서만 제외.
         merged_normalized_aliases = [
-            normalize(a) for a in merged_aliases if normalize(a)
+            normalize(a)
+            for a in merged_aliases
+            if normalize(a) and normalize(a) not in NON_IDENTIFYING_ALIAS_STOPLIST
         ]
 
         # --- description — 더 긴 쪽 유지, 동률이면 existing 유지 ---

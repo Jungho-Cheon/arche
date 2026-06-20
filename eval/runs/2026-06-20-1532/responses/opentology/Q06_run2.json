@@ -1,0 +1,130 @@
+{
+  "column": "opentology",
+  "question_id": "Q06",
+  "run_index": 2,
+  "anchor_extraction": {
+    "input_tokens": 494,
+    "output_tokens": 68,
+    "latency_ms": 1127,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"FY21\",\"aliases\":[\"FY21\"]},{\"canonical\":\"FY22\",\"aliases\":[\"FY22\"]},{\"canonical\":\"Embedded\",\"aliases\":[\"Embedded\"]},{\"canonical\":\"AMD reporting segment\",\"aliases\":[\"AMD reporting segment\",\"reporting segment\"]},{\"canonical\":\"sales proportion\",\"aliases\":[\"sales proportion\",\"sales proportionally\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "FY21",
+          "aliases": [
+            "FY21"
+          ]
+        },
+        {
+          "canonical": "FY22",
+          "aliases": [
+            "FY22"
+          ]
+        },
+        {
+          "canonical": "Embedded",
+          "aliases": [
+            "Embedded"
+          ]
+        },
+        {
+          "canonical": "AMD reporting segment",
+          "aliases": [
+            "AMD reporting segment",
+            "reporting segment"
+          ]
+        },
+        {
+          "canonical": "sales proportion",
+          "aliases": [
+            "sales proportion",
+            "sales proportionally"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 1000,
+      "input": {
+        "keywords": [
+          "FY21",
+          "FY22",
+          "Embedded",
+          "AMD reporting segment",
+          "reporting segment",
+          "sales proportion",
+          "sales proportionally"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 39,
+      "input": {
+        "entry_ids": [
+          "01KVHV95CFXH4TPGP6D6A8VD88",
+          "01KVHV94VGG7VDVVCDH5KCATB3",
+          "01KVHV949NZP17TXM80K6G34R2",
+          "01KVHV93JY98J1Q1EHXKNTZ11G",
+          "01KVHVEVXAHE26FCCZE0RH5RQ2",
+          "01KVHVBCMJKKASP9YDYHW4GCCZ",
+          "01KVHVHRGSC3MDENK5RTBTG497",
+          "01KVHVB3Z96QEBZZC0YYRF0TPX",
+          "01KVHVKD9DGAXBVP41VZTE40K8",
+          "01KVHVFXGCSD0ZZC4EKKE392V4"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 17,
+        "edges": 13,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVHV95CFXH4TPGP6D6A8VD88",
+    "01KVHV94VGG7VDVVCDH5KCATB3",
+    "01KVHV949NZP17TXM80K6G34R2",
+    "01KVHV93JY98J1Q1EHXKNTZ11G",
+    "01KVHVEVXAHE26FCCZE0RH5RQ2",
+    "01KVHVBCMJKKASP9YDYHW4GCCZ",
+    "01KVHVHRGSC3MDENK5RTBTG497",
+    "01KVHVB3Z96QEBZZC0YYRF0TPX",
+    "01KVHVKD9DGAXBVP41VZTE40K8",
+    "01KVHVFXGCSD0ZZC4EKKE392V4"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 7552,
+  "answer_generation": {
+    "input_tokens": 2555,
+    "output_tokens": 125,
+    "latency_ms": 1672,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"e\",\"reasoning\":\"그래프에는 AMD의 각 사업 부문(예: Data Center segment, Client segment, Gaming segment, Embedded segment)에 대한 정의와 AMD가 이 사업 부문들을 보유하고 있다는 정보만 제공되어 있습니다. FY21~FY22 기간 동안 각 사업 부문의 매출 비율 변화(즉, 비율 증가)에 대한 수치나 비교 정보는 그래프에 포함되어 있지 않습니다. 따라서 보기 중 어느 사업 부문이 Embedded를 제외하고 가장 큰 비율 증가를 보였는지 판단할 수 있는 근거가 없습니다.\"}",
+    "parsed": {
+      "choice": "e",
+      "reasoning": "그래프에는 AMD의 각 사업 부문(예: Data Center segment, Client segment, Gaming segment, Embedded segment)에 대한 정의와 AMD가 이 사업 부문들을 보유하고 있다는 정보만 제공되어 있습니다. FY21~FY22 기간 동안 각 사업 부문의 매출 비율 변화(즉, 비율 증가)에 대한 수치나 비교 정보는 그래프에 포함되어 있지 않습니다. 따라서 보기 중 어느 사업 부문이 Embedded를 제외하고 가장 큰 비율 증가를 보였는지 판단할 수 있는 근거가 없습니다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 56,
+  "total_input_tokens": 3049,
+  "total_output_tokens": 193,
+  "total_tokens": 3298,
+  "total_latency_ms": 3838
+}

@@ -1,0 +1,163 @@
+{
+  "column": "combined",
+  "question_id": "Q20",
+  "run_index": 1,
+  "anchor_extraction": {
+    "input_tokens": 483,
+    "output_tokens": 50,
+    "latency_ms": 923,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"production rate changes\",\"aliases\":[\"production rate changes\"]},{\"canonical\":\"Boeing\",\"aliases\":[\"Boeing\"]},{\"canonical\":\"FY2023\",\"aliases\":[\"FY2023\",\"Fiscal Year 2023\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "production rate changes",
+          "aliases": [
+            "production rate changes"
+          ]
+        },
+        {
+          "canonical": "Boeing",
+          "aliases": [
+            "Boeing"
+          ]
+        },
+        {
+          "canonical": "FY2023",
+          "aliases": [
+            "FY2023",
+            "Fiscal Year 2023"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 1606,
+      "input": {
+        "keywords": [
+          "production rate changes",
+          "Boeing",
+          "FY2023",
+          "Fiscal Year 2023"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 156,
+      "input": {
+        "entry_ids": [
+          "01KVHVJAC0HJ24RDC9RT5V52EP",
+          "01KVHVJB12EN4X3PKS7Z835PEE",
+          "01KVHVHGM15GM1MGSYPCXT9Z2S",
+          "01KVHVFRZ8XBW6BQJBF8XDTXMS",
+          "01KVHVEPF8H0HSM6NSPNHFFZ17",
+          "01KVHVAETBZWP34M0HH734SK6P",
+          "01KVHVJBQAPSNGY7DA2MFPKKKV",
+          "01KVHVFY5SR7S5GEXTEQGVVZMZ",
+          "01KVHVGTZATSJA08Y3MYCK8ZMY",
+          "01KVHVGY5W8J69ASESMFEDW7WW"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 63,
+        "edges": 59,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVHVJAC0HJ24RDC9RT5V52EP",
+    "01KVHVJB12EN4X3PKS7Z835PEE",
+    "01KVHVHGM15GM1MGSYPCXT9Z2S",
+    "01KVHVFRZ8XBW6BQJBF8XDTXMS",
+    "01KVHVEPF8H0HSM6NSPNHFFZ17",
+    "01KVHVAETBZWP34M0HH734SK6P",
+    "01KVHVJBQAPSNGY7DA2MFPKKKV",
+    "01KVHVFY5SR7S5GEXTEQGVVZMZ",
+    "01KVHVGTZATSJA08Y3MYCK8ZMY",
+    "01KVHVGY5W8J69ASESMFEDW7WW"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 26931,
+  "retrieved_chunks": [
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 9,
+      "score": 0.6683232824375283
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 10,
+      "score": 0.6561986180134534
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 8,
+      "score": 0.634639123340839
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 29,
+      "score": 0.6180856151576645
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 33,
+      "score": 0.603878187281937
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 34,
+      "score": 0.5907685645510595
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 4,
+      "score": 0.5763287793152495
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 35,
+      "score": 0.5727585921517782
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 15071,
+    "output_tokens": 183,
+    "latency_ms": 2682,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"c\",\"reasoning\":\"(A) 검색된 문서 발췌에서 737, 777X, 787 각각에 대해 2023년 생산량 변화 전망이 명시적으로 언급됨. 737은 2022년 월 31대에서 점진적 증가 계획, 787은 저조한 생산률에서 2023년 월 5대로 점진적 증가 계획, 777X는 2022~2023년 생산 중단(일시적 pause) 후 2023년 재개 예정이라고 명시. 즉, 세 기종 모두 2023년에 생산률 증가(혹은 재개)가 전망됨. (B) 도메인 그래프에는 생산률 전망에 대한 구체적 정보가 없음. 따라서 (A)의 구체적 근거에 따라 c)번이 정답.\"}",
+    "parsed": {
+      "choice": "c",
+      "reasoning": "(A) 검색된 문서 발췌에서 737, 777X, 787 각각에 대해 2023년 생산량 변화 전망이 명시적으로 언급됨. 737은 2022년 월 31대에서 점진적 증가 계획, 787은 저조한 생산률에서 2023년 월 5대로 점진적 증가 계획, 777X는 2022~2023년 생산 중단(일시적 pause) 후 2023년 재개 예정이라고 명시. 즉, 세 기종 모두 2023년에 생산률 증가(혹은 재개)가 전망됨. (B) 도메인 그래프에는 생산률 전망에 대한 구체적 정보가 없음. 따라서 (A)의 구체적 근거에 따라 c)번이 정답."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 20375,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 12,
+    "chunk_setup_amortized": 20331,
+    "chunk_setup_total": 426971,
+    "graph_keyword_estimated": 32,
+    "questions_count_for_amortization": 21
+  },
+  "total_input_tokens": 15554,
+  "total_output_tokens": 233,
+  "total_tokens": 36162,
+  "total_latency_ms": 5367
+}
