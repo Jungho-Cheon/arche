@@ -158,4 +158,58 @@ graph #1 만 *우연히* AMD / AXP / BA 의 entity / source 가 강하게 잡혀
 1. **PRD 갱신** — "aug 가 default" 주장 제거. Combined 가 *현재* default, aug 는 *graph 강화 조건부 default 후보*
 2. **EntityConsolidator (M6.5b #40)** 본격 — graph variance 의 근본 해소
 3. **ingest deterministic 가드** — seed / temperature 외 추가 통제 (LLM provider 의 reproducible mode 등)
-4. **다도메인 (commerce-verbose)** 측정 — financebench 한정 결과일 가능성 격리 (지난 95K 측정에서 combined 100% 였음 — 도메인 영향 큰 신호)
+4. **다도메인 (commerce-verbose)** 측정 — financebench 한정 결과일 가능성 격리
+
+## 후속 측정 결과 (anchor diversity + graph #5 + commerce-verbose)
+
+### Commerce-verbose 데이터셋 무효 확정
+
+지난 95K 측정 (`STATUS.md` 의 Opentology 90% / Combined 100%) 가 *데이터셋 결함* 으로 의심됨. 검증:
+
+| 데이터셋 검사 | 결과 |
+|---|---|
+| 정답 분포 | **a=27/30, b=3/30** (셔플 안 됨) |
+| chunk_rag / aug / combined acc | **모두 100%** |
+
+a 만 골라도 90%. 정답 셔플 없는 데이터셋은 우월성 비교 불가. STATUS.md 의 95K Opentology 90% 결과도 *데이터셋 결함* 의 그림자. 별도 PR 에서 commerce-verbose 정답 셔플 필요.
+
+### Anchor diversity 가드 효과 (graph #5)
+
+`find_entities` 결과를 anchor (keyword) 별 top-2 보장으로 분산 → cross-company contamination 차단 가설:
+
+| 컬럼 | acc (graph #5) | 차이 (vs chunk) |
+|---|---|---|
+| chunk_rag | 71.4% | — |
+| **opentology_aug (★ diversity)** | **71.4%** | parity |
+| combined (graph #5) | 76.2% | +4.8pp |
+
+aug 가 chunk parity. diversity 가 +1 문항만 회복 (graph #2-4 의 66.7% → graph #5 의 71.4%). 여전히 *combined > aug*.
+
+### Graph #5 의 진짜 문제 발견
+
+graph #5 의 AMD 매칭 검사:
+- "AMD" anchor → 매칭 entity: AMD Athlon Series processors, AMD Radeon Series GPUs, AMD Instinct family 등 *제품만*
+- **"Advanced Micro Devices" (회사) entity 가 graph 에 없음**
+- 결과: Q05 (AMD cash flow) 가 AMD source 좁힘 실패 (sources = AXP / BA 만)
+
+graph #1 (PoC) 만 *우연히* "Advanced Micro Devices" entity 가 강하게 추출됐고, #2-5 는 이게 빠짐. **ingest LLM 의 회사 / 조직 entity 추출 비결정성** 이 graph variance 의 정체.
+
+코드 fix (diversity 가드) 로는 *entity 자체가 없는 케이스* 회복 불가. ingest 단계 보강이 필수.
+
+## 최종 결론 — 우월성의 *조건* 확정
+
+| 조건 | 본 PR 효과 | 누적 효과 (추정) |
+|---|---|---|
+| baseline (no diversity, graph variance 그대로) | mean 70.2% | chunk parity 또는 그 이하 |
+| + anchor diversity (find_entities per-keyword top-N) | +1 문항 | mean 71-72% |
+| + 회사 / 조직 entity 강제 추출 (ingest prompt amend) | +N pp 가능 | mean 75-80% (가설) |
+| + EntityConsolidator (M6.5b #40, entity 정합성) | graph variance ↓ | mean 77-83% (가설) |
+| + Ingest seed/replay invariance | distribution narrow | stable acc |
+
+**aug 우월성 입증 = 위 4 가지 중 *최소 2-3 개* 충족 후의 새 측정에서 acc ≥ chunk + 3pp**. 본 PR 의 anchor diversity 만으로는 *부족*.
+
+본 PR 이 확정한 것:
+1. **현재 aug ≯ chunk** (그래서 default 는 Combined 유지)
+2. **graph variance 의 진짜 정체** = 회사 / 조직 entity 의 ingest 추출 비결정성
+3. **anchor diversity 코드 가드** = +1 문항 회복 (보존 가치 있음)
+4. **commerce-verbose 데이터셋 결함** = 추후 셔플 필요

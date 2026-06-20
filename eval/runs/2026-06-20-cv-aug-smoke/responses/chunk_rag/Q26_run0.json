@@ -1,0 +1,65 @@
+{
+  "column": "chunk_rag",
+  "question_id": "Q26",
+  "run_index": 0,
+  "input_tokens": 4393,
+  "output_tokens": 165,
+  "embedding_tokens": 3684,
+  "embedding_tokens_breakdown": {
+    "question_embedding": 66,
+    "setup_amortized": 3618,
+    "setup_total": 108550,
+    "questions_count_for_amortization": 30
+  },
+  "total_tokens": 8242,
+  "latency_ms": 2133,
+  "model": "gpt-4.1",
+  "retrieved_chunks": [
+    {
+      "source_path": "b2b/b2b-ops-guide.md",
+      "chunk_index": 3,
+      "score": 0.6126912644146659
+    },
+    {
+      "source_path": "b2b/b2b-coupon-policy.md",
+      "chunk_index": 0,
+      "score": 0.5887552448273773
+    },
+    {
+      "source_path": "b2b/b2b-coupon-policy.md",
+      "chunk_index": 1,
+      "score": 0.5798531763383655
+    },
+    {
+      "source_path": "marketing/coupon-stacking-guide.md",
+      "chunk_index": 2,
+      "score": 0.560555699590658
+    },
+    {
+      "source_path": "marketing/coupon-stacking-guide.md",
+      "chunk_index": 5,
+      "score": 0.5587192408782135
+    },
+    {
+      "source_path": "marketing/coupon-stacking-guide.md",
+      "chunk_index": 1,
+      "score": 0.551108713541278
+    },
+    {
+      "source_path": "b2b/b2b-coupon-policy.md",
+      "chunk_index": 2,
+      "score": 0.54289650706289
+    },
+    {
+      "source_path": "b2b/enterprise-agreement-addendum.pdf",
+      "chunk_index": 1,
+      "score": 0.5354724617504931
+    }
+  ],
+  "raw_response": "{\"choice\":\"a\",\"reasoning\":\"청크 3과 청크 7에서 'B2C 결합 금지' 원칙이 명확히 설명되어 있다. CPN-B2B-* (엔터프라이즈 쿠폰)과 CPN-WELCOME-* (웰컴 쿠폰, B2C 쿠폰)은 한 주문에 함께 담을 수 없으며, 시스템이 B2C 쿠폰을 자동 무효화하고 B2B 쿠폰만 적용한다고 명시되어 있다. 실제 적용 예시 C(청크 7)에서도 담당자가 실수로 두 쿠폰을 함께 담았을 때 B2C 쿠폰이 무효화되고 안내 메시지가 노출된다고 구체적으로 설명한다. 따라서 정답은 a)이다.\"}",
+  "parsed": {
+    "choice": "a",
+    "reasoning": "청크 3과 청크 7에서 'B2C 결합 금지' 원칙이 명확히 설명되어 있다. CPN-B2B-* (엔터프라이즈 쿠폰)과 CPN-WELCOME-* (웰컴 쿠폰, B2C 쿠폰)은 한 주문에 함께 담을 수 없으며, 시스템이 B2C 쿠폰을 자동 무효화하고 B2B 쿠폰만 적용한다고 명시되어 있다. 실제 적용 예시 C(청크 7)에서도 담당자가 실수로 두 쿠폰을 함께 담았을 때 B2C 쿠폰이 무효화되고 안내 메시지가 노출된다고 구체적으로 설명한다. 따라서 정답은 a)이다."
+  },
+  "parse_error": null
+}

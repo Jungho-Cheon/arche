@@ -1,0 +1,161 @@
+{
+  "column": "combined",
+  "question_id": "Q11",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 508,
+    "output_tokens": 40,
+    "latency_ms": 1010,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"gross margin\",\"aliases\":[\"gross margin\"]},{\"canonical\":\"FY2022\",\"aliases\":[\"FY2022\"]},{\"canonical\":\"American Express\",\"aliases\":[\"American Express\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "gross margin",
+          "aliases": [
+            "gross margin"
+          ]
+        },
+        {
+          "canonical": "FY2022",
+          "aliases": [
+            "FY2022"
+          ]
+        },
+        {
+          "canonical": "American Express",
+          "aliases": [
+            "American Express"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 891,
+      "input": {
+        "keywords": [
+          "gross margin",
+          "FY2022",
+          "American Express"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 184,
+      "input": {
+        "entry_ids": [
+          "01KVJS9SXN1PBN9D6ASJWRH9GA",
+          "01KVJS9V9RNSZB2RKM5579JY5N",
+          "01KVJSBCB9MJ5JNJ82Z9KW9S3S",
+          "01KVJSD21KZSEHT4JGS7MXWQ74",
+          "01KVJSD1EDWKW7X1GTRC0Q5ZC7",
+          "01KVJSBTHYZXADE92KN6Q214SV",
+          "01KVJSDK6AJ509ND7NSNFC8VMX",
+          "01KVJSD9R346QCMCXFH80DBJHP",
+          "01KVJSDJ5X5GBSYRCC43Y6W6JF",
+          "01KVJSD91S6YFJYHK3X2SH61PC"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 71,
+        "edges": 67,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVJS9SXN1PBN9D6ASJWRH9GA",
+    "01KVJS9V9RNSZB2RKM5579JY5N",
+    "01KVJSBCB9MJ5JNJ82Z9KW9S3S",
+    "01KVJSD21KZSEHT4JGS7MXWQ74",
+    "01KVJSD1EDWKW7X1GTRC0Q5ZC7",
+    "01KVJSBTHYZXADE92KN6Q214SV",
+    "01KVJSDK6AJ509ND7NSNFC8VMX",
+    "01KVJSD9R346QCMCXFH80DBJHP",
+    "01KVJSDJ5X5GBSYRCC43Y6W6JF",
+    "01KVJSD91S6YFJYHK3X2SH61PC"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 32875,
+  "retrieved_chunks": [
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 72,
+      "score": 0.638829820835636
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 51,
+      "score": 0.6309442813787864
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 4,
+      "score": 0.6251633614688344
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 6,
+      "score": 0.6134742105795243
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 49,
+      "score": 0.5988632588716658
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 5,
+      "score": 0.5973987705771153
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 54,
+      "score": 0.5964663779051919
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 53,
+      "score": 0.5934765175561638
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 16161,
+    "output_tokens": 322,
+    "latency_ms": 4611,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"a\",\"reasoning\":\"(A) 검색된 문서 발췌에서 American Express의 실적 분석과 수익 구조에 대한 상세 설명이 제공됩니다. 특히, 청크 2, 3, 4, 7, 8 등에서 반복적으로 언급되는 것은 American Express가 전통적인 제조업이나 유통업과 달리 'gross margin(매출총이익률)'이라는 지표로 실적을 관리하지 않는다는 점입니다. 대신, 이 회사는 'discount revenue', 'net card fees', 'interest income', 'service fees and other revenue' 등 다양한 수익원과 'total expenses', 'operating expenses', 'marketing expenses', 'business development expenses' 등 다양한 비용 항목을 중심으로 실적을 분석합니다. 실제로 청크 2, 3, 4, 7, 8 등에서 gross margin이라는 용어 자체가 등장하지 않으며, 대신 'total revenues net of interest expense', 'operating expenses', 'provisions for credit losses' 등 금융업 특유의 지표가 강조됩니다. (B) 도메인 그래프에서도 gross margin 관련 엔티티나 관계가 전혀 등장하지 않습니다. 따라서 American Express와 같은 금융 서비스 회사는 gross margin이 실적을 평가하는 데 적합한 지표가 아니며, 이 점을 명확히 설명하는 것이 정답입니다. 이 결론은 (A) 발췌의 구체적이고 명시적인 설명에 근거합니다.\"}",
+    "parsed": {
+      "choice": "a",
+      "reasoning": "(A) 검색된 문서 발췌에서 American Express의 실적 분석과 수익 구조에 대한 상세 설명이 제공됩니다. 특히, 청크 2, 3, 4, 7, 8 등에서 반복적으로 언급되는 것은 American Express가 전통적인 제조업이나 유통업과 달리 'gross margin(매출총이익률)'이라는 지표로 실적을 관리하지 않는다는 점입니다. 대신, 이 회사는 'discount revenue', 'net card fees', 'interest income', 'service fees and other revenue' 등 다양한 수익원과 'total expenses', 'operating expenses', 'marketing expenses', 'business development expenses' 등 다양한 비용 항목을 중심으로 실적을 분석합니다. 실제로 청크 2, 3, 4, 7, 8 등에서 gross margin이라는 용어 자체가 등장하지 않으며, 대신 'total revenues net of interest expense', 'operating expenses', 'provisions for credit losses' 등 금융업 특유의 지표가 강조됩니다. (B) 도메인 그래프에서도 gross margin 관련 엔티티나 관계가 전혀 등장하지 않습니다. 따라서 American Express와 같은 금융 서비스 회사는 gross margin이 실적을 평가하는 데 적합한 지표가 아니며, 이 점을 명확히 설명하는 것이 정답입니다. 이 결론은 (A) 발췌의 구체적이고 명시적인 설명에 근거합니다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 20392,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 37,
+    "chunk_setup_amortized": 20331,
+    "chunk_setup_total": 426971,
+    "graph_keyword_estimated": 24,
+    "questions_count_for_amortization": 21
+  },
+  "total_input_tokens": 16669,
+  "total_output_tokens": 362,
+  "total_tokens": 37423,
+  "total_latency_ms": 6696
+}

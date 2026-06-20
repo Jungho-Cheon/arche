@@ -1,0 +1,65 @@
+{
+  "column": "chunk_rag",
+  "question_id": "Q04",
+  "run_index": 0,
+  "input_tokens": 4499,
+  "output_tokens": 160,
+  "embedding_tokens": 3684,
+  "embedding_tokens_breakdown": {
+    "question_embedding": 66,
+    "setup_amortized": 3618,
+    "setup_total": 108550,
+    "questions_count_for_amortization": 30
+  },
+  "total_tokens": 8343,
+  "latency_ms": 2645,
+  "model": "gpt-4.1",
+  "retrieved_chunks": [
+    {
+      "source_path": "b2b/b2b-coupon-policy.md",
+      "chunk_index": 1,
+      "score": 0.7945101065543455
+    },
+    {
+      "source_path": "marketing/coupon-stacking-guide.md",
+      "chunk_index": 5,
+      "score": 0.716142783099133
+    },
+    {
+      "source_path": "b2b/b2b-coupon-policy.md",
+      "chunk_index": 0,
+      "score": 0.6932403806073414
+    },
+    {
+      "source_path": "b2b/b2b-ops-guide.md",
+      "chunk_index": 3,
+      "score": 0.6800491697992662
+    },
+    {
+      "source_path": "b2b/enterprise-agreement-addendum.pdf",
+      "chunk_index": 2,
+      "score": 0.6699022384774744
+    },
+    {
+      "source_path": "marketing/coupon-stacking-guide.md",
+      "chunk_index": 1,
+      "score": 0.6193691702885005
+    },
+    {
+      "source_path": "b2b/enterprise-agreement-addendum.pdf",
+      "chunk_index": 1,
+      "score": 0.617802344722458
+    },
+    {
+      "source_path": "b2b/b2b-coupon-policy.md",
+      "chunk_index": 2,
+      "score": 0.5974170404084265
+    }
+  ],
+  "raw_response": "{\"choice\":\"b\",\"reasoning\":\"청크 1, 5, 8에서 명확히 '여러 장의 CPN-B2B-*를 쌓아 올린 누적 할인율 합계는 30%를 초과할 수 없다. 합계가 30%를 넘기는 stacking 조합은 결제 직전 단계에서 자동 차단된다(마지막에 적용된 쿠폰부터 거부)'라고 규정하고 있다. 또한 예시 B에서 37% stacking 시 마지막 쿠폰부터 거부되어 30%까지만 적용된다고 구체적으로 설명한다. 따라서 누적 35% stacking 시 마지막 쿠폰부터 자동 차단되어 30% 이하만 적용된다. 보기 b가 정답이다.\"}",
+  "parsed": {
+    "choice": "b",
+    "reasoning": "청크 1, 5, 8에서 명확히 '여러 장의 CPN-B2B-*를 쌓아 올린 누적 할인율 합계는 30%를 초과할 수 없다. 합계가 30%를 넘기는 stacking 조합은 결제 직전 단계에서 자동 차단된다(마지막에 적용된 쿠폰부터 거부)'라고 규정하고 있다. 또한 예시 B에서 37% stacking 시 마지막 쿠폰부터 거부되어 30%까지만 적용된다고 구체적으로 설명한다. 따라서 누적 35% stacking 시 마지막 쿠폰부터 자동 차단되어 30% 이하만 적용된다. 보기 b가 정답이다."
+  },
+  "parse_error": null
+}

@@ -1,0 +1,65 @@
+{
+  "column": "chunk_rag",
+  "question_id": "Q06",
+  "run_index": 0,
+  "input_tokens": 4767,
+  "output_tokens": 129,
+  "embedding_tokens": 3647,
+  "embedding_tokens_breakdown": {
+    "question_embedding": 29,
+    "setup_amortized": 3618,
+    "setup_total": 108550,
+    "questions_count_for_amortization": 30
+  },
+  "total_tokens": 8543,
+  "latency_ms": 2043,
+  "model": "gpt-4.1",
+  "retrieved_chunks": [
+    {
+      "source_path": "global-pm/country-policy-matrix.md",
+      "chunk_index": 2,
+      "score": 0.4423690321036489
+    },
+    {
+      "source_path": "global-pm/country-policy-matrix.md",
+      "chunk_index": 3,
+      "score": 0.4301394027513597
+    },
+    {
+      "source_path": "global-pm/country-launch-memo-jp.pdf",
+      "chunk_index": 1,
+      "score": 0.4111536879294479
+    },
+    {
+      "source_path": "legal-risk/kyc-age-verification-memo.pdf",
+      "chunk_index": 1,
+      "score": 0.3764812999065318
+    },
+    {
+      "source_path": "global-pm/country-launch-memo-jp.pdf",
+      "chunk_index": 2,
+      "score": 0.3668294731143527
+    },
+    {
+      "source_path": "seller-ops/settlement-faq.md",
+      "chunk_index": 6,
+      "score": 0.3545691523318518
+    },
+    {
+      "source_path": "global-pm/country-launch-memo-jp.pdf",
+      "chunk_index": 4,
+      "score": 0.35078639500019726
+    },
+    {
+      "source_path": "cs-logistics/cs-macro-manual.md",
+      "chunk_index": 1,
+      "score": 0.3432773878999395
+    }
+  ],
+  "raw_response": "{\"choice\":\"a\",\"reasoning\":\"청크 1, 2, 4, 7, 8 등 여러 발췌에서 DE(독일)의 주류 연령 기준이 맥주는 16세, 증류주는 18세로 주종에 따라 다르다고 명확히 설명하고 있다. 특히 표와 설명에서 'DE: 맥주 16세 / 증류주 18세'라고 반복적으로 언급된다. 따라서 DE에서 맥주를 구매할 수 있는 최소 연령은 16세가 맞다. 보기 a)가 정답이다.\"}",
+  "parsed": {
+    "choice": "a",
+    "reasoning": "청크 1, 2, 4, 7, 8 등 여러 발췌에서 DE(독일)의 주류 연령 기준이 맥주는 16세, 증류주는 18세로 주종에 따라 다르다고 명확히 설명하고 있다. 특히 표와 설명에서 'DE: 맥주 16세 / 증류주 18세'라고 반복적으로 언급된다. 따라서 DE에서 맥주를 구매할 수 있는 최소 연령은 16세가 맞다. 보기 a)가 정답이다."
+  },
+  "parse_error": null
+}

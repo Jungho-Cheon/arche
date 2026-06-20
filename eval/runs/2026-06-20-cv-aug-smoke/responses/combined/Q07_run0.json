@@ -1,0 +1,172 @@
+{
+  "column": "combined",
+  "question_id": "Q07",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 513,
+    "output_tokens": 90,
+    "latency_ms": 1061,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"미국 블랙프라이데이\",\"aliases\":[\"미국 블랙프라이데이\",\"CMP-US-BFM2026\"]},{\"canonical\":\"컨사인 셀러\",\"aliases\":[\"컨사인 셀러\",\"위탁 셀러\"]},{\"canonical\":\"명품\",\"aliases\":[\"명품\"]},{\"canonical\":\"추가 5% 할인\",\"aliases\":[\"추가 5% 할인\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "미국 블랙프라이데이",
+          "aliases": [
+            "미국 블랙프라이데이",
+            "CMP-US-BFM2026"
+          ]
+        },
+        {
+          "canonical": "컨사인 셀러",
+          "aliases": [
+            "컨사인 셀러",
+            "위탁 셀러"
+          ]
+        },
+        {
+          "canonical": "명품",
+          "aliases": [
+            "명품"
+          ]
+        },
+        {
+          "canonical": "추가 5% 할인",
+          "aliases": [
+            "추가 5% 할인"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 1249,
+      "input": {
+        "keywords": [
+          "미국 블랙프라이데이",
+          "CMP-US-BFM2026",
+          "컨사인 셀러",
+          "위탁 셀러",
+          "명품",
+          "추가 5% 할인"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 71,
+      "input": {
+        "entry_ids": [
+          "01KVJQH1PXBTCRG48GGGHYQBKF",
+          "01KVJRCCHGZ5RWHTRT333Z51G6",
+          "01KVJQDJ2KYZXY247C4N8CQWB3",
+          "01KVJQQY8ATECG27A4J185051K",
+          "01KVJQJK7SMVP2HVVXNKTM515X",
+          "01KVJQGN4M8FPR9X4FNNEKQP2G",
+          "01KVJRHYW9Z7MJKC2BQE8EPPRK",
+          "01KVJRDH2KKE4MQQQKSG43VQXS",
+          "01KVJQE9TXXKFMRRMHK0T9BW84",
+          "01KVJRDJ2TEF91TC333T7Z32PV"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 27,
+        "edges": 21,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVJQH1PXBTCRG48GGGHYQBKF",
+    "01KVJRCCHGZ5RWHTRT333Z51G6",
+    "01KVJQDJ2KYZXY247C4N8CQWB3",
+    "01KVJQQY8ATECG27A4J185051K",
+    "01KVJQJK7SMVP2HVVXNKTM515X",
+    "01KVJQGN4M8FPR9X4FNNEKQP2G",
+    "01KVJRHYW9Z7MJKC2BQE8EPPRK",
+    "01KVJRDH2KKE4MQQQKSG43VQXS",
+    "01KVJQE9TXXKFMRRMHK0T9BW84",
+    "01KVJRDJ2TEF91TC333T7Z32PV"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 15492,
+  "retrieved_chunks": [
+    {
+      "source_path": "seller-ops/settlement-faq.md",
+      "chunk_index": 7,
+      "score": 0.6889218229714588
+    },
+    {
+      "source_path": "marketing/bfm2026-brief.pdf",
+      "chunk_index": 1,
+      "score": 0.5682225681431546
+    },
+    {
+      "source_path": "b2b/b2b-ops-guide.md",
+      "chunk_index": 3,
+      "score": 0.5429528764662558
+    },
+    {
+      "source_path": "seller-ops/seller-agreement-annex.pdf",
+      "chunk_index": 4,
+      "score": 0.5423836483519082
+    },
+    {
+      "source_path": "hq-pm/quarterly-policy-brief.pdf",
+      "chunk_index": 2,
+      "score": 0.5334683408470433
+    },
+    {
+      "source_path": "seller-ops/settlement-faq.md",
+      "chunk_index": 12,
+      "score": 0.5136639093945062
+    },
+    {
+      "source_path": "marketing/bfm2026-brief.pdf",
+      "chunk_index": 2,
+      "score": 0.5096084168325956
+    },
+    {
+      "source_path": "seller-ops/settlement-faq.md",
+      "chunk_index": 6,
+      "score": 0.5019237777264743
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 10069,
+    "output_tokens": 208,
+    "latency_ms": 2875,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"a\",\"reasoning\":\"(A) 검색된 문서 발췌에서 여러 곳(예: seller-ops/settlement-faq.md:7, marketing/bfm2026-brief.pdf:1, seller-ops/seller-agreement-annex.pdf:4, hq-pm/quarterly-policy-brief.pdf:2)에서 명확하게 'US BFM2026 추가 5% 할인은 명품+사입(1P) 거래에만 적용되고, MP와 컨사인(위탁) 거래는 제외된다'고 반복적으로 명시하고 있다. (B) 도메인 그래프에서도 CMP-KR-BFM2026(=US BFM2026) --추가 할인에서 제외한다--> 컨사인, MP 셀러 관계가 명확히 드러난다. 두 출처 모두 일치하며, 특히 (A)에서 구체적 예시와 표로까지 설명되어 있어 결정적이다.\"}",
+    "parsed": {
+      "choice": "a",
+      "reasoning": "(A) 검색된 문서 발췌에서 여러 곳(예: seller-ops/settlement-faq.md:7, marketing/bfm2026-brief.pdf:1, seller-ops/seller-agreement-annex.pdf:4, hq-pm/quarterly-policy-brief.pdf:2)에서 명확하게 'US BFM2026 추가 5% 할인은 명품+사입(1P) 거래에만 적용되고, MP와 컨사인(위탁) 거래는 제외된다'고 반복적으로 명시하고 있다. (B) 도메인 그래프에서도 CMP-KR-BFM2026(=US BFM2026) --추가 할인에서 제외한다--> 컨사인, MP 셀러 관계가 명확히 드러난다. 두 출처 모두 일치하며, 특히 (A)에서 구체적 예시와 표로까지 설명되어 있어 결정적이다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 3725,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 59,
+    "chunk_setup_amortized": 3618,
+    "chunk_setup_total": 108550,
+    "graph_keyword_estimated": 48,
+    "questions_count_for_amortization": 30
+  },
+  "total_input_tokens": 10582,
+  "total_output_tokens": 298,
+  "total_tokens": 14605,
+  "total_latency_ms": 5256
+}

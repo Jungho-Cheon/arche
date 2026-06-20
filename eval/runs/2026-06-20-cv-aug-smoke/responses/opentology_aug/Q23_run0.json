@@ -1,0 +1,202 @@
+{
+  "column": "opentology_aug",
+  "question_id": "Q23",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 529,
+    "output_tokens": 128,
+    "latency_ms": 1806,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"미국 블랙프라이데이(CMP-US-BFM2026) 추가 5% 할인\",\"aliases\":[\"미국 블랙프라이데이(CMP-US-BFM2026) 추가 5% 할인\",\"블랙프라이데이 5% 할인\",\"CMP-US-BFM2026 할인\"]},{\"canonical\":\"사입(1P) 명품 거래\",\"aliases\":[\"사입(1P) 명품 거래\",\"1P 명품 거래\",\"사입 명품 거래\"]},{\"canonical\":\"정산\",\"aliases\":[\"정산\",\"정산받는 금액\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "미국 블랙프라이데이(CMP-US-BFM2026) 추가 5% 할인",
+          "aliases": [
+            "미국 블랙프라이데이(CMP-US-BFM2026) 추가 5% 할인",
+            "블랙프라이데이 5% 할인",
+            "CMP-US-BFM2026 할인"
+          ]
+        },
+        {
+          "canonical": "사입(1P) 명품 거래",
+          "aliases": [
+            "사입(1P) 명품 거래",
+            "1P 명품 거래",
+            "사입 명품 거래"
+          ]
+        },
+        {
+          "canonical": "정산",
+          "aliases": [
+            "정산",
+            "정산받는 금액"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 2066,
+      "input": {
+        "keywords": [
+          "미국 블랙프라이데이(CMP-US-BFM2026) 추가 5% 할인",
+          "블랙프라이데이 5% 할인",
+          "CMP-US-BFM2026 할인",
+          "사입(1P) 명품 거래",
+          "1P 명품 거래",
+          "사입 명품 거래",
+          "정산",
+          "정산받는 금액"
+        ],
+        "limit": 20,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 20
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 167,
+      "input": {
+        "entry_ids": [
+          "01KVJRCCHGZ5RWHTRT333Z51G6",
+          "01KVJQQY8ATECG27A4J185051K",
+          "01KVJRJ6J6PKF0NGSH31TE5TTY",
+          "01KVJRGTBWEV31CX0W721SBB3B",
+          "01KVJRFWR00SMHRVJ3A45K43RM",
+          "01KVJQX94JJDFPJ2KBMYWNCVXT",
+          "01KVJRDGJ0G1H6A1EBVP7XYP7W",
+          "01KVJRJ7B7X806F78SNSNBSN7K",
+          "01KVJQBCZ8TG2D8FNTAGS2637W",
+          "01KVJQKDZCHJ1A1RVQY1Q2C1MJ"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 57,
+        "edges": 65,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVJRCCHGZ5RWHTRT333Z51G6",
+    "01KVJQQY8ATECG27A4J185051K",
+    "01KVJRJ6J6PKF0NGSH31TE5TTY",
+    "01KVJRGTBWEV31CX0W721SBB3B",
+    "01KVJRFWR00SMHRVJ3A45K43RM",
+    "01KVJQX94JJDFPJ2KBMYWNCVXT",
+    "01KVJRDGJ0G1H6A1EBVP7XYP7W",
+    "01KVJRJ7B7X806F78SNSNBSN7K",
+    "01KVJQBCZ8TG2D8FNTAGS2637W",
+    "01KVJQKDZCHJ1A1RVQY1Q2C1MJ"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 38421,
+  "graph_selected_sources": [
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/cs-logistics/cs-macro-manual.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/seller-ops/seller-agreement-annex.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/hq-pm/decision-log.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/hq-pm/policy-matrix.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/legal-risk/gdpr-de-memo.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/marketing/bfm2026-brief.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/marketing/campaign-playbook.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/global-pm/country-launch-memo-jp.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/b2b/b2b-coupon-policy.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/b2b/b2b-ops-guide.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/b2b/enterprise-agreement-addendum.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/legal-risk/risk-checklist.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/loyalty/tier-rulebook.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/loyalty/tier-transition-rulebook.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/marketing/coupon-stacking-guide.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/seller-ops/_GLOSSARY.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/seller-ops/settlement-faq.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/global-pm/country-policy-matrix.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/legal-risk/_GLOSSARY.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/cs-logistics/cold-chain-sop.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/hq-pm/quarterly-policy-brief.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/cs-logistics/_GLOSSARY.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/global-pm/_GLOSSARY.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/hq-pm/_GLOSSARY.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/marketing/_GLOSSARY.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/cs-logistics/return-refund-flowchart.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/legal-risk/kyc-age-verification-memo.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/global-pm/country-launch-memo-vn.pdf"
+  ],
+  "used_fallback": null,
+  "retrieved_chunks": [
+    {
+      "source_path": "seller-ops/settlement-faq.md",
+      "chunk_index": 7,
+      "score": 0.7139534663910686
+    },
+    {
+      "source_path": "seller-ops/seller-agreement-annex.pdf",
+      "chunk_index": 4,
+      "score": 0.5879271511210733
+    },
+    {
+      "source_path": "seller-ops/settlement-faq.md",
+      "chunk_index": 12,
+      "score": 0.555499574138605
+    },
+    {
+      "source_path": "marketing/bfm2026-brief.pdf",
+      "chunk_index": 1,
+      "score": 0.5492301879921853
+    },
+    {
+      "source_path": "b2b/b2b-ops-guide.md",
+      "chunk_index": 3,
+      "score": 0.5324795910681495
+    },
+    {
+      "source_path": "seller-ops/settlement-faq.md",
+      "chunk_index": 6,
+      "score": 0.5288084824829611
+    },
+    {
+      "source_path": "hq-pm/decision-log.md",
+      "chunk_index": 4,
+      "score": 0.5278344522004993
+    },
+    {
+      "source_path": "hq-pm/quarterly-policy-brief.pdf",
+      "chunk_index": 2,
+      "score": 0.524900427545798
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 18746,
+    "output_tokens": 205,
+    "latency_ms": 2793,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"a\",\"reasoning\":\"(A) 발췌에서 'CMP-US-BFM2026 의 추가 5% 할인 대상은 명품 카테고리 + 사입 (1P) 거래로 한정됩니다. ... 추가 할인 부담분은 회사 마케팅 예산에서 충당하므로 셀러 정산금을 줄이지 않습니다. 즉 사입 셀러는 추가 할인이 적용돼도 정산받는 금액 자체는 정상가 기준입니다.'라고 명확히 서술되어 있습니다. 표와 예시까지 들어서 구매자는 할인된 금액을 내지만 셀러는 정상가 기준으로 정산받는다고 설명합니다. (B) 그래프에서도 '명품+사입 5% 할인 --정산분을 흡수한다--> 본사' 등 구조적 관계가 일치합니다. 두 정보 모두 일치하며, (A)의 정량적·구체적 설명이 결정적입니다.\"}",
+    "parsed": {
+      "choice": "a",
+      "reasoning": "(A) 발췌에서 'CMP-US-BFM2026 의 추가 5% 할인 대상은 명품 카테고리 + 사입 (1P) 거래로 한정됩니다. ... 추가 할인 부담분은 회사 마케팅 예산에서 충당하므로 셀러 정산금을 줄이지 않습니다. 즉 사입 셀러는 추가 할인이 적용돼도 정산받는 금액 자체는 정상가 기준입니다.'라고 명확히 서술되어 있습니다. 표와 예시까지 들어서 구매자는 할인된 금액을 내지만 셀러는 정상가 기준으로 정산받는다고 설명합니다. (B) 그래프에서도 '명품+사입 5% 할인 --정산분을 흡수한다--> 본사' 등 구조적 관계가 일치합니다. 두 정보 모두 일치하며, (A)의 정량적·구체적 설명이 결정적입니다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 3768,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 86,
+    "chunk_setup_amortized": 3618,
+    "chunk_setup_total": 108550,
+    "graph_keyword_estimated": 64,
+    "questions_count_for_amortization": 30
+  },
+  "total_input_tokens": 19275,
+  "total_output_tokens": 333,
+  "total_tokens": 23376,
+  "total_latency_ms": 6832
+}

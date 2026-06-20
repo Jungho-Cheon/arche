@@ -1,0 +1,173 @@
+{
+  "column": "combined",
+  "question_id": "Q29",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 517,
+    "output_tokens": 182,
+    "latency_ms": 1213,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"엔터프라이즈(B2B) 계정\",\"aliases\":[\"엔터프라이즈(B2B) 계정\",\"B2B 계정\",\"엔터프라이즈 계정\"]},{\"canonical\":\"한국 블랙프라이데이(CMP-KR-BFM2026) 캠페인\",\"aliases\":[\"한국 블랙프라이데이(CMP-KR-BFM2026) 캠페인\",\"CMP-KR-BFM2026 캠페인\",\"한국 블랙프라이데이 캠페인\"]},{\"canonical\":\"미국 블랙프라이데이(CMP-US-BFM2026) 캠페인\",\"aliases\":[\"미국 블랙프라이데이(CMP-US-BFM2026) 캠페인\",\"CMP-US-BFM2026 캠페인\",\"미국 블랙프라이데이 캠페인\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "엔터프라이즈(B2B) 계정",
+          "aliases": [
+            "엔터프라이즈(B2B) 계정",
+            "B2B 계정",
+            "엔터프라이즈 계정"
+          ]
+        },
+        {
+          "canonical": "한국 블랙프라이데이(CMP-KR-BFM2026) 캠페인",
+          "aliases": [
+            "한국 블랙프라이데이(CMP-KR-BFM2026) 캠페인",
+            "CMP-KR-BFM2026 캠페인",
+            "한국 블랙프라이데이 캠페인"
+          ]
+        },
+        {
+          "canonical": "미국 블랙프라이데이(CMP-US-BFM2026) 캠페인",
+          "aliases": [
+            "미국 블랙프라이데이(CMP-US-BFM2026) 캠페인",
+            "CMP-US-BFM2026 캠페인",
+            "미국 블랙프라이데이 캠페인"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 1694,
+      "input": {
+        "keywords": [
+          "엔터프라이즈(B2B) 계정",
+          "B2B 계정",
+          "엔터프라이즈 계정",
+          "한국 블랙프라이데이(CMP-KR-BFM2026) 캠페인",
+          "CMP-KR-BFM2026 캠페인",
+          "한국 블랙프라이데이 캠페인",
+          "미국 블랙프라이데이(CMP-US-BFM2026) 캠페인",
+          "CMP-US-BFM2026 캠페인",
+          "미국 블랙프라이데이 캠페인"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 283,
+      "input": {
+        "entry_ids": [
+          "01KVJQKDZCHJ1A1RVQY1Q2C1MJ",
+          "01KVJQBCZ8TG2D8FNTAGS2637W",
+          "01KVJQBAZFJNQYM17XY9S6A168",
+          "01KVJQKFHF78GM87AS09JVBSCB",
+          "01KVJQBCAX1TC87ZT9N3Q4CXVY",
+          "01KVJQBDFC9BEQSRAW0R3B2F4S",
+          "01KVJQQR1GZNG4S2HDAKPBZNS3",
+          "01KVJQXDAZR4XYTXRWJT0ZCH94",
+          "01KVJR09V27E0VMHGVTRWNSDYZ",
+          "01KVJRC1964W8C7R2NPR3QWBJJ"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 75,
+        "edges": 105,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVJQKDZCHJ1A1RVQY1Q2C1MJ",
+    "01KVJQBCZ8TG2D8FNTAGS2637W",
+    "01KVJQBAZFJNQYM17XY9S6A168",
+    "01KVJQKFHF78GM87AS09JVBSCB",
+    "01KVJQBCAX1TC87ZT9N3Q4CXVY",
+    "01KVJQBDFC9BEQSRAW0R3B2F4S",
+    "01KVJQQR1GZNG4S2HDAKPBZNS3",
+    "01KVJQXDAZR4XYTXRWJT0ZCH94",
+    "01KVJR09V27E0VMHGVTRWNSDYZ",
+    "01KVJRC1964W8C7R2NPR3QWBJJ"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 57194,
+  "retrieved_chunks": [
+    {
+      "source_path": "marketing/bfm2026-brief.pdf",
+      "chunk_index": 0,
+      "score": 0.6682887330150499
+    },
+    {
+      "source_path": "b2b/b2b-ops-guide.md",
+      "chunk_index": 3,
+      "score": 0.6283808522031155
+    },
+    {
+      "source_path": "marketing/campaign-playbook.md",
+      "chunk_index": 3,
+      "score": 0.6216919561356461
+    },
+    {
+      "source_path": "marketing/campaign-playbook.md",
+      "chunk_index": 4,
+      "score": 0.5833500407950958
+    },
+    {
+      "source_path": "global-pm/country-launch-memo-jp.pdf",
+      "chunk_index": 3,
+      "score": 0.5500609451847999
+    },
+    {
+      "source_path": "hq-pm/policy-matrix.md",
+      "chunk_index": 6,
+      "score": 0.5491398254440809
+    },
+    {
+      "source_path": "hq-pm/quarterly-policy-brief.pdf",
+      "chunk_index": 2,
+      "score": 0.5206230190727041
+    },
+    {
+      "source_path": "b2b/b2b-coupon-policy.md",
+      "chunk_index": 2,
+      "score": 0.5110662606447156
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 25425,
+    "output_tokens": 216,
+    "latency_ms": 4061,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"a\",\"reasoning\":\"(A) 검색된 문서 발췌에서 b2b-ops-guide.md, b2b-coupon-policy.md 등은 명확하게 '엔터프라이즈는 이 B2C 캠페인에 참여하지 않는다'고 서술하고, 대신 전략 계정 캠페인을 별도로 운영한다고 설명한다. (B) 도메인 그래프에서도 '엔터프라이즈 계정 --참여하지 않는다--> CMP-KR-BFM2026', '엔터프라이즈 계정 --참여하지 않는다--> CMP-US-BFM2026', '전략 계정 캠페인 --참여하지 않는다--> CMP-KR-BFM2026', '전략 계정 캠페인 --참여하지 않는다--> CMP-US-BFM2026' 등 명확한 불참 관계가 다수 명시되어 있다. 두 출처 모두 일치하며, 가장 구체적이고 명시적인 근거가 있으므로 a)가 정답이다.\"}",
+    "parsed": {
+      "choice": "a",
+      "reasoning": "(A) 검색된 문서 발췌에서 b2b-ops-guide.md, b2b-coupon-policy.md 등은 명확하게 '엔터프라이즈는 이 B2C 캠페인에 참여하지 않는다'고 서술하고, 대신 전략 계정 캠페인을 별도로 운영한다고 설명한다. (B) 도메인 그래프에서도 '엔터프라이즈 계정 --참여하지 않는다--> CMP-KR-BFM2026', '엔터프라이즈 계정 --참여하지 않는다--> CMP-US-BFM2026', '전략 계정 캠페인 --참여하지 않는다--> CMP-KR-BFM2026', '전략 계정 캠페인 --참여하지 않는다--> CMP-US-BFM2026' 등 명확한 불참 관계가 다수 명시되어 있다. 두 출처 모두 일치하며, 가장 구체적이고 명시적인 근거가 있으므로 a)가 정답이다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 3753,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 63,
+    "chunk_setup_amortized": 3618,
+    "chunk_setup_total": 108550,
+    "graph_keyword_estimated": 72,
+    "questions_count_for_amortization": 30
+  },
+  "total_input_tokens": 25942,
+  "total_output_tokens": 398,
+  "total_tokens": 30093,
+  "total_latency_ms": 7251
+}

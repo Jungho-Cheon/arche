@@ -1,0 +1,208 @@
+{
+  "column": "opentology_aug",
+  "question_id": "Q29",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 517,
+    "output_tokens": 122,
+    "latency_ms": 1756,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"엔터프라이즈(B2B) 계정\",\"aliases\":[\"엔터프라이즈(B2B) 계정\",\"B2B 계정\",\"엔터프라이즈 계정\"]},{\"canonical\":\"한국 블랙프라이데이\",\"aliases\":[\"한국 블랙프라이데이\",\"CMP-KR-BFM2026\"]},{\"canonical\":\"미국 블랙프라이데이\",\"aliases\":[\"미국 블랙프라이데이\",\"CMP-US-BFM2026\"]},{\"canonical\":\"캠페인\",\"aliases\":[\"캠페인\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "엔터프라이즈(B2B) 계정",
+          "aliases": [
+            "엔터프라이즈(B2B) 계정",
+            "B2B 계정",
+            "엔터프라이즈 계정"
+          ]
+        },
+        {
+          "canonical": "한국 블랙프라이데이",
+          "aliases": [
+            "한국 블랙프라이데이",
+            "CMP-KR-BFM2026"
+          ]
+        },
+        {
+          "canonical": "미국 블랙프라이데이",
+          "aliases": [
+            "미국 블랙프라이데이",
+            "CMP-US-BFM2026"
+          ]
+        },
+        {
+          "canonical": "캠페인",
+          "aliases": [
+            "캠페인"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 1978,
+      "input": {
+        "keywords": [
+          "엔터프라이즈(B2B) 계정",
+          "B2B 계정",
+          "엔터프라이즈 계정",
+          "한국 블랙프라이데이",
+          "CMP-KR-BFM2026",
+          "미국 블랙프라이데이",
+          "CMP-US-BFM2026",
+          "캠페인"
+        ],
+        "limit": 20,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 20
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 242,
+      "input": {
+        "entry_ids": [
+          "01KVJQKDZCHJ1A1RVQY1Q2C1MJ",
+          "01KVJQC51CR6ZCKBFZVT6TC42R",
+          "01KVJQBAZFJNQYM17XY9S6A168",
+          "01KVJQAXFBSCMJE9JXVZXR55ZD",
+          "01KVJQBCZ8TG2D8FNTAGS2637W",
+          "01KVJQCKDGQQ1TFYF335XCH5WP",
+          "01KVJQKFHF78GM87AS09JVBSCB",
+          "01KVJQQR1GZNG4S2HDAKPBZNS3",
+          "01KVJQBCAX1TC87ZT9N3Q4CXVY",
+          "01KVJQB7MHYJ83PTGKFF18JFWW"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 76,
+        "edges": 95,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVJQKDZCHJ1A1RVQY1Q2C1MJ",
+    "01KVJQC51CR6ZCKBFZVT6TC42R",
+    "01KVJQBAZFJNQYM17XY9S6A168",
+    "01KVJQAXFBSCMJE9JXVZXR55ZD",
+    "01KVJQBCZ8TG2D8FNTAGS2637W",
+    "01KVJQCKDGQQ1TFYF335XCH5WP",
+    "01KVJQKFHF78GM87AS09JVBSCB",
+    "01KVJQQR1GZNG4S2HDAKPBZNS3",
+    "01KVJQBCAX1TC87ZT9N3Q4CXVY",
+    "01KVJQB7MHYJ83PTGKFF18JFWW"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 55366,
+  "graph_selected_sources": [
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/cs-logistics/cs-macro-manual.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/seller-ops/seller-agreement-annex.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/b2b/b2b-coupon-policy.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/b2b/b2b-ops-guide.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/b2b/enterprise-agreement-addendum.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/hq-pm/decision-log.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/hq-pm/policy-matrix.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/legal-risk/risk-checklist.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/loyalty/tier-rulebook.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/loyalty/tier-transition-rulebook.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/marketing/campaign-playbook.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/marketing/coupon-stacking-guide.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/seller-ops/_GLOSSARY.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/seller-ops/settlement-faq.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/global-pm/country-launch-memo-jp.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/global-pm/country-policy-matrix.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/legal-risk/gdpr-de-memo.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/marketing/bfm2026-brief.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/cs-logistics/_GLOSSARY.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/cs-logistics/cold-chain-sop.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/global-pm/_GLOSSARY.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/hq-pm/_GLOSSARY.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/marketing/_GLOSSARY.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/hq-pm/quarterly-policy-brief.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/legal-risk/_GLOSSARY.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/cs-logistics/return-refund-flowchart.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/legal-risk/kyc-age-verification-memo.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/global-pm/country-launch-memo-vn.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/loyalty/_GLOSSARY.md"
+  ],
+  "used_fallback": null,
+  "retrieved_chunks": [
+    {
+      "source_path": "marketing/bfm2026-brief.pdf",
+      "chunk_index": 0,
+      "score": 0.668332307268757
+    },
+    {
+      "source_path": "b2b/b2b-ops-guide.md",
+      "chunk_index": 3,
+      "score": 0.6283808522031155
+    },
+    {
+      "source_path": "marketing/campaign-playbook.md",
+      "chunk_index": 3,
+      "score": 0.6197308263198807
+    },
+    {
+      "source_path": "marketing/campaign-playbook.md",
+      "chunk_index": 4,
+      "score": 0.5833500407950958
+    },
+    {
+      "source_path": "global-pm/country-launch-memo-jp.pdf",
+      "chunk_index": 3,
+      "score": 0.5500609451847999
+    },
+    {
+      "source_path": "hq-pm/policy-matrix.md",
+      "chunk_index": 6,
+      "score": 0.5491398254440809
+    },
+    {
+      "source_path": "hq-pm/quarterly-policy-brief.pdf",
+      "chunk_index": 2,
+      "score": 0.5207235806867845
+    },
+    {
+      "source_path": "b2b/b2b-coupon-policy.md",
+      "chunk_index": 2,
+      "score": 0.5112922694349546
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 24860,
+    "output_tokens": 249,
+    "latency_ms": 2680,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"a\",\"reasoning\":\"(A) 발췌에서 b2b-ops-guide.md, b2b-coupon-policy.md 등에서 '엔터프라이즈는 이 B2C 캠페인에 참여하지 않는다', 'BFM 은 모두 소비자 대상이다', 'B2B 는 별도 전략 계정 캠페인을 운영한다'는 명확한 서술이 반복적으로 등장한다. (B) 그래프에서도 '엔터프라이즈 계정 --참여하지 않는다--> CMP-KR-BFM2026', '엔터프라이즈 계정 --참여하지 않는다--> CMP-US-BFM2026', '전략 계정 캠페인 --참여하지 않는다--> CMP-KR-BFM2026', '전략 계정 캠페인 --참여하지 않는다--> CMP-US-BFM2026' 등 구조적으로도 B2B 계정이 BFM 캠페인에 참여하지 않음을 명확히 보여준다. 두 근거가 일치하며, (A)에서 정책적 이유(계약 단가, 마진 구조 등)까지 설명되어 있어 a)가 정답임이 확실하다.\"}",
+    "parsed": {
+      "choice": "a",
+      "reasoning": "(A) 발췌에서 b2b-ops-guide.md, b2b-coupon-policy.md 등에서 '엔터프라이즈는 이 B2C 캠페인에 참여하지 않는다', 'BFM 은 모두 소비자 대상이다', 'B2B 는 별도 전략 계정 캠페인을 운영한다'는 명확한 서술이 반복적으로 등장한다. (B) 그래프에서도 '엔터프라이즈 계정 --참여하지 않는다--> CMP-KR-BFM2026', '엔터프라이즈 계정 --참여하지 않는다--> CMP-US-BFM2026', '전략 계정 캠페인 --참여하지 않는다--> CMP-KR-BFM2026', '전략 계정 캠페인 --참여하지 않는다--> CMP-US-BFM2026' 등 구조적으로도 B2B 계정이 BFM 캠페인에 참여하지 않음을 명확히 보여준다. 두 근거가 일치하며, (A)에서 정책적 이유(계약 단가, 마진 구조 등)까지 설명되어 있어 a)가 정답임이 확실하다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 3745,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 63,
+    "chunk_setup_amortized": 3618,
+    "chunk_setup_total": 108550,
+    "graph_keyword_estimated": 64,
+    "questions_count_for_amortization": 30
+  },
+  "total_input_tokens": 25377,
+  "total_output_tokens": 371,
+  "total_tokens": 29493,
+  "total_latency_ms": 6656
+}

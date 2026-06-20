@@ -1,0 +1,204 @@
+{
+  "column": "opentology_aug",
+  "question_id": "Q04",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 515,
+    "output_tokens": 113,
+    "latency_ms": 1126,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"B2B 엔터프라이즈 주문\",\"aliases\":[\"B2B 엔터프라이즈 주문\"]},{\"canonical\":\"CPN-B2B 쿠폰\",\"aliases\":[\"CPN-B2B 쿠폰\",\"B2B 쿠폰\"]},{\"canonical\":\"stacking\",\"aliases\":[\"stacking\",\"쿠폰 stacking\",\"쿠폰 중복 적용\"]},{\"canonical\":\"누적 할인율\",\"aliases\":[\"누적 할인율\"]},{\"canonical\":\"쿠폰 할인 처리\",\"aliases\":[\"쿠폰 할인 처리\",\"쿠폰 할인 적용\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "B2B 엔터프라이즈 주문",
+          "aliases": [
+            "B2B 엔터프라이즈 주문"
+          ]
+        },
+        {
+          "canonical": "CPN-B2B 쿠폰",
+          "aliases": [
+            "CPN-B2B 쿠폰",
+            "B2B 쿠폰"
+          ]
+        },
+        {
+          "canonical": "stacking",
+          "aliases": [
+            "stacking",
+            "쿠폰 stacking",
+            "쿠폰 중복 적용"
+          ]
+        },
+        {
+          "canonical": "누적 할인율",
+          "aliases": [
+            "누적 할인율"
+          ]
+        },
+        {
+          "canonical": "쿠폰 할인 처리",
+          "aliases": [
+            "쿠폰 할인 처리",
+            "쿠폰 할인 적용"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 2380,
+      "input": {
+        "keywords": [
+          "B2B 엔터프라이즈 주문",
+          "CPN-B2B 쿠폰",
+          "B2B 쿠폰",
+          "stacking",
+          "쿠폰 stacking",
+          "쿠폰 중복 적용",
+          "누적 할인율",
+          "쿠폰 할인 처리",
+          "쿠폰 할인 적용"
+        ],
+        "limit": 20,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 20
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 73,
+      "input": {
+        "entry_ids": [
+          "01KVJQERVB40DXK5WHWENXD286",
+          "01KVJQC96S0VSQXFCEP9XYYH3V",
+          "01KVJQT0V2CNSF36NVKKVVCSEV",
+          "01KVJQZSTVPE2S2XF5SDFTT54E",
+          "01KVJQH7NZ95QW8GW1C90G4NNN",
+          "01KVJREG1KYXWYENT7KA61W32A",
+          "01KVJR7A618MDTS0XZSTJKBRGW",
+          "01KVJQGMDR8NPP4YFWV37RDK1G",
+          "01KVJQCM1CZAQAE3FZK5X9C417",
+          "01KVJQB5V5D9WQQJS9061T1TKG"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 30,
+        "edges": 22,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVJQERVB40DXK5WHWENXD286",
+    "01KVJQC96S0VSQXFCEP9XYYH3V",
+    "01KVJQT0V2CNSF36NVKKVVCSEV",
+    "01KVJQZSTVPE2S2XF5SDFTT54E",
+    "01KVJQH7NZ95QW8GW1C90G4NNN",
+    "01KVJREG1KYXWYENT7KA61W32A",
+    "01KVJR7A618MDTS0XZSTJKBRGW",
+    "01KVJQGMDR8NPP4YFWV37RDK1G",
+    "01KVJQCM1CZAQAE3FZK5X9C417",
+    "01KVJQB5V5D9WQQJS9061T1TKG"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 15261,
+  "graph_selected_sources": [
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/cs-logistics/cold-chain-sop.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/hq-pm/policy-matrix.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/marketing/coupon-decision-tree.png",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/marketing/coupon-stacking-guide.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/b2b/b2b-ops-guide.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/hq-pm/quarterly-policy-brief.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/legal-risk/risk-checklist.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/global-pm/country-launch-memo-vn.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/b2b/b2b-coupon-policy.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/b2b/enterprise-agreement-addendum.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/hq-pm/decision-log.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/marketing/bfm2026-brief.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/marketing/campaign-playbook.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/global-pm/country-launch-memo-jp.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/loyalty/tier-rulebook.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/seller-ops/seller-agreement-annex.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/seller-ops/settlement-faq.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/cs-logistics/cs-macro-manual.md"
+  ],
+  "used_fallback": null,
+  "retrieved_chunks": [
+    {
+      "source_path": "b2b/b2b-coupon-policy.md",
+      "chunk_index": 1,
+      "score": 0.7945101065543455
+    },
+    {
+      "source_path": "marketing/coupon-stacking-guide.md",
+      "chunk_index": 5,
+      "score": 0.716142783099133
+    },
+    {
+      "source_path": "b2b/b2b-coupon-policy.md",
+      "chunk_index": 0,
+      "score": 0.6928067528400857
+    },
+    {
+      "source_path": "b2b/b2b-ops-guide.md",
+      "chunk_index": 3,
+      "score": 0.6800491697992662
+    },
+    {
+      "source_path": "b2b/enterprise-agreement-addendum.pdf",
+      "chunk_index": 2,
+      "score": 0.6699022384774744
+    },
+    {
+      "source_path": "marketing/coupon-stacking-guide.md",
+      "chunk_index": 1,
+      "score": 0.6193691702885005
+    },
+    {
+      "source_path": "b2b/enterprise-agreement-addendum.pdf",
+      "chunk_index": 1,
+      "score": 0.617802344722458
+    },
+    {
+      "source_path": "b2b/b2b-coupon-policy.md",
+      "chunk_index": 2,
+      "score": 0.5974170404084265
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 10184,
+    "output_tokens": 213,
+    "latency_ms": 2429,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"b\",\"reasoning\":\"(A) 발췌에서 b2b-coupon-policy.md, enterprise-agreement-addendum.pdf 등 여러 곳에서 'B2B 쿠폰 누적 할인율 합계는 30%를 초과할 수 없다'고 명시되어 있고, 30%를 넘기는 stacking 조합은 결제 직전 단계에서 자동 차단되며, 마지막에 적용된 쿠폰부터 거부된다고 구체적으로 설명한다. 실제 예시(12%+10%+8%+7%=37% → 30% 초과, 마지막 쿠폰부터 거부, 처음 세 장만 적용)도 있다. (B) 그래프에서도 B2B stacking 3원칙이 CPN-B2B-*에 적용되고, 별도 stacking 규칙이 있음을 구조적으로 뒷받침한다. 하지만 결정적 근거는 (A)의 정량적 수치와 처리 방식 설명이다. 따라서 정답은 b)이다.\"}",
+    "parsed": {
+      "choice": "b",
+      "reasoning": "(A) 발췌에서 b2b-coupon-policy.md, enterprise-agreement-addendum.pdf 등 여러 곳에서 'B2B 쿠폰 누적 할인율 합계는 30%를 초과할 수 없다'고 명시되어 있고, 30%를 넘기는 stacking 조합은 결제 직전 단계에서 자동 차단되며, 마지막에 적용된 쿠폰부터 거부된다고 구체적으로 설명한다. 실제 예시(12%+10%+8%+7%=37% → 30% 초과, 마지막 쿠폰부터 거부, 처음 세 장만 적용)도 있다. (B) 그래프에서도 B2B stacking 3원칙이 CPN-B2B-*에 적용되고, 별도 stacking 규칙이 있음을 구조적으로 뒷받침한다. 하지만 결정적 근거는 (A)의 정량적 수치와 처리 방식 설명이다. 따라서 정답은 b)이다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 3756,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 66,
+    "chunk_setup_amortized": 3618,
+    "chunk_setup_total": 108550,
+    "graph_keyword_estimated": 72,
+    "questions_count_for_amortization": 30
+  },
+  "total_input_tokens": 10699,
+  "total_output_tokens": 326,
+  "total_tokens": 14781,
+  "total_latency_ms": 6008
+}

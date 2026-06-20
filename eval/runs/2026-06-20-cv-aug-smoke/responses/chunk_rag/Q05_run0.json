@@ -1,0 +1,65 @@
+{
+  "column": "chunk_rag",
+  "question_id": "Q05",
+  "run_index": 0,
+  "input_tokens": 4352,
+  "output_tokens": 137,
+  "embedding_tokens": 3662,
+  "embedding_tokens_breakdown": {
+    "question_embedding": 44,
+    "setup_amortized": 3618,
+    "setup_total": 108550,
+    "questions_count_for_amortization": 30
+  },
+  "total_tokens": 8151,
+  "latency_ms": 2528,
+  "model": "gpt-4.1",
+  "retrieved_chunks": [
+    {
+      "source_path": "loyalty/_GLOSSARY.md",
+      "chunk_index": 0,
+      "score": 0.608533125866921
+    },
+    {
+      "source_path": "loyalty/tier-rulebook.md",
+      "chunk_index": 0,
+      "score": 0.5858364011735228
+    },
+    {
+      "source_path": "loyalty/tier-transition-rulebook.pdf",
+      "chunk_index": 0,
+      "score": 0.5199506774870314
+    },
+    {
+      "source_path": "loyalty/_GLOSSARY.md",
+      "chunk_index": 1,
+      "score": 0.5186727422596429
+    },
+    {
+      "source_path": "loyalty/tier-rulebook.md",
+      "chunk_index": 1,
+      "score": 0.4975252880339277
+    },
+    {
+      "source_path": "loyalty/tier-rulebook.md",
+      "chunk_index": 4,
+      "score": 0.44039615322267217
+    },
+    {
+      "source_path": "hq-pm/policy-matrix.md",
+      "chunk_index": 0,
+      "score": 0.4347316709482114
+    },
+    {
+      "source_path": "marketing/_GLOSSARY.md",
+      "chunk_index": 0,
+      "score": 0.4243372670291162
+    }
+  ],
+  "raw_response": "{\"choice\":\"a\",\"reasoning\":\"청크 1, 2, 3, 4, 8에서 모두 마케팅팀의 '다이아 등급'이 정식 명칭 VVIP에 해당하며, 로열티팀 호칭으로는 '이너 서클(INNER)'임이 명확히 매핑되어 있다. 예를 들어 청크 1의 표와 청크 8의 매핑표에서 '다이아 등급' = VVIP = 로열티팀 '이너 서클(INNER)'로 일치한다. 따라서 정답은 a) 이너 서클(INNER)이다.\"}",
+  "parsed": {
+    "choice": "a",
+    "reasoning": "청크 1, 2, 3, 4, 8에서 모두 마케팅팀의 '다이아 등급'이 정식 명칭 VVIP에 해당하며, 로열티팀 호칭으로는 '이너 서클(INNER)'임이 명확히 매핑되어 있다. 예를 들어 청크 1의 표와 청크 8의 매핑표에서 '다이아 등급' = VVIP = 로열티팀 '이너 서클(INNER)'로 일치한다. 따라서 정답은 a) 이너 서클(INNER)이다."
+  },
+  "parse_error": null
+}

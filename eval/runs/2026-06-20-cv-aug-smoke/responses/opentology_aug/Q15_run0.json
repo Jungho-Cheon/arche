@@ -1,0 +1,196 @@
+{
+  "column": "opentology_aug",
+  "question_id": "Q15",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 507,
+    "output_tokens": 69,
+    "latency_ms": 1017,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"VVIP 회원\",\"aliases\":[\"VVIP 회원\"]},{\"canonical\":\"패션 상품\",\"aliases\":[\"패션 상품\"]},{\"canonical\":\"컨사인 셀러\",\"aliases\":[\"컨사인 셀러\",\"위탁 셀러\"]},{\"canonical\":\"정산일\",\"aliases\":[\"정산일\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "VVIP 회원",
+          "aliases": [
+            "VVIP 회원"
+          ]
+        },
+        {
+          "canonical": "패션 상품",
+          "aliases": [
+            "패션 상품"
+          ]
+        },
+        {
+          "canonical": "컨사인 셀러",
+          "aliases": [
+            "컨사인 셀러",
+            "위탁 셀러"
+          ]
+        },
+        {
+          "canonical": "정산일",
+          "aliases": [
+            "정산일"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 1375,
+      "input": {
+        "keywords": [
+          "VVIP 회원",
+          "패션 상품",
+          "컨사인 셀러",
+          "위탁 셀러",
+          "정산일"
+        ],
+        "limit": 20,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 20
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 74,
+      "input": {
+        "entry_ids": [
+          "01KVJQH1PXBTCRG48GGGHYQBKF",
+          "01KVJRJ95QV3B31N59SZ8FXAHZ",
+          "01KVJQDJ2KYZXY247C4N8CQWB3",
+          "01KVJRC9M87A6B2QS6J05KQQTA",
+          "01KVJQJK7SMVP2HVVXNKTM515X",
+          "01KVJRJ5B6WWX6069X5ZTYQ19X",
+          "01KVJRDH2KKE4MQQQKSG43VQXS",
+          "01KVJQE9TXXKFMRRMHK0T9BW84",
+          "01KVJRHYW9Z7MJKC2BQE8EPPRK",
+          "01KVJQGN4M8FPR9X4FNNEKQP2G"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 28,
+        "edges": 20,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVJQH1PXBTCRG48GGGHYQBKF",
+    "01KVJRJ95QV3B31N59SZ8FXAHZ",
+    "01KVJQDJ2KYZXY247C4N8CQWB3",
+    "01KVJRC9M87A6B2QS6J05KQQTA",
+    "01KVJQJK7SMVP2HVVXNKTM515X",
+    "01KVJRJ5B6WWX6069X5ZTYQ19X",
+    "01KVJRDH2KKE4MQQQKSG43VQXS",
+    "01KVJQE9TXXKFMRRMHK0T9BW84",
+    "01KVJRHYW9Z7MJKC2BQE8EPPRK",
+    "01KVJQGN4M8FPR9X4FNNEKQP2G"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 15927,
+  "graph_selected_sources": [
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/cs-logistics/cold-chain-sop.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/seller-ops/seller-agreement-annex.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/b2b/enterprise-agreement-addendum.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/marketing/bfm2026-brief.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/cs-logistics/return-refund-flowchart.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/seller-ops/settlement-faq.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/marketing/campaign-playbook.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/cs-logistics/cs-macro-manual.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/loyalty/tier-rulebook.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/legal-risk/risk-checklist.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/cs-logistics/_GLOSSARY.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/global-pm/_GLOSSARY.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/hq-pm/_GLOSSARY.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/hq-pm/policy-matrix.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/marketing/_GLOSSARY.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/seller-ops/_GLOSSARY.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/global-pm/country-launch-memo-jp.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/hq-pm/quarterly-policy-brief.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/b2b/b2b-coupon-policy.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/b2b/b2b-ops-guide.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/hq-pm/decision-log.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/loyalty/tier-transition-rulebook.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/marketing/coupon-stacking-guide.md"
+  ],
+  "used_fallback": null,
+  "retrieved_chunks": [
+    {
+      "source_path": "seller-ops/settlement-faq.md",
+      "chunk_index": 3,
+      "score": 0.539691971697223
+    },
+    {
+      "source_path": "seller-ops/seller-agreement-annex.pdf",
+      "chunk_index": 2,
+      "score": 0.5148863163129509
+    },
+    {
+      "source_path": "seller-ops/settlement-faq.md",
+      "chunk_index": 2,
+      "score": 0.4922823875021762
+    },
+    {
+      "source_path": "seller-ops/seller-agreement-annex.pdf",
+      "chunk_index": 1,
+      "score": 0.47668168391434973
+    },
+    {
+      "source_path": "seller-ops/settlement-faq.md",
+      "chunk_index": 8,
+      "score": 0.46845025845287336
+    },
+    {
+      "source_path": "seller-ops/settlement-faq.md",
+      "chunk_index": 1,
+      "score": 0.45941197644716
+    },
+    {
+      "source_path": "cs-logistics/cold-chain-sop.pdf",
+      "chunk_index": 2,
+      "score": 0.4511492828688682
+    },
+    {
+      "source_path": "cs-logistics/return-refund-flowchart.md",
+      "chunk_index": 1,
+      "score": 0.43707561613908846
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 10840,
+    "output_tokens": 148,
+    "latency_ms": 1485,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"a\",\"reasoning\":\"(A) 발췌에서 'VVIP 회원이 명품이 아닌 상품 (예: 패션, 식품) 을 사면 기본 주기 그대로이고, 명품을 VVIP 가 아닌 회원이 사도 기본 주기 그대로입니다.'라고 명확히 설명하고 있다. 또한 표와 예시에서 컨사인 기본 주기가 D+15임을 반복적으로 보여준다. (B) 그래프도 컨사인(위탁) 셀러의 기본 정산 주기가 D+15임을 구조적으로 뒷받침한다. 두 정보 모두 일치하며, (A)의 정량적 근거가 결정적이다.\"}",
+    "parsed": {
+      "choice": "a",
+      "reasoning": "(A) 발췌에서 'VVIP 회원이 명품이 아닌 상품 (예: 패션, 식품) 을 사면 기본 주기 그대로이고, 명품을 VVIP 가 아닌 회원이 사도 기본 주기 그대로입니다.'라고 명확히 설명하고 있다. 또한 표와 예시에서 컨사인 기본 주기가 D+15임을 반복적으로 보여준다. (B) 그래프도 컨사인(위탁) 셀러의 기본 정산 주기가 D+15임을 구조적으로 뒷받침한다. 두 정보 모두 일치하며, (A)의 정량적 근거가 결정적이다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 3711,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 53,
+    "chunk_setup_amortized": 3618,
+    "chunk_setup_total": 108550,
+    "graph_keyword_estimated": 40,
+    "questions_count_for_amortization": 30
+  },
+  "total_input_tokens": 11347,
+  "total_output_tokens": 217,
+  "total_tokens": 15275,
+  "total_latency_ms": 3951
+}

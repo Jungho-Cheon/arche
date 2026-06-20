@@ -1,0 +1,177 @@
+{
+  "column": "combined",
+  "question_id": "Q20",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 512,
+    "output_tokens": 72,
+    "latency_ms": 988,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"VVIP 회원\",\"aliases\":[\"VVIP 회원\"]},{\"canonical\":\"명품 거래\",\"aliases\":[\"명품 거래\"]},{\"canonical\":\"정산 보류\",\"aliases\":[\"정산 보류\",\"hold\"]},{\"canonical\":\"정산\",\"aliases\":[\"정산\"]},{\"canonical\":\"시스템 오류\",\"aliases\":[\"시스템 오류\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "VVIP 회원",
+          "aliases": [
+            "VVIP 회원"
+          ]
+        },
+        {
+          "canonical": "명품 거래",
+          "aliases": [
+            "명품 거래"
+          ]
+        },
+        {
+          "canonical": "정산 보류",
+          "aliases": [
+            "정산 보류",
+            "hold"
+          ]
+        },
+        {
+          "canonical": "정산",
+          "aliases": [
+            "정산"
+          ]
+        },
+        {
+          "canonical": "시스템 오류",
+          "aliases": [
+            "시스템 오류"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 1203,
+      "input": {
+        "keywords": [
+          "VVIP 회원",
+          "명품 거래",
+          "정산 보류",
+          "hold",
+          "정산",
+          "시스템 오류"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 79,
+      "input": {
+        "entry_ids": [
+          "01KVJR727WT3B1P1546V7Q3E5S",
+          "01KVJR8GC14MTJGVMKTE8HT5AA",
+          "01KVJQW37QKM50JNGF21ETVQ8S",
+          "01KVJRKZ3ZNDH6SJYVG5E7NASQ",
+          "01KVJQMBNMHK5GTZ25V9GVTYDD",
+          "01KVJRJ5XYK7ZFKEQ9CRPQXDB9",
+          "01KVJRM6EEA1G8JWDDB7NT8TP4",
+          "01KVJQCGZGXRET6A06FQHT16QT",
+          "01KVJRKYH8CY37C14HVSEQ4EPZ",
+          "01KVJRM3HH4BTX4P5Q1AHD4XJJ"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 27,
+        "edges": 23,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVJR727WT3B1P1546V7Q3E5S",
+    "01KVJR8GC14MTJGVMKTE8HT5AA",
+    "01KVJQW37QKM50JNGF21ETVQ8S",
+    "01KVJRKZ3ZNDH6SJYVG5E7NASQ",
+    "01KVJQMBNMHK5GTZ25V9GVTYDD",
+    "01KVJRJ5XYK7ZFKEQ9CRPQXDB9",
+    "01KVJRM6EEA1G8JWDDB7NT8TP4",
+    "01KVJQCGZGXRET6A06FQHT16QT",
+    "01KVJRKYH8CY37C14HVSEQ4EPZ",
+    "01KVJRM3HH4BTX4P5Q1AHD4XJJ"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 15668,
+  "retrieved_chunks": [
+    {
+      "source_path": "seller-ops/settlement-faq.md",
+      "chunk_index": 2,
+      "score": 0.6254299605301262
+    },
+    {
+      "source_path": "cs-logistics/return-refund-flowchart.md",
+      "chunk_index": 4,
+      "score": 0.5845138676818458
+    },
+    {
+      "source_path": "seller-ops/settlement-faq.md",
+      "chunk_index": 1,
+      "score": 0.5515614472634907
+    },
+    {
+      "source_path": "cs-logistics/cs-macro-manual.md",
+      "chunk_index": 4,
+      "score": 0.5220046998743348
+    },
+    {
+      "source_path": "seller-ops/settlement-faq.md",
+      "chunk_index": 8,
+      "score": 0.4824906056279062
+    },
+    {
+      "source_path": "cs-logistics/return-refund-flowchart.md",
+      "chunk_index": 3,
+      "score": 0.44442861632848696
+    },
+    {
+      "source_path": "hq-pm/policy-matrix.md",
+      "chunk_index": 3,
+      "score": 0.4431611867162056
+    },
+    {
+      "source_path": "seller-ops/seller-agreement-annex.pdf",
+      "chunk_index": 1,
+      "score": 0.44083769104213416
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 10473,
+    "output_tokens": 215,
+    "latency_ms": 2425,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"a\",\"reasoning\":\"(A) 검색된 문서 발췌에서 seller-ops/settlement-faq.md:2에 명확히 '분쟁이 없으면 기간 경과 후 자동 해제되며 별도 통지는 없습니다'라고 하면서, Q15에서 'VVIP 명품 14일 보류가 분쟁 없이 끝났는데도 해제가 안 됩니다. 어떻게 푸나요?'라는 질문이 있으므로, 분쟁(클레임) 플래그가 함께 걸려 있으면 14일이 지나도 정산이 멈춘다는 점을 시사한다. 또한 (B) 도메인 그래프에서도 '클레임 --해제가 지연된다--> 정산 보류'라는 관계가 명시되어 있어, 분쟁/클레임이 있으면 14일이 지나도 정산 보류가 해제되지 않음을 뒷받침한다. 두 출처 모두 일치하며, 이 근거가 결정적이다.\"}",
+    "parsed": {
+      "choice": "a",
+      "reasoning": "(A) 검색된 문서 발췌에서 seller-ops/settlement-faq.md:2에 명확히 '분쟁이 없으면 기간 경과 후 자동 해제되며 별도 통지는 없습니다'라고 하면서, Q15에서 'VVIP 명품 14일 보류가 분쟁 없이 끝났는데도 해제가 안 됩니다. 어떻게 푸나요?'라는 질문이 있으므로, 분쟁(클레임) 플래그가 함께 걸려 있으면 14일이 지나도 정산이 멈춘다는 점을 시사한다. 또한 (B) 도메인 그래프에서도 '클레임 --해제가 지연된다--> 정산 보류'라는 관계가 명시되어 있어, 분쟁/클레임이 있으면 14일이 지나도 정산 보류가 해제되지 않음을 뒷받침한다. 두 출처 모두 일치하며, 이 근거가 결정적이다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 3736,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 70,
+    "chunk_setup_amortized": 3618,
+    "chunk_setup_total": 108550,
+    "graph_keyword_estimated": 48,
+    "questions_count_for_amortization": 30
+  },
+  "total_input_tokens": 10985,
+  "total_output_tokens": 287,
+  "total_tokens": 15008,
+  "total_latency_ms": 4695
+}

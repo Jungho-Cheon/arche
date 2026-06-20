@@ -1,0 +1,65 @@
+{
+  "column": "chunk_rag",
+  "question_id": "Q19",
+  "run_index": 0,
+  "input_tokens": 4627,
+  "output_tokens": 195,
+  "embedding_tokens": 3652,
+  "embedding_tokens_breakdown": {
+    "question_embedding": 34,
+    "setup_amortized": 3618,
+    "setup_total": 108550,
+    "questions_count_for_amortization": 30
+  },
+  "total_tokens": 8474,
+  "latency_ms": 2253,
+  "model": "gpt-4.1",
+  "retrieved_chunks": [
+    {
+      "source_path": "global-pm/country-launch-memo-vn.pdf",
+      "chunk_index": 3,
+      "score": 0.6600643933424387
+    },
+    {
+      "source_path": "marketing/campaign-playbook.md",
+      "chunk_index": 4,
+      "score": 0.6597252834516916
+    },
+    {
+      "source_path": "marketing/bfm2026-brief.pdf",
+      "chunk_index": 0,
+      "score": 0.6140003574381959
+    },
+    {
+      "source_path": "global-pm/country-policy-matrix.md",
+      "chunk_index": 4,
+      "score": 0.5794549797882746
+    },
+    {
+      "source_path": "hq-pm/policy-matrix.md",
+      "chunk_index": 6,
+      "score": 0.5599125397704272
+    },
+    {
+      "source_path": "global-pm/country-policy-matrix.md",
+      "chunk_index": 5,
+      "score": 0.552003819698046
+    },
+    {
+      "source_path": "marketing/campaign-playbook.md",
+      "chunk_index": 3,
+      "score": 0.5499879149972943
+    },
+    {
+      "source_path": "global-pm/country-launch-memo-jp.pdf",
+      "chunk_index": 3,
+      "score": 0.5414643426165676
+    }
+  ],
+  "raw_response": "{\"choice\":\"a\",\"reasoning\":\"청크 3, 5, 6, 8 등 여러 발췌에서 2026 블랙프라이데이(BFM) 캠페인은 KR(한국)과 US(미국)만 참여하며, JP(일본), DE(독일), VN(베트남)은 모두 미참여라고 명확히 서술되어 있다. 예를 들어, 청크 3에서는 '미참여국 안내 — 일본 (JP), 독일 (DE), 베트남 (VN) 은 BFM 2026 에 참여하지 않는다.'라고 명시되어 있고, 청크 6의 표에서도 JP/DE/VN은 비참여로 정리되어 있다. 따라서 정답은 a) 셋 다 미참여다. BFM 2026 은 KR 과 US 만 참여하고 JP/DE/VN 은 모두 비참여다.\"}",
+  "parsed": {
+    "choice": "a",
+    "reasoning": "청크 3, 5, 6, 8 등 여러 발췌에서 2026 블랙프라이데이(BFM) 캠페인은 KR(한국)과 US(미국)만 참여하며, JP(일본), DE(독일), VN(베트남)은 모두 미참여라고 명확히 서술되어 있다. 예를 들어, 청크 3에서는 '미참여국 안내 — 일본 (JP), 독일 (DE), 베트남 (VN) 은 BFM 2026 에 참여하지 않는다.'라고 명시되어 있고, 청크 6의 표에서도 JP/DE/VN은 비참여로 정리되어 있다. 따라서 정답은 a) 셋 다 미참여다. BFM 2026 은 KR 과 US 만 참여하고 JP/DE/VN 은 모두 비참여다."
+  },
+  "parse_error": null
+}

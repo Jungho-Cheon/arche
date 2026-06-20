@@ -1,0 +1,177 @@
+{
+  "column": "opentology_aug",
+  "question_id": "Q12",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 491,
+    "output_tokens": 23,
+    "latency_ms": 716,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"이너 서클\",\"aliases\":[\"이너 서클\",\"VVIP\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "이너 서클",
+          "aliases": [
+            "이너 서클",
+            "VVIP"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 769,
+      "input": {
+        "keywords": [
+          "이너 서클",
+          "VVIP"
+        ],
+        "limit": 20,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 20
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 124,
+      "input": {
+        "entry_ids": [
+          "01KVJRAZ75WSJ2JBEBS202MCYJ",
+          "01KVJQX64HWGVFXAVQGMW7RQS0",
+          "01KVJR7PP4A4TJTTHHZNA1AXE6",
+          "01KVJQZNRZRHF4GATPGC2SS1RE",
+          "01KVJR72Y4TAQF602QWCFHY0AS",
+          "01KVJRGE1MV826NDC8966HPCYS",
+          "01KVJQFC4K2VNP6HGSG5CM72E7",
+          "01KVJR9XPVTQ5QF6FK7C8V5VQD",
+          "01KVJQVF87KNKZ77QSFBGK054M",
+          "01KVJR0JY6M5PGV9YXRE0B148N"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 46,
+        "edges": 44,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVJRAZ75WSJ2JBEBS202MCYJ",
+    "01KVJQX64HWGVFXAVQGMW7RQS0",
+    "01KVJR7PP4A4TJTTHHZNA1AXE6",
+    "01KVJQZNRZRHF4GATPGC2SS1RE",
+    "01KVJR72Y4TAQF602QWCFHY0AS",
+    "01KVJRGE1MV826NDC8966HPCYS",
+    "01KVJQFC4K2VNP6HGSG5CM72E7",
+    "01KVJR9XPVTQ5QF6FK7C8V5VQD",
+    "01KVJQVF87KNKZ77QSFBGK054M",
+    "01KVJR0JY6M5PGV9YXRE0B148N"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 22730,
+  "graph_selected_sources": [
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/hq-pm/quarterly-policy-brief.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/seller-ops/seller-agreement-annex.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/hq-pm/decision-log.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/legal-risk/_GLOSSARY.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/cs-logistics/_GLOSSARY.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/cs-logistics/cold-chain-sop.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/global-pm/_GLOSSARY.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/hq-pm/_GLOSSARY.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/hq-pm/policy-matrix.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/loyalty/tier-matrix.png",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/marketing/_GLOSSARY.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/marketing/campaign-playbook.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/seller-ops/_GLOSSARY.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/loyalty/tier-transition-rulebook.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/seller-ops/settlement-faq.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/legal-risk/risk-checklist.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/global-pm/country-policy-matrix.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/loyalty/_GLOSSARY.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/loyalty/tier-rulebook.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/b2b/b2b-ops-guide.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/b2b/enterprise-agreement-addendum.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/seller-ops/settlement-cycle-chart.png",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/marketing/bfm2026-brief.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/cs-logistics/cs-macro-manual.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/legal-risk/kyc-age-verification-memo.pdf"
+  ],
+  "used_fallback": null,
+  "retrieved_chunks": [
+    {
+      "source_path": "loyalty/tier-rulebook.md",
+      "chunk_index": 3,
+      "score": 0.5308350338976515
+    },
+    {
+      "source_path": "loyalty/tier-rulebook.md",
+      "chunk_index": 2,
+      "score": 0.5058348189250641
+    },
+    {
+      "source_path": "loyalty/tier-transition-rulebook.pdf",
+      "chunk_index": 2,
+      "score": 0.4685555811492487
+    },
+    {
+      "source_path": "hq-pm/policy-matrix.md",
+      "chunk_index": 2,
+      "score": 0.4454599209105142
+    },
+    {
+      "source_path": "loyalty/tier-transition-rulebook.pdf",
+      "chunk_index": 1,
+      "score": 0.4395668837523616
+    },
+    {
+      "source_path": "loyalty/tier-rulebook.md",
+      "chunk_index": 4,
+      "score": 0.4246871754958092
+    },
+    {
+      "source_path": "loyalty/_GLOSSARY.md",
+      "chunk_index": 1,
+      "score": 0.4199223170517822
+    },
+    {
+      "source_path": "seller-ops/settlement-faq.md",
+      "chunk_index": 3,
+      "score": 0.41927076789875006
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 13228,
+    "output_tokens": 208,
+    "latency_ms": 2329,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"a\",\"reasoning\":\"(A) 발췌에서 이너 서클(VVIP) 승급 조건이 '직전 12개월 누적 결제액 500만원 이상' AND '최근 NPS 응답 점수 9 이상'임을 명확히 서술하고 있다. 두 조건 모두를 충족해야 하며, 금액 OR 건수였던 골드와 달리 이너 서클은 금액 AND 만족도임을 강조한다. (B) 그래프에서도 '이너 서클 --적용된다--> NPS 9 이상', '이너 서클 --적용된다--> 12개월 누적 120만원'이 아니라, '500만원 + NPS 9 정의 --정의한다--> 이너 서클(VVIP) 자격' 등으로 a)와 일치하는 구조적 근거가 있다. 두 정보 모두 a)가 정답임을 뒷받침하므로 a)를 선택한다.\"}",
+    "parsed": {
+      "choice": "a",
+      "reasoning": "(A) 발췌에서 이너 서클(VVIP) 승급 조건이 '직전 12개월 누적 결제액 500만원 이상' AND '최근 NPS 응답 점수 9 이상'임을 명확히 서술하고 있다. 두 조건 모두를 충족해야 하며, 금액 OR 건수였던 골드와 달리 이너 서클은 금액 AND 만족도임을 강조한다. (B) 그래프에서도 '이너 서클 --적용된다--> NPS 9 이상', '이너 서클 --적용된다--> 12개월 누적 120만원'이 아니라, '500만원 + NPS 9 정의 --정의한다--> 이너 서클(VVIP) 자격' 등으로 a)와 일치하는 구조적 근거가 있다. 두 정보 모두 a)가 정답임을 뒷받침하므로 a)를 선택한다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 3671,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 37,
+    "chunk_setup_amortized": 3618,
+    "chunk_setup_total": 108550,
+    "graph_keyword_estimated": 16,
+    "questions_count_for_amortization": 30
+  },
+  "total_input_tokens": 13719,
+  "total_output_tokens": 231,
+  "total_tokens": 17621,
+  "total_latency_ms": 3938
+}

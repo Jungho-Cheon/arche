@@ -1,0 +1,205 @@
+{
+  "column": "opentology_aug",
+  "question_id": "Q08",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 516,
+    "output_tokens": 109,
+    "latency_ms": 1534,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"신선식품\",\"aliases\":[\"신선식품\"]},{\"canonical\":\"1P(직매입) 셀러\",\"aliases\":[\"1P(직매입) 셀러\",\"직매입 셀러\",\"1P 셀러\"]},{\"canonical\":\"콜드체인 사고\",\"aliases\":[\"콜드체인 사고\"]},{\"canonical\":\"환불\",\"aliases\":[\"환불\"]},{\"canonical\":\"환불 손실 부담\",\"aliases\":[\"환불 손실 부담\",\"손실 부담\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "신선식품",
+          "aliases": [
+            "신선식품"
+          ]
+        },
+        {
+          "canonical": "1P(직매입) 셀러",
+          "aliases": [
+            "1P(직매입) 셀러",
+            "직매입 셀러",
+            "1P 셀러"
+          ]
+        },
+        {
+          "canonical": "콜드체인 사고",
+          "aliases": [
+            "콜드체인 사고"
+          ]
+        },
+        {
+          "canonical": "환불",
+          "aliases": [
+            "환불"
+          ]
+        },
+        {
+          "canonical": "환불 손실 부담",
+          "aliases": [
+            "환불 손실 부담",
+            "손실 부담"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 1996,
+      "input": {
+        "keywords": [
+          "신선식품",
+          "1P(직매입) 셀러",
+          "직매입 셀러",
+          "1P 셀러",
+          "콜드체인 사고",
+          "환불",
+          "환불 손실 부담",
+          "손실 부담"
+        ],
+        "limit": 20,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 20
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 62,
+      "input": {
+        "entry_ids": [
+          "01KVJR0GWPZQ74MRV4TW97952Z",
+          "01KVJQEAHB1PM66PA1DEE33GS4",
+          "01KVJQH1PXBTCRG48GGGHYQBKF",
+          "01KVJQDJ2KYZXY247C4N8CQWB3",
+          "01KVJQPH4J8SEYVXN1S6CSAP9A",
+          "01KVJRJ5B6WWX6069X5ZTYQ19X",
+          "01KVJQVGJZDGQJBEN2T9M2N6NY",
+          "01KVJQSNY7FAWCCRMRTGV9PKWF",
+          "01KVJRM2V77HAKMP8027EHF0Q9",
+          "01KVJRBY08W357XYRX67D50R7J"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 26,
+        "edges": 17,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVJR0GWPZQ74MRV4TW97952Z",
+    "01KVJQEAHB1PM66PA1DEE33GS4",
+    "01KVJQH1PXBTCRG48GGGHYQBKF",
+    "01KVJQDJ2KYZXY247C4N8CQWB3",
+    "01KVJQPH4J8SEYVXN1S6CSAP9A",
+    "01KVJRJ5B6WWX6069X5ZTYQ19X",
+    "01KVJQVGJZDGQJBEN2T9M2N6NY",
+    "01KVJQSNY7FAWCCRMRTGV9PKWF",
+    "01KVJRM2V77HAKMP8027EHF0Q9",
+    "01KVJRBY08W357XYRX67D50R7J"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 14007,
+  "graph_selected_sources": [
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/hq-pm/quarterly-policy-brief.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/loyalty/tier-rulebook.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/loyalty/tier-transition-rulebook.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/cs-logistics/cold-chain-sop.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/seller-ops/seller-agreement-annex.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/seller-ops/settlement-faq.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/b2b/enterprise-agreement-addendum.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/global-pm/country-policy-matrix.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/marketing/bfm2026-brief.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/cs-logistics/return-refund-flowchart.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/global-pm/country-launch-memo-jp.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/global-pm/country-launch-memo-vn.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/hq-pm/policy-matrix.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/legal-risk/gdpr-de-memo.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/legal-risk/kyc-age-verification-memo.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/loyalty/_GLOSSARY.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/cs-logistics/_GLOSSARY.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/global-pm/_GLOSSARY.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/hq-pm/_GLOSSARY.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/marketing/_GLOSSARY.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/seller-ops/_GLOSSARY.md"
+  ],
+  "used_fallback": null,
+  "retrieved_chunks": [
+    {
+      "source_path": "cs-logistics/cold-chain-sop.pdf",
+      "chunk_index": 3,
+      "score": 0.5778380511294023
+    },
+    {
+      "source_path": "seller-ops/settlement-faq.md",
+      "chunk_index": 4,
+      "score": 0.5760785996148309
+    },
+    {
+      "source_path": "seller-ops/settlement-faq.md",
+      "chunk_index": 9,
+      "score": 0.5758599575456775
+    },
+    {
+      "source_path": "seller-ops/settlement-faq.md",
+      "chunk_index": 3,
+      "score": 0.5561354678744265
+    },
+    {
+      "source_path": "cs-logistics/cold-chain-sop.pdf",
+      "chunk_index": 0,
+      "score": 0.5457024731716201
+    },
+    {
+      "source_path": "cs-logistics/cold-chain-sop.pdf",
+      "chunk_index": 2,
+      "score": 0.544719742680158
+    },
+    {
+      "source_path": "seller-ops/seller-agreement-annex.pdf",
+      "chunk_index": 2,
+      "score": 0.5425209115696339
+    },
+    {
+      "source_path": "cs-logistics/cold-chain-sop.pdf",
+      "chunk_index": 1,
+      "score": 0.5382958362162948
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 9937,
+    "output_tokens": 193,
+    "latency_ms": 1930,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"a\",\"reasoning\":\"(A) 발췌에서 여러 문서(특히 cs-logistics/cold-chain-sop.pdf, seller-ops/settlement-faq.md, seller-ops/seller-agreement-annex.pdf)에서 1P(직매입, 사입) 셀러의 신선식품 콜드체인 사고 환불 손실은 '본사 손실'로 명확히 규정되어 있다. 즉, 회사가 전액 부담하고 셀러 정산금에서 차감하지 않는다. (B) 그래프에서도 '사입 --적용된다--> 셀러', '1P 사고 --손실 귀속된다--> 본사' 등 구조적으로 일치하는 관계가 명확히 드러난다. 두 정보 모두 일치하며, (A)의 정량적·정책적 설명이 결정적 근거다.\"}",
+    "parsed": {
+      "choice": "a",
+      "reasoning": "(A) 발췌에서 여러 문서(특히 cs-logistics/cold-chain-sop.pdf, seller-ops/settlement-faq.md, seller-ops/seller-agreement-annex.pdf)에서 1P(직매입, 사입) 셀러의 신선식품 콜드체인 사고 환불 손실은 '본사 손실'로 명확히 규정되어 있다. 즉, 회사가 전액 부담하고 셀러 정산금에서 차감하지 않는다. (B) 그래프에서도 '사입 --적용된다--> 셀러', '1P 사고 --손실 귀속된다--> 본사' 등 구조적으로 일치하는 관계가 명확히 드러난다. 두 정보 모두 일치하며, (A)의 정량적·정책적 설명이 결정적 근거다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 3752,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 70,
+    "chunk_setup_amortized": 3618,
+    "chunk_setup_total": 108550,
+    "graph_keyword_estimated": 64,
+    "questions_count_for_amortization": 30
+  },
+  "total_input_tokens": 10453,
+  "total_output_tokens": 302,
+  "total_tokens": 14507,
+  "total_latency_ms": 5522
+}

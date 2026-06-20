@@ -1,0 +1,158 @@
+{
+  "column": "combined",
+  "question_id": "Q30",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 516,
+    "output_tokens": 39,
+    "latency_ms": 931,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"이너 서클\",\"aliases\":[\"이너 서클\",\"VVIP\"]},{\"canonical\":\"NPS\",\"aliases\":[\"NPS\",\"NPS 응답\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "이너 서클",
+          "aliases": [
+            "이너 서클",
+            "VVIP"
+          ]
+        },
+        {
+          "canonical": "NPS",
+          "aliases": [
+            "NPS",
+            "NPS 응답"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 802,
+      "input": {
+        "keywords": [
+          "이너 서클",
+          "VVIP",
+          "NPS",
+          "NPS 응답"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 68,
+      "input": {
+        "entry_ids": [
+          "01KVJQFHMHJ4WZ291JSJXKV3BM",
+          "01KVJQJNDJEC7YE5NH1JEA1JN0",
+          "01KVJR7RFF5VZEFKJJ9BDJ63HX",
+          "01KVJRA57X0CJ7KQVS104ACBRG",
+          "01KVJRB0QRMNPPTBJADSAEYDQP",
+          "01KVJRAZ75WSJ2JBEBS202MCYJ",
+          "01KVJQX64HWGVFXAVQGMW7RQS0",
+          "01KVJR7PP4A4TJTTHHZNA1AXE6",
+          "01KVJQZNRZRHF4GATPGC2SS1RE",
+          "01KVJR72Y4TAQF602QWCFHY0AS"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 23,
+        "edges": 16,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVJQFHMHJ4WZ291JSJXKV3BM",
+    "01KVJQJNDJEC7YE5NH1JEA1JN0",
+    "01KVJR7RFF5VZEFKJJ9BDJ63HX",
+    "01KVJRA57X0CJ7KQVS104ACBRG",
+    "01KVJRB0QRMNPPTBJADSAEYDQP",
+    "01KVJRAZ75WSJ2JBEBS202MCYJ",
+    "01KVJQX64HWGVFXAVQGMW7RQS0",
+    "01KVJR7PP4A4TJTTHHZNA1AXE6",
+    "01KVJQZNRZRHF4GATPGC2SS1RE",
+    "01KVJR72Y4TAQF602QWCFHY0AS"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 11385,
+  "retrieved_chunks": [
+    {
+      "source_path": "loyalty/tier-rulebook.md",
+      "chunk_index": 3,
+      "score": 0.6366407217871919
+    },
+    {
+      "source_path": "loyalty/tier-rulebook.md",
+      "chunk_index": 2,
+      "score": 0.5762347370816218
+    },
+    {
+      "source_path": "loyalty/_GLOSSARY.md",
+      "chunk_index": 1,
+      "score": 0.5139003714399166
+    },
+    {
+      "source_path": "loyalty/tier-rulebook.md",
+      "chunk_index": 4,
+      "score": 0.5003592476753635
+    },
+    {
+      "source_path": "loyalty/tier-transition-rulebook.pdf",
+      "chunk_index": 1,
+      "score": 0.47652987956606135
+    },
+    {
+      "source_path": "loyalty/tier-transition-rulebook.pdf",
+      "chunk_index": 2,
+      "score": 0.469223086761172
+    },
+    {
+      "source_path": "loyalty/tier-rulebook.md",
+      "chunk_index": 5,
+      "score": 0.4332414564153661
+    },
+    {
+      "source_path": "loyalty/tier-rulebook.md",
+      "chunk_index": 9,
+      "score": 0.42843380856997354
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 9191,
+    "output_tokens": 198,
+    "latency_ms": 2912,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"a\",\"reasoning\":\"(A) 검색된 문서 발췌에서 이너 서클(VVIP) 승급 조건은 '12개월 누적 결제액 500만 원 이상 AND 최근 NPS 응답 점수 9 이상'이 모두 충족되어야 한다고 명확히 규정되어 있다. NPS 9 미만이면 금액이 아무리 높아도 승급되지 않는다는 점도 반복적으로 강조된다. (B) 도메인 그래프에서도 '500만 원 + NPS 9 정의'가 이너 서클 자격을 정의한다고 명시되어 있고, NPS 9 이상이 적용된다고 관계가 연결되어 있다. 두 출처 모두 명확하게 AND 조건임을 보여주므로, NPS 7점인 회원은 승급하지 않는다. 결정적 근거는 (A) 발췌의 명시적 규정이다.\"}",
+    "parsed": {
+      "choice": "a",
+      "reasoning": "(A) 검색된 문서 발췌에서 이너 서클(VVIP) 승급 조건은 '12개월 누적 결제액 500만 원 이상 AND 최근 NPS 응답 점수 9 이상'이 모두 충족되어야 한다고 명확히 규정되어 있다. NPS 9 미만이면 금액이 아무리 높아도 승급되지 않는다는 점도 반복적으로 강조된다. (B) 도메인 그래프에서도 '500만 원 + NPS 9 정의'가 이너 서클 자격을 정의한다고 명시되어 있고, NPS 9 이상이 적용된다고 관계가 연결되어 있다. 두 출처 모두 명확하게 AND 조건임을 보여주므로, NPS 7점인 회원은 승급하지 않는다. 결정적 근거는 (A) 발췌의 명시적 규정이다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 3713,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 63,
+    "chunk_setup_amortized": 3618,
+    "chunk_setup_total": 108550,
+    "graph_keyword_estimated": 32,
+    "questions_count_for_amortization": 30
+  },
+  "total_input_tokens": 9707,
+  "total_output_tokens": 237,
+  "total_tokens": 13657,
+  "total_latency_ms": 4713
+}

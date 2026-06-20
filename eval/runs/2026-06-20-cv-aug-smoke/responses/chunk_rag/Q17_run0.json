@@ -1,0 +1,65 @@
+{
+  "column": "chunk_rag",
+  "question_id": "Q17",
+  "run_index": 0,
+  "input_tokens": 4501,
+  "output_tokens": 134,
+  "embedding_tokens": 3691,
+  "embedding_tokens_breakdown": {
+    "question_embedding": 73,
+    "setup_amortized": 3618,
+    "setup_total": 108550,
+    "questions_count_for_amortization": 30
+  },
+  "total_tokens": 8326,
+  "latency_ms": 1500,
+  "model": "gpt-4.1",
+  "retrieved_chunks": [
+    {
+      "source_path": "marketing/campaign-playbook.md",
+      "chunk_index": 8,
+      "score": 0.6499883769011534
+    },
+    {
+      "source_path": "hq-pm/policy-matrix.md",
+      "chunk_index": 5,
+      "score": 0.6113144438727648
+    },
+    {
+      "source_path": "hq-pm/policy-matrix.md",
+      "chunk_index": 6,
+      "score": 0.596991102356143
+    },
+    {
+      "source_path": "hq-pm/quarterly-policy-brief.pdf",
+      "chunk_index": 2,
+      "score": 0.5642797455296759
+    },
+    {
+      "source_path": "marketing/campaign-playbook.md",
+      "chunk_index": 7,
+      "score": 0.5597882571555386
+    },
+    {
+      "source_path": "legal-risk/kyc-age-verification-memo.pdf",
+      "chunk_index": 2,
+      "score": 0.5427011744488073
+    },
+    {
+      "source_path": "global-pm/country-policy-matrix.md",
+      "chunk_index": 4,
+      "score": 0.5339259138945895
+    },
+    {
+      "source_path": "hq-pm/quarterly-policy-brief.pdf",
+      "chunk_index": 1,
+      "score": 0.529738333728776
+    }
+  ],
+  "raw_response": "{\"choice\":\"a\",\"reasoning\":\"청크 1, 3, 4, 5, 6, 7, 8 등 여러 발췌에서 반복적으로 'BNPL(후불결제) 캠페인에서 디지털콘텐츠 카테고리를 자동 제외해야 한다'고 명시하고 있다. 누락 시 캠페인 승인이 반려된다는 점도 청크 1에서 분명히 언급된다. 경고만 표시하거나 특정 회원에게만 허용, VN만 제외 등은 모두 발췌 내용과 다르다. 따라서 정답은 a)이다.\"}",
+  "parsed": {
+    "choice": "a",
+    "reasoning": "청크 1, 3, 4, 5, 6, 7, 8 등 여러 발췌에서 반복적으로 'BNPL(후불결제) 캠페인에서 디지털콘텐츠 카테고리를 자동 제외해야 한다'고 명시하고 있다. 누락 시 캠페인 승인이 반려된다는 점도 청크 1에서 분명히 언급된다. 경고만 표시하거나 특정 회원에게만 허용, VN만 제외 등은 모두 발췌 내용과 다르다. 따라서 정답은 a)이다."
+  },
+  "parse_error": null
+}

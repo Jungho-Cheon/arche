@@ -1,0 +1,154 @@
+{
+  "column": "combined",
+  "question_id": "Q05",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 499,
+    "output_tokens": 37,
+    "latency_ms": 961,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"다이아 등급\",\"aliases\":[\"다이아 등급\"]},{\"canonical\":\"로열티팀\",\"aliases\":[\"로열티팀\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "다이아 등급",
+          "aliases": [
+            "다이아 등급"
+          ]
+        },
+        {
+          "canonical": "로열티팀",
+          "aliases": [
+            "로열티팀"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 679,
+      "input": {
+        "keywords": [
+          "다이아 등급",
+          "로열티팀"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 91,
+      "input": {
+        "entry_ids": [
+          "01KVJQWWE4G87QY7GJ8397ZG28",
+          "01KVJQYE81YT4RXME67H5DW82R",
+          "01KVJR95Y73MDS6D0ZABH2BT7Q",
+          "01KVJR9JMTM9NN2E3J80JNZPZZ",
+          "01KVJR9Z00CARX38G3P6PXTY00",
+          "01KVJR8C3CQK4N3GYED6PJV01Z",
+          "01KVJR7QYCE7TSJCBZH5HST8W3",
+          "01KVJQZR9TTR7RS4DHVAW1GJ3R",
+          "01KVJRB1YEZMWNP9NVT7Z4FAG0",
+          "01KVJR7PP4A4TJTTHHZNA1AXE6"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 27,
+        "edges": 28,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVJQWWE4G87QY7GJ8397ZG28",
+    "01KVJQYE81YT4RXME67H5DW82R",
+    "01KVJR95Y73MDS6D0ZABH2BT7Q",
+    "01KVJR9JMTM9NN2E3J80JNZPZZ",
+    "01KVJR9Z00CARX38G3P6PXTY00",
+    "01KVJR8C3CQK4N3GYED6PJV01Z",
+    "01KVJR7QYCE7TSJCBZH5HST8W3",
+    "01KVJQZR9TTR7RS4DHVAW1GJ3R",
+    "01KVJRB1YEZMWNP9NVT7Z4FAG0",
+    "01KVJR7PP4A4TJTTHHZNA1AXE6"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 17513,
+  "retrieved_chunks": [
+    {
+      "source_path": "loyalty/_GLOSSARY.md",
+      "chunk_index": 0,
+      "score": 0.6086888956648071
+    },
+    {
+      "source_path": "loyalty/tier-rulebook.md",
+      "chunk_index": 0,
+      "score": 0.5859149393568973
+    },
+    {
+      "source_path": "loyalty/tier-transition-rulebook.pdf",
+      "chunk_index": 0,
+      "score": 0.5199377775271131
+    },
+    {
+      "source_path": "loyalty/_GLOSSARY.md",
+      "chunk_index": 1,
+      "score": 0.5187434920318955
+    },
+    {
+      "source_path": "loyalty/tier-rulebook.md",
+      "chunk_index": 1,
+      "score": 0.4978143789148964
+    },
+    {
+      "source_path": "loyalty/tier-rulebook.md",
+      "chunk_index": 4,
+      "score": 0.43994759568208
+    },
+    {
+      "source_path": "hq-pm/policy-matrix.md",
+      "chunk_index": 0,
+      "score": 0.4349155494158648
+    },
+    {
+      "source_path": "marketing/_GLOSSARY.md",
+      "chunk_index": 0,
+      "score": 0.42453018067232046
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 10692,
+    "output_tokens": 162,
+    "latency_ms": 2553,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"a\",\"reasoning\":\"(A) 검색된 문서 발췌에서 loyalty/_GLOSSARY.md, loyalty/tier-rulebook.md, loyalty/tier-transition-rulebook.pdf, marketing/_GLOSSARY.md 등 여러 곳에서 마케팅팀의 '다이아 등급'이 로열티팀의 '이너 서클(INNER)'과 동일하며, 이는 정식 명칭 VVIP에 해당한다고 명확히 매핑되어 있다. (B) 도메인 그래프에서도 '이너 서클(Inner Circle)'의 aliases에 '마케팅 \\\"다이아 등급\\\"'이 포함되어 있어 두 출처 모두 일치한다. 따라서 a) 이너 서클(INNER)이 정답임이 명확하다.\"}",
+    "parsed": {
+      "choice": "a",
+      "reasoning": "(A) 검색된 문서 발췌에서 loyalty/_GLOSSARY.md, loyalty/tier-rulebook.md, loyalty/tier-transition-rulebook.pdf, marketing/_GLOSSARY.md 등 여러 곳에서 마케팅팀의 '다이아 등급'이 로열티팀의 '이너 서클(INNER)'과 동일하며, 이는 정식 명칭 VVIP에 해당한다고 명확히 매핑되어 있다. (B) 도메인 그래프에서도 '이너 서클(Inner Circle)'의 aliases에 '마케팅 \"다이아 등급\"'이 포함되어 있어 두 출처 모두 일치한다. 따라서 a) 이너 서클(INNER)이 정답임이 명확하다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 3678,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 44,
+    "chunk_setup_amortized": 3618,
+    "chunk_setup_total": 108550,
+    "graph_keyword_estimated": 16,
+    "questions_count_for_amortization": 30
+  },
+  "total_input_tokens": 11191,
+  "total_output_tokens": 199,
+  "total_tokens": 15068,
+  "total_latency_ms": 4284
+}

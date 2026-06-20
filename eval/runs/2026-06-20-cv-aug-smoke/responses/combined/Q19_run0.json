@@ -1,0 +1,174 @@
+{
+  "column": "combined",
+  "question_id": "Q19",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 494,
+    "output_tokens": 76,
+    "latency_ms": 1583,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"JP\",\"aliases\":[\"JP\"]},{\"canonical\":\"DE\",\"aliases\":[\"DE\"]},{\"canonical\":\"VN\",\"aliases\":[\"VN\"]},{\"canonical\":\"2026 블랙프라이데이(BFM)\",\"aliases\":[\"2026 블랙프라이데이(BFM)\",\"2026 BFM\",\"블랙프라이데이\",\"BFM\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "JP",
+          "aliases": [
+            "JP"
+          ]
+        },
+        {
+          "canonical": "DE",
+          "aliases": [
+            "DE"
+          ]
+        },
+        {
+          "canonical": "VN",
+          "aliases": [
+            "VN"
+          ]
+        },
+        {
+          "canonical": "2026 블랙프라이데이(BFM)",
+          "aliases": [
+            "2026 블랙프라이데이(BFM)",
+            "2026 BFM",
+            "블랙프라이데이",
+            "BFM"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 1510,
+      "input": {
+        "keywords": [
+          "JP",
+          "DE",
+          "VN",
+          "2026 블랙프라이데이(BFM)",
+          "2026 BFM",
+          "블랙프라이데이",
+          "BFM"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 119,
+      "input": {
+        "entry_ids": [
+          "01KVJQTKE5Z7VDNDYJMN815P47",
+          "01KVJQRYKYZTFWEFXDQ93AV8V6",
+          "01KVJQW2170KSXSR4EHEG78H18",
+          "01KVJQQR1GZNG4S2HDAKPBZNS3",
+          "01KVJRCA8NDERNRMDGKD8NREZF",
+          "01KVJQN1QS5CG3KAKT8YB73YG2",
+          "01KVJRCB1G8DSXECRBPX2VTS1B",
+          "01KVJRB8PE4X2SJAJS49RMETYW",
+          "01KVJQQXQN25QCJADNAVAETZZ0",
+          "01KVJRATYDWY0PZF383GAQHAWD"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 41,
+        "edges": 43,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVJQTKE5Z7VDNDYJMN815P47",
+    "01KVJQRYKYZTFWEFXDQ93AV8V6",
+    "01KVJQW2170KSXSR4EHEG78H18",
+    "01KVJQQR1GZNG4S2HDAKPBZNS3",
+    "01KVJRCA8NDERNRMDGKD8NREZF",
+    "01KVJQN1QS5CG3KAKT8YB73YG2",
+    "01KVJRCB1G8DSXECRBPX2VTS1B",
+    "01KVJRB8PE4X2SJAJS49RMETYW",
+    "01KVJQQXQN25QCJADNAVAETZZ0",
+    "01KVJRATYDWY0PZF383GAQHAWD"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 29118,
+  "retrieved_chunks": [
+    {
+      "source_path": "global-pm/country-launch-memo-vn.pdf",
+      "chunk_index": 3,
+      "score": 0.6605480814176556
+    },
+    {
+      "source_path": "marketing/campaign-playbook.md",
+      "chunk_index": 4,
+      "score": 0.6597252834516916
+    },
+    {
+      "source_path": "marketing/bfm2026-brief.pdf",
+      "chunk_index": 0,
+      "score": 0.6140281532737053
+    },
+    {
+      "source_path": "global-pm/country-policy-matrix.md",
+      "chunk_index": 4,
+      "score": 0.5794549797882746
+    },
+    {
+      "source_path": "hq-pm/policy-matrix.md",
+      "chunk_index": 6,
+      "score": 0.5599125397704272
+    },
+    {
+      "source_path": "marketing/campaign-playbook.md",
+      "chunk_index": 3,
+      "score": 0.552225543775514
+    },
+    {
+      "source_path": "global-pm/country-policy-matrix.md",
+      "chunk_index": 5,
+      "score": 0.552003819698046
+    },
+    {
+      "source_path": "global-pm/country-launch-memo-jp.pdf",
+      "chunk_index": 3,
+      "score": 0.5414643426165676
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 15150,
+    "output_tokens": 205,
+    "latency_ms": 3075,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"a\",\"reasoning\":\"(A) 검색된 문서 발췌와 (B) 도메인 그래프 모두 JP, DE, VN 세 국가는 2026 블랙프라이데이(BFM)에 모두 비참여한다는 점을 명확히 제시한다. (A)에서는 여러 공식 문서(예: global-pm/country-launch-memo-vn.pdf, marketing/bfm2026-brief.pdf, global-pm/country-policy-matrix.md 등)에서 'BFM 2026은 KR과 US만 참여, JP/DE/VN은 비참여'라고 반복적으로 명시한다. (B) 도메인 그래프에서도 '블랙프라이데이 2026 --비참여한다--> JP/DE/VN' 관계가 다수의 출처에서 확인된다. 두 출처가 일치하므로 a) '셋 다 미참여다'가 정답이다.\"}",
+    "parsed": {
+      "choice": "a",
+      "reasoning": "(A) 검색된 문서 발췌와 (B) 도메인 그래프 모두 JP, DE, VN 세 국가는 2026 블랙프라이데이(BFM)에 모두 비참여한다는 점을 명확히 제시한다. (A)에서는 여러 공식 문서(예: global-pm/country-launch-memo-vn.pdf, marketing/bfm2026-brief.pdf, global-pm/country-policy-matrix.md 등)에서 'BFM 2026은 KR과 US만 참여, JP/DE/VN은 비참여'라고 반복적으로 명시한다. (B) 도메인 그래프에서도 '블랙프라이데이 2026 --비참여한다--> JP/DE/VN' 관계가 다수의 출처에서 확인된다. 두 출처가 일치하므로 a) '셋 다 미참여다'가 정답이다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 3708,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 34,
+    "chunk_setup_amortized": 3618,
+    "chunk_setup_total": 108550,
+    "graph_keyword_estimated": 56,
+    "questions_count_for_amortization": 30
+  },
+  "total_input_tokens": 15644,
+  "total_output_tokens": 281,
+  "total_tokens": 19633,
+  "total_latency_ms": 6287
+}

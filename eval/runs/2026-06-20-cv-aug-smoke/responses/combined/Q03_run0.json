@@ -1,0 +1,158 @@
+{
+  "column": "combined",
+  "question_id": "Q03",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 503,
+    "output_tokens": 51,
+    "latency_ms": 1104,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"디지털상품권\",\"aliases\":[\"디지털상품권\"]},{\"canonical\":\"BNPL(후불결제)\",\"aliases\":[\"BNPL(후불결제)\",\"BNPL\",\"후불결제\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "디지털상품권",
+          "aliases": [
+            "디지털상품권"
+          ]
+        },
+        {
+          "canonical": "BNPL(후불결제)",
+          "aliases": [
+            "BNPL(후불결제)",
+            "BNPL",
+            "후불결제"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 934,
+      "input": {
+        "keywords": [
+          "디지털상품권",
+          "BNPL(후불결제)",
+          "BNPL",
+          "후불결제"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 102,
+      "input": {
+        "entry_ids": [
+          "01KVJQSHJ0HY169DA0QSY3EZVT",
+          "01KVJR3YBSF0Q5JYBHS6798XNC",
+          "01KVJRCDEDNT8DXXFG2FDJKM3D",
+          "01KVJQQ2HAXWKD71WMYCXT0KF1",
+          "01KVJR47P4QBMFF7HKK8ZD00JC",
+          "01KVJR16T5VQ6RPYSYZ8EWPA08",
+          "01KVJQK8VKRBB7MFG144CMZP8R",
+          "01KVJQYMGHT3566ZAXAYXQQB4Z",
+          "01KVJQQKZDF1Z2BWFDWB8A49XB",
+          "01KVJQRGAZFGAWJP7EQR1DJYG9"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 33,
+        "edges": 35,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVJQSHJ0HY169DA0QSY3EZVT",
+    "01KVJR3YBSF0Q5JYBHS6798XNC",
+    "01KVJRCDEDNT8DXXFG2FDJKM3D",
+    "01KVJQQ2HAXWKD71WMYCXT0KF1",
+    "01KVJR47P4QBMFF7HKK8ZD00JC",
+    "01KVJR16T5VQ6RPYSYZ8EWPA08",
+    "01KVJQK8VKRBB7MFG144CMZP8R",
+    "01KVJQYMGHT3566ZAXAYXQQB4Z",
+    "01KVJQQKZDF1Z2BWFDWB8A49XB",
+    "01KVJQRGAZFGAWJP7EQR1DJYG9"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 25841,
+  "retrieved_chunks": [
+    {
+      "source_path": "hq-pm/policy-matrix.md",
+      "chunk_index": 5,
+      "score": 0.5791594174915383
+    },
+    {
+      "source_path": "global-pm/country-launch-memo-vn.pdf",
+      "chunk_index": 0,
+      "score": 0.5772733216971484
+    },
+    {
+      "source_path": "legal-risk/kyc-age-verification-memo.pdf",
+      "chunk_index": 3,
+      "score": 0.5728183778501361
+    },
+    {
+      "source_path": "hq-pm/policy-matrix.md",
+      "chunk_index": 6,
+      "score": 0.5687281777813613
+    },
+    {
+      "source_path": "legal-risk/risk-checklist.md",
+      "chunk_index": 2,
+      "score": 0.5545343382855049
+    },
+    {
+      "source_path": "global-pm/country-policy-matrix.md",
+      "chunk_index": 7,
+      "score": 0.5544143189599586
+    },
+    {
+      "source_path": "global-pm/country-launch-memo-vn.pdf",
+      "chunk_index": 1,
+      "score": 0.539819974247901
+    },
+    {
+      "source_path": "cs-logistics/cs-macro-manual.md",
+      "chunk_index": 6,
+      "score": 0.530284193267881
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 13641,
+    "output_tokens": 266,
+    "latency_ms": 2820,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"a\",\"reasoning\":\"(A) 검색된 문서 발췌에서 여러 곳(청크 2, 3, 5, 7, 8)에서 VN(베트남)에서는 디지털상품권은 외환법, BNPL(후불결제)은 금융법에 의해 모두 미허용임이 명확히 서술되어 있다. 예를 들어, 'VN 진입의 결정적 제약은 두 가지 결제수단을 법으로 쓸 수 없다는 점이다. 본사 규칙 R9 에 따라 VN 에서는 다음이 미허용이다. 디지털상품권 미허용 외환법 (선불성 외화 환전 우려), BNPL (후불결제) 미허용 금융법 (소비자 여신 규제)'라고 명시되어 있다. (B) 도메인 그래프에서도 'VN --금지된다--> BNPL', 'VN --미허용한다--> BNPL', '디지털콘텐츠 --결합 금지된다--> BNPL' 등 관계가 명확히 드러난다. 두 출처 모두 일치하며, (A) 발췌의 구체적 법령 근거가 결정적이다.\"}",
+    "parsed": {
+      "choice": "a",
+      "reasoning": "(A) 검색된 문서 발췌에서 여러 곳(청크 2, 3, 5, 7, 8)에서 VN(베트남)에서는 디지털상품권은 외환법, BNPL(후불결제)은 금융법에 의해 모두 미허용임이 명확히 서술되어 있다. 예를 들어, 'VN 진입의 결정적 제약은 두 가지 결제수단을 법으로 쓸 수 없다는 점이다. 본사 규칙 R9 에 따라 VN 에서는 다음이 미허용이다. 디지털상품권 미허용 외환법 (선불성 외화 환전 우려), BNPL (후불결제) 미허용 금융법 (소비자 여신 규제)'라고 명시되어 있다. (B) 도메인 그래프에서도 'VN --금지된다--> BNPL', 'VN --미허용한다--> BNPL', '디지털콘텐츠 --결합 금지된다--> BNPL' 등 관계가 명확히 드러난다. 두 출처 모두 일치하며, (A) 발췌의 구체적 법령 근거가 결정적이다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 3697,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 47,
+    "chunk_setup_amortized": 3618,
+    "chunk_setup_total": 108550,
+    "graph_keyword_estimated": 32,
+    "questions_count_for_amortization": 30
+  },
+  "total_input_tokens": 14144,
+  "total_output_tokens": 317,
+  "total_tokens": 18158,
+  "total_latency_ms": 4960
+}

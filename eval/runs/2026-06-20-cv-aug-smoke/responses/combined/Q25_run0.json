@@ -1,0 +1,181 @@
+{
+  "column": "combined",
+  "question_id": "Q25",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 507,
+    "output_tokens": 109,
+    "latency_ms": 1071,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"신선식품 콜드체인 사고\",\"aliases\":[\"신선식품 콜드체인 사고\"]},{\"canonical\":\"환불\",\"aliases\":[\"환불\"]},{\"canonical\":\"MP(입점사) 셀러\",\"aliases\":[\"MP(입점사) 셀러\",\"입점사 셀러\",\"MP 셀러\"]},{\"canonical\":\"손실\",\"aliases\":[\"손실\"]},{\"canonical\":\"손실 처리\",\"aliases\":[\"손실 처리\",\"손실 보전\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "신선식품 콜드체인 사고",
+          "aliases": [
+            "신선식품 콜드체인 사고"
+          ]
+        },
+        {
+          "canonical": "환불",
+          "aliases": [
+            "환불"
+          ]
+        },
+        {
+          "canonical": "MP(입점사) 셀러",
+          "aliases": [
+            "MP(입점사) 셀러",
+            "입점사 셀러",
+            "MP 셀러"
+          ]
+        },
+        {
+          "canonical": "손실",
+          "aliases": [
+            "손실"
+          ]
+        },
+        {
+          "canonical": "손실 처리",
+          "aliases": [
+            "손실 처리",
+            "손실 보전"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 1384,
+      "input": {
+        "keywords": [
+          "신선식품 콜드체인 사고",
+          "환불",
+          "MP(입점사) 셀러",
+          "입점사 셀러",
+          "MP 셀러",
+          "손실",
+          "손실 처리",
+          "손실 보전"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 81,
+      "input": {
+        "entry_ids": [
+          "01KVJR75V2BG0YDB2CG50ECJRS",
+          "01KVJQMAYA92RH9BT0DXNDGCT9",
+          "01KVJRC94PG9RPHK5DRJ1GSRM0",
+          "01KVJQH1PXBTCRG48GGGHYQBKF",
+          "01KVJRJT81NT6SS9AZF2D983MW",
+          "01KVJQH861DG8W5ZGWH34AYX3N",
+          "01KVJRDH2KKE4MQQQKSG43VQXS",
+          "01KVJRF87WGQ4DH4RBFH6GYHER",
+          "01KVJQDJ2KYZXY247C4N8CQWB3",
+          "01KVJQJK7SMVP2HVVXNKTM515X"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 29,
+        "edges": 24,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVJR75V2BG0YDB2CG50ECJRS",
+    "01KVJQMAYA92RH9BT0DXNDGCT9",
+    "01KVJRC94PG9RPHK5DRJ1GSRM0",
+    "01KVJQH1PXBTCRG48GGGHYQBKF",
+    "01KVJRJT81NT6SS9AZF2D983MW",
+    "01KVJQH861DG8W5ZGWH34AYX3N",
+    "01KVJRDH2KKE4MQQQKSG43VQXS",
+    "01KVJRF87WGQ4DH4RBFH6GYHER",
+    "01KVJQDJ2KYZXY247C4N8CQWB3",
+    "01KVJQJK7SMVP2HVVXNKTM515X"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 17351,
+  "retrieved_chunks": [
+    {
+      "source_path": "seller-ops/settlement-faq.md",
+      "chunk_index": 9,
+      "score": 0.5782538916577722
+    },
+    {
+      "source_path": "seller-ops/settlement-faq.md",
+      "chunk_index": 4,
+      "score": 0.5737119184916382
+    },
+    {
+      "source_path": "cs-logistics/cold-chain-sop.pdf",
+      "chunk_index": 0,
+      "score": 0.5712246610375141
+    },
+    {
+      "source_path": "seller-ops/seller-agreement-annex.pdf",
+      "chunk_index": 2,
+      "score": 0.5627455851058768
+    },
+    {
+      "source_path": "cs-logistics/cold-chain-sop.pdf",
+      "chunk_index": 3,
+      "score": 0.556070253286315
+    },
+    {
+      "source_path": "seller-ops/settlement-faq.md",
+      "chunk_index": 3,
+      "score": 0.5475252165603511
+    },
+    {
+      "source_path": "seller-ops/settlement-faq.md",
+      "chunk_index": 5,
+      "score": 0.5471816654770271
+    },
+    {
+      "source_path": "cs-logistics/cs-macro-manual.md",
+      "chunk_index": 3,
+      "score": 0.5369376444559786
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 11221,
+    "output_tokens": 242,
+    "latency_ms": 3282,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"a\",\"reasoning\":\"(A) 검색된 문서 발췌에서 seller-ops/settlement-faq.md, seller-ops/seller-agreement-annex.pdf, cs-logistics/cold-chain-sop.pdf, cs-logistics/cs-macro-manual.md 등 여러 곳에서 MP(입점사) 셀러의 신선식품 콜드체인 사고 환불 손실은 '셀러 정산금에서 먼저 차감되고, 그 차감분은 입점 시 의무 가입한 셀러 보증보험으로 보전된다'고 명확히 설명한다. 예시와 표, 매크로 응대문 등에서 일관되게 이 구조를 반복 설명한다. (B) 도메인 그래프에서도 'MP --셀러 차감 및 보증보험이 적용된다--> 손실 귀속' 및 '셀러 보증보험 --한도 내에서 보전한다--> 손실 귀속' 등으로 같은 구조를 명확히 보여준다. 두 출처가 일치하며, 보기 a)가 정확히 이 내용을 반영하므로 a)를 선택한다.\"}",
+    "parsed": {
+      "choice": "a",
+      "reasoning": "(A) 검색된 문서 발췌에서 seller-ops/settlement-faq.md, seller-ops/seller-agreement-annex.pdf, cs-logistics/cold-chain-sop.pdf, cs-logistics/cs-macro-manual.md 등 여러 곳에서 MP(입점사) 셀러의 신선식품 콜드체인 사고 환불 손실은 '셀러 정산금에서 먼저 차감되고, 그 차감분은 입점 시 의무 가입한 셀러 보증보험으로 보전된다'고 명확히 설명한다. 예시와 표, 매크로 응대문 등에서 일관되게 이 구조를 반복 설명한다. (B) 도메인 그래프에서도 'MP --셀러 차감 및 보증보험이 적용된다--> 손실 귀속' 및 '셀러 보증보험 --한도 내에서 보전한다--> 손실 귀속' 등으로 같은 구조를 명확히 보여준다. 두 출처가 일치하며, 보기 a)가 정확히 이 내용을 반영하므로 a)를 선택한다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 3738,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 56,
+    "chunk_setup_amortized": 3618,
+    "chunk_setup_total": 108550,
+    "graph_keyword_estimated": 64,
+    "questions_count_for_amortization": 30
+  },
+  "total_input_tokens": 11728,
+  "total_output_tokens": 351,
+  "total_tokens": 15817,
+  "total_latency_ms": 5818
+}

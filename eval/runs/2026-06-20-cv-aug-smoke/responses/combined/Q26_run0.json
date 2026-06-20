@@ -1,0 +1,160 @@
+{
+  "column": "combined",
+  "question_id": "Q26",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 510,
+    "output_tokens": 72,
+    "latency_ms": 1064,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"B2B 엔터프라이즈 쿠폰\",\"aliases\":[\"B2B 엔터프라이즈 쿠폰\",\"CPN-B2B\"]},{\"canonical\":\"신규 가입 웰컴 쿠폰\",\"aliases\":[\"신규 가입 웰컴 쿠폰\",\"웰컴 쿠폰\",\"CPN-WELCOME\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "B2B 엔터프라이즈 쿠폰",
+          "aliases": [
+            "B2B 엔터프라이즈 쿠폰",
+            "CPN-B2B"
+          ]
+        },
+        {
+          "canonical": "신규 가입 웰컴 쿠폰",
+          "aliases": [
+            "신규 가입 웰컴 쿠폰",
+            "웰컴 쿠폰",
+            "CPN-WELCOME"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 1292,
+      "input": {
+        "keywords": [
+          "B2B 엔터프라이즈 쿠폰",
+          "CPN-B2B",
+          "신규 가입 웰컴 쿠폰",
+          "웰컴 쿠폰",
+          "CPN-WELCOME"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 129,
+      "input": {
+        "entry_ids": [
+          "01KVJQC96S0VSQXFCEP9XYYH3V",
+          "01KVJQERVB40DXK5WHWENXD286",
+          "01KVJR97B66MZEW89ZNEZ2A778",
+          "01KVJQT0V2CNSF36NVKKVVCSEV",
+          "01KVJQZSTVPE2S2XF5SDFTT54E",
+          "01KVJQH7NZ95QW8GW1C90G4NNN",
+          "01KVJQB0NFVT99D1AAM3GZM71Z",
+          "01KVJQB5AKPA22DWM7GP93PJN4",
+          "01KVJQXAHES6S8HFNMBCA6NBPJ",
+          "01KVJQN3K9WFK467F8FTHKF72J"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 37,
+        "edges": 42,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVJQC96S0VSQXFCEP9XYYH3V",
+    "01KVJQERVB40DXK5WHWENXD286",
+    "01KVJR97B66MZEW89ZNEZ2A778",
+    "01KVJQT0V2CNSF36NVKKVVCSEV",
+    "01KVJQZSTVPE2S2XF5SDFTT54E",
+    "01KVJQH7NZ95QW8GW1C90G4NNN",
+    "01KVJQB0NFVT99D1AAM3GZM71Z",
+    "01KVJQB5AKPA22DWM7GP93PJN4",
+    "01KVJQXAHES6S8HFNMBCA6NBPJ",
+    "01KVJQN3K9WFK467F8FTHKF72J"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 22745,
+  "retrieved_chunks": [
+    {
+      "source_path": "b2b/b2b-ops-guide.md",
+      "chunk_index": 3,
+      "score": 0.6126987136320734
+    },
+    {
+      "source_path": "b2b/b2b-coupon-policy.md",
+      "chunk_index": 0,
+      "score": 0.5887088980582841
+    },
+    {
+      "source_path": "b2b/b2b-coupon-policy.md",
+      "chunk_index": 1,
+      "score": 0.58015191732984
+    },
+    {
+      "source_path": "marketing/coupon-stacking-guide.md",
+      "chunk_index": 2,
+      "score": 0.5605409038459105
+    },
+    {
+      "source_path": "marketing/coupon-stacking-guide.md",
+      "chunk_index": 5,
+      "score": 0.5587205364650268
+    },
+    {
+      "source_path": "marketing/coupon-stacking-guide.md",
+      "chunk_index": 1,
+      "score": 0.55112327218385
+    },
+    {
+      "source_path": "b2b/b2b-coupon-policy.md",
+      "chunk_index": 2,
+      "score": 0.5427455544152633
+    },
+    {
+      "source_path": "b2b/enterprise-agreement-addendum.pdf",
+      "chunk_index": 1,
+      "score": 0.5355187051456447
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 12660,
+    "output_tokens": 247,
+    "latency_ms": 3030,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"a\",\"reasoning\":\"(A) 검색된 문서 발췌에서 b2b/b2b-coupon-policy.md와 b2b/enterprise-agreement-addendum.pdf, b2b/b2b-ops-guide.md 등 여러 곳에서 B2B 쿠폰(CPN-B2B-*)과 B2C 쿠폰(CPN-WELCOME-*, CPN-CART-*)은 결합이 절대 금지되며, 한 주문에 함께 담으면 시스템이 B2C 쿠폰을 자동 무효화하고 B2B 쿠폰만 적용된다고 명시하고 있다. 실제 적용 예시(C)에서도 담당자가 실수로 두 쿠폰을 함께 담았을 때 B2C 쿠폰이 무효화된다고 구체적으로 설명한다. (B) 도메인 그래프에서도 'CPN-B2B-* --결합이 금지된다--> CPN-WELCOME-*' 및 '시스템 --자동 무효화한다--> CPN-WELCOME-*' 관계가 명확히 존재한다. 두 출처 모두 일치하며, (A)의 구체적 예시가 결정적 근거다.\"}",
+    "parsed": {
+      "choice": "a",
+      "reasoning": "(A) 검색된 문서 발췌에서 b2b/b2b-coupon-policy.md와 b2b/enterprise-agreement-addendum.pdf, b2b/b2b-ops-guide.md 등 여러 곳에서 B2B 쿠폰(CPN-B2B-*)과 B2C 쿠폰(CPN-WELCOME-*, CPN-CART-*)은 결합이 절대 금지되며, 한 주문에 함께 담으면 시스템이 B2C 쿠폰을 자동 무효화하고 B2B 쿠폰만 적용된다고 명시하고 있다. 실제 적용 예시(C)에서도 담당자가 실수로 두 쿠폰을 함께 담았을 때 B2C 쿠폰이 무효화된다고 구체적으로 설명한다. (B) 도메인 그래프에서도 'CPN-B2B-* --결합이 금지된다--> CPN-WELCOME-*' 및 '시스템 --자동 무효화한다--> CPN-WELCOME-*' 관계가 명확히 존재한다. 두 출처 모두 일치하며, (A)의 구체적 예시가 결정적 근거다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 3724,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 66,
+    "chunk_setup_amortized": 3618,
+    "chunk_setup_total": 108550,
+    "graph_keyword_estimated": 40,
+    "questions_count_for_amortization": 30
+  },
+  "total_input_tokens": 13170,
+  "total_output_tokens": 319,
+  "total_tokens": 17213,
+  "total_latency_ms": 5515
+}

@@ -1,0 +1,161 @@
+{
+  "column": "combined",
+  "question_id": "Q02",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 486,
+    "output_tokens": 32,
+    "latency_ms": 853,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"AMD\",\"aliases\":[\"AMD\"]},{\"canonical\":\"products\",\"aliases\":[\"products\"]},{\"canonical\":\"services\",\"aliases\":[\"services\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "AMD",
+          "aliases": [
+            "AMD"
+          ]
+        },
+        {
+          "canonical": "products",
+          "aliases": [
+            "products"
+          ]
+        },
+        {
+          "canonical": "services",
+          "aliases": [
+            "services"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 672,
+      "input": {
+        "keywords": [
+          "AMD",
+          "products",
+          "services"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 54,
+      "input": {
+        "entry_ids": [
+          "01KVJSA6SKDXA784BE56NE83D1",
+          "01KVJSEMYDN1E39WEPYKPD254J",
+          "01KVJS7M80PCQD571Z60PG30JY",
+          "01KVJS7KP8AT0CYVHT0K8CM2X5",
+          "01KVJS7MYFWSR01AB7S93FW24X",
+          "01KVJSA6B61A3E0JNFVBCDZZH9",
+          "01KVJS7S0J032XK8J6DFD2MGMS",
+          "01KVJSGNDE4QGQ1BEDR2KTPSE0",
+          "01KVJSBWYE4XXJK36BWZ80XXGF",
+          "01KVJS7K4XZ0KVWTZJ936W3PM9"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 20,
+        "edges": 13,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVJSA6SKDXA784BE56NE83D1",
+    "01KVJSEMYDN1E39WEPYKPD254J",
+    "01KVJS7M80PCQD571Z60PG30JY",
+    "01KVJS7KP8AT0CYVHT0K8CM2X5",
+    "01KVJS7MYFWSR01AB7S93FW24X",
+    "01KVJSA6B61A3E0JNFVBCDZZH9",
+    "01KVJS7S0J032XK8J6DFD2MGMS",
+    "01KVJSGNDE4QGQ1BEDR2KTPSE0",
+    "01KVJSBWYE4XXJK36BWZ80XXGF",
+    "01KVJS7K4XZ0KVWTZJ936W3PM9"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 8252,
+  "retrieved_chunks": [
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 3,
+      "score": 0.6949059445551105
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 13,
+      "score": 0.6934358303960223
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 10,
+      "score": 0.6857035665424713
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 4,
+      "score": 0.6735801871679588
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 2,
+      "score": 0.6703228577792844
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 48,
+      "score": 0.6650018671113759
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 47,
+      "score": 0.6638816612383478
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 46,
+      "score": 0.649914229753475
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 10133,
+    "output_tokens": 191,
+    "latency_ms": 2344,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"a\",\"reasoning\":\"(A) 검색된 문서 발췌에서 AMD가 FY22 기준으로 판매하는 주요 제품과 서비스에 대해 명확하게 기술하고 있다. 예를 들어, 청크 1, 2, 4, 5 등에서 AMD가 데이터 센터용 서버 CPU, GPU, DPU, FPGA, Adaptive SoC, PC용 CPU, APU, 칩셋, 디스크리트 GPU, 세미커스텀 SoC, 개발 서비스, 임베디드 CPU, GPU, APU, FPGA, Adaptive SoC 등을 제공한다고 명시한다. (B) 도메인 그래프에서도 각 세그먼트별로 어떤 제품군을 제공하는지 관계가 명확히 드러난다. 두 출처 모두 보기 a)의 내용을 구체적으로 뒷받침하므로 a)가 정답이다.\"}",
+    "parsed": {
+      "choice": "a",
+      "reasoning": "(A) 검색된 문서 발췌에서 AMD가 FY22 기준으로 판매하는 주요 제품과 서비스에 대해 명확하게 기술하고 있다. 예를 들어, 청크 1, 2, 4, 5 등에서 AMD가 데이터 센터용 서버 CPU, GPU, DPU, FPGA, Adaptive SoC, PC용 CPU, APU, 칩셋, 디스크리트 GPU, 세미커스텀 SoC, 개발 서비스, 임베디드 CPU, GPU, APU, FPGA, Adaptive SoC 등을 제공한다고 명시한다. (B) 도메인 그래프에서도 각 세그먼트별로 어떤 제품군을 제공하는지 관계가 명확히 드러난다. 두 출처 모두 보기 a)의 내용을 구체적으로 뒷받침하므로 a)가 정답이다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 20370,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 15,
+    "chunk_setup_amortized": 20331,
+    "chunk_setup_total": 426971,
+    "graph_keyword_estimated": 24,
+    "questions_count_for_amortization": 21
+  },
+  "total_input_tokens": 10619,
+  "total_output_tokens": 223,
+  "total_tokens": 31212,
+  "total_latency_ms": 3923
+}

@@ -1,0 +1,186 @@
+{
+  "column": "opentology_aug",
+  "question_id": "Q06",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 492,
+    "output_tokens": 44,
+    "latency_ms": 1262,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"독일\",\"aliases\":[\"독일\",\"DE\"]},{\"canonical\":\"맥주\",\"aliases\":[\"맥주\"]},{\"canonical\":\"최소 연령\",\"aliases\":[\"최소 연령\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "독일",
+          "aliases": [
+            "독일",
+            "DE"
+          ]
+        },
+        {
+          "canonical": "맥주",
+          "aliases": [
+            "맥주"
+          ]
+        },
+        {
+          "canonical": "최소 연령",
+          "aliases": [
+            "최소 연령"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 1420,
+      "input": {
+        "keywords": [
+          "독일",
+          "DE",
+          "맥주",
+          "최소 연령"
+        ],
+        "limit": 20,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 20
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 128,
+      "input": {
+        "entry_ids": [
+          "01KVJQNGAYVENM4N6EKGDZ8N41",
+          "01KVJQMT0JV3SJJMWR3QSGXHKD",
+          "01KVJQKGE60W3M7F1YN1YHGTKS",
+          "01KVJQJDYPSF53Y0D7RSVVXW44",
+          "01KVJR4HMMBFJNCTVA6Q8B9XV7",
+          "01KVJR6XXW5KZ3VMTSQQW5H2B3",
+          "01KVJQE1GK4YB4QFV330HA42TN",
+          "01KVJQSXVABNZ5H1DP1FJ0TQRP",
+          "01KVJQPQRBKV8Z60TH2JTR5VKW",
+          "01KVJR311AY0KB7M2H3441ZMFS"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 39,
+        "edges": 40,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVJQNGAYVENM4N6EKGDZ8N41",
+    "01KVJQMT0JV3SJJMWR3QSGXHKD",
+    "01KVJQKGE60W3M7F1YN1YHGTKS",
+    "01KVJQJDYPSF53Y0D7RSVVXW44",
+    "01KVJR4HMMBFJNCTVA6Q8B9XV7",
+    "01KVJR6XXW5KZ3VMTSQQW5H2B3",
+    "01KVJQE1GK4YB4QFV330HA42TN",
+    "01KVJQSXVABNZ5H1DP1FJ0TQRP",
+    "01KVJQPQRBKV8Z60TH2JTR5VKW",
+    "01KVJR311AY0KB7M2H3441ZMFS"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 21323,
+  "graph_selected_sources": [
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/cs-logistics/cs-macro-manual.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/global-pm/country-launch-memo-vn.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/legal-risk/risk-checklist.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/b2b/enterprise-agreement-addendum.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/legal-risk/kyc-age-verification-memo.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/legal-risk/gdpr-de-memo.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/global-pm/country-launch-memo-jp.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/global-pm/country-policy-matrix.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/hq-pm/decision-log.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/hq-pm/quarterly-policy-brief.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/marketing/bfm2026-brief.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/seller-ops/seller-agreement-annex.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/global-pm/_GLOSSARY.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/hq-pm/policy-matrix.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/marketing/campaign-playbook.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/b2b/b2b-ops-guide.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/cs-logistics/cold-chain-sop.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/legal-risk/_GLOSSARY.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/loyalty/_GLOSSARY.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/loyalty/tier-rulebook.md"
+  ],
+  "used_fallback": null,
+  "retrieved_chunks": [
+    {
+      "source_path": "global-pm/country-policy-matrix.md",
+      "chunk_index": 2,
+      "score": 0.4423690321036489
+    },
+    {
+      "source_path": "global-pm/country-policy-matrix.md",
+      "chunk_index": 3,
+      "score": 0.4301394027513597
+    },
+    {
+      "source_path": "global-pm/country-launch-memo-jp.pdf",
+      "chunk_index": 1,
+      "score": 0.4111536879294479
+    },
+    {
+      "source_path": "legal-risk/kyc-age-verification-memo.pdf",
+      "chunk_index": 1,
+      "score": 0.3765750767503625
+    },
+    {
+      "source_path": "global-pm/country-launch-memo-jp.pdf",
+      "chunk_index": 2,
+      "score": 0.3668294731143527
+    },
+    {
+      "source_path": "global-pm/country-launch-memo-jp.pdf",
+      "chunk_index": 4,
+      "score": 0.35078639500019726
+    },
+    {
+      "source_path": "cs-logistics/cs-macro-manual.md",
+      "chunk_index": 1,
+      "score": 0.3432773878999395
+    },
+    {
+      "source_path": "global-pm/country-launch-memo-jp.pdf",
+      "chunk_index": 3,
+      "score": 0.3330307402444705
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 12746,
+    "output_tokens": 166,
+    "latency_ms": 2226,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"a\",\"reasoning\":\"(A) 발췌에서 DE(독일)는 맥주 16세, 증류주 18세로 주종에 따라 연령 기준이 다르다고 명확히 표로 제시하고, 여러 청크에서 반복적으로 확인된다. (B) 그래프에서도 'DE --맥주 연령 임계값을 16로 설정한다--> 주류' 및 'DE --맥주 16세, 증류주 18세이다--> 음주 가능 연령' 등 구조적으로 동일 내용을 뒷받침한다. 두 정보가 일치하므로 a) 16세가 정답이며, 결정적 근거는 (A)의 정량적 표와 (B)의 구조적 관계 모두이다.\"}",
+    "parsed": {
+      "choice": "a",
+      "reasoning": "(A) 발췌에서 DE(독일)는 맥주 16세, 증류주 18세로 주종에 따라 연령 기준이 다르다고 명확히 표로 제시하고, 여러 청크에서 반복적으로 확인된다. (B) 그래프에서도 'DE --맥주 연령 임계값을 16로 설정한다--> 주류' 및 'DE --맥주 16세, 증류주 18세이다--> 음주 가능 연령' 등 구조적으로 동일 내용을 뒷받침한다. 두 정보가 일치하므로 a) 16세가 정답이며, 결정적 근거는 (A)의 정량적 표와 (B)의 구조적 관계 모두이다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 3679,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 29,
+    "chunk_setup_amortized": 3618,
+    "chunk_setup_total": 108550,
+    "graph_keyword_estimated": 32,
+    "questions_count_for_amortization": 30
+  },
+  "total_input_tokens": 13238,
+  "total_output_tokens": 210,
+  "total_tokens": 17127,
+  "total_latency_ms": 5036
+}

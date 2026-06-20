@@ -1,0 +1,163 @@
+{
+  "column": "combined",
+  "question_id": "Q07",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 480,
+    "output_tokens": 43,
+    "latency_ms": 1052,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"AMD\",\"aliases\":[\"AMD\"]},{\"canonical\":\"customer concentration\",\"aliases\":[\"customer concentration\"]},{\"canonical\":\"FY22\",\"aliases\":[\"FY22\",\"fiscal year 2022\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "AMD",
+          "aliases": [
+            "AMD"
+          ]
+        },
+        {
+          "canonical": "customer concentration",
+          "aliases": [
+            "customer concentration"
+          ]
+        },
+        {
+          "canonical": "FY22",
+          "aliases": [
+            "FY22",
+            "fiscal year 2022"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 746,
+      "input": {
+        "keywords": [
+          "AMD",
+          "customer concentration",
+          "FY22",
+          "fiscal year 2022"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 65,
+      "input": {
+        "entry_ids": [
+          "01KVJSBP1K39PWPESBA2TAXHEV",
+          "01KVJSBJ4XEF35WND6Z0MJG08C",
+          "01KVJSBJN84NAGQ66WRFQCMJQW",
+          "01KVJSF4B34W3MK0JWYCM7Z0MB",
+          "01KVJS7M80PCQD571Z60PG30JY",
+          "01KVJS7KP8AT0CYVHT0K8CM2X5",
+          "01KVJS7MYFWSR01AB7S93FW24X",
+          "01KVJS7S0J032XK8J6DFD2MGMS",
+          "01KVJSF34WBT3SVBBDXSDA56YH",
+          "01KVJSANZH7VZYP9PVVJHMSZ9C"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 23,
+        "edges": 17,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVJSBP1K39PWPESBA2TAXHEV",
+    "01KVJSBJ4XEF35WND6Z0MJG08C",
+    "01KVJSBJN84NAGQ66WRFQCMJQW",
+    "01KVJSF4B34W3MK0JWYCM7Z0MB",
+    "01KVJS7M80PCQD571Z60PG30JY",
+    "01KVJS7KP8AT0CYVHT0K8CM2X5",
+    "01KVJS7MYFWSR01AB7S93FW24X",
+    "01KVJS7S0J032XK8J6DFD2MGMS",
+    "01KVJSF34WBT3SVBBDXSDA56YH",
+    "01KVJSANZH7VZYP9PVVJHMSZ9C"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 10036,
+  "retrieved_chunks": [
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 46,
+      "score": 0.6231920299154547
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 47,
+      "score": 0.6212902682587397
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 14,
+      "score": 0.6137327522684403
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 13,
+      "score": 0.6106508809999924
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 3,
+      "score": 0.6044962720883229
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 4,
+      "score": 0.59713197237792
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 2,
+      "score": 0.5959317817888855
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 0,
+      "score": 0.5905995883597538
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 10552,
+    "output_tokens": 111,
+    "latency_ms": 2053,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"e\",\"reasoning\":\"Neither (A) the document excerpts nor (B) the domain graph provide any explicit information about customer concentration or the percentage of revenue attributable to any specific customer for AMD in FY22. The document excerpts focus on AMD's business segments, product offerings, financial results, and strategic acquisitions, but do not mention customer concentration. The domain graph also does not contain any entities or relationships related to customer concentration or major customers. Therefore, the correct answer is (e) Insufficient information / cannot determine from the corpus.\"}",
+    "parsed": {
+      "choice": "e",
+      "reasoning": "Neither (A) the document excerpts nor (B) the domain graph provide any explicit information about customer concentration or the percentage of revenue attributable to any specific customer for AMD in FY22. The document excerpts focus on AMD's business segments, product offerings, financial results, and strategic acquisitions, but do not mention customer concentration. The domain graph also does not contain any entities or relationships related to customer concentration or major customers. Therefore, the correct answer is (e) Insufficient information / cannot determine from the corpus."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 20372,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 9,
+    "chunk_setup_amortized": 20331,
+    "chunk_setup_total": 426971,
+    "graph_keyword_estimated": 32,
+    "questions_count_for_amortization": 21
+  },
+  "total_input_tokens": 11032,
+  "total_output_tokens": 154,
+  "total_tokens": 31558,
+  "total_latency_ms": 3916
+}

@@ -1,0 +1,188 @@
+{
+  "column": "combined",
+  "question_id": "Q13",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 514,
+    "output_tokens": 131,
+    "latency_ms": 1423,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"독일(DE) 회원\",\"aliases\":[\"독일(DE) 회원\"]},{\"canonical\":\"개인정보 완전 삭제\",\"aliases\":[\"개인정보 완전 삭제\",\"개인정보 삭제\"]},{\"canonical\":\"회계법\",\"aliases\":[\"회계법\"]},{\"canonical\":\"거래 기록 10 년 보존\",\"aliases\":[\"거래 기록 10 년 보존\",\"거래 기록 보존\"]},{\"canonical\":\"법적 예외 조항\",\"aliases\":[\"법적 예외 조항\",\"예외 조항\"]},{\"canonical\":\"데이터 분리 보관\",\"aliases\":[\"데이터 분리 보관\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "독일(DE) 회원",
+          "aliases": [
+            "독일(DE) 회원"
+          ]
+        },
+        {
+          "canonical": "개인정보 완전 삭제",
+          "aliases": [
+            "개인정보 완전 삭제",
+            "개인정보 삭제"
+          ]
+        },
+        {
+          "canonical": "회계법",
+          "aliases": [
+            "회계법"
+          ]
+        },
+        {
+          "canonical": "거래 기록 10 년 보존",
+          "aliases": [
+            "거래 기록 10 년 보존",
+            "거래 기록 보존"
+          ]
+        },
+        {
+          "canonical": "법적 예외 조항",
+          "aliases": [
+            "법적 예외 조항",
+            "예외 조항"
+          ]
+        },
+        {
+          "canonical": "데이터 분리 보관",
+          "aliases": [
+            "데이터 분리 보관"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 1481,
+      "input": {
+        "keywords": [
+          "독일(DE) 회원",
+          "개인정보 완전 삭제",
+          "개인정보 삭제",
+          "회계법",
+          "거래 기록 10 년 보존",
+          "거래 기록 보존",
+          "법적 예외 조항",
+          "예외 조항",
+          "데이터 분리 보관"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 77,
+      "input": {
+        "entry_ids": [
+          "01KVJR1QR5AR1NQQMF99F86Z8E",
+          "01KVJR2F29PJ79CCD71VTEKCFP",
+          "01KVJR2YN22EBH7E459EYHWWGY",
+          "01KVJQX94JJDFPJ2KBMYWNCVXT",
+          "01KVJR8DRV3XN6R37ZB4FQ3Y01",
+          "01KVJRA2J13VAW1R7CPVS4QZZQ",
+          "01KVJR17XGEVQY2NRVGZHE25HR",
+          "01KVJQYPPG8YN3ZCQPE01E4CQE",
+          "01KVJRJ6J6PKF0NGSH31TE5TTY",
+          "01KVJRA3V44NGYEVXNX0GTE2NS"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 32,
+        "edges": 23,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVJR1QR5AR1NQQMF99F86Z8E",
+    "01KVJR2F29PJ79CCD71VTEKCFP",
+    "01KVJR2YN22EBH7E459EYHWWGY",
+    "01KVJQX94JJDFPJ2KBMYWNCVXT",
+    "01KVJR8DRV3XN6R37ZB4FQ3Y01",
+    "01KVJRA2J13VAW1R7CPVS4QZZQ",
+    "01KVJR17XGEVQY2NRVGZHE25HR",
+    "01KVJQYPPG8YN3ZCQPE01E4CQE",
+    "01KVJRJ6J6PKF0NGSH31TE5TTY",
+    "01KVJRA3V44NGYEVXNX0GTE2NS"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 14879,
+  "retrieved_chunks": [
+    {
+      "source_path": "global-pm/country-policy-matrix.md",
+      "chunk_index": 6,
+      "score": 0.6216569546734729
+    },
+    {
+      "source_path": "legal-risk/gdpr-de-memo.pdf",
+      "chunk_index": 3,
+      "score": 0.5911051629317862
+    },
+    {
+      "source_path": "legal-risk/gdpr-de-memo.pdf",
+      "chunk_index": 1,
+      "score": 0.5767959325069405
+    },
+    {
+      "source_path": "cs-logistics/cs-macro-manual.md",
+      "chunk_index": 7,
+      "score": 0.5490654800136979
+    },
+    {
+      "source_path": "legal-risk/gdpr-de-memo.pdf",
+      "chunk_index": 0,
+      "score": 0.5001664491474297
+    },
+    {
+      "source_path": "legal-risk/gdpr-de-memo.pdf",
+      "chunk_index": 2,
+      "score": 0.4926066038042836
+    },
+    {
+      "source_path": "hq-pm/decision-log.md",
+      "chunk_index": 1,
+      "score": 0.48986406856433734
+    },
+    {
+      "source_path": "hq-pm/policy-matrix.md",
+      "chunk_index": 7,
+      "score": 0.4691280718300819
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 10312,
+    "output_tokens": 300,
+    "latency_ms": 3477,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"a\",\"reasoning\":\"(A) 검색된 문서 발췌와 (B) 도메인 그래프 모두에서 독일(DE) 회원 탈퇴 시 GDPR의 PII(개인 식별 정보) 완전 삭제 의무와 회계법의 거래 기록 10년 보존 의무가 충돌할 때, 거래 기록은 회원 ID만 남기고 PII를 제거한 비식별 형태로 10년간 보존하는 것이 유일한 해소안임을 명확히 제시한다. (A)에서는 여러 문서(legal-risk/gdpr-de-memo.pdf, global-pm/country-policy-matrix.md, hq-pm/policy-matrix.md 등)에서 이 절충안이 본사 정책으로 확정되었음을 반복적으로 설명하고, 구체적 처리 항목(회원 ID만 남기고 실명, 연락처, 주소, 결제수단 토큰 등은 삭제)을 명시한다. (B) 그래프에서도 '거래 기록 --회원 ID만 남긴다--> 회원 ID', '거래 기록 --비식별화 처리로 PII를 제거한다--> PII' 등 관계가 명확히 연결되어 있다. 두 출처가 일치하며, 가장 구체적이고 명시적인 근거가 (A) 발췌에 다수 존재하므로 a)가 정답이다.\"}",
+    "parsed": {
+      "choice": "a",
+      "reasoning": "(A) 검색된 문서 발췌와 (B) 도메인 그래프 모두에서 독일(DE) 회원 탈퇴 시 GDPR의 PII(개인 식별 정보) 완전 삭제 의무와 회계법의 거래 기록 10년 보존 의무가 충돌할 때, 거래 기록은 회원 ID만 남기고 PII를 제거한 비식별 형태로 10년간 보존하는 것이 유일한 해소안임을 명확히 제시한다. (A)에서는 여러 문서(legal-risk/gdpr-de-memo.pdf, global-pm/country-policy-matrix.md, hq-pm/policy-matrix.md 등)에서 이 절충안이 본사 정책으로 확정되었음을 반복적으로 설명하고, 구체적 처리 항목(회원 ID만 남기고 실명, 연락처, 주소, 결제수단 토큰 등은 삭제)을 명시한다. (B) 그래프에서도 '거래 기록 --회원 ID만 남긴다--> 회원 ID', '거래 기록 --비식별화 처리로 PII를 제거한다--> PII' 등 관계가 명확히 연결되어 있다. 두 출처가 일치하며, 가장 구체적이고 명시적인 근거가 (A) 발췌에 다수 존재하므로 a)가 정답이다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 3767,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 77,
+    "chunk_setup_amortized": 3618,
+    "chunk_setup_total": 108550,
+    "graph_keyword_estimated": 72,
+    "questions_count_for_amortization": 30
+  },
+  "total_input_tokens": 10826,
+  "total_output_tokens": 431,
+  "total_tokens": 15024,
+  "total_latency_ms": 6458
+}

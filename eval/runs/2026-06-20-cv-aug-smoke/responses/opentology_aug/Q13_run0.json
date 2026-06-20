@@ -1,0 +1,211 @@
+{
+  "column": "opentology_aug",
+  "question_id": "Q13",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 514,
+    "output_tokens": 118,
+    "latency_ms": 1522,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"독일(DE) 회원\",\"aliases\":[\"독일(DE) 회원\"]},{\"canonical\":\"개인정보 완전 삭제\",\"aliases\":[\"개인정보 완전 삭제\",\"개인정보 삭제\"]},{\"canonical\":\"회계법\",\"aliases\":[\"회계법\"]},{\"canonical\":\"거래 기록 10 년 보존\",\"aliases\":[\"거래 기록 10 년 보존\",\"거래 기록 보존\"]},{\"canonical\":\"법률 충돌 해소 절차\",\"aliases\":[\"법률 충돌 해소 절차\",\"충돌 해소 절차\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "독일(DE) 회원",
+          "aliases": [
+            "독일(DE) 회원"
+          ]
+        },
+        {
+          "canonical": "개인정보 완전 삭제",
+          "aliases": [
+            "개인정보 완전 삭제",
+            "개인정보 삭제"
+          ]
+        },
+        {
+          "canonical": "회계법",
+          "aliases": [
+            "회계법"
+          ]
+        },
+        {
+          "canonical": "거래 기록 10 년 보존",
+          "aliases": [
+            "거래 기록 10 년 보존",
+            "거래 기록 보존"
+          ]
+        },
+        {
+          "canonical": "법률 충돌 해소 절차",
+          "aliases": [
+            "법률 충돌 해소 절차",
+            "충돌 해소 절차"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 1663,
+      "input": {
+        "keywords": [
+          "독일(DE) 회원",
+          "개인정보 완전 삭제",
+          "개인정보 삭제",
+          "회계법",
+          "거래 기록 10 년 보존",
+          "거래 기록 보존",
+          "법률 충돌 해소 절차",
+          "충돌 해소 절차"
+        ],
+        "limit": 20,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 20
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 77,
+      "input": {
+        "entry_ids": [
+          "01KVJR1QR5AR1NQQMF99F86Z8E",
+          "01KVJR1RMNRWQVKGXB3A1KS0AH",
+          "01KVJR18QS33DPHYK1P2ACWV6R",
+          "01KVJQX94JJDFPJ2KBMYWNCVXT",
+          "01KVJR2F29PJ79CCD71VTEKCFP",
+          "01KVJQJJ2DMAJC6C73X738KTBV",
+          "01KVJQFDF57DKGEDEFVQARH8PC",
+          "01KVJQYPPG8YN3ZCQPE01E4CQE",
+          "01KVJR1V1CNYT98FKJ33F26YS0",
+          "01KVJRGTBWEV31CX0W721SBB3B"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 30,
+        "edges": 22,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVJR1QR5AR1NQQMF99F86Z8E",
+    "01KVJR1RMNRWQVKGXB3A1KS0AH",
+    "01KVJR18QS33DPHYK1P2ACWV6R",
+    "01KVJQX94JJDFPJ2KBMYWNCVXT",
+    "01KVJR2F29PJ79CCD71VTEKCFP",
+    "01KVJQJJ2DMAJC6C73X738KTBV",
+    "01KVJQFDF57DKGEDEFVQARH8PC",
+    "01KVJQYPPG8YN3ZCQPE01E4CQE",
+    "01KVJR1V1CNYT98FKJ33F26YS0",
+    "01KVJRGTBWEV31CX0W721SBB3B"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 17253,
+  "graph_selected_sources": [
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/legal-risk/gdpr-de-memo.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/hq-pm/decision-log.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/hq-pm/policy-matrix.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/seller-ops/seller-agreement-annex.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/legal-risk/_GLOSSARY.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/cs-logistics/cs-macro-manual.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/cs-logistics/return-refund-flowchart.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/legal-risk/kyc-age-verification-memo.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/legal-risk/risk-checklist.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/cs-logistics/_GLOSSARY.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/global-pm/_GLOSSARY.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/hq-pm/_GLOSSARY.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/marketing/_GLOSSARY.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/global-pm/country-policy-matrix.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/marketing/campaign-playbook.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/hq-pm/quarterly-policy-brief.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/loyalty/tier-rulebook.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/global-pm/country-launch-memo-jp.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/global-pm/country-launch-memo-vn.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/loyalty/tier-transition-rulebook.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/b2b/b2b-coupon-policy.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/b2b/b2b-ops-guide.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/b2b/enterprise-agreement-addendum.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/cs-logistics/cold-chain-sop.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/marketing/coupon-stacking-guide.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/seller-ops/settlement-faq.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/seller-ops/_GLOSSARY.md"
+  ],
+  "used_fallback": null,
+  "retrieved_chunks": [
+    {
+      "source_path": "global-pm/country-policy-matrix.md",
+      "chunk_index": 6,
+      "score": 0.6216569546734729
+    },
+    {
+      "source_path": "legal-risk/gdpr-de-memo.pdf",
+      "chunk_index": 3,
+      "score": 0.5911051629317862
+    },
+    {
+      "source_path": "legal-risk/gdpr-de-memo.pdf",
+      "chunk_index": 1,
+      "score": 0.5763644417196485
+    },
+    {
+      "source_path": "cs-logistics/cs-macro-manual.md",
+      "chunk_index": 7,
+      "score": 0.5490654800136979
+    },
+    {
+      "source_path": "legal-risk/gdpr-de-memo.pdf",
+      "chunk_index": 0,
+      "score": 0.4994056510735976
+    },
+    {
+      "source_path": "legal-risk/gdpr-de-memo.pdf",
+      "chunk_index": 2,
+      "score": 0.4926066038042836
+    },
+    {
+      "source_path": "hq-pm/decision-log.md",
+      "chunk_index": 1,
+      "score": 0.48986406856433734
+    },
+    {
+      "source_path": "hq-pm/policy-matrix.md",
+      "chunk_index": 7,
+      "score": 0.4691280718300819
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 11135,
+    "output_tokens": 257,
+    "latency_ms": 2501,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"a\",\"reasoning\":\"(A) 원본 발췌에서 DE 회원 탈퇴 시 GDPR 30일 내 PII 완전 삭제 의무와 회계법 10년 거래 기록 보존 의무가 충돌할 때, 거래 기록은 회원 ID만 남기고 PII를 제거한 비식별 형태로 10년간 보존한다는 점이 여러 문서(legal-risk/gdpr-de-memo.pdf, global-pm/country-policy-matrix.md, hq-pm/policy-matrix.md 등)에서 반복적으로 명시되어 있다. (B) 그래프에서도 '비식별화 해소 방안'이 '상법상 거래기록 보존의무'와 'GDPR 삭제권'을 모두 해소한다고 구조적으로 연결되어 있고, '거래 기록 --회원 ID만 남긴다--> 회원 ID', '거래 기록 --비식별화 처리로 PII를 제거한다--> PII' 등 관계가 명확하다. 두 정보가 일치하며, (A)에서 구체적 처리 방식(회원 ID만 남기고 PII 제거)이 명확히 제시되어 있으므로 a)가 정답이다.\"}",
+    "parsed": {
+      "choice": "a",
+      "reasoning": "(A) 원본 발췌에서 DE 회원 탈퇴 시 GDPR 30일 내 PII 완전 삭제 의무와 회계법 10년 거래 기록 보존 의무가 충돌할 때, 거래 기록은 회원 ID만 남기고 PII를 제거한 비식별 형태로 10년간 보존한다는 점이 여러 문서(legal-risk/gdpr-de-memo.pdf, global-pm/country-policy-matrix.md, hq-pm/policy-matrix.md 등)에서 반복적으로 명시되어 있다. (B) 그래프에서도 '비식별화 해소 방안'이 '상법상 거래기록 보존의무'와 'GDPR 삭제권'을 모두 해소한다고 구조적으로 연결되어 있고, '거래 기록 --회원 ID만 남긴다--> 회원 ID', '거래 기록 --비식별화 처리로 PII를 제거한다--> PII' 등 관계가 명확하다. 두 정보가 일치하며, (A)에서 구체적 처리 방식(회원 ID만 남기고 PII 제거)이 명확히 제시되어 있으므로 a)가 정답이다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 3759,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 77,
+    "chunk_setup_amortized": 3618,
+    "chunk_setup_total": 108550,
+    "graph_keyword_estimated": 64,
+    "questions_count_for_amortization": 30
+  },
+  "total_input_tokens": 11649,
+  "total_output_tokens": 375,
+  "total_tokens": 15783,
+  "total_latency_ms": 5763
+}

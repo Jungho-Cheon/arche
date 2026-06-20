@@ -1,0 +1,172 @@
+{
+  "column": "combined",
+  "question_id": "Q09",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 490,
+    "output_tokens": 85,
+    "latency_ms": 1312,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"JIS 인증\",\"aliases\":[\"JIS 인증\"]},{\"canonical\":\"가전 상품\",\"aliases\":[\"가전 상품\"]},{\"canonical\":\"일본(JP)\",\"aliases\":[\"일본(JP)\",\"일본\"]},{\"canonical\":\"인증 미보유 상품 처리 절차\",\"aliases\":[\"인증 미보유 상품 처리 절차\",\"JIS 인증 미보유 상품 처리\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "JIS 인증",
+          "aliases": [
+            "JIS 인증"
+          ]
+        },
+        {
+          "canonical": "가전 상품",
+          "aliases": [
+            "가전 상품"
+          ]
+        },
+        {
+          "canonical": "일본(JP)",
+          "aliases": [
+            "일본(JP)",
+            "일본"
+          ]
+        },
+        {
+          "canonical": "인증 미보유 상품 처리 절차",
+          "aliases": [
+            "인증 미보유 상품 처리 절차",
+            "JIS 인증 미보유 상품 처리"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 1343,
+      "input": {
+        "keywords": [
+          "JIS 인증",
+          "가전 상품",
+          "일본(JP)",
+          "일본",
+          "인증 미보유 상품 처리 절차",
+          "JIS 인증 미보유 상품 처리"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 50,
+      "input": {
+        "entry_ids": [
+          "01KVJR0KNA1C5E9E62DJMCWYQG",
+          "01KVJQK51A1Q7K3XBKKMJ6QEAT",
+          "01KVJQNGY3CD8YR1493BYT1J78",
+          "01KVJQFNHCSP5179FWDCVBZKNS",
+          "01KVJQV9QCCC33C98802RAMVDQ",
+          "01KVJQRD6XZWPPY9KYYNCKK4J3",
+          "01KVJRFAEA7DTZD8BCF3PWYFFM",
+          "01KVJRBEBG5NVH907P7GY6WDN0",
+          "01KVJQMZ616T89K8ZTJWMYNXGY",
+          "01KVJQK6AYE3PYXAF1WFQMFNRN"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 21,
+        "edges": 12,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVJR0KNA1C5E9E62DJMCWYQG",
+    "01KVJQK51A1Q7K3XBKKMJ6QEAT",
+    "01KVJQNGY3CD8YR1493BYT1J78",
+    "01KVJQFNHCSP5179FWDCVBZKNS",
+    "01KVJQV9QCCC33C98802RAMVDQ",
+    "01KVJQRD6XZWPPY9KYYNCKK4J3",
+    "01KVJRFAEA7DTZD8BCF3PWYFFM",
+    "01KVJRBEBG5NVH907P7GY6WDN0",
+    "01KVJQMZ616T89K8ZTJWMYNXGY",
+    "01KVJQK6AYE3PYXAF1WFQMFNRN"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 8486,
+  "retrieved_chunks": [
+    {
+      "source_path": "seller-ops/settlement-faq.md",
+      "chunk_index": 6,
+      "score": 0.5841774324111676
+    },
+    {
+      "source_path": "global-pm/country-policy-matrix.md",
+      "chunk_index": 3,
+      "score": 0.5687927401609832
+    },
+    {
+      "source_path": "global-pm/country-launch-memo-jp.pdf",
+      "chunk_index": 1,
+      "score": 0.5542712201852927
+    },
+    {
+      "source_path": "seller-ops/seller-agreement-annex.pdf",
+      "chunk_index": 3,
+      "score": 0.5356503967511509
+    },
+    {
+      "source_path": "seller-ops/settlement-faq.md",
+      "chunk_index": 5,
+      "score": 0.5051399440587816
+    },
+    {
+      "source_path": "cs-logistics/cs-macro-manual.md",
+      "chunk_index": 5,
+      "score": 0.48571685724839975
+    },
+    {
+      "source_path": "cs-logistics/cs-macro-manual.md",
+      "chunk_index": 6,
+      "score": 0.42899104325996357
+    },
+    {
+      "source_path": "global-pm/country-launch-memo-jp.pdf",
+      "chunk_index": 0,
+      "score": 0.4192233501473173
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 7957,
+    "output_tokens": 226,
+    "latency_ms": 2736,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"a\",\"reasoning\":\"(A) 검색된 문서 발췌에서 JP 시장의 가전/디지털 카테고리 상품은 JIS 인증서가 없으면 심사를 통과하지 못하고, 인증서 없이 올라온 상품은 자동으로 비노출 처리되어 구매가 일어나지 않는다고 명확히 서술되어 있다. 또한, 미인증 상품은 검색과 카테고리에서 자동으로 가려진다는 점이 여러 청크(특히 seller-ops/settlement-faq.md, global-pm/country-policy-matrix.md, global-pm/country-launch-memo-jp.pdf)에서 반복적으로 확인된다. (B) 도메인 그래프에서도 '자동 비노출'이 JIS 미인증 시 JP 가전/디지털 상품에 적용된다는 관계가 명확히 연결되어 있다. 두 출처가 모두 일치하며, 가장 구체적이고 명시적인 근거가 (A) 발췌에 반복적으로 나타나므로 a)가 정답이다.\"}",
+    "parsed": {
+      "choice": "a",
+      "reasoning": "(A) 검색된 문서 발췌에서 JP 시장의 가전/디지털 카테고리 상품은 JIS 인증서가 없으면 심사를 통과하지 못하고, 인증서 없이 올라온 상품은 자동으로 비노출 처리되어 구매가 일어나지 않는다고 명확히 서술되어 있다. 또한, 미인증 상품은 검색과 카테고리에서 자동으로 가려진다는 점이 여러 청크(특히 seller-ops/settlement-faq.md, global-pm/country-policy-matrix.md, global-pm/country-launch-memo-jp.pdf)에서 반복적으로 확인된다. (B) 도메인 그래프에서도 '자동 비노출'이 JIS 미인증 시 JP 가전/디지털 상품에 적용된다는 관계가 명확히 연결되어 있다. 두 출처가 모두 일치하며, 가장 구체적이고 명시적인 근거가 (A) 발췌에 반복적으로 나타나므로 a)가 정답이다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 3698,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 32,
+    "chunk_setup_amortized": 3618,
+    "chunk_setup_total": 108550,
+    "graph_keyword_estimated": 48,
+    "questions_count_for_amortization": 30
+  },
+  "total_input_tokens": 8447,
+  "total_output_tokens": 311,
+  "total_tokens": 12456,
+  "total_latency_ms": 5441
+}

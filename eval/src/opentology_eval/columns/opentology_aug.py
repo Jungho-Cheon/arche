@@ -262,6 +262,10 @@ class OpentologyAugRunner:
     adaptive_top_k: bool = True
     # robust fallback — graph 가 0 source 또는 0 entry 일 때 chunk_rag 단독 전환.
     chunk_fallback_on_empty_graph: bool = True
+    # anchor diversity — find_entities 결과를 *anchor (keyword) 별 top-N* 으로
+    # 분산해 specific anchor (e.g. "AMD") 가 generic anchor (e.g. "operations")
+    # 에 밀려나는 cross-company contamination 차단. 0 이면 비활성.
+    anchor_diversity_per_keyword: int = 2
     index: _SourceGroupedIndex = field(default_factory=_SourceGroupedIndex)
     # global (전체 코퍼스) 인덱스 — fallback 시 사용. chunk_rag 와 동일 결과.
     global_index: _MemoryIndex = field(default_factory=_MemoryIndex)
@@ -305,20 +309,55 @@ class OpentologyAugRunner:
         anchor = self._extract_anchors(question.question)
         keywords = _extract_aliases_union(anchor.parsed)
 
-        # (2) find_entities → 진입점 ID
+        # (2) find_entities → 진입점 ID (anchor diversity 가드 포함)
         entry_ids: list[str] = []
         primitive_error: dict[str, Any] | None = None
         if keywords:
             try:
+                # anchor diversity 활성 시 후보 풀을 *2 배로 받아* 후처리 분산.
+                # WHY 2 배: 한 anchor 가 모든 후보를 점유하더라도, 다른 anchor 의
+                # 후보가 limit 안에 들어올 여지를 만든다.
+                fetch_limit = (
+                    self.find_entities_limit * 2
+                    if self.anchor_diversity_per_keyword > 0
+                    else self.find_entities_limit
+                )
                 find_entities_data = self.client.find_entities(
                     keywords=keywords,
-                    limit=self.find_entities_limit,
+                    limit=fetch_limit,
                     log=primitive_calls,
                 )
-                for m in find_entities_data.get("matches") or []:
-                    nid = (m.get("node") or {}).get("id")
-                    if nid and nid not in entry_ids:
+                candidates = find_entities_data.get("matches") or []
+
+                if self.anchor_diversity_per_keyword > 0:
+                    # 1 pass — 각 keyword 당 N 개씩 보장.
+                    n_per_kw: dict[str, int] = {}
+                    per_keyword_quota = self.anchor_diversity_per_keyword
+                    for m in candidates:
+                        if len(entry_ids) >= self.find_entities_limit:
+                            break
+                        nid = (m.get("node") or {}).get("id")
+                        kw = m.get("matched_keyword") or ""
+                        if not nid or nid in entry_ids:
+                            continue
+                        if n_per_kw.get(kw, 0) >= per_keyword_quota:
+                            continue
                         entry_ids.append(str(nid))
+                        n_per_kw[kw] = n_per_kw.get(kw, 0) + 1
+                    # 2 pass — 남은 자리는 우선순위 그대로 채움.
+                    for m in candidates:
+                        if len(entry_ids) >= self.find_entities_limit:
+                            break
+                        nid = (m.get("node") or {}).get("id")
+                        if nid and nid not in entry_ids:
+                            entry_ids.append(str(nid))
+                else:
+                    for m in candidates:
+                        if len(entry_ids) >= self.find_entities_limit:
+                            break
+                        nid = (m.get("node") or {}).get("id")
+                        if nid and nid not in entry_ids:
+                            entry_ids.append(str(nid))
             except (OpentologyClientError, OpentologyUnavailableError) as e:
                 primitive_error = {"step": "find_entities", "message": str(e)}
 

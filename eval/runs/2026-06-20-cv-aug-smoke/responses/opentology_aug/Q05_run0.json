@@ -1,0 +1,184 @@
+{
+  "column": "opentology_aug",
+  "question_id": "Q05",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 499,
+    "output_tokens": 46,
+    "latency_ms": 864,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"다이아 등급\",\"aliases\":[\"다이아 등급\",\"마케팅팀 다이아 등급\"]},{\"canonical\":\"로열티팀\",\"aliases\":[\"로열티팀\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "다이아 등급",
+          "aliases": [
+            "다이아 등급",
+            "마케팅팀 다이아 등급"
+          ]
+        },
+        {
+          "canonical": "로열티팀",
+          "aliases": [
+            "로열티팀"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 857,
+      "input": {
+        "keywords": [
+          "다이아 등급",
+          "마케팅팀 다이아 등급",
+          "로열티팀"
+        ],
+        "limit": 20,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 20
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 94,
+      "input": {
+        "entry_ids": [
+          "01KVJR95Y73MDS6D0ZABH2BT7Q",
+          "01KVJR9Z00CARX38G3P6PXTY00",
+          "01KVJQQMMEAZGE9GVF5SV9BVGD",
+          "01KVJQWYY5R3KFNZCVDHFKS2RN",
+          "01KVJQWWE4G87QY7GJ8397ZG28",
+          "01KVJQYE81YT4RXME67H5DW82R",
+          "01KVJR9JMTM9NN2E3J80JNZPZZ",
+          "01KVJR8C3CQK4N3GYED6PJV01Z",
+          "01KVJR7QYCE7TSJCBZH5HST8W3",
+          "01KVJQZR9TTR7RS4DHVAW1GJ3R"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 29,
+        "edges": 30,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVJR95Y73MDS6D0ZABH2BT7Q",
+    "01KVJR9Z00CARX38G3P6PXTY00",
+    "01KVJQQMMEAZGE9GVF5SV9BVGD",
+    "01KVJQWYY5R3KFNZCVDHFKS2RN",
+    "01KVJQWWE4G87QY7GJ8397ZG28",
+    "01KVJQYE81YT4RXME67H5DW82R",
+    "01KVJR9JMTM9NN2E3J80JNZPZZ",
+    "01KVJR8C3CQK4N3GYED6PJV01Z",
+    "01KVJR7QYCE7TSJCBZH5HST8W3",
+    "01KVJQZR9TTR7RS4DHVAW1GJ3R"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 19100,
+  "graph_selected_sources": [
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/hq-pm/decision-log.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/loyalty/tier-transition-rulebook.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/loyalty/tier-matrix.png",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/loyalty/tier-rulebook.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/global-pm/country-launch-memo-jp.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/hq-pm/policy-matrix.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/hq-pm/quarterly-policy-brief.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/legal-risk/risk-checklist.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/seller-ops/seller-agreement-annex.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/seller-ops/settlement-faq.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/loyalty/_GLOSSARY.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/seller-ops/_GLOSSARY.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/marketing/campaign-playbook.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/b2b/b2b-coupon-policy.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/b2b/b2b-ops-guide.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/b2b/enterprise-agreement-addendum.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/marketing/coupon-stacking-guide.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/cs-logistics/cs-macro-manual.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/global-pm/country-policy-matrix.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/legal-risk/gdpr-de-memo.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/marketing/bfm2026-brief.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/cs-logistics/cold-chain-sop.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/marketing/coupon-decision-tree.png",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/legal-risk/kyc-age-verification-memo.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/global-pm/country-launch-memo-vn.pdf"
+  ],
+  "used_fallback": null,
+  "retrieved_chunks": [
+    {
+      "source_path": "loyalty/_GLOSSARY.md",
+      "chunk_index": 0,
+      "score": 0.6086680217791982
+    },
+    {
+      "source_path": "loyalty/tier-rulebook.md",
+      "chunk_index": 0,
+      "score": 0.5858364011735228
+    },
+    {
+      "source_path": "loyalty/tier-transition-rulebook.pdf",
+      "chunk_index": 0,
+      "score": 0.5198737577248035
+    },
+    {
+      "source_path": "loyalty/_GLOSSARY.md",
+      "chunk_index": 1,
+      "score": 0.5191862023809841
+    },
+    {
+      "source_path": "loyalty/tier-rulebook.md",
+      "chunk_index": 1,
+      "score": 0.4975050819892057
+    },
+    {
+      "source_path": "loyalty/tier-rulebook.md",
+      "chunk_index": 4,
+      "score": 0.43997776828351914
+    },
+    {
+      "source_path": "hq-pm/policy-matrix.md",
+      "chunk_index": 0,
+      "score": 0.4347316709482114
+    },
+    {
+      "source_path": "marketing/_GLOSSARY.md",
+      "chunk_index": 0,
+      "score": 0.4243372670291162
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 11394,
+    "output_tokens": 180,
+    "latency_ms": 2069,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"a\",\"reasoning\":\"(A) 발췌에서 loyalty/_GLOSSARY.md, loyalty/tier-rulebook.md, loyalty/tier-transition-rulebook.pdf, marketing/_GLOSSARY.md 등 여러 공식 문서에서 '마케팅팀의 다이아 등급'이 'VVIP'의 마케팅 별칭이며, 이는 로열티팀 호칭으로 '이너 서클(INNER)'임이 명확히 표로 매핑되어 있다. (B) 그래프에서도 '다이아 등급'이 VVIP, 로열티팀 이너 서클과 동일 엔티티로 연결되어 있다. 두 정보 모두 일치하므로 a) 이너 서클(INNER)이 정답이다. 결정적 근거는 (A) 발췌의 표와 명시적 매핑 설명이다.\"}",
+    "parsed": {
+      "choice": "a",
+      "reasoning": "(A) 발췌에서 loyalty/_GLOSSARY.md, loyalty/tier-rulebook.md, loyalty/tier-transition-rulebook.pdf, marketing/_GLOSSARY.md 등 여러 공식 문서에서 '마케팅팀의 다이아 등급'이 'VVIP'의 마케팅 별칭이며, 이는 로열티팀 호칭으로 '이너 서클(INNER)'임이 명확히 표로 매핑되어 있다. (B) 그래프에서도 '다이아 등급'이 VVIP, 로열티팀 이너 서클과 동일 엔티티로 연결되어 있다. 두 정보 모두 일치하므로 a) 이너 서클(INNER)이 정답이다. 결정적 근거는 (A) 발췌의 표와 명시적 매핑 설명이다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 3686,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 44,
+    "chunk_setup_amortized": 3618,
+    "chunk_setup_total": 108550,
+    "graph_keyword_estimated": 24,
+    "questions_count_for_amortization": 30
+  },
+  "total_input_tokens": 11893,
+  "total_output_tokens": 226,
+  "total_tokens": 15805,
+  "total_latency_ms": 3884
+}
