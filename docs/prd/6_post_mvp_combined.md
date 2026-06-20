@@ -22,6 +22,24 @@
 
 핵심 — chunk 와 graph 의 오답이 *완전히 비겹침*. LLM 이 두 retrieval 결과를 한 컨텍스트에서 비교해 *서로의 약점을 정정* 한다. 라우터 휴리스틱 불필요.
 
+### §0.1 2026-06-21 갱신 — variance 분석 결과 default 확정
+
+본 §0 표 (95K) 와 이후 financebench-smoke (21 MCQ) 6 graph 재 ingest 측정을 종합한 결과 (`eval/reports/2026-06-21-variance-decision/`):
+
+| 컬럼 | variance 정체 | floor | ceiling | 토큰 |
+|---|---|---|---|---|
+| chunk_rag | graph 무관 | 71.4% (고정) | 71.4% | 6.9K |
+| opentology_aug (graph-guided chunk) | graph dependent | 66.7% | 81.0% | 17K |
+| **combined (default)** | graph dependent (작음) | **≥71% (chunk floor)** | 81.0% | 17K |
+
+variance 의 정체는 **ingest LLM 비결정성** 단일 원인. query LLM 비결정성 = 0 (N=3 majority 검증) → N=1 측정으로 충분. 따라서 시제품의 *기본 채널* 은:
+
+- **default = combined** — variance robust, chunk floor 보장, graph upside 활용
+- **opentology_aug** — 명시적 multi-hop hint 시 별도 호출 (hops=3 우월). EntityConsolidator (M6.5b #40) 이후 overall 우월 재평가
+- **chunk_rag** — 토큰 최소 (6.9K) 필요 시 별도 호출
+
+§1 의 `/answer` 는 이 default = combined 를 *기본 동작* 으로 노출하고, 옵션으로 `mode: "combined" | "aug" | "chunks"` 를 받아 다른 컬럼 호출.
+
 ---
 
 ## §1. Combined 를 Opentology 의 정체성으로 — 필요한 것
@@ -38,6 +56,8 @@
 | `POST /retrieve/subgraph` | subgraph 만 | 질문 + hops | entities + relations + paths |
 
 `/answer` 가 *기본* 채널이 된다 (현재 MVP 는 사용자가 6 primitive 를 직접 조합). `/retrieve` 는 자체 LLM 을 운영하는 사용자를 위한 것.
+
+`/answer` 의 *기본 동작* 은 §0.1 의 default = combined. body 의 `mode` 옵션으로 `"combined" | "aug" | "chunks"` 선택 가능. `mode` 미지정 시 combined.
 
 ### §1.2 Provenance — 어떤 신호가 답을 결정했나
 
@@ -71,6 +91,7 @@
 | `skip_graph_if_no_anchor` | true | anchor 0 개면 graph 컨텍스트 = (엔티티 없음). 호출 비용 절감 |
 | `embed_model` | text-embedding-3-small | 임베딩 모델 (chunk/anchor 공통). large 로 올리면 retrieval 품질↑, 비용↑ |
 | `answer_model` | gpt-4.1 | 답변 LLM. mini 로 다운그레이드 가능 |
+| `mode` | `"combined"` | §0.1 default. `"aug"` (graph-guided chunk, multi-hop hint 용) / `"chunks"` (chunk_rag 단독, 토큰 최소) |
 
 이 노브들은 `/answer` body 의 `options` 필드로 노출하고, 서버 설정으로 기본값을 잡는다.
 
