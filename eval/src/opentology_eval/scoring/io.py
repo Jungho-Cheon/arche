@@ -25,7 +25,7 @@ from pathlib import Path
 from typing import Any
 
 
-COLUMNS: tuple[str, ...] = ("full_context", "chunk_rag", "opentology")
+COLUMNS: tuple[str, ...] = ("full_context", "chunk_rag", "opentology", "combined")
 
 
 # ---------- 응답 로더 ----------
@@ -153,6 +153,30 @@ def extract_metrics(response: dict[str, Any], column: str) -> ResponseMetrics:
             anchor = response.get("anchor_extraction") or {}
             if isinstance(anchor, dict) and anchor.get("parse_error"):
                 # answer 가 None 이고 anchor 도 실패면 upstream 실패로 분류.
+                if parsed is None:
+                    parse_error = f"anchor_parse_error: {anchor.get('parse_error')}"
+    elif column == "combined":
+        # combined 응답 스키마는 opentology 와 동일 구조 — anchor + answer_generation
+        # 묶음 + retrieved_chunks. 토큰 / latency 집계도 동일하게 total_* 필드.
+        input_t = int(response.get("total_input_tokens", 0))
+        output_t = int(response.get("total_output_tokens", 0))
+        embedding_t = int(response.get("embedding_tokens_estimated", 0))
+        if "total_tokens" in response:
+            total_t = int(response["total_tokens"])
+        else:
+            total_t = input_t + output_t + embedding_t
+        latency = int(response.get("total_latency_ms", 0))
+        ans = response.get("answer_generation") or {}
+        model = str(ans.get("model", "")) if isinstance(ans, dict) else ""
+        parsed = (
+            ans.get("parsed")
+            if isinstance(ans, dict) and isinstance(ans.get("parsed"), dict)
+            else None
+        )
+        parse_error = ans.get("parse_error") if isinstance(ans, dict) else None
+        if parse_error is None:
+            anchor = response.get("anchor_extraction") or {}
+            if isinstance(anchor, dict) and anchor.get("parse_error"):
                 if parsed is None:
                     parse_error = f"anchor_parse_error: {anchor.get('parse_error')}"
     else:

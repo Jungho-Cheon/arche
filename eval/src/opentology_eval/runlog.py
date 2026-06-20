@@ -43,6 +43,7 @@ class RunDirs:
     full_context: Path
     chunk_rag: Path
     opentology: Path
+    combined: Path
 
     @classmethod
     def create(cls, base: Path, run_id: str) -> "RunDirs":
@@ -50,10 +51,18 @@ class RunDirs:
         full = root / "responses" / "full_context"
         chunk = root / "responses" / "chunk_rag"
         opent = root / "responses" / "opentology"
+        comb = root / "responses" / "combined"
         full.mkdir(parents=True, exist_ok=True)
         chunk.mkdir(parents=True, exist_ok=True)
         opent.mkdir(parents=True, exist_ok=True)
-        return cls(root=root, full_context=full, chunk_rag=chunk, opentology=opent)
+        comb.mkdir(parents=True, exist_ok=True)
+        return cls(
+            root=root,
+            full_context=full,
+            chunk_rag=chunk,
+            opentology=opent,
+            combined=comb,
+        )
 
 
 def write_response_json(path: Path, payload: dict[str, Any]) -> None:

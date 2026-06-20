@@ -17,6 +17,7 @@ from dotenv import load_dotenv
 
 from .clients import OpentologyClient
 from .columns.chunk_rag import ChunkRAGRunner
+from .columns.combined import CombinedRunner
 from .columns.full_context import FullContextRunner
 from .columns.opentology import OpentologyRunner
 from .config import load_config
@@ -85,7 +86,7 @@ def ask(
     corpus: Annotated[Path, typer.Option(help="corpus 디렉토리 경로")],
     questions: Annotated[Path, typer.Option(help="questions.yaml 경로")],
     question_id: Annotated[str, typer.Option("--question", help="질문 ID 예: Q01")],
-    column: Annotated[str, typer.Option(help="full_context | chunk_rag | opentology")],
+    column: Annotated[str, typer.Option(help="full_context | chunk_rag | opentology | combined")],
     output: Annotated[Path, typer.Option(help="응답 JSON 저장 디렉토리")],
     run_index: Annotated[int, typer.Option(help="run 번호 (0..N-1)")] = 0,
     api_url: Annotated[
@@ -145,6 +146,22 @@ def ask(
                 # skip — 코어가 비어있어도 빈 결과로 흐름이 끝까지 가도록.
                 pass
             payload = orun.ask(question=q, run_index=run_index)
+    elif column == "combined":
+        embedder = OpenAIEmbeddingProvider(
+            model_id=cfg.embedding_model_id, api_key=cfg.openai_api_key
+        )
+        with OpentologyClient(base_url=_resolve_api_url(api_url)) as client:
+            comb = CombinedRunner(
+                loader=loader, client=client, answer_llm=llm, embedder=embedder
+            )
+            comb.setup()
+            if setup_corpus_path is not None:
+                OpentologyRunner(
+                    client=client, answer_llm=llm
+                ).setup_corpus(directory_path=str(setup_corpus_path.resolve()))
+            payload = comb.ask(
+                question=q, run_index=run_index, questions_count=len(qset.questions)
+            )
     else:
         raise typer.BadParameter(f"알 수 없는 컬럼: {column}")
 
@@ -161,7 +178,7 @@ def run(
     runs: Annotated[int, typer.Option(help="질문당 반복 횟수 N")] = 3,
     columns: Annotated[
         str,
-        typer.Option(help="컴마 구분: full_context,chunk_rag,opentology"),
+        typer.Option(help="컴마 구분: full_context,chunk_rag,opentology,combined"),
     ] = "full_context,chunk_rag",
     api_url: Annotated[
         str | None,
@@ -201,7 +218,7 @@ def run(
     qset = load_questions(questions)
 
     requested = [c.strip() for c in columns.split(",") if c.strip()]
-    known = {"full_context", "chunk_rag", "opentology"}
+    known = {"full_context", "chunk_rag", "opentology", "combined"}
     unknown = set(requested) - known
     if unknown:
         raise typer.BadParameter(f"알 수 없는 컬럼: {sorted(unknown)}")
@@ -330,6 +347,57 @@ def run(
                     payload = orun.ask(question=q, run_index=r)
                     write_response_json(out_path, payload)
                     typer.echo(f"[opentology] {q.id} run{r} done")
+
+    if "combined" in requested:
+        # Combined: chunk RAG retrieval + Opentology subgraph 를 단일 LLM 호출에 합침.
+        # 본 측정에서 chunk(96.7%) 와 graph(96.7%) 가 *서로 다른* 1 문항을 틀린 진단
+        # 에서 도출. 라우터 없이 LLM 이 두 신호를 내부 비교하는 보완재 가설 검증용.
+        _pause_between_columns("combined")
+        anchor_llm = None
+        if anchor_llm_model:
+            anchor_id = (
+                anchor_llm_model.split("/", 1)[1]
+                if "/" in anchor_llm_model
+                else anchor_llm_model
+            )
+            anchor_llm = OpenAIProvider(
+                model_id=anchor_id, api_key=cfg.openai_api_key
+            )
+        embedder = OpenAIEmbeddingProvider(
+            model_id=cfg.embedding_model_id, api_key=cfg.openai_api_key
+        )
+        with OpentologyClient(base_url=_resolve_api_url(api_url)) as client:
+            comb = CombinedRunner(
+                loader=loader,
+                client=client,
+                answer_llm=llm,
+                embedder=embedder,
+                anchor_llm=anchor_llm,
+            )
+            comb.setup()
+            if setup_corpus_path is not None:
+                # opentology 가 같은 run 안에서 이미 ingest 했다면 중복 호출하지 않음.
+                # 사용자가 *combined 만* 요청한 경우에만 여기서 ingest.
+                if "opentology" not in requested:
+                    # combined 는 OpentologyRunner.setup_corpus 와 같은 절차 필요.
+                    OpentologyRunner(
+                        client=client, answer_llm=llm, anchor_llm=anchor_llm
+                    ).setup_corpus(directory_path=str(setup_corpus_path.resolve()))
+            elif not skip_setup and "opentology" not in requested:
+                typer.echo(
+                    "[combined] setup_corpus 와 skip-setup 둘 다 미지정 — 빈 그래프 가정으로 진행"
+                )
+            for q in qset.questions:
+                for r in range(runs):
+                    out_path = dirs.combined / f"{q.id}_run{r}.json"
+                    if _should_skip(out_path):
+                        typer.echo(f"[combined] {q.id} run{r} skip (existing)")
+                        continue
+                    payload = comb.ask(
+                        question=q, run_index=r, questions_count=len(qset.questions)
+                    )
+                    write_response_json(out_path, payload)
+                    typer.echo(f"[combined] {q.id} run{r} done")
 
     typer.echo(f"run complete: {dirs.root}")
 
