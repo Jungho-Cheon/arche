@@ -1,0 +1,171 @@
+{
+  "column": "opentology_aug",
+  "question_id": "Q03",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 483,
+    "output_tokens": 47,
+    "latency_ms": 1022,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"revenue\",\"aliases\":[\"revenue\"]},{\"canonical\":\"FY22\",\"aliases\":[\"FY22\",\"fiscal year 2022\"]},{\"canonical\":\"AMD\",\"aliases\":[\"AMD\",\"Advanced Micro Devices\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "revenue",
+          "aliases": [
+            "revenue"
+          ]
+        },
+        {
+          "canonical": "FY22",
+          "aliases": [
+            "FY22",
+            "fiscal year 2022"
+          ]
+        },
+        {
+          "canonical": "AMD",
+          "aliases": [
+            "AMD",
+            "Advanced Micro Devices"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 797,
+      "input": {
+        "keywords": [
+          "revenue",
+          "FY22",
+          "fiscal year 2022",
+          "AMD",
+          "Advanced Micro Devices"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 183,
+      "input": {
+        "entry_ids": [
+          "01KVJPRYYTMX7W7TP1PVETPD8W",
+          "01KVJPSFAWTGRSSHKKV5RX3RFN",
+          "01KVJPWPGWKG0X8K9G0KC8DF4M",
+          "01KVJPXHQQW9E6YMWDFNNRT8CP",
+          "01KVJPT38796WETFDMF9HXQNJ8",
+          "01KVJPXH45EDESKF36KH20XM11",
+          "01KVJPSEJRVC47JQ3YXXC83YTE",
+          "01KVJPSFY2YY4P91XA4STTG0SX",
+          "01KVJPSGQR5QYY6BYFTKD6G3PG",
+          "01KVJPWNS5DR9JNVDPCT07PZHN"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 68,
+        "edges": 67,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVJPRYYTMX7W7TP1PVETPD8W",
+    "01KVJPSFAWTGRSSHKKV5RX3RFN",
+    "01KVJPWPGWKG0X8K9G0KC8DF4M",
+    "01KVJPXHQQW9E6YMWDFNNRT8CP",
+    "01KVJPT38796WETFDMF9HXQNJ8",
+    "01KVJPXH45EDESKF36KH20XM11",
+    "01KVJPSEJRVC47JQ3YXXC83YTE",
+    "01KVJPSFY2YY4P91XA4STTG0SX",
+    "01KVJPSGQR5QYY6BYFTKD6G3PG",
+    "01KVJPWNS5DR9JNVDPCT07PZHN"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 29605,
+  "graph_selected_sources": [
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMERICANEXPRESS_2022_10K.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMD_2022_10K.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/BOEING_2022_10K.md"
+  ],
+  "used_fallback": null,
+  "retrieved_chunks": [
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 47,
+      "score": 0.6829650203916264
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 46,
+      "score": 0.6661280892735956
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 14,
+      "score": 0.6291907312394861
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 13,
+      "score": 0.6285062534867079
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 48,
+      "score": 0.6252878155288898
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 2,
+      "score": 0.6208889244032165
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 4,
+      "score": 0.6190753251493533
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 3,
+      "score": 0.6168821732522566
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 16645,
+    "output_tokens": 189,
+    "latency_ms": 2088,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"a\",\"reasoning\":\"(A) 발췌에서 FY22(2022년) AMD의 매출 변화(증가)는 '64% 증가한 데이터 센터 부문(주로 EPYC 서버 프로세서 판매 증가), 21% 증가한 게이밍 부문(주로 세미커스텀 제품 판매 증가), 그리고 Xilinx 임베디드 제품 판매 포함에 따른 임베디드 부문 매출의 상당한 증가'에 의해 주도되었다고 명확히 서술되어 있습니다. (B) 그래프는 구조적으로 Xilinx 인수, EPYC, 세미커스텀, 임베디드 등 각 사업부와 제품군의 관계를 보여주지만, 정량적 매출 변화의 직접적 원인에 대한 설명은 (A)가 결정적입니다. 따라서 보기 a)가 정답입니다.\"}",
+    "parsed": {
+      "choice": "a",
+      "reasoning": "(A) 발췌에서 FY22(2022년) AMD의 매출 변화(증가)는 '64% 증가한 데이터 센터 부문(주로 EPYC 서버 프로세서 판매 증가), 21% 증가한 게이밍 부문(주로 세미커스텀 제품 판매 증가), 그리고 Xilinx 임베디드 제품 판매 포함에 따른 임베디드 부문 매출의 상당한 증가'에 의해 주도되었다고 명확히 서술되어 있습니다. (B) 그래프는 구조적으로 Xilinx 인수, EPYC, 세미커스텀, 임베디드 등 각 사업부와 제품군의 관계를 보여주지만, 정량적 매출 변화의 직접적 원인에 대한 설명은 (A)가 결정적입니다. 따라서 보기 a)가 정답입니다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 20383,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 12,
+    "chunk_setup_amortized": 20331,
+    "chunk_setup_total": 426971,
+    "graph_keyword_estimated": 40,
+    "questions_count_for_amortization": 21
+  },
+  "total_input_tokens": 17128,
+  "total_output_tokens": 236,
+  "total_tokens": 37747,
+  "total_latency_ms": 4090
+}

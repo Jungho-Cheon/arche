@@ -1,0 +1,177 @@
+{
+  "column": "opentology_aug",
+  "question_id": "Q21",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 488,
+    "output_tokens": 71,
+    "latency_ms": 976,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"Boeing\",\"aliases\":[\"Boeing\"]},{\"canonical\":\"effective tax rate\",\"aliases\":[\"effective tax rate\"]},{\"canonical\":\"FY2022\",\"aliases\":[\"FY2022\",\"fiscal year 2022\"]},{\"canonical\":\"FY2021\",\"aliases\":[\"FY2021\",\"fiscal year 2021\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "Boeing",
+          "aliases": [
+            "Boeing"
+          ]
+        },
+        {
+          "canonical": "effective tax rate",
+          "aliases": [
+            "effective tax rate"
+          ]
+        },
+        {
+          "canonical": "FY2022",
+          "aliases": [
+            "FY2022",
+            "fiscal year 2022"
+          ]
+        },
+        {
+          "canonical": "FY2021",
+          "aliases": [
+            "FY2021",
+            "fiscal year 2021"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 662,
+      "input": {
+        "keywords": [
+          "Boeing",
+          "effective tax rate",
+          "FY2022",
+          "fiscal year 2022",
+          "FY2021",
+          "fiscal year 2021"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 56,
+      "input": {
+        "entry_ids": [
+          "01KVJPJ2AX7MMJCF4Y5C5T40JD",
+          "01KVJPFWQRRNPPDHN03GZQHSYR",
+          "01KVJPEZE4FY7D66ZQ3GPX7TAY",
+          "01KVJPFXD4TMS9J4YQ0YWSMFTH",
+          "01KVJPF2ESPEHR7EMZVP7SM8HV",
+          "01KVJPJ317B73ATYE51QCT5XWS",
+          "01KVJPG1DTG1R94ZECW2W2QSZ3",
+          "01KVJPJWQPJVFYJS70MG3BH9ZN",
+          "01KVJPHS19NSJE6N9EDC3QTY5M",
+          "01KVJPEA4K9DRP9FZCAWZ8C42G"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 22,
+        "edges": 15,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVJPJ2AX7MMJCF4Y5C5T40JD",
+    "01KVJPFWQRRNPPDHN03GZQHSYR",
+    "01KVJPEZE4FY7D66ZQ3GPX7TAY",
+    "01KVJPFXD4TMS9J4YQ0YWSMFTH",
+    "01KVJPF2ESPEHR7EMZVP7SM8HV",
+    "01KVJPJ317B73ATYE51QCT5XWS",
+    "01KVJPG1DTG1R94ZECW2W2QSZ3",
+    "01KVJPJWQPJVFYJS70MG3BH9ZN",
+    "01KVJPHS19NSJE6N9EDC3QTY5M",
+    "01KVJPEA4K9DRP9FZCAWZ8C42G"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 9520,
+  "graph_selected_sources": [
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/BOEING_2022_10K.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMERICANEXPRESS_2022_10K.md"
+  ],
+  "used_fallback": null,
+  "retrieved_chunks": [
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 59,
+      "score": 0.6106279328841301
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 55,
+      "score": 0.6088133707972482
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 26,
+      "score": 0.5972130042891924
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 27,
+      "score": 0.5971158354332934
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 24,
+      "score": 0.5920553583356803
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 54,
+      "score": 0.5811962157422487
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 56,
+      "score": 0.5811313339397806
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 43,
+      "score": 0.5767675785379341
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 9575,
+    "output_tokens": 168,
+    "latency_ms": 2771,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"e\",\"reasoning\":\"(A) 발췌에서 Boeing의 effective income tax rate에 대한 수치가 명확히 제시되어 있습니다: 'Effective income tax rate (0.6)% 14.8 % 17.5 %' (BOEING_2022_10K.md:24). 여기서 2022년은 (0.6)%, 2021년은 14.8%입니다. 그러나 보기의 수치(0.62%, -14.76% 등)와 일치하는 조합이 없습니다. (B) 그래프에는 세율 관련 구조적 정보가 없으므로, (A)의 수치와 보기가 일치하지 않아 정답을 고를 수 없습니다. 따라서 정보 부족(e)이 정답입니다.\"}",
+    "parsed": {
+      "choice": "e",
+      "reasoning": "(A) 발췌에서 Boeing의 effective income tax rate에 대한 수치가 명확히 제시되어 있습니다: 'Effective income tax rate (0.6)% 14.8 % 17.5 %' (BOEING_2022_10K.md:24). 여기서 2022년은 (0.6)%, 2021년은 14.8%입니다. 그러나 보기의 수치(0.62%, -14.76% 등)와 일치하는 조합이 없습니다. (B) 그래프에는 세율 관련 구조적 정보가 없으므로, (A)의 수치와 보기가 일치하지 않아 정답을 고를 수 없습니다. 따라서 정보 부족(e)이 정답입니다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 20396,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 17,
+    "chunk_setup_amortized": 20331,
+    "chunk_setup_total": 426971,
+    "graph_keyword_estimated": 48,
+    "questions_count_for_amortization": 21
+  },
+  "total_input_tokens": 10063,
+  "total_output_tokens": 239,
+  "total_tokens": 30698,
+  "total_latency_ms": 4465
+}

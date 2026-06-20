@@ -1,0 +1,166 @@
+{
+  "column": "opentology_aug",
+  "question_id": "Q11",
+  "run_index": 2,
+  "anchor_extraction": {
+    "input_tokens": 508,
+    "output_tokens": 40,
+    "latency_ms": 1022,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"gross margin\",\"aliases\":[\"gross margin\"]},{\"canonical\":\"FY2022\",\"aliases\":[\"FY2022\"]},{\"canonical\":\"American Express\",\"aliases\":[\"American Express\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "gross margin",
+          "aliases": [
+            "gross margin"
+          ]
+        },
+        {
+          "canonical": "FY2022",
+          "aliases": [
+            "FY2022"
+          ]
+        },
+        {
+          "canonical": "American Express",
+          "aliases": [
+            "American Express"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 550,
+      "input": {
+        "keywords": [
+          "gross margin",
+          "FY2022",
+          "American Express"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 143,
+      "input": {
+        "entry_ids": [
+          "01KVJN9T239NKXWRDNGMR1881M",
+          "01KVJN9VC4Y9EJ0VH8X8CEY0WE",
+          "01KVJNCXBJ02MF6J4KHDY15ZP5",
+          "01KVJNCWHJ94JF8R2M2SP9MNKV",
+          "01KVJNCG3QWJ73RWHPHTGFV1Y9",
+          "01KVJNBCXTWVBSY5D90H8K1W44",
+          "01KVJNCGRQ44PR9KNYPXC9XXDP",
+          "01KVJN9TT33X03A9D6MKHNS90G",
+          "01KVJNBC6X6N102TW1PQF7SJED",
+          "01KVJNAHA5VHXRQREAA50X9Y9A"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 71,
+        "edges": 73,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVJN9T239NKXWRDNGMR1881M",
+    "01KVJN9VC4Y9EJ0VH8X8CEY0WE",
+    "01KVJNCXBJ02MF6J4KHDY15ZP5",
+    "01KVJNCWHJ94JF8R2M2SP9MNKV",
+    "01KVJNCG3QWJ73RWHPHTGFV1Y9",
+    "01KVJNBCXTWVBSY5D90H8K1W44",
+    "01KVJNCGRQ44PR9KNYPXC9XXDP",
+    "01KVJN9TT33X03A9D6MKHNS90G",
+    "01KVJNBC6X6N102TW1PQF7SJED",
+    "01KVJNAHA5VHXRQREAA50X9Y9A"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 34498,
+  "graph_selected_sources": [
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMERICANEXPRESS_2022_10K.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/BOEING_2022_10K.md"
+  ],
+  "used_fallback": null,
+  "retrieved_chunks": [
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 72,
+      "score": 0.6411804422410183
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 51,
+      "score": 0.6340845523621158
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 4,
+      "score": 0.6244227977447231
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 6,
+      "score": 0.6112518903617462
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 54,
+      "score": 0.601152621038656
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 49,
+      "score": 0.6008767162331446
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 53,
+      "score": 0.5990447760582688
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 5,
+      "score": 0.5951816651449555
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 16591,
+    "output_tokens": 210,
+    "latency_ms": 2304,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"a\",\"reasoning\":\"(A) 발췌에서 American Express의 실적 평가는 'gross margin(매출총이익률)'이 아니라, 네트워크 볼륨, 할인수익(discount revenue), 카드 수수료, 순이자수익, 서비스 수수료 등 다양한 금융업 특유의 지표로 이루어진다고 명확히 설명하고 있다. 예를 들어, 청크 2, 3, 5, 7 등에서 수익 구조와 비용 구조가 제조업/유통업과 달리 'cost of goods sold' 개념이 적용되지 않음을 반복적으로 언급한다. (B) 그래프에서도 American Express가 글로벌 결제 네트워크 및 금융서비스 회사임을 구조적으로 보여주며, gross margin이 핵심 지표가 아님을 뒷받침한다. 따라서 정답은 a)이며, 결정적 근거는 (A) 발췌의 설명이다.\"}",
+    "parsed": {
+      "choice": "a",
+      "reasoning": "(A) 발췌에서 American Express의 실적 평가는 'gross margin(매출총이익률)'이 아니라, 네트워크 볼륨, 할인수익(discount revenue), 카드 수수료, 순이자수익, 서비스 수수료 등 다양한 금융업 특유의 지표로 이루어진다고 명확히 설명하고 있다. 예를 들어, 청크 2, 3, 5, 7 등에서 수익 구조와 비용 구조가 제조업/유통업과 달리 'cost of goods sold' 개념이 적용되지 않음을 반복적으로 언급한다. (B) 그래프에서도 American Express가 글로벌 결제 네트워크 및 금융서비스 회사임을 구조적으로 보여주며, gross margin이 핵심 지표가 아님을 뒷받침한다. 따라서 정답은 a)이며, 결정적 근거는 (A) 발췌의 설명이다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 20392,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 37,
+    "chunk_setup_amortized": 20331,
+    "chunk_setup_total": 426971,
+    "graph_keyword_estimated": 24,
+    "questions_count_for_amortization": 21
+  },
+  "total_input_tokens": 17099,
+  "total_output_tokens": 250,
+  "total_tokens": 37741,
+  "total_latency_ms": 4019
+}

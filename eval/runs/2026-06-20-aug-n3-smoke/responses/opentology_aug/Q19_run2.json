@@ -1,0 +1,162 @@
+{
+  "column": "opentology_aug",
+  "question_id": "Q19",
+  "run_index": 2,
+  "anchor_extraction": {
+    "input_tokens": 480,
+    "output_tokens": 34,
+    "latency_ms": 1024,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"Boeing\",\"aliases\":[\"Boeing\"]},{\"canonical\":\"cyclicality\",\"aliases\":[\"cyclicality\",\"business cycle\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "Boeing",
+          "aliases": [
+            "Boeing"
+          ]
+        },
+        {
+          "canonical": "cyclicality",
+          "aliases": [
+            "cyclicality",
+            "business cycle"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 795,
+      "input": {
+        "keywords": [
+          "Boeing",
+          "cyclicality",
+          "business cycle"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 140,
+      "input": {
+        "entry_ids": [
+          "01KVJNECHMYXBQAYAJK66KYKCE",
+          "01KVJNF7WM59JPZQTN8SMK4TMN",
+          "01KVJNFYYV8JNG6MQM7E3ZKZDG",
+          "01KVJN9Y0HBN2BW8XSZSFWKG53",
+          "01KVJNEA3RPPR3V5S4PN4QDCAR",
+          "01KVJNG1ABR7F138R7AHRENYCR",
+          "01KVJNEQKPZGM125V9XQ4F3ZYN",
+          "01KVJN8MY5A4JS7NYNA4ZVB162",
+          "01KVJNF8GD6P8MQ3VX957WDSK2",
+          "01KVJNF93T4V8DP8NGGKDNRY10"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 53,
+        "edges": 50,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVJNECHMYXBQAYAJK66KYKCE",
+    "01KVJNF7WM59JPZQTN8SMK4TMN",
+    "01KVJNFYYV8JNG6MQM7E3ZKZDG",
+    "01KVJN9Y0HBN2BW8XSZSFWKG53",
+    "01KVJNEA3RPPR3V5S4PN4QDCAR",
+    "01KVJNG1ABR7F138R7AHRENYCR",
+    "01KVJNEQKPZGM125V9XQ4F3ZYN",
+    "01KVJN8MY5A4JS7NYNA4ZVB162",
+    "01KVJNF8GD6P8MQ3VX957WDSK2",
+    "01KVJNF93T4V8DP8NGGKDNRY10"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 23558,
+  "graph_selected_sources": [
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/BOEING_2022_10K.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMERICANEXPRESS_2022_10K.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMD_2022_10K.md"
+  ],
+  "used_fallback": null,
+  "retrieved_chunks": [
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 10,
+      "score": 0.6042984302771528
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 8,
+      "score": 0.6011174028907862
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 12,
+      "score": 0.5877800009724703
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 22,
+      "score": 0.5785555362135644
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 19,
+      "score": 0.560278444835389
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 60,
+      "score": 0.5579374211016418
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 4,
+      "score": 0.5577521175856426
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 29,
+      "score": 0.5572817017022773
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 14758,
+    "output_tokens": 174,
+    "latency_ms": 1889,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"c\",\"reasoning\":\"The decisive evidence comes from (A) the original excerpts, particularly from BOEING_2022_10K.md:8 and :22, which state that Boeing's Commercial Airplanes business is highly dependent on the health of the airline industry, which is itself cyclical and affected by factors such as travel demand, airline financial performance, and macroeconomic conditions. The text explicitly mentions that airline financial performance influences demand for new capacity and that the commercial jet aircraft market and airline industry are extremely competitive and affected by economic cycles. There is no support for the claim that only defense contracts are cyclical or that Boeing is generally non-cyclical. The domain graph (B) supports that Boeing is exposed to both commercial and defense markets, but the cyclicality is clearly tied to the commercial/airline side per (A).\"}",
+    "parsed": {
+      "choice": "c",
+      "reasoning": "The decisive evidence comes from (A) the original excerpts, particularly from BOEING_2022_10K.md:8 and :22, which state that Boeing's Commercial Airplanes business is highly dependent on the health of the airline industry, which is itself cyclical and affected by factors such as travel demand, airline financial performance, and macroeconomic conditions. The text explicitly mentions that airline financial performance influences demand for new capacity and that the commercial jet aircraft market and airline industry are extremely competitive and affected by economic cycles. There is no support for the claim that only defense contracts are cyclical or that Boeing is generally non-cyclical. The domain graph (B) supports that Boeing is exposed to both commercial and defense markets, but the cyclicality is clearly tied to the commercial/airline side per (A)."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 20364,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 9,
+    "chunk_setup_amortized": 20331,
+    "chunk_setup_total": 426971,
+    "graph_keyword_estimated": 24,
+    "questions_count_for_amortization": 21
+  },
+  "total_input_tokens": 15238,
+  "total_output_tokens": 208,
+  "total_tokens": 35810,
+  "total_latency_ms": 3848
+}

@@ -1,0 +1,172 @@
+{
+  "column": "opentology_aug",
+  "question_id": "Q16",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 485,
+    "output_tokens": 58,
+    "latency_ms": 1030,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"Boeing\",\"aliases\":[\"Boeing\"]},{\"canonical\":\"FY2022\",\"aliases\":[\"FY2022\",\"Fiscal Year 2022\"]},{\"canonical\":\"ongoing legal battles\",\"aliases\":[\"ongoing legal battles\",\"legal battles\",\"lawsuits\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "Boeing",
+          "aliases": [
+            "Boeing"
+          ]
+        },
+        {
+          "canonical": "FY2022",
+          "aliases": [
+            "FY2022",
+            "Fiscal Year 2022"
+          ]
+        },
+        {
+          "canonical": "ongoing legal battles",
+          "aliases": [
+            "ongoing legal battles",
+            "legal battles",
+            "lawsuits"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 1209,
+      "input": {
+        "keywords": [
+          "Boeing",
+          "FY2022",
+          "Fiscal Year 2022",
+          "ongoing legal battles",
+          "legal battles",
+          "lawsuits"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 58,
+      "input": {
+        "entry_ids": [
+          "01KVJPE83ZY1YV2783T25H734T",
+          "01KVJPJ2AX7MMJCF4Y5C5T40JD",
+          "01KVJPEF1BE260M3RX2F38HW1N",
+          "01KVJPJ317B73ATYE51QCT5XWS",
+          "01KVJPDVC97X4XX78ME41E2SFG",
+          "01KVJPEZE4FY7D66ZQ3GPX7TAY",
+          "01KVJPFWQRRNPPDHN03GZQHSYR",
+          "01KVJPF2ESPEHR7EMZVP7SM8HV",
+          "01KVJPFXD4TMS9J4YQ0YWSMFTH",
+          "01KVJPEW8GGTEWTMM3HKJ5C29Y"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 20,
+        "edges": 15,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVJPE83ZY1YV2783T25H734T",
+    "01KVJPJ2AX7MMJCF4Y5C5T40JD",
+    "01KVJPEF1BE260M3RX2F38HW1N",
+    "01KVJPJ317B73ATYE51QCT5XWS",
+    "01KVJPDVC97X4XX78ME41E2SFG",
+    "01KVJPEZE4FY7D66ZQ3GPX7TAY",
+    "01KVJPFWQRRNPPDHN03GZQHSYR",
+    "01KVJPF2ESPEHR7EMZVP7SM8HV",
+    "01KVJPFXD4TMS9J4YQ0YWSMFTH",
+    "01KVJPEW8GGTEWTMM3HKJ5C29Y"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 8773,
+  "graph_selected_sources": [
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMERICANEXPRESS_2022_10K.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/BOEING_2022_10K.md"
+  ],
+  "used_fallback": null,
+  "retrieved_chunks": [
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 19,
+      "score": 0.6312766021019975
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 29,
+      "score": 0.6251388359661816
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 108,
+      "score": 0.6231658993792882
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 22,
+      "score": 0.6230537620183458
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 6,
+      "score": 0.6222869103022793
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 10,
+      "score": 0.6220609470176182
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 43,
+      "score": 0.6158840663899419
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 4,
+      "score": 0.6092854797469128
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 9973,
+    "output_tokens": 135,
+    "latency_ms": 1546,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"a\",\"reasoning\":\"(A) 발췌의 청크 3에서 'Multiple legal actions have been filed against us as a result of the October 29, 2018 accident of Lion Air Flight 610 and the March 10, 2019 accident of Ethiopian Airlines Flight 302.'라는 명확한 진술이 있다. 이는 2018, 2019년 항공기 사고와 관련된 소송이 FY2022에도 계속되고 있음을 보여준다. (B) 그래프에는 법적 분쟁에 대한 구조적 정보가 없으므로, (A)가 결정적 근거이다.\"}",
+    "parsed": {
+      "choice": "a",
+      "reasoning": "(A) 발췌의 청크 3에서 'Multiple legal actions have been filed against us as a result of the October 29, 2018 accident of Lion Air Flight 610 and the March 10, 2019 accident of Ethiopian Airlines Flight 302.'라는 명확한 진술이 있다. 이는 2018, 2019년 항공기 사고와 관련된 소송이 FY2022에도 계속되고 있음을 보여준다. (B) 그래프에는 법적 분쟁에 대한 구조적 정보가 없으므로, (A)가 결정적 근거이다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 20393,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 14,
+    "chunk_setup_amortized": 20331,
+    "chunk_setup_total": 426971,
+    "graph_keyword_estimated": 48,
+    "questions_count_for_amortization": 21
+  },
+  "total_input_tokens": 10458,
+  "total_output_tokens": 193,
+  "total_tokens": 31044,
+  "total_latency_ms": 3843
+}
