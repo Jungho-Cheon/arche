@@ -1,0 +1,205 @@
+{
+  "column": "opentology_aug",
+  "question_id": "Q11",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 508,
+    "output_tokens": 40,
+    "latency_ms": 877,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"gross margin\",\"aliases\":[\"gross margin\"]},{\"canonical\":\"FY2022\",\"aliases\":[\"FY2022\"]},{\"canonical\":\"American Express\",\"aliases\":[\"American Express\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "gross margin",
+          "aliases": [
+            "gross margin"
+          ]
+        },
+        {
+          "canonical": "FY2022",
+          "aliases": [
+            "FY2022"
+          ]
+        },
+        {
+          "canonical": "American Express",
+          "aliases": [
+            "American Express"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 631,
+      "input": {
+        "keywords": [
+          "gross margin",
+          "FY2022",
+          "American Express"
+        ],
+        "limit": 20,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 20
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 195,
+      "input": {
+        "entry_ids": [
+          "01KVJT5CVABCZDRHBSEM3HE630",
+          "01KVJT5DCCDX6669DKZE47DC41",
+          "01KVJT4NF0NPK4ECBEVSS86D41",
+          "01KVJT595GHA3K4CG1901BR042",
+          "01KVJT4JYSPHEN9K3STPJJ4JXD",
+          "01KVJT5GYFB4D5ZSHM796R3SG7",
+          "01KVJT54KXB1D5VKF2FTPF622B",
+          "01KVJT3X5C89HWRQK8Y3RMP5GD",
+          "01KVJT3YEH04T5E9EF4ASTQYRJ",
+          "01KVJT5G5VSSVDYH2KY6P93QHX"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 80,
+        "edges": 79,
+        "truncated": true
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVJT5CVABCZDRHBSEM3HE630",
+    "01KVJT5DCCDX6669DKZE47DC41",
+    "01KVJT4NF0NPK4ECBEVSS86D41",
+    "01KVJT595GHA3K4CG1901BR042",
+    "01KVJT4JYSPHEN9K3STPJJ4JXD",
+    "01KVJT5GYFB4D5ZSHM796R3SG7",
+    "01KVJT54KXB1D5VKF2FTPF622B",
+    "01KVJT3X5C89HWRQK8Y3RMP5GD",
+    "01KVJT3YEH04T5E9EF4ASTQYRJ",
+    "01KVJT5G5VSSVDYH2KY6P93QHX"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 37434,
+  "graph_selected_sources": [
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMERICANEXPRESS_2022_10K.md"
+  ],
+  "used_fallback": null,
+  "retrieved_chunks": [
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 72,
+      "score": 0.6411804422410183
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 51,
+      "score": 0.6340549243979516
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 4,
+      "score": 0.6244227977447231
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 6,
+      "score": 0.6112518903617462
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 54,
+      "score": 0.6009619494455135
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 49,
+      "score": 0.6008387764086208
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 53,
+      "score": 0.5989776611273272
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 5,
+      "score": 0.5951816651449555
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 115,
+      "score": 0.5878848783451778
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 3,
+      "score": 0.5799374383440777
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 165,
+      "score": 0.5782668768242356
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 32,
+      "score": 0.5752602451097977
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 94,
+      "score": 0.5682420838690689
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 114,
+      "score": 0.5669607603862225
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 98,
+      "score": 0.5650725451398039
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 95,
+      "score": 0.5644070388390127
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 23173,
+    "output_tokens": 171,
+    "latency_ms": 2110,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"a\",\"reasoning\":\"(A) The extracted passages from the 10-K repeatedly emphasize that American Express is a financial services company whose performance is measured by metrics such as net interest income, discount revenue, net card fees, and provisions for credit losses, rather than gross margin. There is no mention of 'gross margin' as a relevant or reported metric for the company. Instead, the report discusses revenue lines, expense categories, and profitability in terms of net income and capital ratios. (B) The domain graph also classifies American Express as a globally integrated payments company, not a manufacturer or traditional retailer, and does not indicate any relationship to gross margin as a key metric. Therefore, both (A) and (B) support that gross margin is not a useful metric for American Express, making 'a' the correct answer.\"}",
+    "parsed": {
+      "choice": "a",
+      "reasoning": "(A) The extracted passages from the 10-K repeatedly emphasize that American Express is a financial services company whose performance is measured by metrics such as net interest income, discount revenue, net card fees, and provisions for credit losses, rather than gross margin. There is no mention of 'gross margin' as a relevant or reported metric for the company. Instead, the report discusses revenue lines, expense categories, and profitability in terms of net income and capital ratios. (B) The domain graph also classifies American Express as a globally integrated payments company, not a manufacturer or traditional retailer, and does not indicate any relationship to gross margin as a key metric. Therefore, both (A) and (B) support that gross margin is not a useful metric for American Express, making 'a' the correct answer."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 20392,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 37,
+    "chunk_setup_amortized": 20331,
+    "chunk_setup_total": 426971,
+    "graph_keyword_estimated": 24,
+    "questions_count_for_amortization": 21
+  },
+  "total_input_tokens": 23681,
+  "total_output_tokens": 211,
+  "total_tokens": 44284,
+  "total_latency_ms": 3813
+}

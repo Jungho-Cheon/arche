@@ -1,0 +1,209 @@
+{
+  "column": "opentology_aug",
+  "question_id": "Q06",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 494,
+    "output_tokens": 78,
+    "latency_ms": 1093,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"FY21\",\"aliases\":[\"FY21\",\"Fiscal Year 2021\"]},{\"canonical\":\"FY22\",\"aliases\":[\"FY22\",\"Fiscal Year 2022\"]},{\"canonical\":\"Embedded\",\"aliases\":[\"Embedded\"]},{\"canonical\":\"AMD reporting segment\",\"aliases\":[\"AMD reporting segment\",\"AMD segment\"]},{\"canonical\":\"sales proportion\",\"aliases\":[\"sales proportion\",\"sales share\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "FY21",
+          "aliases": [
+            "FY21",
+            "Fiscal Year 2021"
+          ]
+        },
+        {
+          "canonical": "FY22",
+          "aliases": [
+            "FY22",
+            "Fiscal Year 2022"
+          ]
+        },
+        {
+          "canonical": "Embedded",
+          "aliases": [
+            "Embedded"
+          ]
+        },
+        {
+          "canonical": "AMD reporting segment",
+          "aliases": [
+            "AMD reporting segment",
+            "AMD segment"
+          ]
+        },
+        {
+          "canonical": "sales proportion",
+          "aliases": [
+            "sales proportion",
+            "sales share"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 1145,
+      "input": {
+        "keywords": [
+          "FY21",
+          "Fiscal Year 2021",
+          "FY22",
+          "Fiscal Year 2022",
+          "Embedded",
+          "AMD reporting segment",
+          "AMD segment",
+          "sales proportion",
+          "sales share"
+        ],
+        "limit": 20,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 20
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 109,
+      "input": {
+        "entry_ids": [
+          "01KVJT7FVBYXA51S69YA5RTX3J",
+          "01KVJT2KYN3C4SP2CQ2CYDCMY9",
+          "01KVJT2JJM0XXGZJMVNYS676C2",
+          "01KVJT4NF0NPK4ECBEVSS86D41",
+          "01KVJT7F2ZYC3NVWPG0YRYT604",
+          "01KVJT21KWRTJ6E2XQ5XP6R27V",
+          "01KVJTARR72X00NCK0MVFETHTD",
+          "01KVJT9N6B3CXMJ2PDR22GSEW1",
+          "01KVJT2K1QHE650TG55AX3YWQ3",
+          "01KVJT1HTEY8JTJD02BDCB1T4R"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 56,
+        "edges": 52,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVJT7FVBYXA51S69YA5RTX3J",
+    "01KVJT2KYN3C4SP2CQ2CYDCMY9",
+    "01KVJT2JJM0XXGZJMVNYS676C2",
+    "01KVJT4NF0NPK4ECBEVSS86D41",
+    "01KVJT7F2ZYC3NVWPG0YRYT604",
+    "01KVJT21KWRTJ6E2XQ5XP6R27V",
+    "01KVJTARR72X00NCK0MVFETHTD",
+    "01KVJT9N6B3CXMJ2PDR22GSEW1",
+    "01KVJT2K1QHE650TG55AX3YWQ3",
+    "01KVJT1HTEY8JTJD02BDCB1T4R"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 24388,
+  "graph_selected_sources": [
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMD_2022_10K.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMERICANEXPRESS_2022_10K.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/BOEING_2022_10K.md"
+  ],
+  "used_fallback": null,
+  "retrieved_chunks": [
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 72,
+      "score": 0.6307079977083806
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 4,
+      "score": 0.6300717589531374
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 54,
+      "score": 0.6132433210307124
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 46,
+      "score": 0.6116610813065511
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 47,
+      "score": 0.6081147772248272
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 55,
+      "score": 0.6015386448574617
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 8,
+      "score": 0.5740504000315195
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 48,
+      "score": 0.5714670611197188
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 73,
+      "score": 0.5678235475559459
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 2,
+      "score": 0.5596752559577178
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 13,
+      "score": 0.5575753225757221
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 64,
+      "score": 0.5557655687055054
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 17797,
+    "output_tokens": 223,
+    "latency_ms": 1979,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"c\",\"reasoning\":\"(A) provides a table of net revenue by segment for 2022 and 2021: Data Center ($6,043M in 2022 vs $3,694M in 2021), Client ($6,201M vs $6,887M), Gaming ($6,805M vs $5,607M), Embedded ($4,552M vs $246M). Excluding Embedded, the proportional increase is calculated as (2022-2021)/2021: Data Center: (6,043-3,694)/3,694 ≈ 0.636 (63.6%), Gaming: (6,805-5,607)/5,607 ≈ 0.214 (21.4%), Client: (6,201-6,887)/6,887 ≈ -0.1 (decrease). Thus, Data Center had the largest proportional increase, excluding Embedded. (B) confirms the segment structure but does not provide quantitative changes. Therefore, (A) is decisive and the answer is c.\"}",
+    "parsed": {
+      "choice": "c",
+      "reasoning": "(A) provides a table of net revenue by segment for 2022 and 2021: Data Center ($6,043M in 2022 vs $3,694M in 2021), Client ($6,201M vs $6,887M), Gaming ($6,805M vs $5,607M), Embedded ($4,552M vs $246M). Excluding Embedded, the proportional increase is calculated as (2022-2021)/2021: Data Center: (6,043-3,694)/3,694 ≈ 0.636 (63.6%), Gaming: (6,805-5,607)/5,607 ≈ 0.214 (21.4%), Client: (6,201-6,887)/6,887 ≈ -0.1 (decrease). Thus, Data Center had the largest proportional increase, excluding Embedded. (B) confirms the segment structure but does not provide quantitative changes. Therefore, (A) is decisive and the answer is c."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 20426,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 23,
+    "chunk_setup_amortized": 20331,
+    "chunk_setup_total": 426971,
+    "graph_keyword_estimated": 72,
+    "questions_count_for_amortization": 21
+  },
+  "total_input_tokens": 18291,
+  "total_output_tokens": 301,
+  "total_tokens": 39018,
+  "total_latency_ms": 4326
+}

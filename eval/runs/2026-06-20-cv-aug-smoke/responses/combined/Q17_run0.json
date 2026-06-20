@@ -1,0 +1,170 @@
+{
+  "column": "combined",
+  "question_id": "Q17",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 510,
+    "output_tokens": 74,
+    "latency_ms": 999,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"BNPL\",\"aliases\":[\"BNPL\",\"후불결제\"]},{\"canonical\":\"디지털콘텐츠 카테고리\",\"aliases\":[\"디지털콘텐츠 카테고리\"]},{\"canonical\":\"캠페인\",\"aliases\":[\"캠페인\"]},{\"canonical\":\"결제 수단\",\"aliases\":[\"결제 수단\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "BNPL",
+          "aliases": [
+            "BNPL",
+            "후불결제"
+          ]
+        },
+        {
+          "canonical": "디지털콘텐츠 카테고리",
+          "aliases": [
+            "디지털콘텐츠 카테고리"
+          ]
+        },
+        {
+          "canonical": "캠페인",
+          "aliases": [
+            "캠페인"
+          ]
+        },
+        {
+          "canonical": "결제 수단",
+          "aliases": [
+            "결제 수단"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 1090,
+      "input": {
+        "keywords": [
+          "BNPL",
+          "후불결제",
+          "디지털콘텐츠 카테고리",
+          "캠페인",
+          "결제 수단"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 72,
+      "input": {
+        "entry_ids": [
+          "01KVJQSHJ0HY169DA0QSY3EZVT",
+          "01KVJR3YBSF0Q5JYBHS6798XNC",
+          "01KVJQK8VKRBB7MFG144CMZP8R",
+          "01KVJRCDEDNT8DXXFG2FDJKM3D",
+          "01KVJQQ2HAXWKD71WMYCXT0KF1",
+          "01KVJR47P4QBMFF7HKK8ZD00JC",
+          "01KVJR16T5VQ6RPYSYZ8EWPA08",
+          "01KVJQSQY6HPH0SV170VCSV7H6",
+          "01KVJQYMGHT3566ZAXAYXQQB4Z",
+          "01KVJQRGAZFGAWJP7EQR1DJYG9"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 27,
+        "edges": 22,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVJQSHJ0HY169DA0QSY3EZVT",
+    "01KVJR3YBSF0Q5JYBHS6798XNC",
+    "01KVJQK8VKRBB7MFG144CMZP8R",
+    "01KVJRCDEDNT8DXXFG2FDJKM3D",
+    "01KVJQQ2HAXWKD71WMYCXT0KF1",
+    "01KVJR47P4QBMFF7HKK8ZD00JC",
+    "01KVJR16T5VQ6RPYSYZ8EWPA08",
+    "01KVJQSQY6HPH0SV170VCSV7H6",
+    "01KVJQYMGHT3566ZAXAYXQQB4Z",
+    "01KVJQRGAZFGAWJP7EQR1DJYG9"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 17363,
+  "retrieved_chunks": [
+    {
+      "source_path": "marketing/campaign-playbook.md",
+      "chunk_index": 8,
+      "score": 0.650008097378108
+    },
+    {
+      "source_path": "hq-pm/policy-matrix.md",
+      "chunk_index": 5,
+      "score": 0.6113144438727648
+    },
+    {
+      "source_path": "hq-pm/policy-matrix.md",
+      "chunk_index": 6,
+      "score": 0.596991102356143
+    },
+    {
+      "source_path": "hq-pm/quarterly-policy-brief.pdf",
+      "chunk_index": 2,
+      "score": 0.5647862814048011
+    },
+    {
+      "source_path": "marketing/campaign-playbook.md",
+      "chunk_index": 7,
+      "score": 0.5597942372990925
+    },
+    {
+      "source_path": "legal-risk/kyc-age-verification-memo.pdf",
+      "chunk_index": 2,
+      "score": 0.5427011744488073
+    },
+    {
+      "source_path": "global-pm/country-policy-matrix.md",
+      "chunk_index": 4,
+      "score": 0.5339259138945895
+    },
+    {
+      "source_path": "hq-pm/quarterly-policy-brief.pdf",
+      "chunk_index": 1,
+      "score": 0.529542015332794
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 10789,
+    "output_tokens": 203,
+    "latency_ms": 2678,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"a\",\"reasoning\":\"(A) 검색된 문서 발췌에서 여러 곳(특히 marketing/campaign-playbook.md, hq-pm/policy-matrix.md, hq-pm/quarterly-policy-brief.pdf, global-pm/country-policy-matrix.md 등)에서 'BNPL 캠페인에서 디지털콘텐츠 카테고리를 자동 제외해야 하며, 이 누락 시 캠페인 발행이 반려된다'는 점을 명확히 규정하고 있다. (B) 도메인 그래프에서도 'BNPL --자동 제외한다--> 디지털콘텐츠 카테고리', '디지털콘텐츠 --결합할 수 없다--> BNPL' 등 명시적 관계가 다수 존재한다. 두 출처 모두 일치하며, 가장 구체적이고 명확한 근거가 (A)와 (B) 모두에서 확인된다. 따라서 a)가 정답이다.\"}",
+    "parsed": {
+      "choice": "a",
+      "reasoning": "(A) 검색된 문서 발췌에서 여러 곳(특히 marketing/campaign-playbook.md, hq-pm/policy-matrix.md, hq-pm/quarterly-policy-brief.pdf, global-pm/country-policy-matrix.md 등)에서 'BNPL 캠페인에서 디지털콘텐츠 카테고리를 자동 제외해야 하며, 이 누락 시 캠페인 발행이 반려된다'는 점을 명확히 규정하고 있다. (B) 도메인 그래프에서도 'BNPL --자동 제외한다--> 디지털콘텐츠 카테고리', '디지털콘텐츠 --결합할 수 없다--> BNPL' 등 명시적 관계가 다수 존재한다. 두 출처 모두 일치하며, 가장 구체적이고 명확한 근거가 (A)와 (B) 모두에서 확인된다. 따라서 a)가 정답이다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 3731,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 73,
+    "chunk_setup_amortized": 3618,
+    "chunk_setup_total": 108550,
+    "graph_keyword_estimated": 40,
+    "questions_count_for_amortization": 30
+  },
+  "total_input_tokens": 11299,
+  "total_output_tokens": 277,
+  "total_tokens": 15307,
+  "total_latency_ms": 4839
+}

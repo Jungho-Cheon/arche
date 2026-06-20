@@ -1,0 +1,65 @@
+{
+  "column": "chunk_rag",
+  "question_id": "Q27",
+  "run_index": 0,
+  "input_tokens": 4561,
+  "output_tokens": 174,
+  "embedding_tokens": 3675,
+  "embedding_tokens_breakdown": {
+    "question_embedding": 57,
+    "setup_amortized": 3618,
+    "setup_total": 108550,
+    "questions_count_for_amortization": 30
+  },
+  "total_tokens": 8410,
+  "latency_ms": 2308,
+  "model": "gpt-4.1",
+  "retrieved_chunks": [
+    {
+      "source_path": "seller-ops/settlement-faq.md",
+      "chunk_index": 9,
+      "score": 0.39498461673034607
+    },
+    {
+      "source_path": "cs-logistics/cold-chain-sop.pdf",
+      "chunk_index": 2,
+      "score": 0.3797704700131107
+    },
+    {
+      "source_path": "cs-logistics/cold-chain-sop.pdf",
+      "chunk_index": 1,
+      "score": 0.3775173590794727
+    },
+    {
+      "source_path": "cs-logistics/cold-chain-sop.pdf",
+      "chunk_index": 3,
+      "score": 0.37175221982355017
+    },
+    {
+      "source_path": "seller-ops/settlement-faq.md",
+      "chunk_index": 8,
+      "score": 0.35722841851496556
+    },
+    {
+      "source_path": "seller-ops/settlement-faq.md",
+      "chunk_index": 3,
+      "score": 0.3514538682778699
+    },
+    {
+      "source_path": "seller-ops/settlement-faq.md",
+      "chunk_index": 10,
+      "score": 0.35111340532357604
+    },
+    {
+      "source_path": "hq-pm/_GLOSSARY.md",
+      "chunk_index": 0,
+      "score": 0.3427436077877803
+    }
+  ],
+  "raw_response": "{\"choice\":\"a\",\"reasoning\":\"청크 8의 용어집에 따르면 '다이렉트 소싱'은 1P(직매입)와 동일하다. 청크 2, 3, 6 등에서 1P(직매입) 셀러의 콜드체인 사고 손실은 '본사 손실'로 명확히 규정되어 있다. 예를 들어, 청크 6의 표와 설명에서 사입(직매입)은 회사가 재고 소유권을 가지므로 사고 손실도 본사가 부담한다고 되어 있다. 따라서 정답은 a) 본사 손실. 다이렉트 소싱은 1P(직매입)이고, 1P 콜드체인 사고는 본사가 흡수한다.\"}",
+  "parsed": {
+    "choice": "a",
+    "reasoning": "청크 8의 용어집에 따르면 '다이렉트 소싱'은 1P(직매입)와 동일하다. 청크 2, 3, 6 등에서 1P(직매입) 셀러의 콜드체인 사고 손실은 '본사 손실'로 명확히 규정되어 있다. 예를 들어, 청크 6의 표와 설명에서 사입(직매입)은 회사가 재고 소유권을 가지므로 사고 손실도 본사가 부담한다고 되어 있다. 따라서 정답은 a) 본사 손실. 다이렉트 소싱은 1P(직매입)이고, 1P 콜드체인 사고는 본사가 흡수한다."
+  },
+  "parse_error": null
+}

@@ -1,0 +1,162 @@
+{
+  "column": "opentology_aug",
+  "question_id": "Q19",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 480,
+    "output_tokens": 34,
+    "latency_ms": 816,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"Boeing\",\"aliases\":[\"Boeing\"]},{\"canonical\":\"cyclicality\",\"aliases\":[\"cyclicality\",\"business cycle\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "Boeing",
+          "aliases": [
+            "Boeing"
+          ]
+        },
+        {
+          "canonical": "cyclicality",
+          "aliases": [
+            "cyclicality",
+            "business cycle"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 692,
+      "input": {
+        "keywords": [
+          "Boeing",
+          "cyclicality",
+          "business cycle"
+        ],
+        "limit": 20,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 20
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 157,
+      "input": {
+        "entry_ids": [
+          "01KVJSENMYQYT8ADFNEEKW1ZSZ",
+          "01KVJSEJR4304FBD8WF8QD87XS",
+          "01KVJS9XMXRBXVFS6EGH198CFC",
+          "01KVJSF7DTPGTPAB23V7FNWH6Z",
+          "01KVJSFJYE84Q83XH6R3PX8W28",
+          "01KVJSARCAJFN78C2A9BJWSSX9",
+          "01KVJSACYG5E5G7H61DTYGBWQP",
+          "01KVJSFGYD31SFY15VW1WDHCVD",
+          "01KVJSGA81N9X8JC46F2XFJNRZ",
+          "01KVJSGAYJC3R75P4J2NPF9RVC"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 60,
+        "edges": 58,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVJSENMYQYT8ADFNEEKW1ZSZ",
+    "01KVJSEJR4304FBD8WF8QD87XS",
+    "01KVJS9XMXRBXVFS6EGH198CFC",
+    "01KVJSF7DTPGTPAB23V7FNWH6Z",
+    "01KVJSFJYE84Q83XH6R3PX8W28",
+    "01KVJSARCAJFN78C2A9BJWSSX9",
+    "01KVJSACYG5E5G7H61DTYGBWQP",
+    "01KVJSFGYD31SFY15VW1WDHCVD",
+    "01KVJSGA81N9X8JC46F2XFJNRZ",
+    "01KVJSGAYJC3R75P4J2NPF9RVC"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 26254,
+  "graph_selected_sources": [
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/BOEING_2022_10K.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMERICANEXPRESS_2022_10K.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMD_2022_10K.md"
+  ],
+  "used_fallback": null,
+  "retrieved_chunks": [
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 10,
+      "score": 0.6042984302771528
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 8,
+      "score": 0.6011174028907862
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 12,
+      "score": 0.5877800009724703
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 22,
+      "score": 0.5785350198939018
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 19,
+      "score": 0.560278444835389
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 60,
+      "score": 0.5579374211016418
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 4,
+      "score": 0.5577521175856426
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 29,
+      "score": 0.5571868525921554
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 15675,
+    "output_tokens": 227,
+    "latency_ms": 2801,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"c\",\"reasoning\":\"(A) 발췌에서 Boeing의 사업이 항공사 산업의 경기 변동(cyclicality)에 노출되어 있음을 명확히 언급하고 있다. 예를 들어, 'Our Commercial Airplanes business depends on our ability to maintain a healthy production system...' 및 'Airline financial performance, which influences demand for new capacity, has been adversely impacted by the COVID-19 pandemic...' 등에서 항공사 산업의 수요 변동이 Boeing의 실적에 영향을 미친다고 설명한다. 또한, 'the commercial jet aircraft market and the airline industry remain extremely competitive' 등도 경기 변동성을 시사한다. (B) 그래프는 구조적으로 Boeing이 상업용 항공기(Commercial Airplanes) 부문을 보유하고 있음을 보여주지만, cyclicality에 대한 직접적 언급은 없다. 따라서 (A) 발췌가 결정적 근거이며, 정답은 c) Yes, Boeing's business is subject to cyclicality because it is exposed to the cyclical airline industry.\"}",
+    "parsed": {
+      "choice": "c",
+      "reasoning": "(A) 발췌에서 Boeing의 사업이 항공사 산업의 경기 변동(cyclicality)에 노출되어 있음을 명확히 언급하고 있다. 예를 들어, 'Our Commercial Airplanes business depends on our ability to maintain a healthy production system...' 및 'Airline financial performance, which influences demand for new capacity, has been adversely impacted by the COVID-19 pandemic...' 등에서 항공사 산업의 수요 변동이 Boeing의 실적에 영향을 미친다고 설명한다. 또한, 'the commercial jet aircraft market and the airline industry remain extremely competitive' 등도 경기 변동성을 시사한다. (B) 그래프는 구조적으로 Boeing이 상업용 항공기(Commercial Airplanes) 부문을 보유하고 있음을 보여주지만, cyclicality에 대한 직접적 언급은 없다. 따라서 (A) 발췌가 결정적 근거이며, 정답은 c) Yes, Boeing's business is subject to cyclicality because it is exposed to the cyclical airline industry."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 20364,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 9,
+    "chunk_setup_amortized": 20331,
+    "chunk_setup_total": 426971,
+    "graph_keyword_estimated": 24,
+    "questions_count_for_amortization": 21
+  },
+  "total_input_tokens": 16155,
+  "total_output_tokens": 261,
+  "total_tokens": 36780,
+  "total_latency_ms": 4466
+}

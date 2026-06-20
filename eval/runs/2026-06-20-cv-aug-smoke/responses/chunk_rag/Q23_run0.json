@@ -1,0 +1,65 @@
+{
+  "column": "chunk_rag",
+  "question_id": "Q23",
+  "run_index": 0,
+  "input_tokens": 4719,
+  "output_tokens": 153,
+  "embedding_tokens": 3704,
+  "embedding_tokens_breakdown": {
+    "question_embedding": 86,
+    "setup_amortized": 3618,
+    "setup_total": 108550,
+    "questions_count_for_amortization": 30
+  },
+  "total_tokens": 8576,
+  "latency_ms": 2365,
+  "model": "gpt-4.1",
+  "retrieved_chunks": [
+    {
+      "source_path": "seller-ops/settlement-faq.md",
+      "chunk_index": 7,
+      "score": 0.7139534663910686
+    },
+    {
+      "source_path": "seller-ops/seller-agreement-annex.pdf",
+      "chunk_index": 4,
+      "score": 0.5879271511210733
+    },
+    {
+      "source_path": "seller-ops/settlement-faq.md",
+      "chunk_index": 12,
+      "score": 0.5552666728662251
+    },
+    {
+      "source_path": "marketing/bfm2026-brief.pdf",
+      "chunk_index": 1,
+      "score": 0.5492301879921853
+    },
+    {
+      "source_path": "b2b/b2b-ops-guide.md",
+      "chunk_index": 3,
+      "score": 0.5324795910681495
+    },
+    {
+      "source_path": "seller-ops/settlement-faq.md",
+      "chunk_index": 6,
+      "score": 0.5288084824829611
+    },
+    {
+      "source_path": "hq-pm/decision-log.md",
+      "chunk_index": 4,
+      "score": 0.5278344522004993
+    },
+    {
+      "source_path": "hq-pm/quarterly-policy-brief.pdf",
+      "chunk_index": 2,
+      "score": 0.524900427545798
+    }
+  ],
+  "raw_response": "{\"choice\":\"a\",\"reasoning\":\"청크 1, 청크 2, 청크 3, 청크 4에서 모두 명확하게 'CMP-US-BFM2026'의 추가 5% 할인은 명품+사입(1P) 거래에만 적용되며, 이 할인 부담은 회사 마케팅 예산에서 충당하므로 셀러 정산금은 정상가 기준으로 산정된다고 반복적으로 설명하고 있다. 예시 표(청크 1)에서도 구매자는 950,000원을 결제하지만 셀러 정산 기준액은 1,000,000원(정상가)임을 명시한다. 따라서 정답은 a)이다.\"}",
+  "parsed": {
+    "choice": "a",
+    "reasoning": "청크 1, 청크 2, 청크 3, 청크 4에서 모두 명확하게 'CMP-US-BFM2026'의 추가 5% 할인은 명품+사입(1P) 거래에만 적용되며, 이 할인 부담은 회사 마케팅 예산에서 충당하므로 셀러 정산금은 정상가 기준으로 산정된다고 반복적으로 설명하고 있다. 예시 표(청크 1)에서도 구매자는 950,000원을 결제하지만 셀러 정산 기준액은 1,000,000원(정상가)임을 명시한다. 따라서 정답은 a)이다."
+  },
+  "parse_error": null
+}

@@ -1,0 +1,167 @@
+{
+  "column": "opentology_aug",
+  "question_id": "Q08",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 494,
+    "output_tokens": 42,
+    "latency_ms": 927,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"debt securities\",\"aliases\":[\"debt securities\"]},{\"canonical\":\"national securities exchange\",\"aliases\":[\"national securities exchange\"]},{\"canonical\":\"American Express\",\"aliases\":[\"American Express\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "debt securities",
+          "aliases": [
+            "debt securities"
+          ]
+        },
+        {
+          "canonical": "national securities exchange",
+          "aliases": [
+            "national securities exchange"
+          ]
+        },
+        {
+          "canonical": "American Express",
+          "aliases": [
+            "American Express"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 586,
+      "input": {
+        "keywords": [
+          "debt securities",
+          "national securities exchange",
+          "American Express"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 167,
+      "input": {
+        "entry_ids": [
+          "01KVJPC9F5R1GSJR31YCJ2XC8W",
+          "01KVJPDDF9GJYQ9C8EY7NR2S1C",
+          "01KVJPFS9BMZA70DVJZKEDBEWS",
+          "01KVJPETY477X3SVZ99653WF1Y",
+          "01KVJPHCTW431ATJE19Y7ESDZQ",
+          "01KVJPDBPZ7W7YSJ391V50GVQZ",
+          "01KVJPETAVYS36CBBDDSVFGTVJ",
+          "01KVJPE8W5V44GF20QPKC9YETA",
+          "01KVJPFZJNB2VBNGX2R5FV02Z5",
+          "01KVJPDC65NCXVZDG57VG3MMG3"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 62,
+        "edges": 60,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVJPC9F5R1GSJR31YCJ2XC8W",
+    "01KVJPDDF9GJYQ9C8EY7NR2S1C",
+    "01KVJPFS9BMZA70DVJZKEDBEWS",
+    "01KVJPETY477X3SVZ99653WF1Y",
+    "01KVJPHCTW431ATJE19Y7ESDZQ",
+    "01KVJPDBPZ7W7YSJ391V50GVQZ",
+    "01KVJPETAVYS36CBBDDSVFGTVJ",
+    "01KVJPE8W5V44GF20QPKC9YETA",
+    "01KVJPFZJNB2VBNGX2R5FV02Z5",
+    "01KVJPDC65NCXVZDG57VG3MMG3"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 28390,
+  "graph_selected_sources": [
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMERICANEXPRESS_2022_10K.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMD_2022_10K.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/BOEING_2022_10K.md"
+  ],
+  "used_fallback": null,
+  "retrieved_chunks": [
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 77,
+      "score": 0.691861693458734
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 260,
+      "score": 0.6565701634597274
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 262,
+      "score": 0.6523882484456659
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 137,
+      "score": 0.6435564288327854
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 76,
+      "score": 0.638491085908548
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 49,
+      "score": 0.6314253582016033
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 0,
+      "score": 0.6204847404716521
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 136,
+      "score": 0.619287254981228
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 14898,
+    "output_tokens": 175,
+    "latency_ms": 2523,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"d\",\"reasoning\":\"(A) The relevant section in the 10-K (see 청크 7) lists the securities registered pursuant to Section 12(b) of the Exchange Act: 'Common Shares (par value $0.20 per Share) AXP New York Stock Exchange.' There is no mention of any debt securities (such as notes or bonds) being registered to trade on a national securities exchange under American Express' name as of 2022. The only security listed is common stock. (B) The domain graph does not indicate any relationship between American Express and debt securities being listed or traded on a national securities exchange. Therefore, the decisive evidence is from (A), and the correct answer is (d): There are no debt securities registered to trade on a national securities exchange under American Express' name as of 2022.\"}",
+    "parsed": {
+      "choice": "d",
+      "reasoning": "(A) The relevant section in the 10-K (see 청크 7) lists the securities registered pursuant to Section 12(b) of the Exchange Act: 'Common Shares (par value $0.20 per Share) AXP New York Stock Exchange.' There is no mention of any debt securities (such as notes or bonds) being registered to trade on a national securities exchange under American Express' name as of 2022. The only security listed is common stock. (B) The domain graph does not indicate any relationship between American Express and debt securities being listed or traded on a national securities exchange. Therefore, the decisive evidence is from (A), and the correct answer is (d): There are no debt securities registered to trade on a national securities exchange under American Express' name as of 2022."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 20378,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 23,
+    "chunk_setup_amortized": 20331,
+    "chunk_setup_total": 426971,
+    "graph_keyword_estimated": 24,
+    "questions_count_for_amortization": 21
+  },
+  "total_input_tokens": 15392,
+  "total_output_tokens": 217,
+  "total_tokens": 35987,
+  "total_latency_ms": 4203
+}

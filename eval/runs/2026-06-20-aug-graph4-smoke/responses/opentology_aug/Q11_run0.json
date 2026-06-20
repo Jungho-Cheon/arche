@@ -1,0 +1,171 @@
+{
+  "column": "opentology_aug",
+  "question_id": "Q11",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 508,
+    "output_tokens": 50,
+    "latency_ms": 919,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"gross margin\",\"aliases\":[\"gross margin\"]},{\"canonical\":\"FY2022\",\"aliases\":[\"FY2022\",\"fiscal year 2022\"]},{\"canonical\":\"American Express\",\"aliases\":[\"American Express\",\"Amex\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "gross margin",
+          "aliases": [
+            "gross margin"
+          ]
+        },
+        {
+          "canonical": "FY2022",
+          "aliases": [
+            "FY2022",
+            "fiscal year 2022"
+          ]
+        },
+        {
+          "canonical": "American Express",
+          "aliases": [
+            "American Express",
+            "Amex"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 810,
+      "input": {
+        "keywords": [
+          "gross margin",
+          "FY2022",
+          "fiscal year 2022",
+          "American Express",
+          "Amex"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 163,
+      "input": {
+        "entry_ids": [
+          "01KVJPV3ABQRS2KWSM5A9164SZ",
+          "01KVJPWETK9Y5YFH8BHNBZ8YJT",
+          "01KVJPXHQQW9E6YMWDFNNRT8CP",
+          "01KVJPWPGWKG0X8K9G0KC8DF4M",
+          "01KVJPXH45EDESKF36KH20XM11",
+          "01KVJPXDMHNFNYZH31WD30FK1T",
+          "01KVJPV4Y53FDYHB7E21HGHST1",
+          "01KVJPWFCGS26TG74DMMHSDJM2",
+          "01KVJPWNS5DR9JNVDPCT07PZHN",
+          "01KVJPXPY2C3FJVHDRRAGKSNFV"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 65,
+        "edges": 64,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVJPV3ABQRS2KWSM5A9164SZ",
+    "01KVJPWETK9Y5YFH8BHNBZ8YJT",
+    "01KVJPXHQQW9E6YMWDFNNRT8CP",
+    "01KVJPWPGWKG0X8K9G0KC8DF4M",
+    "01KVJPXH45EDESKF36KH20XM11",
+    "01KVJPXDMHNFNYZH31WD30FK1T",
+    "01KVJPV4Y53FDYHB7E21HGHST1",
+    "01KVJPWFCGS26TG74DMMHSDJM2",
+    "01KVJPWNS5DR9JNVDPCT07PZHN",
+    "01KVJPXPY2C3FJVHDRRAGKSNFV"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 31679,
+  "graph_selected_sources": [
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMERICANEXPRESS_2022_10K.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMD_2022_10K.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/BOEING_2022_10K.md"
+  ],
+  "used_fallback": null,
+  "retrieved_chunks": [
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 72,
+      "score": 0.6388861675745708
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 51,
+      "score": 0.6309756462113131
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 4,
+      "score": 0.6252159914691284
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 6,
+      "score": 0.6136194655704628
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 49,
+      "score": 0.5989020782658506
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 5,
+      "score": 0.5973117319550698
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 54,
+      "score": 0.5962724360171529
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 53,
+      "score": 0.5934037867113717
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 15951,
+    "output_tokens": 199,
+    "latency_ms": 2849,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"a\",\"reasoning\":\"(A) The excerpts from the 10-K repeatedly discuss American Express's performance in terms of revenue lines (discount revenue, net card fees, service fees, net interest income) and expenses (marketing, business development, compensation, etc.), but do not mention 'gross margin' as a key metric. Instead, the company focuses on metrics like billed business, network volumes, and net income. (A) explicitly states that American Express is a globally integrated payments company, and its business model is 'spend-centric,' generating revenues primarily by driving spending on cards, not by selling goods with a traditional cost of goods sold. (B) The domain graph confirms American Express is a payments/financial services company, not a manufacturer or retailer. Therefore, gross margin is not a useful metric for this type of company, and performance is not measured through gross margin. This makes (a) the correct answer, with (A) providing the decisive evidence.\"}",
+    "parsed": {
+      "choice": "a",
+      "reasoning": "(A) The excerpts from the 10-K repeatedly discuss American Express's performance in terms of revenue lines (discount revenue, net card fees, service fees, net interest income) and expenses (marketing, business development, compensation, etc.), but do not mention 'gross margin' as a key metric. Instead, the company focuses on metrics like billed business, network volumes, and net income. (A) explicitly states that American Express is a globally integrated payments company, and its business model is 'spend-centric,' generating revenues primarily by driving spending on cards, not by selling goods with a traditional cost of goods sold. (B) The domain graph confirms American Express is a payments/financial services company, not a manufacturer or retailer. Therefore, gross margin is not a useful metric for this type of company, and performance is not measured through gross margin. This makes (a) the correct answer, with (A) providing the decisive evidence."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 20408,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 37,
+    "chunk_setup_amortized": 20331,
+    "chunk_setup_total": 426971,
+    "graph_keyword_estimated": 40,
+    "questions_count_for_amortization": 21
+  },
+  "total_input_tokens": 16459,
+  "total_output_tokens": 249,
+  "total_tokens": 37116,
+  "total_latency_ms": 4741
+}

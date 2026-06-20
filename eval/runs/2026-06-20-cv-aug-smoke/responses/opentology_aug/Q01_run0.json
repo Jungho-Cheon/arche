@@ -1,0 +1,208 @@
+{
+  "column": "opentology_aug",
+  "question_id": "Q01",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 535,
+    "output_tokens": 78,
+    "latency_ms": 1017,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"로열티팀\",\"aliases\":[\"로열티팀\"]},{\"canonical\":\"골드 등급\",\"aliases\":[\"골드 등급\"]},{\"canonical\":\"비활성 등급\",\"aliases\":[\"비활성 등급\"]},{\"canonical\":\"명품\",\"aliases\":[\"명품\"]},{\"canonical\":\"반품 가능 기간\",\"aliases\":[\"반품 가능 기간\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "로열티팀",
+          "aliases": [
+            "로열티팀"
+          ]
+        },
+        {
+          "canonical": "골드 등급",
+          "aliases": [
+            "골드 등급"
+          ]
+        },
+        {
+          "canonical": "비활성 등급",
+          "aliases": [
+            "비활성 등급"
+          ]
+        },
+        {
+          "canonical": "명품",
+          "aliases": [
+            "명품"
+          ]
+        },
+        {
+          "canonical": "반품 가능 기간",
+          "aliases": [
+            "반품 가능 기간"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 1173,
+      "input": {
+        "keywords": [
+          "로열티팀",
+          "골드 등급",
+          "비활성 등급",
+          "명품",
+          "반품 가능 기간"
+        ],
+        "limit": 20,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 20
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 145,
+      "input": {
+        "entry_ids": [
+          "01KVJR9Z00CARX38G3P6PXTY00",
+          "01KVJR8DAT0QYQP58VG8XVY26Y",
+          "01KVJR95Y73MDS6D0ZABH2BT7Q",
+          "01KVJR96CRGGDCPSQMPSJT429F",
+          "01KVJR8C3CQK4N3GYED6PJV01Z",
+          "01KVJRGTBWEV31CX0W721SBB3B",
+          "01KVJQJFHAE0M48WZJEX1FRDRD",
+          "01KVJRCCHGZ5RWHTRT333Z51G6",
+          "01KVJQWWE4G87QY7GJ8397ZG28",
+          "01KVJRA1B5JAWWY32GKS8ATM9E"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 46,
+        "edges": 46,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVJR9Z00CARX38G3P6PXTY00",
+    "01KVJR8DAT0QYQP58VG8XVY26Y",
+    "01KVJR95Y73MDS6D0ZABH2BT7Q",
+    "01KVJR96CRGGDCPSQMPSJT429F",
+    "01KVJR8C3CQK4N3GYED6PJV01Z",
+    "01KVJRGTBWEV31CX0W721SBB3B",
+    "01KVJQJFHAE0M48WZJEX1FRDRD",
+    "01KVJRCCHGZ5RWHTRT333Z51G6",
+    "01KVJQWWE4G87QY7GJ8397ZG28",
+    "01KVJRA1B5JAWWY32GKS8ATM9E"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 29344,
+  "graph_selected_sources": [
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/hq-pm/decision-log.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/loyalty/tier-transition-rulebook.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/loyalty/tier-matrix.png",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/seller-ops/seller-agreement-annex.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/marketing/bfm2026-brief.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/loyalty/tier-rulebook.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/cs-logistics/cs-macro-manual.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/hq-pm/policy-matrix.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/hq-pm/quarterly-policy-brief.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/legal-risk/kyc-age-verification-memo.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/legal-risk/risk-checklist.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/b2b/b2b-coupon-policy.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/b2b/b2b-ops-guide.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/b2b/enterprise-agreement-addendum.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/marketing/campaign-playbook.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/marketing/coupon-stacking-guide.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/seller-ops/_GLOSSARY.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/seller-ops/settlement-faq.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/cs-logistics/cold-chain-sop.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/global-pm/country-launch-memo-jp.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/cs-logistics/return-refund-flowchart.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/loyalty/_GLOSSARY.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/global-pm/country-launch-memo-vn.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/cs-logistics/_GLOSSARY.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/global-pm/_GLOSSARY.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/hq-pm/_GLOSSARY.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/marketing/_GLOSSARY.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/global-pm/country-policy-matrix.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/legal-risk/_GLOSSARY.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/legal-risk/gdpr-de-memo.pdf"
+  ],
+  "used_fallback": null,
+  "retrieved_chunks": [
+    {
+      "source_path": "loyalty/tier-rulebook.md",
+      "chunk_index": 9,
+      "score": 0.6374096086976114
+    },
+    {
+      "source_path": "loyalty/tier-transition-rulebook.pdf",
+      "chunk_index": 1,
+      "score": 0.6172043060224964
+    },
+    {
+      "source_path": "loyalty/tier-rulebook.md",
+      "chunk_index": 6,
+      "score": 0.6043601014215323
+    },
+    {
+      "source_path": "loyalty/tier-transition-rulebook.pdf",
+      "chunk_index": 2,
+      "score": 0.5872791988051655
+    },
+    {
+      "source_path": "loyalty/tier-rulebook.md",
+      "chunk_index": 2,
+      "score": 0.5232071866862545
+    },
+    {
+      "source_path": "loyalty/tier-rulebook.md",
+      "chunk_index": 7,
+      "score": 0.5130230224504598
+    },
+    {
+      "source_path": "hq-pm/policy-matrix.md",
+      "chunk_index": 3,
+      "score": 0.5023402463585279
+    },
+    {
+      "source_path": "loyalty/tier-rulebook.md",
+      "chunk_index": 3,
+      "score": 0.4805018254546362
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 15615,
+    "output_tokens": 218,
+    "latency_ms": 2702,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"b\",\"reasoning\":\"(A) 원본 발췌에서 loyalty/tier-rulebook.md, loyalty/tier-transition-rulebook.pdf, hq-pm/policy-matrix.md 등 여러 곳에서 '비활성에서 골드로 복귀한 직후 30일 이내에는 명품 반품 연장이 적용되지 않고 기본 7일이 적용된다'고 명확히 규정하고 있다. 복귀 31일째부터 30일 연장이 정상 적용된다는 예시와 표준 시나리오도 제시되어 있다. (B) 그래프에서도 '복귀 30일 유예 --적용된다--> 명품 반품 연장' 관계가 명시되어 있어 구조적으로도 일치한다. 두 정보 모두 30일 이내에는 7일만 적용된다는 점을 일치되게 보여주므로, 정답은 b) 7일이다. 결정적 근거는 (A) 발췌의 수치와 예시이다.\"}",
+    "parsed": {
+      "choice": "b",
+      "reasoning": "(A) 원본 발췌에서 loyalty/tier-rulebook.md, loyalty/tier-transition-rulebook.pdf, hq-pm/policy-matrix.md 등 여러 곳에서 '비활성에서 골드로 복귀한 직후 30일 이내에는 명품 반품 연장이 적용되지 않고 기본 7일이 적용된다'고 명확히 규정하고 있다. 복귀 31일째부터 30일 연장이 정상 적용된다는 예시와 표준 시나리오도 제시되어 있다. (B) 그래프에서도 '복귀 30일 유예 --적용된다--> 명품 반품 연장' 관계가 명시되어 있어 구조적으로도 일치한다. 두 정보 모두 30일 이내에는 7일만 적용된다는 점을 일치되게 보여주므로, 정답은 b) 7일이다. 결정적 근거는 (A) 발췌의 수치와 예시이다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 3752,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 94,
+    "chunk_setup_amortized": 3618,
+    "chunk_setup_total": 108550,
+    "graph_keyword_estimated": 40,
+    "questions_count_for_amortization": 30
+  },
+  "total_input_tokens": 16150,
+  "total_output_tokens": 296,
+  "total_tokens": 20198,
+  "total_latency_ms": 5037
+}

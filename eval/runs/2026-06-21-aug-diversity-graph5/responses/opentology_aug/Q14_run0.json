@@ -1,0 +1,161 @@
+{
+  "column": "opentology_aug",
+  "question_id": "Q14",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 484,
+    "output_tokens": 29,
+    "latency_ms": 763,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"American Express\",\"aliases\":[\"American Express\"]},{\"canonical\":\"card members\",\"aliases\":[\"card members\",\"members\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "American Express",
+          "aliases": [
+            "American Express"
+          ]
+        },
+        {
+          "canonical": "card members",
+          "aliases": [
+            "card members",
+            "members"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 481,
+      "input": {
+        "keywords": [
+          "American Express",
+          "card members",
+          "members"
+        ],
+        "limit": 20,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 20
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 173,
+      "input": {
+        "entry_ids": [
+          "01KVJSD44Y5B8P8DQ3FB8XW9FN",
+          "01KVJS9SXN1PBN9D6ASJWRH9GA",
+          "01KVJSA7BAE988TTCDJP90SSQ9",
+          "01KVJSA5RPRW3NF18SX389707C",
+          "01KVJS88EGTSG96NYREEYDEYKV",
+          "01KVJSACG36166KHBDFXHTGA87",
+          "01KVJSD1EDWKW7X1GTRC0Q5ZC7",
+          "01KVJS9V9RNSZB2RKM5579JY5N",
+          "01KVJSBCB9MJ5JNJ82Z9KW9S3S",
+          "01KVJSD21KZSEHT4JGS7MXWQ74"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 62,
+        "edges": 60,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVJSD44Y5B8P8DQ3FB8XW9FN",
+    "01KVJS9SXN1PBN9D6ASJWRH9GA",
+    "01KVJSA7BAE988TTCDJP90SSQ9",
+    "01KVJSA5RPRW3NF18SX389707C",
+    "01KVJS88EGTSG96NYREEYDEYKV",
+    "01KVJSACG36166KHBDFXHTGA87",
+    "01KVJSD1EDWKW7X1GTRC0Q5ZC7",
+    "01KVJS9V9RNSZB2RKM5579JY5N",
+    "01KVJSBCB9MJ5JNJ82Z9KW9S3S",
+    "01KVJSD21KZSEHT4JGS7MXWQ74"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 28580,
+  "graph_selected_sources": [
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMERICANEXPRESS_2022_10K.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMD_2022_10K.md"
+  ],
+  "used_fallback": null,
+  "retrieved_chunks": [
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 54,
+      "score": 0.6252907481136231
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 6,
+      "score": 0.6178771366507546
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 53,
+      "score": 0.6109168587133122
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 99,
+      "score": 0.5883026926683458
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 72,
+      "score": 0.5792011244350403
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 4,
+      "score": 0.5788586595828755
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 32,
+      "score": 0.5728452816540859
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 57,
+      "score": 0.569164470378901
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 15270,
+    "output_tokens": 127,
+    "latency_ms": 2611,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"b\",\"reasoning\":\"(A) 발췌에서 'Net card fees increased 17 percent year over-year, as new card acquisitions reached record levels in 2022 and Card Member retention remained high, demonstrating the impact of investments we have made in our premium value propositions.'라는 명확한 진술이 있습니다. 이는 2022년에 카드 회원 유지가 높았음을 직접적으로 언급합니다. (B) 그래프에는 카드 회원 유지에 대한 구조적 관계 정보가 없으므로, (A)의 정량적·정성적 진술이 결정적 근거입니다.\"}",
+    "parsed": {
+      "choice": "b",
+      "reasoning": "(A) 발췌에서 'Net card fees increased 17 percent year over-year, as new card acquisitions reached record levels in 2022 and Card Member retention remained high, demonstrating the impact of investments we have made in our premium value propositions.'라는 명확한 진술이 있습니다. 이는 2022년에 카드 회원 유지가 높았음을 직접적으로 언급합니다. (B) 그래프에는 카드 회원 유지에 대한 구조적 관계 정보가 없으므로, (A)의 정량적·정성적 진술이 결정적 근거입니다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 20368,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 13,
+    "chunk_setup_amortized": 20331,
+    "chunk_setup_total": 426971,
+    "graph_keyword_estimated": 24,
+    "questions_count_for_amortization": 21
+  },
+  "total_input_tokens": 15754,
+  "total_output_tokens": 156,
+  "total_tokens": 36278,
+  "total_latency_ms": 4028
+}

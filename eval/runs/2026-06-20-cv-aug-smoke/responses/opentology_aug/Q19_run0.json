@@ -1,0 +1,200 @@
+{
+  "column": "opentology_aug",
+  "question_id": "Q19",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 494,
+    "output_tokens": 76,
+    "latency_ms": 1078,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"JP\",\"aliases\":[\"JP\"]},{\"canonical\":\"DE\",\"aliases\":[\"DE\"]},{\"canonical\":\"VN\",\"aliases\":[\"VN\"]},{\"canonical\":\"2026 블랙프라이데이(BFM)\",\"aliases\":[\"2026 블랙프라이데이(BFM)\",\"2026 BFM\",\"블랙프라이데이(BFM)\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "JP",
+          "aliases": [
+            "JP"
+          ]
+        },
+        {
+          "canonical": "DE",
+          "aliases": [
+            "DE"
+          ]
+        },
+        {
+          "canonical": "VN",
+          "aliases": [
+            "VN"
+          ]
+        },
+        {
+          "canonical": "2026 블랙프라이데이(BFM)",
+          "aliases": [
+            "2026 블랙프라이데이(BFM)",
+            "2026 BFM",
+            "블랙프라이데이(BFM)"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 1751,
+      "input": {
+        "keywords": [
+          "JP",
+          "DE",
+          "VN",
+          "2026 블랙프라이데이(BFM)",
+          "2026 BFM",
+          "블랙프라이데이(BFM)"
+        ],
+        "limit": 20,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 20
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 180,
+      "input": {
+        "entry_ids": [
+          "01KVJQTKE5Z7VDNDYJMN815P47",
+          "01KVJQRYKYZTFWEFXDQ93AV8V6",
+          "01KVJQQR1GZNG4S2HDAKPBZNS3",
+          "01KVJQXDAZR4XYTXRWJT0ZCH94",
+          "01KVJQQXQN25QCJADNAVAETZZ0",
+          "01KVJRATYDWY0PZF383GAQHAWD",
+          "01KVJQTMH61E6ATVSKSB6QQ0KQ",
+          "01KVJQNEFV0DSEVD5RR1BYD3ZW",
+          "01KVJRCA8NDERNRMDGKD8NREZF",
+          "01KVJRCB1G8DSXECRBPX2VTS1B"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 51,
+        "edges": 66,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVJQTKE5Z7VDNDYJMN815P47",
+    "01KVJQRYKYZTFWEFXDQ93AV8V6",
+    "01KVJQQR1GZNG4S2HDAKPBZNS3",
+    "01KVJQXDAZR4XYTXRWJT0ZCH94",
+    "01KVJQQXQN25QCJADNAVAETZZ0",
+    "01KVJRATYDWY0PZF383GAQHAWD",
+    "01KVJQTMH61E6ATVSKSB6QQ0KQ",
+    "01KVJQNEFV0DSEVD5RR1BYD3ZW",
+    "01KVJRCA8NDERNRMDGKD8NREZF",
+    "01KVJRCB1G8DSXECRBPX2VTS1B"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 38481,
+  "graph_selected_sources": [
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/hq-pm/decision-log.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/hq-pm/quarterly-policy-brief.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/marketing/bfm2026-brief.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/global-pm/country-launch-memo-vn.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/global-pm/country-launch-memo-jp.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/global-pm/country-policy-matrix.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/hq-pm/policy-matrix.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/legal-risk/gdpr-de-memo.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/marketing/campaign-playbook.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/legal-risk/kyc-age-verification-memo.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/loyalty/tier-transition-rulebook.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/legal-risk/risk-checklist.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/b2b/b2b-coupon-policy.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/b2b/b2b-ops-guide.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/b2b/enterprise-agreement-addendum.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/loyalty/tier-rulebook.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/marketing/coupon-stacking-guide.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/seller-ops/_GLOSSARY.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/seller-ops/settlement-faq.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/global-pm/_GLOSSARY.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/loyalty/_GLOSSARY.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/seller-ops/seller-agreement-annex.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/cs-logistics/cold-chain-sop.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/cs-logistics/cs-macro-manual.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/legal-risk/_GLOSSARY.md"
+  ],
+  "used_fallback": null,
+  "retrieved_chunks": [
+    {
+      "source_path": "global-pm/country-launch-memo-vn.pdf",
+      "chunk_index": 3,
+      "score": 0.6600643933424387
+    },
+    {
+      "source_path": "marketing/campaign-playbook.md",
+      "chunk_index": 4,
+      "score": 0.6597252834516916
+    },
+    {
+      "source_path": "marketing/bfm2026-brief.pdf",
+      "chunk_index": 0,
+      "score": 0.6140003574381959
+    },
+    {
+      "source_path": "global-pm/country-policy-matrix.md",
+      "chunk_index": 4,
+      "score": 0.5794549797882746
+    },
+    {
+      "source_path": "hq-pm/policy-matrix.md",
+      "chunk_index": 6,
+      "score": 0.5599125397704272
+    },
+    {
+      "source_path": "global-pm/country-policy-matrix.md",
+      "chunk_index": 5,
+      "score": 0.552003819698046
+    },
+    {
+      "source_path": "marketing/campaign-playbook.md",
+      "chunk_index": 3,
+      "score": 0.5499879149972943
+    },
+    {
+      "source_path": "global-pm/country-launch-memo-jp.pdf",
+      "chunk_index": 3,
+      "score": 0.5414643426165676
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 18498,
+    "output_tokens": 182,
+    "latency_ms": 2039,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"a\",\"reasoning\":\"(A) 발췌에서 여러 문서(예: global-pm/country-launch-memo-vn.pdf, marketing/bfm2026-brief.pdf, global-pm/country-policy-matrix.md 등)에서 2026 블랙프라이데이(BFM)는 KR(한국)과 US(미국)만 참여하고, JP(일본), DE(독일), VN(베트남)은 모두 비참여임이 명확히 반복적으로 언급된다. (B) 그래프에서도 '블랙프라이데이 2026 --미참여한다--> JP/DE/VN' 관계가 다수 명시되어 구조적으로도 일치한다. 두 정보가 모두 명확히 일치하므로 a) '셋 다 미참여다'가 정답이다.\"}",
+    "parsed": {
+      "choice": "a",
+      "reasoning": "(A) 발췌에서 여러 문서(예: global-pm/country-launch-memo-vn.pdf, marketing/bfm2026-brief.pdf, global-pm/country-policy-matrix.md 등)에서 2026 블랙프라이데이(BFM)는 KR(한국)과 US(미국)만 참여하고, JP(일본), DE(독일), VN(베트남)은 모두 비참여임이 명확히 반복적으로 언급된다. (B) 그래프에서도 '블랙프라이데이 2026 --미참여한다--> JP/DE/VN' 관계가 다수 명시되어 구조적으로도 일치한다. 두 정보가 모두 명확히 일치하므로 a) '셋 다 미참여다'가 정답이다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 3700,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 34,
+    "chunk_setup_amortized": 3618,
+    "chunk_setup_total": 108550,
+    "graph_keyword_estimated": 48,
+    "questions_count_for_amortization": 30
+  },
+  "total_input_tokens": 18992,
+  "total_output_tokens": 258,
+  "total_tokens": 22950,
+  "total_latency_ms": 5048
+}

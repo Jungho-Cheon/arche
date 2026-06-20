@@ -1,0 +1,162 @@
+{
+  "column": "opentology_aug",
+  "question_id": "Q17",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 506,
+    "output_tokens": 33,
+    "latency_ms": 933,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"Boeing\",\"aliases\":[\"Boeing\"]},{\"canonical\":\"gross margin\",\"aliases\":[\"gross margin\",\"gross margin profile\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "Boeing",
+          "aliases": [
+            "Boeing"
+          ]
+        },
+        {
+          "canonical": "gross margin",
+          "aliases": [
+            "gross margin",
+            "gross margin profile"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 732,
+      "input": {
+        "keywords": [
+          "Boeing",
+          "gross margin",
+          "gross margin profile"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 124,
+      "input": {
+        "entry_ids": [
+          "01KVJNAGKP2WQCRBAYJW9TKPB8",
+          "01KVJNFYYV8JNG6MQM7E3ZKZDG",
+          "01KVJNECHMYXBQAYAJK66KYKCE",
+          "01KVJNEA3RPPR3V5S4PN4QDCAR",
+          "01KVJN8FGEZ3EZ9D9XJVRSZSRP",
+          "01KVJNCVC5N8FF0ZVH3Q3BZ063",
+          "01KVJNG1ABR7F138R7AHRENYCR",
+          "01KVJNEQKPZGM125V9XQ4F3ZYN",
+          "01KVJN8EKPVHPNFV4CZNNRGR51",
+          "01KVJNAHA5VHXRQREAA50X9Y9A"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 56,
+        "edges": 51,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVJNAGKP2WQCRBAYJW9TKPB8",
+    "01KVJNFYYV8JNG6MQM7E3ZKZDG",
+    "01KVJNECHMYXBQAYAJK66KYKCE",
+    "01KVJNEA3RPPR3V5S4PN4QDCAR",
+    "01KVJN8FGEZ3EZ9D9XJVRSZSRP",
+    "01KVJNCVC5N8FF0ZVH3Q3BZ063",
+    "01KVJNG1ABR7F138R7AHRENYCR",
+    "01KVJNEQKPZGM125V9XQ4F3ZYN",
+    "01KVJN8EKPVHPNFV4CZNNRGR51",
+    "01KVJNAHA5VHXRQREAA50X9Y9A"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 24230,
+  "graph_selected_sources": [
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/BOEING_2022_10K.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMD_2022_10K.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMERICANEXPRESS_2022_10K.md"
+  ],
+  "used_fallback": null,
+  "retrieved_chunks": [
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 22,
+      "score": 0.5912425799681461
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 60,
+      "score": 0.5872558725269342
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 10,
+      "score": 0.5787143298990093
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 24,
+      "score": 0.5779005793295974
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 27,
+      "score": 0.5752620749464197
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 26,
+      "score": 0.5748266432981383
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 54,
+      "score": 0.5741847241735195
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 4,
+      "score": 0.572733820823039
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 15021,
+    "output_tokens": 166,
+    "latency_ms": 1847,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"b\",\"reasoning\":\"(A) provides detailed financials, including revenue, cost of products/services, and operating margin, but does not explicitly report or emphasize 'gross margin' as a key metric. Instead, Boeing's reporting and management discussion focus on operating margin and loss from operations, which is typical for aerospace/defense companies due to the complexity of their contracts, use of program accounting, and the nature of their cost structure (see Note 1 and the management discussion). (B) does not provide a cross-document relationship that would override this, but the structure of Boeing's reporting (as seen in A) makes it clear that gross margin is not the primary or most useful metric for performance evaluation. Therefore, choice (b) is correct, and (A) is decisive in this reasoning.\"}",
+    "parsed": {
+      "choice": "b",
+      "reasoning": "(A) provides detailed financials, including revenue, cost of products/services, and operating margin, but does not explicitly report or emphasize 'gross margin' as a key metric. Instead, Boeing's reporting and management discussion focus on operating margin and loss from operations, which is typical for aerospace/defense companies due to the complexity of their contracts, use of program accounting, and the nature of their cost structure (see Note 1 and the management discussion). (B) does not provide a cross-document relationship that would override this, but the structure of Boeing's reporting (as seen in A) makes it clear that gross margin is not the primary or most useful metric for performance evaluation. Therefore, choice (b) is correct, and (A) is decisive in this reasoning."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 20390,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 35,
+    "chunk_setup_amortized": 20331,
+    "chunk_setup_total": 426971,
+    "graph_keyword_estimated": 24,
+    "questions_count_for_amortization": 21
+  },
+  "total_input_tokens": 15527,
+  "total_output_tokens": 199,
+  "total_tokens": 36116,
+  "total_latency_ms": 3636
+}

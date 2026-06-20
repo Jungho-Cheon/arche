@@ -1,0 +1,162 @@
+{
+  "column": "opentology_aug",
+  "question_id": "Q17",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 506,
+    "output_tokens": 33,
+    "latency_ms": 877,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"Boeing\",\"aliases\":[\"Boeing\"]},{\"canonical\":\"gross margin\",\"aliases\":[\"gross margin\",\"gross margin profile\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "Boeing",
+          "aliases": [
+            "Boeing"
+          ]
+        },
+        {
+          "canonical": "gross margin",
+          "aliases": [
+            "gross margin",
+            "gross margin profile"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 807,
+      "input": {
+        "keywords": [
+          "Boeing",
+          "gross margin",
+          "gross margin profile"
+        ],
+        "limit": 20,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 20
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 172,
+      "input": {
+        "entry_ids": [
+          "01KVJS9XMXRBXVFS6EGH198CFC",
+          "01KVJSA7WF0GRP4QPFESW5H77V",
+          "01KVJSEJR4304FBD8WF8QD87XS",
+          "01KVJSENMYQYT8ADFNEEKW1ZSZ",
+          "01KVJS8JXTEZYD2W3KGJCQT7E5",
+          "01KVJSDGEWBSM256BR3GAEYZFE",
+          "01KVJSGA81N9X8JC46F2XFJNRZ",
+          "01KVJS7FR1KWFHH1WVAPB91ETR",
+          "01KVJSGAYJC3R75P4J2NPF9RVC",
+          "01KVJSFG4ZEP712JMY5M54RK6W"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 70,
+        "edges": 66,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVJS9XMXRBXVFS6EGH198CFC",
+    "01KVJSA7WF0GRP4QPFESW5H77V",
+    "01KVJSEJR4304FBD8WF8QD87XS",
+    "01KVJSENMYQYT8ADFNEEKW1ZSZ",
+    "01KVJS8JXTEZYD2W3KGJCQT7E5",
+    "01KVJSDGEWBSM256BR3GAEYZFE",
+    "01KVJSGA81N9X8JC46F2XFJNRZ",
+    "01KVJS7FR1KWFHH1WVAPB91ETR",
+    "01KVJSGAYJC3R75P4J2NPF9RVC",
+    "01KVJSFG4ZEP712JMY5M54RK6W"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 30119,
+  "graph_selected_sources": [
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/BOEING_2022_10K.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMERICANEXPRESS_2022_10K.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMD_2022_10K.md"
+  ],
+  "used_fallback": null,
+  "retrieved_chunks": [
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 22,
+      "score": 0.5912343783430919
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 60,
+      "score": 0.5872558725269342
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 10,
+      "score": 0.5787143298990093
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 24,
+      "score": 0.5779005793295974
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 27,
+      "score": 0.5752399932176854
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 26,
+      "score": 0.5748266432981383
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 54,
+      "score": 0.5741847241735195
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 4,
+      "score": 0.572733820823039
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 16861,
+    "output_tokens": 320,
+    "latency_ms": 3206,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"b\",\"reasoning\":\"(A) 발췌에서 Boeing의 손익계산서(Consolidated Statements of Operations, 청크 7)에는 'gross profit' 또는 'gross margin'이라는 항목이 명시적으로 존재하지 않고, 대신 'total revenues', 'cost of products', 'cost of services', 그리고 'loss from operations' 등으로 구분되어 있습니다. Boeing은 제조업체이지만, 방산·항공우주 복합기업으로서 제품과 서비스가 혼재되어 있고, 장기계약(특히 BDS, BGS 부문)에서는 매출원가 산정이 복잡하며, 프로그램 회계(program accounting)와 장기계약 회계가 혼용됩니다. 실제로 (A) 청크 2, 5 등에서 매출원가(cost of sales) 산정 방식이 일반적인 제조업과 다름을 설명하고 있습니다. (B) 그래프에서도 Boeing의 주요 성과지표로 'operating margin'이 언급되고, 실제로 경영진 논의(MD&A)와 세그먼트 실적도 'operating margin' 중심으로 보고됩니다. 따라서 gross margin은 Boeing의 실적 평가에 적합하지 않으며, (A)와 (B) 모두 이를 뒷받침합니다. 정량 수치로 gross margin을 직접 계산할 수는 있으나, 회사가 공식적으로 이 지표를 사용하지 않으므로 b)번이 정답입니다.\"}",
+    "parsed": {
+      "choice": "b",
+      "reasoning": "(A) 발췌에서 Boeing의 손익계산서(Consolidated Statements of Operations, 청크 7)에는 'gross profit' 또는 'gross margin'이라는 항목이 명시적으로 존재하지 않고, 대신 'total revenues', 'cost of products', 'cost of services', 그리고 'loss from operations' 등으로 구분되어 있습니다. Boeing은 제조업체이지만, 방산·항공우주 복합기업으로서 제품과 서비스가 혼재되어 있고, 장기계약(특히 BDS, BGS 부문)에서는 매출원가 산정이 복잡하며, 프로그램 회계(program accounting)와 장기계약 회계가 혼용됩니다. 실제로 (A) 청크 2, 5 등에서 매출원가(cost of sales) 산정 방식이 일반적인 제조업과 다름을 설명하고 있습니다. (B) 그래프에서도 Boeing의 주요 성과지표로 'operating margin'이 언급되고, 실제로 경영진 논의(MD&A)와 세그먼트 실적도 'operating margin' 중심으로 보고됩니다. 따라서 gross margin은 Boeing의 실적 평가에 적합하지 않으며, (A)와 (B) 모두 이를 뒷받침합니다. 정량 수치로 gross margin을 직접 계산할 수는 있으나, 회사가 공식적으로 이 지표를 사용하지 않으므로 b)번이 정답입니다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 20390,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 35,
+    "chunk_setup_amortized": 20331,
+    "chunk_setup_total": 426971,
+    "graph_keyword_estimated": 24,
+    "questions_count_for_amortization": 21
+  },
+  "total_input_tokens": 17367,
+  "total_output_tokens": 353,
+  "total_tokens": 38110,
+  "total_latency_ms": 5062
+}

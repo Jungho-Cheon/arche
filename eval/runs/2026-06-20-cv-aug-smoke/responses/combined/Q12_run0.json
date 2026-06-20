@@ -1,0 +1,158 @@
+{
+  "column": "combined",
+  "question_id": "Q12",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 491,
+    "output_tokens": 40,
+    "latency_ms": 854,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"이너 서클\",\"aliases\":[\"이너 서클\",\"VVIP\"]},{\"canonical\":\"승급 조건\",\"aliases\":[\"승급 조건\",\"충족 조건\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "이너 서클",
+          "aliases": [
+            "이너 서클",
+            "VVIP"
+          ]
+        },
+        {
+          "canonical": "승급 조건",
+          "aliases": [
+            "승급 조건",
+            "충족 조건"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 1011,
+      "input": {
+        "keywords": [
+          "이너 서클",
+          "VVIP",
+          "승급 조건",
+          "충족 조건"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 102,
+      "input": {
+        "entry_ids": [
+          "01KVJRB1YEZMWNP9NVT7Z4FAG0",
+          "01KVJRAZ75WSJ2JBEBS202MCYJ",
+          "01KVJQX64HWGVFXAVQGMW7RQS0",
+          "01KVJR7PP4A4TJTTHHZNA1AXE6",
+          "01KVJQZNRZRHF4GATPGC2SS1RE",
+          "01KVJR72Y4TAQF602QWCFHY0AS",
+          "01KVJRGE1MV826NDC8966HPCYS",
+          "01KVJR9XPVTQ5QF6FK7C8V5VQD",
+          "01KVJR7TS6WX971HG127Z42HPB",
+          "01KVJQVF87KNKZ77QSFBGK054M"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 37,
+        "edges": 33,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVJRB1YEZMWNP9NVT7Z4FAG0",
+    "01KVJRAZ75WSJ2JBEBS202MCYJ",
+    "01KVJQX64HWGVFXAVQGMW7RQS0",
+    "01KVJR7PP4A4TJTTHHZNA1AXE6",
+    "01KVJQZNRZRHF4GATPGC2SS1RE",
+    "01KVJR72Y4TAQF602QWCFHY0AS",
+    "01KVJRGE1MV826NDC8966HPCYS",
+    "01KVJR9XPVTQ5QF6FK7C8V5VQD",
+    "01KVJR7TS6WX971HG127Z42HPB",
+    "01KVJQVF87KNKZ77QSFBGK054M"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 19686,
+  "retrieved_chunks": [
+    {
+      "source_path": "loyalty/tier-rulebook.md",
+      "chunk_index": 3,
+      "score": 0.531506811241302
+    },
+    {
+      "source_path": "loyalty/tier-rulebook.md",
+      "chunk_index": 2,
+      "score": 0.5053989702936837
+    },
+    {
+      "source_path": "loyalty/tier-transition-rulebook.pdf",
+      "chunk_index": 2,
+      "score": 0.4685313347158428
+    },
+    {
+      "source_path": "hq-pm/policy-matrix.md",
+      "chunk_index": 2,
+      "score": 0.4456060697733566
+    },
+    {
+      "source_path": "loyalty/tier-transition-rulebook.pdf",
+      "chunk_index": 1,
+      "score": 0.43962618448684754
+    },
+    {
+      "source_path": "loyalty/tier-rulebook.md",
+      "chunk_index": 4,
+      "score": 0.4246871754958092
+    },
+    {
+      "source_path": "loyalty/_GLOSSARY.md",
+      "chunk_index": 1,
+      "score": 0.4202020504108859
+    },
+    {
+      "source_path": "seller-ops/settlement-faq.md",
+      "chunk_index": 3,
+      "score": 0.41927076789875006
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 11940,
+    "output_tokens": 151,
+    "latency_ms": 2365,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"a\",\"reasoning\":\"(A) 검색된 문서 발췌에서 이너 서클(VVIP) 승급 조건이 명확하게 '직전 12개월 누적 결제액 500만원 이상' AND '최근 NPS 응답 점수 9 이상' 두 조건을 모두 충족해야 한다고 반복적으로 명시되어 있다. (B) 도메인 그래프에서도 이너 서클(Inner Circle) 엔티티에 '12개월 누적 500만원 및 NPS 9 이상 시 부여되는 등급'이라고 되어 있어 두 출처가 일치한다. 따라서 a)가 정답이며, 두 출처 모두에서 명확하게 확인된다.\"}",
+    "parsed": {
+      "choice": "a",
+      "reasoning": "(A) 검색된 문서 발췌에서 이너 서클(VVIP) 승급 조건이 명확하게 '직전 12개월 누적 결제액 500만원 이상' AND '최근 NPS 응답 점수 9 이상' 두 조건을 모두 충족해야 한다고 반복적으로 명시되어 있다. (B) 도메인 그래프에서도 이너 서클(Inner Circle) 엔티티에 '12개월 누적 500만원 및 NPS 9 이상 시 부여되는 등급'이라고 되어 있어 두 출처가 일치한다. 따라서 a)가 정답이며, 두 출처 모두에서 명확하게 확인된다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 3687,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 37,
+    "chunk_setup_amortized": 3618,
+    "chunk_setup_total": 108550,
+    "graph_keyword_estimated": 32,
+    "questions_count_for_amortization": 30
+  },
+  "total_input_tokens": 12431,
+  "total_output_tokens": 191,
+  "total_tokens": 16309,
+  "total_latency_ms": 4332
+}

@@ -1,0 +1,167 @@
+{
+  "column": "opentology_aug",
+  "question_id": "Q11",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 508,
+    "output_tokens": 40,
+    "latency_ms": 1079,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"gross margin\",\"aliases\":[\"gross margin\"]},{\"canonical\":\"FY2022\",\"aliases\":[\"FY2022\"]},{\"canonical\":\"American Express\",\"aliases\":[\"American Express\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "gross margin",
+          "aliases": [
+            "gross margin"
+          ]
+        },
+        {
+          "canonical": "FY2022",
+          "aliases": [
+            "FY2022"
+          ]
+        },
+        {
+          "canonical": "American Express",
+          "aliases": [
+            "American Express"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 724,
+      "input": {
+        "keywords": [
+          "gross margin",
+          "FY2022",
+          "American Express"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 181,
+      "input": {
+        "entry_ids": [
+          "01KVJPDBPZ7W7YSJ391V50GVQZ",
+          "01KVJPETAVYS36CBBDDSVFGTVJ",
+          "01KVJPDDF9GJYQ9C8EY7NR2S1C",
+          "01KVJPETY477X3SVZ99653WF1Y",
+          "01KVJPFS9BMZA70DVJZKEDBEWS",
+          "01KVJPDC65NCXVZDG57VG3MMG3",
+          "01KVJPG3QN9SJM191D6N9MXPTV",
+          "01KVJPESHVG529PHZVMS9TK8Y1",
+          "01KVJPEE9HPEPX0AN9M4479M63",
+          "01KVJPEF1BE260M3RX2F38HW1N"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 66,
+        "edges": 64,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVJPDBPZ7W7YSJ391V50GVQZ",
+    "01KVJPETAVYS36CBBDDSVFGTVJ",
+    "01KVJPDDF9GJYQ9C8EY7NR2S1C",
+    "01KVJPETY477X3SVZ99653WF1Y",
+    "01KVJPFS9BMZA70DVJZKEDBEWS",
+    "01KVJPDC65NCXVZDG57VG3MMG3",
+    "01KVJPG3QN9SJM191D6N9MXPTV",
+    "01KVJPESHVG529PHZVMS9TK8Y1",
+    "01KVJPEE9HPEPX0AN9M4479M63",
+    "01KVJPEF1BE260M3RX2F38HW1N"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 30500,
+  "graph_selected_sources": [
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMERICANEXPRESS_2022_10K.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMD_2022_10K.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/BOEING_2022_10K.md"
+  ],
+  "used_fallback": null,
+  "retrieved_chunks": [
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 72,
+      "score": 0.6388861675745708
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 51,
+      "score": 0.6309442813787864
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 4,
+      "score": 0.6252159914691284
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 6,
+      "score": 0.6136194655704628
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 49,
+      "score": 0.5988632588716658
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 5,
+      "score": 0.5973117319550698
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 54,
+      "score": 0.5962724360171529
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 53,
+      "score": 0.5934037867113717
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 15783,
+    "output_tokens": 215,
+    "latency_ms": 3089,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"a\",\"reasoning\":\"(A) 발췌에서 American Express의 실적 평가는 'gross margin'(매출총이익) 지표가 아니라, 네트워크 볼륨, 카드 수수료, 이자수익, 서비스 수수료 등 다양한 금융 서비스업 특유의 수익/비용 항목으로 설명되고 있습니다. 특히 청크 2, 3, 4, 7, 8 등에서 수익 구조와 비용 구조가 제조업/유통업과 달리 'cost of goods sold' 개념이 적용되지 않음을 명확히 보여줍니다. (B) 그래프에서도 American Express가 통합 결제 네트워크, 카드 발급, 서비스 제공 등 금융업 특화 사업 구조임을 확인할 수 있습니다. 따라서 gross margin은 이 회사의 실적을 평가하는 데 적합하지 않다는 점이 (A)와 (B) 모두에서 일치하며, (A)가 결정적 근거입니다.\"}",
+    "parsed": {
+      "choice": "a",
+      "reasoning": "(A) 발췌에서 American Express의 실적 평가는 'gross margin'(매출총이익) 지표가 아니라, 네트워크 볼륨, 카드 수수료, 이자수익, 서비스 수수료 등 다양한 금융 서비스업 특유의 수익/비용 항목으로 설명되고 있습니다. 특히 청크 2, 3, 4, 7, 8 등에서 수익 구조와 비용 구조가 제조업/유통업과 달리 'cost of goods sold' 개념이 적용되지 않음을 명확히 보여줍니다. (B) 그래프에서도 American Express가 통합 결제 네트워크, 카드 발급, 서비스 제공 등 금융업 특화 사업 구조임을 확인할 수 있습니다. 따라서 gross margin은 이 회사의 실적을 평가하는 데 적합하지 않다는 점이 (A)와 (B) 모두에서 일치하며, (A)가 결정적 근거입니다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 20392,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 37,
+    "chunk_setup_amortized": 20331,
+    "chunk_setup_total": 426971,
+    "graph_keyword_estimated": 24,
+    "questions_count_for_amortization": 21
+  },
+  "total_input_tokens": 16291,
+  "total_output_tokens": 255,
+  "total_tokens": 36938,
+  "total_latency_ms": 5073
+}

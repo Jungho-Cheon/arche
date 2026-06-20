@@ -1,0 +1,161 @@
+{
+  "column": "combined",
+  "question_id": "Q14",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 519,
+    "output_tokens": 52,
+    "latency_ms": 893,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"프리미엄 멤버\",\"aliases\":[\"프리미엄 멤버\"]},{\"canonical\":\"명품\",\"aliases\":[\"명품\"]},{\"canonical\":\"반품 가능 기간\",\"aliases\":[\"반품 가능 기간\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "프리미엄 멤버",
+          "aliases": [
+            "프리미엄 멤버"
+          ]
+        },
+        {
+          "canonical": "명품",
+          "aliases": [
+            "명품"
+          ]
+        },
+        {
+          "canonical": "반품 가능 기간",
+          "aliases": [
+            "반품 가능 기간"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 1062,
+      "input": {
+        "keywords": [
+          "프리미엄 멤버",
+          "명품",
+          "반품 가능 기간"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 87,
+      "input": {
+        "entry_ids": [
+          "01KVJR8DAT0QYQP58VG8XVY26Y",
+          "01KVJR96CRGGDCPSQMPSJT429F",
+          "01KVJRA1B5JAWWY32GKS8ATM9E",
+          "01KVJQMA4K1QYFBB87M17A80G7",
+          "01KVJRCCHGZ5RWHTRT333Z51G6",
+          "01KVJQX6TY27YGBZAAQ0JGVS5V",
+          "01KVJQZJY7EH62DH0QCFH11FG9",
+          "01KVJQX4T62D2982H1TVV057NJ",
+          "01KVJRGTBWEV31CX0W721SBB3B",
+          "01KVJRBXEE7547FG9HPTYE4M1Z"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 32,
+        "edges": 27,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVJR8DAT0QYQP58VG8XVY26Y",
+    "01KVJR96CRGGDCPSQMPSJT429F",
+    "01KVJRA1B5JAWWY32GKS8ATM9E",
+    "01KVJQMA4K1QYFBB87M17A80G7",
+    "01KVJRCCHGZ5RWHTRT333Z51G6",
+    "01KVJQX6TY27YGBZAAQ0JGVS5V",
+    "01KVJQZJY7EH62DH0QCFH11FG9",
+    "01KVJQX4T62D2982H1TVV057NJ",
+    "01KVJRGTBWEV31CX0W721SBB3B",
+    "01KVJRBXEE7547FG9HPTYE4M1Z"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 17915,
+  "retrieved_chunks": [
+    {
+      "source_path": "loyalty/tier-rulebook.md",
+      "chunk_index": 7,
+      "score": 0.4958613139856531
+    },
+    {
+      "source_path": "loyalty/tier-transition-rulebook.pdf",
+      "chunk_index": 2,
+      "score": 0.4958283198060788
+    },
+    {
+      "source_path": "hq-pm/policy-matrix.md",
+      "chunk_index": 3,
+      "score": 0.4813088879215355
+    },
+    {
+      "source_path": "loyalty/tier-rulebook.md",
+      "chunk_index": 6,
+      "score": 0.4790324499015106
+    },
+    {
+      "source_path": "loyalty/tier-transition-rulebook.pdf",
+      "chunk_index": 1,
+      "score": 0.46927147293344057
+    },
+    {
+      "source_path": "loyalty/tier-rulebook.md",
+      "chunk_index": 8,
+      "score": 0.45527135476649677
+    },
+    {
+      "source_path": "hq-pm/quarterly-policy-brief.pdf",
+      "chunk_index": 1,
+      "score": 0.44307204618173723
+    },
+    {
+      "source_path": "cs-logistics/cs-macro-manual.md",
+      "chunk_index": 2,
+      "score": 0.44217405256186765
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 11599,
+    "output_tokens": 236,
+    "latency_ms": 2827,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"a\",\"reasoning\":\"(A) 검색된 문서 발췌에서 여러 곳(예: hq-pm/policy-matrix.md:3, loyalty/tier-rulebook.md:7, loyalty/tier-transition-rulebook.pdf:2, cs-logistics/cs-macro-manual.md:2)에서 VIP(프리미엄 멤버, 골드 등급, V 회원)가 명품을 구매하면 반품 가능 기간이 7일에서 30일로 연장된다고 명확히 규정하고 있다. 단, 휴면 복귀 30일 이내에는 예외적으로 7일이지만, 질문에서는 '휴면 복귀 이력이 전혀 없는 정상 회원'임을 명시하므로 이 예외가 적용되지 않는다. (B) 도메인 그래프에서도 VIP 회원이 명품 반품 한도 연장(30일) 적용 대상임이 관계로 표현되어 있다. 두 출처가 일치하며, (A)에서 구체적이고 명시적으로 근거가 제시되어 있으므로 a)가 정답이다.\"}",
+    "parsed": {
+      "choice": "a",
+      "reasoning": "(A) 검색된 문서 발췌에서 여러 곳(예: hq-pm/policy-matrix.md:3, loyalty/tier-rulebook.md:7, loyalty/tier-transition-rulebook.pdf:2, cs-logistics/cs-macro-manual.md:2)에서 VIP(프리미엄 멤버, 골드 등급, V 회원)가 명품을 구매하면 반품 가능 기간이 7일에서 30일로 연장된다고 명확히 규정하고 있다. 단, 휴면 복귀 30일 이내에는 예외적으로 7일이지만, 질문에서는 '휴면 복귀 이력이 전혀 없는 정상 회원'임을 명시하므로 이 예외가 적용되지 않는다. (B) 도메인 그래프에서도 VIP 회원이 명품 반품 한도 연장(30일) 적용 대상임이 관계로 표현되어 있다. 두 출처가 일치하며, (A)에서 구체적이고 명시적으로 근거가 제시되어 있으므로 a)가 정답이다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 3722,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 80,
+    "chunk_setup_amortized": 3618,
+    "chunk_setup_total": 108550,
+    "graph_keyword_estimated": 24,
+    "questions_count_for_amortization": 30
+  },
+  "total_input_tokens": 12118,
+  "total_output_tokens": 288,
+  "total_tokens": 16128,
+  "total_latency_ms": 4869
+}

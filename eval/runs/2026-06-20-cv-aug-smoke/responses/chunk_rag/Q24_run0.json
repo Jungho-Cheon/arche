@@ -1,0 +1,65 @@
+{
+  "column": "chunk_rag",
+  "question_id": "Q24",
+  "run_index": 0,
+  "input_tokens": 4769,
+  "output_tokens": 101,
+  "embedding_tokens": 3664,
+  "embedding_tokens_breakdown": {
+    "question_embedding": 46,
+    "setup_amortized": 3618,
+    "setup_total": 108550,
+    "questions_count_for_amortization": 30
+  },
+  "total_tokens": 8534,
+  "latency_ms": 1643,
+  "model": "gpt-4.1",
+  "retrieved_chunks": [
+    {
+      "source_path": "global-pm/country-policy-matrix.md",
+      "chunk_index": 6,
+      "score": 0.4617255101645015
+    },
+    {
+      "source_path": "legal-risk/gdpr-de-memo.pdf",
+      "chunk_index": 3,
+      "score": 0.45431176709994303
+    },
+    {
+      "source_path": "global-pm/country-policy-matrix.md",
+      "chunk_index": 3,
+      "score": 0.4497614906885901
+    },
+    {
+      "source_path": "global-pm/country-policy-matrix.md",
+      "chunk_index": 7,
+      "score": 0.4328616650064285
+    },
+    {
+      "source_path": "cs-logistics/cs-macro-manual.md",
+      "chunk_index": 7,
+      "score": 0.42499606250477484
+    },
+    {
+      "source_path": "global-pm/country-policy-matrix.md",
+      "chunk_index": 5,
+      "score": 0.41729454360023077
+    },
+    {
+      "source_path": "cs-logistics/cs-macro-manual.md",
+      "chunk_index": 1,
+      "score": 0.4141550238833687
+    },
+    {
+      "source_path": "legal-risk/kyc-age-verification-memo.pdf",
+      "chunk_index": 1,
+      "score": 0.41408785489808453
+    }
+  ],
+  "raw_response": "{\"choice\":\"a\",\"reasoning\":\"청크 3과 청크 8에서 DE(독일)는 주종별로 연령 기준이 다르며, 맥주는 16세, 증류주는 18세 이상이어야 주문이 가능하다고 명시되어 있다. 17세 계정으로 증류주를 주문하면 연령 검증에서 실패하여 자동 취소 및 환불 처리된다고 설명한다. 따라서 보기 a)가 정답이다.\"}",
+  "parsed": {
+    "choice": "a",
+    "reasoning": "청크 3과 청크 8에서 DE(독일)는 주종별로 연령 기준이 다르며, 맥주는 16세, 증류주는 18세 이상이어야 주문이 가능하다고 명시되어 있다. 17세 계정으로 증류주를 주문하면 연령 검증에서 실패하여 자동 취소 및 환불 처리된다고 설명한다. 따라서 보기 a)가 정답이다."
+  },
+  "parse_error": null
+}

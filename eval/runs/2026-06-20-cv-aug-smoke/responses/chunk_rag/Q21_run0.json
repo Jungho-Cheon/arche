@@ -1,0 +1,65 @@
+{
+  "column": "chunk_rag",
+  "question_id": "Q21",
+  "run_index": 0,
+  "input_tokens": 4512,
+  "output_tokens": 146,
+  "embedding_tokens": 3694,
+  "embedding_tokens_breakdown": {
+    "question_embedding": 76,
+    "setup_amortized": 3618,
+    "setup_total": 108550,
+    "questions_count_for_amortization": 30
+  },
+  "total_tokens": 8352,
+  "latency_ms": 1730,
+  "model": "gpt-4.1",
+  "retrieved_chunks": [
+    {
+      "source_path": "b2b/b2b-ops-guide.md",
+      "chunk_index": 1,
+      "score": 0.5792615940492013
+    },
+    {
+      "source_path": "b2b/b2b-ops-guide.md",
+      "chunk_index": 2,
+      "score": 0.5718616331101062
+    },
+    {
+      "source_path": "hq-pm/decision-log.md",
+      "chunk_index": 2,
+      "score": 0.5700538345597744
+    },
+    {
+      "source_path": "cs-logistics/cold-chain-sop.pdf",
+      "chunk_index": 3,
+      "score": 0.5656398321293826
+    },
+    {
+      "source_path": "cs-logistics/cs-macro-manual.md",
+      "chunk_index": 3,
+      "score": 0.5608586615475892
+    },
+    {
+      "source_path": "hq-pm/decision-log.md",
+      "chunk_index": 3,
+      "score": 0.5592418534612027
+    },
+    {
+      "source_path": "b2b/enterprise-agreement-addendum.pdf",
+      "chunk_index": 2,
+      "score": 0.5584363592214289
+    },
+    {
+      "source_path": "cs-logistics/cold-chain-sop.pdf",
+      "chunk_index": 1,
+      "score": 0.5554903848578917
+    }
+  ],
+  "raw_response": "{\"choice\":\"a\",\"reasoning\":\"청크 1, 2, 7에서 B2C의 신선식품 환불 예외(특정 등급+7일 이내+콜드체인 증빙→100% 환불)는 소비자 등급 기반이라 B2B에는 그대로 적용되지 않는다고 명확히 서술되어 있다. 대신 B2B(엔터프라이즈)는 SLA(서비스 수준 약정)에 해당 사고가 보장 항목으로 정의되어 있으면, 등급과 무관하게 사고 물량 전액을 인보이스에서 크레딧(credit note) 차감한다고 설명한다. 따라서 a)가 정답이다.\"}",
+  "parsed": {
+    "choice": "a",
+    "reasoning": "청크 1, 2, 7에서 B2C의 신선식품 환불 예외(특정 등급+7일 이내+콜드체인 증빙→100% 환불)는 소비자 등급 기반이라 B2B에는 그대로 적용되지 않는다고 명확히 서술되어 있다. 대신 B2B(엔터프라이즈)는 SLA(서비스 수준 약정)에 해당 사고가 보장 항목으로 정의되어 있으면, 등급과 무관하게 사고 물량 전액을 인보이스에서 크레딧(credit note) 차감한다고 설명한다. 따라서 a)가 정답이다."
+  },
+  "parse_error": null
+}

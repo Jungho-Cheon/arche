@@ -1,0 +1,65 @@
+{
+  "column": "chunk_rag",
+  "question_id": "Q01",
+  "run_index": 0,
+  "input_tokens": 6854,
+  "output_tokens": 138,
+  "embedding_tokens": 20366,
+  "embedding_tokens_breakdown": {
+    "question_embedding": 35,
+    "setup_amortized": 20331,
+    "setup_total": 426971,
+    "questions_count_for_amortization": 21
+  },
+  "total_tokens": 27358,
+  "latency_ms": 2984,
+  "model": "gpt-4.1",
+  "retrieved_chunks": [
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 113,
+      "score": 0.5475266238366149
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 47,
+      "score": 0.544336564784259
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 45,
+      "score": 0.5372316342365769
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 46,
+      "score": 0.535076417121566
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 64,
+      "score": 0.5315680492248203
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 78,
+      "score": 0.5234554945486118
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 0,
+      "score": 0.5176177138559108
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 106,
+      "score": 0.5010971990986399
+    }
+  ],
+  "raw_response": "{\"choice\": \"e\", \"reasoning\": \"The provided excerpts from AMD's 2022 10-K do not contain explicit information about AMD's quick ratio for FY22, nor do they provide the specific values for current assets (excluding inventory) and current liabilities needed to calculate the quick ratio. While there is some information about cash, cash equivalents, and short-term investments (see 청크 2 and 청크 5), there is no consolidated balance sheet or summary of current liabilities and receivables that would allow for a direct calculation or confirmation of the quick ratio. Therefore, based on the provided corpus, the answer is '정보 부족 / 알 수 없음'.\"}",
+  "parsed": {
+    "choice": "e",
+    "reasoning": "The provided excerpts from AMD's 2022 10-K do not contain explicit information about AMD's quick ratio for FY22, nor do they provide the specific values for current assets (excluding inventory) and current liabilities needed to calculate the quick ratio. While there is some information about cash, cash equivalents, and short-term investments (see 청크 2 and 청크 5), there is no consolidated balance sheet or summary of current liabilities and receivables that would allow for a direct calculation or confirmation of the quick ratio. Therefore, based on the provided corpus, the answer is '정보 부족 / 알 수 없음'."
+  },
+  "parse_error": null
+}

@@ -1,0 +1,154 @@
+{
+  "column": "combined",
+  "question_id": "Q14",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 484,
+    "output_tokens": 27,
+    "latency_ms": 1029,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"American Express\",\"aliases\":[\"American Express\"]},{\"canonical\":\"card members\",\"aliases\":[\"card members\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "American Express",
+          "aliases": [
+            "American Express"
+          ]
+        },
+        {
+          "canonical": "card members",
+          "aliases": [
+            "card members"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 870,
+      "input": {
+        "keywords": [
+          "American Express",
+          "card members"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 201,
+      "input": {
+        "entry_ids": [
+          "01KVJT3X5C89HWRQK8Y3RMP5GD",
+          "01KVJT5G5VSSVDYH2KY6P93QHX",
+          "01KVJT79R7N0482Q7YRZZKE24K",
+          "01KVJT3YEH04T5E9EF4ASTQYRJ",
+          "01KVJT6AQZSWY9CGS8HZXYE0PH",
+          "01KVJT5CVABCZDRHBSEM3HE630",
+          "01KVJT5BFMKKYXFZWAB56T0506",
+          "01KVJT5C622KCVXGK0XBWAJVB5",
+          "01KVJT4MR20P3Z2SNQGSG1GC9P",
+          "01KVJT7AYMYNKYTHDW0V0TD63C"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 80,
+        "edges": 78,
+        "truncated": true
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVJT3X5C89HWRQK8Y3RMP5GD",
+    "01KVJT5G5VSSVDYH2KY6P93QHX",
+    "01KVJT79R7N0482Q7YRZZKE24K",
+    "01KVJT3YEH04T5E9EF4ASTQYRJ",
+    "01KVJT6AQZSWY9CGS8HZXYE0PH",
+    "01KVJT5CVABCZDRHBSEM3HE630",
+    "01KVJT5BFMKKYXFZWAB56T0506",
+    "01KVJT5C622KCVXGK0XBWAJVB5",
+    "01KVJT4MR20P3Z2SNQGSG1GC9P",
+    "01KVJT7AYMYNKYTHDW0V0TD63C"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 37138,
+  "retrieved_chunks": [
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 54,
+      "score": 0.6253292804419566
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 6,
+      "score": 0.6178770116558187
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 53,
+      "score": 0.6109883009383983
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 99,
+      "score": 0.5882163990957492
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 72,
+      "score": 0.5791058967179893
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 4,
+      "score": 0.5788721874452243
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 32,
+      "score": 0.5728432497239485
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 57,
+      "score": 0.5691548585947402
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 17422,
+    "output_tokens": 126,
+    "latency_ms": 2483,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"b\",\"reasoning\":\"(A) 검색된 문서 발췌에서 여러 곳(특히 청크 1, 3)에서 2022년에 American Express가 신규 카드 발급이 기록적인 수준에 도달했으며, 'Card Member retention remained high'라고 명시적으로 언급하고 있습니다. 이는 2022년에도 카드 회원 유지율이 높았음을 의미합니다. (B) 도메인 그래프에는 카드 회원 유지에 대한 직접적인 정보가 없으므로, (A)의 명시적 진술이 결정적 근거입니다.\"}",
+    "parsed": {
+      "choice": "b",
+      "reasoning": "(A) 검색된 문서 발췌에서 여러 곳(특히 청크 1, 3)에서 2022년에 American Express가 신규 카드 발급이 기록적인 수준에 도달했으며, 'Card Member retention remained high'라고 명시적으로 언급하고 있습니다. 이는 2022년에도 카드 회원 유지율이 높았음을 의미합니다. (B) 도메인 그래프에는 카드 회원 유지에 대한 직접적인 정보가 없으므로, (A)의 명시적 진술이 결정적 근거입니다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 20360,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 13,
+    "chunk_setup_amortized": 20331,
+    "chunk_setup_total": 426971,
+    "graph_keyword_estimated": 16,
+    "questions_count_for_amortization": 21
+  },
+  "total_input_tokens": 17906,
+  "total_output_tokens": 153,
+  "total_tokens": 38419,
+  "total_latency_ms": 4583
+}

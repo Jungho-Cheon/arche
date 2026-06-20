@@ -1,0 +1,65 @@
+{
+  "column": "chunk_rag",
+  "question_id": "Q16",
+  "run_index": 0,
+  "input_tokens": 4653,
+  "output_tokens": 177,
+  "embedding_tokens": 3717,
+  "embedding_tokens_breakdown": {
+    "question_embedding": 99,
+    "setup_amortized": 3618,
+    "setup_total": 108550,
+    "questions_count_for_amortization": 30
+  },
+  "total_tokens": 8547,
+  "latency_ms": 2024,
+  "model": "gpt-4.1",
+  "retrieved_chunks": [
+    {
+      "source_path": "seller-ops/settlement-faq.md",
+      "chunk_index": 7,
+      "score": 0.5241762521462776
+    },
+    {
+      "source_path": "loyalty/tier-rulebook.md",
+      "chunk_index": 7,
+      "score": 0.505671000152343
+    },
+    {
+      "source_path": "cs-logistics/cs-macro-manual.md",
+      "chunk_index": 7,
+      "score": 0.49608534436168944
+    },
+    {
+      "source_path": "marketing/bfm2026-brief.pdf",
+      "chunk_index": 1,
+      "score": 0.49324784842333147
+    },
+    {
+      "source_path": "b2b/b2b-ops-guide.md",
+      "chunk_index": 3,
+      "score": 0.49212713057959684
+    },
+    {
+      "source_path": "loyalty/tier-rulebook.md",
+      "chunk_index": 3,
+      "score": 0.47541846478851274
+    },
+    {
+      "source_path": "legal-risk/risk-checklist.md",
+      "chunk_index": 5,
+      "score": 0.4695461139197588
+    },
+    {
+      "source_path": "loyalty/tier-rulebook.md",
+      "chunk_index": 4,
+      "score": 0.4671521215310781
+    }
+  ],
+  "raw_response": "{\"choice\":\"a\",\"reasoning\":\"청크 2, 3, 4, 5, 7, 8에서 모두 KR BFM(CMP-KR-BFM2026)은 휴면(수면) 회원을 자동 활성화하고 5,000원 부활 쿠폰을 지급하지만, '제한 회원(Restricted)'은 자동 활성화 및 쿠폰 지급 대상에서 명시적으로 제외된다고 반복적으로 설명한다. 예를 들어 청크 4는 '거래 제한 회원(Restricted) 제외. 블랙리스트 회원은 자동 활성화와 부활 쿠폰 발급 대상에서 빠진다.'라고 명시하고, 청크 2와 3, 8도 동일한 내용을 확인할 수 있다. 따라서 제한 회원이 부활 쿠폰을 받지 못한 이유로 설명된다.\"}",
+  "parsed": {
+    "choice": "a",
+    "reasoning": "청크 2, 3, 4, 5, 7, 8에서 모두 KR BFM(CMP-KR-BFM2026)은 휴면(수면) 회원을 자동 활성화하고 5,000원 부활 쿠폰을 지급하지만, '제한 회원(Restricted)'은 자동 활성화 및 쿠폰 지급 대상에서 명시적으로 제외된다고 반복적으로 설명한다. 예를 들어 청크 4는 '거래 제한 회원(Restricted) 제외. 블랙리스트 회원은 자동 활성화와 부활 쿠폰 발급 대상에서 빠진다.'라고 명시하고, 청크 2와 3, 8도 동일한 내용을 확인할 수 있다. 따라서 제한 회원이 부활 쿠폰을 받지 못한 이유로 설명된다."
+  },
+  "parse_error": null
+}

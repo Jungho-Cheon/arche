@@ -1,0 +1,65 @@
+{
+  "column": "chunk_rag",
+  "question_id": "Q03",
+  "run_index": 0,
+  "input_tokens": 4450,
+  "output_tokens": 154,
+  "embedding_tokens": 3665,
+  "embedding_tokens_breakdown": {
+    "question_embedding": 47,
+    "setup_amortized": 3618,
+    "setup_total": 108550,
+    "questions_count_for_amortization": 30
+  },
+  "total_tokens": 8269,
+  "latency_ms": 2589,
+  "model": "gpt-4.1",
+  "retrieved_chunks": [
+    {
+      "source_path": "hq-pm/policy-matrix.md",
+      "chunk_index": 5,
+      "score": 0.5791594174915383
+    },
+    {
+      "source_path": "global-pm/country-launch-memo-vn.pdf",
+      "chunk_index": 0,
+      "score": 0.5772733216971484
+    },
+    {
+      "source_path": "legal-risk/kyc-age-verification-memo.pdf",
+      "chunk_index": 3,
+      "score": 0.5728183778501361
+    },
+    {
+      "source_path": "hq-pm/policy-matrix.md",
+      "chunk_index": 6,
+      "score": 0.5687281777813613
+    },
+    {
+      "source_path": "legal-risk/risk-checklist.md",
+      "chunk_index": 2,
+      "score": 0.5545343382855049
+    },
+    {
+      "source_path": "global-pm/country-policy-matrix.md",
+      "chunk_index": 7,
+      "score": 0.5543633576569826
+    },
+    {
+      "source_path": "global-pm/country-launch-memo-vn.pdf",
+      "chunk_index": 1,
+      "score": 0.539819974247901
+    },
+    {
+      "source_path": "cs-logistics/cs-macro-manual.md",
+      "chunk_index": 6,
+      "score": 0.5297731152841031
+    }
+  ],
+  "raw_response": "{\"choice\":\"a\",\"reasoning\":\"청크 3, 7, 8에서 VN(베트남)에서는 디지털상품권이 외환법(선불성 외화 환전 우려)으로, BNPL(후불결제)이 금융법(소비자 여신 규제)으로 각각 미허용임이 명확히 언급되어 있다. 또한, 결제 모듈에서 이 두 수단을 노출 단계에서 비활성화해야 하며, 우회 안내도 금지된다고 안내한다. 따라서 '둘 다 불가. 디지털상품권은 외환법, BNPL 은 금융법으로 VN 에서 모두 미허용이다.'가 정답이다.\"}",
+  "parsed": {
+    "choice": "a",
+    "reasoning": "청크 3, 7, 8에서 VN(베트남)에서는 디지털상품권이 외환법(선불성 외화 환전 우려)으로, BNPL(후불결제)이 금융법(소비자 여신 규제)으로 각각 미허용임이 명확히 언급되어 있다. 또한, 결제 모듈에서 이 두 수단을 노출 단계에서 비활성화해야 하며, 우회 안내도 금지된다고 안내한다. 따라서 '둘 다 불가. 디지털상품권은 외환법, BNPL 은 금융법으로 VN 에서 모두 미허용이다.'가 정답이다."
+  },
+  "parse_error": null
+}

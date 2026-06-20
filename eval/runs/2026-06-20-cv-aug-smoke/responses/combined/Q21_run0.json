@@ -1,0 +1,181 @@
+{
+  "column": "combined",
+  "question_id": "Q21",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 524,
+    "output_tokens": 150,
+    "latency_ms": 1518,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"엔터프라이즈(B2B) 신선식품 거래\",\"aliases\":[\"엔터프라이즈(B2B) 신선식품 거래\",\"B2B 신선식품 거래\"]},{\"canonical\":\"콜드체인 사고\",\"aliases\":[\"콜드체인 사고\"]},{\"canonical\":\"B2C\",\"aliases\":[\"B2C\"]},{\"canonical\":\"VVIP+7 일 이내+증빙 환불 예외\",\"aliases\":[\"VVIP+7 일 이내+증빙 환불 예외\",\"VVIP+7일 이내 환불 예외\",\"VVIP 환불 예외\"]},{\"canonical\":\"환불 예외 적용\",\"aliases\":[\"환불 예외 적용\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "엔터프라이즈(B2B) 신선식품 거래",
+          "aliases": [
+            "엔터프라이즈(B2B) 신선식품 거래",
+            "B2B 신선식품 거래"
+          ]
+        },
+        {
+          "canonical": "콜드체인 사고",
+          "aliases": [
+            "콜드체인 사고"
+          ]
+        },
+        {
+          "canonical": "B2C",
+          "aliases": [
+            "B2C"
+          ]
+        },
+        {
+          "canonical": "VVIP+7 일 이내+증빙 환불 예외",
+          "aliases": [
+            "VVIP+7 일 이내+증빙 환불 예외",
+            "VVIP+7일 이내 환불 예외",
+            "VVIP 환불 예외"
+          ]
+        },
+        {
+          "canonical": "환불 예외 적용",
+          "aliases": [
+            "환불 예외 적용"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 1399,
+      "input": {
+        "keywords": [
+          "엔터프라이즈(B2B) 신선식품 거래",
+          "B2B 신선식품 거래",
+          "콜드체인 사고",
+          "B2C",
+          "VVIP+7 일 이내+증빙 환불 예외",
+          "VVIP+7일 이내 환불 예외",
+          "VVIP 환불 예외",
+          "환불 예외 적용"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 78,
+      "input": {
+        "entry_ids": [
+          "01KVJRB01JBW1F4573KAA2FHRT",
+          "01KVJR8DRV3XN6R37ZB4FQ3Y01",
+          "01KVJQGK4TP2V88EN1CGMHDTVR",
+          "01KVJR54NC954C5MS2YKR7K93J",
+          "01KVJQGKQS1FN36G1KSG0H6ACB",
+          "01KVJQM9C46QC9YT1SVQWDK5HD",
+          "01KVJQPWQTESV7HMH1G813V0PQ",
+          "01KVJRA2J13VAW1R7CPVS4QZZQ",
+          "01KVJQZNRZRHF4GATPGC2SS1RE",
+          "01KVJR0GWPZQ74MRV4TW97952Z"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 28,
+        "edges": 23,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVJRB01JBW1F4573KAA2FHRT",
+    "01KVJR8DRV3XN6R37ZB4FQ3Y01",
+    "01KVJQGK4TP2V88EN1CGMHDTVR",
+    "01KVJR54NC954C5MS2YKR7K93J",
+    "01KVJQGKQS1FN36G1KSG0H6ACB",
+    "01KVJQM9C46QC9YT1SVQWDK5HD",
+    "01KVJQPWQTESV7HMH1G813V0PQ",
+    "01KVJRA2J13VAW1R7CPVS4QZZQ",
+    "01KVJQZNRZRHF4GATPGC2SS1RE",
+    "01KVJR0GWPZQ74MRV4TW97952Z"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 12994,
+  "retrieved_chunks": [
+    {
+      "source_path": "b2b/b2b-ops-guide.md",
+      "chunk_index": 1,
+      "score": 0.5792884736214565
+    },
+    {
+      "source_path": "b2b/b2b-ops-guide.md",
+      "chunk_index": 2,
+      "score": 0.5719207960927469
+    },
+    {
+      "source_path": "hq-pm/decision-log.md",
+      "chunk_index": 2,
+      "score": 0.5700964674097858
+    },
+    {
+      "source_path": "cs-logistics/cold-chain-sop.pdf",
+      "chunk_index": 3,
+      "score": 0.565843479383536
+    },
+    {
+      "source_path": "cs-logistics/cs-macro-manual.md",
+      "chunk_index": 3,
+      "score": 0.5608997441651268
+    },
+    {
+      "source_path": "hq-pm/decision-log.md",
+      "chunk_index": 3,
+      "score": 0.5592643637559985
+    },
+    {
+      "source_path": "b2b/enterprise-agreement-addendum.pdf",
+      "chunk_index": 2,
+      "score": 0.5580886620188732
+    },
+    {
+      "source_path": "cs-logistics/cold-chain-sop.pdf",
+      "chunk_index": 1,
+      "score": 0.5553645151166944
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 9409,
+    "output_tokens": 223,
+    "latency_ms": 2716,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"a\",\"reasoning\":\"(A) 검색된 문서 발췌에서 b2b/b2b-ops-guide.md와 b2b/enterprise-agreement-addendum.pdf 모두 B2C의 'VVIP+7일 이내+콜드체인 증빙' 환불 예외는 등급 기반이므로 B2B에는 그대로 적용되지 않는다고 명확히 서술하고 있다. 대신 B2B에서는 SLA(서비스 수준 약정)에 해당 사고가 보장 항목으로 정의되어 있으면, 등급과 무관하게 사고 물량 전액을 인보이스에서 차감(크레딧 노트)한다고 설명한다. (B) 도메인 그래프에서도 B2B에 등급 기반 예외가 적용된다는 근거는 없고, 오히려 B2C 등급 정책과 B2B SLA 정책이 분리되어 있음을 뒷받침한다. 따라서 결정적 근거는 (A) 발췌이며, 보기 a)가 정답이다.\"}",
+    "parsed": {
+      "choice": "a",
+      "reasoning": "(A) 검색된 문서 발췌에서 b2b/b2b-ops-guide.md와 b2b/enterprise-agreement-addendum.pdf 모두 B2C의 'VVIP+7일 이내+콜드체인 증빙' 환불 예외는 등급 기반이므로 B2B에는 그대로 적용되지 않는다고 명확히 서술하고 있다. 대신 B2B에서는 SLA(서비스 수준 약정)에 해당 사고가 보장 항목으로 정의되어 있으면, 등급과 무관하게 사고 물량 전액을 인보이스에서 차감(크레딧 노트)한다고 설명한다. (B) 도메인 그래프에서도 B2B에 등급 기반 예외가 적용된다는 근거는 없고, 오히려 B2C 등급 정책과 B2B SLA 정책이 분리되어 있음을 뒷받침한다. 따라서 결정적 근거는 (A) 발췌이며, 보기 a)가 정답이다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 3758,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 76,
+    "chunk_setup_amortized": 3618,
+    "chunk_setup_total": 108550,
+    "graph_keyword_estimated": 64,
+    "questions_count_for_amortization": 30
+  },
+  "total_input_tokens": 9933,
+  "total_output_tokens": 373,
+  "total_tokens": 14064,
+  "total_latency_ms": 5711
+}

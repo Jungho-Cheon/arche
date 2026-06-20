@@ -1,0 +1,170 @@
+{
+  "column": "combined",
+  "question_id": "Q16",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 540,
+    "output_tokens": 83,
+    "latency_ms": 1195,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"수면 고객\",\"aliases\":[\"수면 고객\"]},{\"canonical\":\"한국 블랙프라이데이\",\"aliases\":[\"한국 블랙프라이데이\",\"CMP-KR-BFM2026\"]},{\"canonical\":\"5,000 원 부활 쿠폰\",\"aliases\":[\"5,000 원 부활 쿠폰\"]},{\"canonical\":\"제한 회원\",\"aliases\":[\"제한 회원\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "수면 고객",
+          "aliases": [
+            "수면 고객"
+          ]
+        },
+        {
+          "canonical": "한국 블랙프라이데이",
+          "aliases": [
+            "한국 블랙프라이데이",
+            "CMP-KR-BFM2026"
+          ]
+        },
+        {
+          "canonical": "5,000 원 부활 쿠폰",
+          "aliases": [
+            "5,000 원 부활 쿠폰"
+          ]
+        },
+        {
+          "canonical": "제한 회원",
+          "aliases": [
+            "제한 회원"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 1053,
+      "input": {
+        "keywords": [
+          "수면 고객",
+          "한국 블랙프라이데이",
+          "CMP-KR-BFM2026",
+          "5,000 원 부활 쿠폰",
+          "제한 회원"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 239,
+      "input": {
+        "entry_ids": [
+          "01KVJRBWR0SN05KAGBDDBED74H",
+          "01KVJQKDZCHJ1A1RVQY1Q2C1MJ",
+          "01KVJQBCZ8TG2D8FNTAGS2637W",
+          "01KVJQFDF57DKGEDEFVQARH8PC",
+          "01KVJQJJ2DMAJC6C73X738KTBV",
+          "01KVJQFCQSAD045T7AW9E9VEAE",
+          "01KVJQXDAZR4XYTXRWJT0ZCH94",
+          "01KVJQJHCB048HBHMEW478N4PW",
+          "01KVJQBCAX1TC87ZT9N3Q4CXVY",
+          "01KVJQQR1GZNG4S2HDAKPBZNS3"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 67,
+        "edges": 97,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVJRBWR0SN05KAGBDDBED74H",
+    "01KVJQKDZCHJ1A1RVQY1Q2C1MJ",
+    "01KVJQBCZ8TG2D8FNTAGS2637W",
+    "01KVJQFDF57DKGEDEFVQARH8PC",
+    "01KVJQJJ2DMAJC6C73X738KTBV",
+    "01KVJQFCQSAD045T7AW9E9VEAE",
+    "01KVJQXDAZR4XYTXRWJT0ZCH94",
+    "01KVJQJHCB048HBHMEW478N4PW",
+    "01KVJQBCAX1TC87ZT9N3Q4CXVY",
+    "01KVJQQR1GZNG4S2HDAKPBZNS3"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 54629,
+  "retrieved_chunks": [
+    {
+      "source_path": "seller-ops/settlement-faq.md",
+      "chunk_index": 7,
+      "score": 0.5242226947069966
+    },
+    {
+      "source_path": "loyalty/tier-rulebook.md",
+      "chunk_index": 7,
+      "score": 0.505671000152343
+    },
+    {
+      "source_path": "cs-logistics/cs-macro-manual.md",
+      "chunk_index": 7,
+      "score": 0.49560219603029365
+    },
+    {
+      "source_path": "marketing/bfm2026-brief.pdf",
+      "chunk_index": 1,
+      "score": 0.4933761764746271
+    },
+    {
+      "source_path": "b2b/b2b-ops-guide.md",
+      "chunk_index": 3,
+      "score": 0.49212713057959684
+    },
+    {
+      "source_path": "loyalty/tier-rulebook.md",
+      "chunk_index": 3,
+      "score": 0.47541846478851274
+    },
+    {
+      "source_path": "legal-risk/risk-checklist.md",
+      "chunk_index": 5,
+      "score": 0.469511373080133
+    },
+    {
+      "source_path": "loyalty/tier-rulebook.md",
+      "chunk_index": 4,
+      "score": 0.4672512726409711
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 24483,
+    "output_tokens": 176,
+    "latency_ms": 3624,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"a\",\"reasoning\":\"(A) 검색된 문서 발췌에서 '블랙프라이데이 2026 한국 캠페인은 수면 고객을 자동 활성화하고 5,000 원 부활 쿠폰을 지급한다. 단 제한 회원은 제외된다.'라는 명확한 문구가 있다(청크 3). (B) 도메인 그래프에서도 CMP-KR-BFM2026 --제외된다--> 제한 회원, CMP-KR-BFM2026 --자동 활성화와 쿠폰 지급에서 제외한다--> Restricted 등 다수의 관계가 명시적으로 존재한다. 두 출처 모두 제한 회원(Restricted)은 자동 활성화 및 부활 쿠폰 지급에서 제외된다는 점을 일치되게 명확히 제시하므로, 정답은 a)이다.\"}",
+    "parsed": {
+      "choice": "a",
+      "reasoning": "(A) 검색된 문서 발췌에서 '블랙프라이데이 2026 한국 캠페인은 수면 고객을 자동 활성화하고 5,000 원 부활 쿠폰을 지급한다. 단 제한 회원은 제외된다.'라는 명확한 문구가 있다(청크 3). (B) 도메인 그래프에서도 CMP-KR-BFM2026 --제외된다--> 제한 회원, CMP-KR-BFM2026 --자동 활성화와 쿠폰 지급에서 제외한다--> Restricted 등 다수의 관계가 명시적으로 존재한다. 두 출처 모두 제한 회원(Restricted)은 자동 활성화 및 부활 쿠폰 지급에서 제외된다는 점을 일치되게 명확히 제시하므로, 정답은 a)이다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 3757,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 99,
+    "chunk_setup_amortized": 3618,
+    "chunk_setup_total": 108550,
+    "graph_keyword_estimated": 40,
+    "questions_count_for_amortization": 30
+  },
+  "total_input_tokens": 25023,
+  "total_output_tokens": 259,
+  "total_tokens": 29039,
+  "total_latency_ms": 6111
+}

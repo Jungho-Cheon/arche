@@ -1,0 +1,175 @@
+{
+  "column": "combined",
+  "question_id": "Q01",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 535,
+    "output_tokens": 78,
+    "latency_ms": 1627,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"로열티팀\",\"aliases\":[\"로열티팀\"]},{\"canonical\":\"골드 등급\",\"aliases\":[\"골드 등급\"]},{\"canonical\":\"비활성 등급\",\"aliases\":[\"비활성 등급\"]},{\"canonical\":\"명품\",\"aliases\":[\"명품\"]},{\"canonical\":\"반품 가능 기간\",\"aliases\":[\"반품 가능 기간\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "로열티팀",
+          "aliases": [
+            "로열티팀"
+          ]
+        },
+        {
+          "canonical": "골드 등급",
+          "aliases": [
+            "골드 등급"
+          ]
+        },
+        {
+          "canonical": "비활성 등급",
+          "aliases": [
+            "비활성 등급"
+          ]
+        },
+        {
+          "canonical": "명품",
+          "aliases": [
+            "명품"
+          ]
+        },
+        {
+          "canonical": "반품 가능 기간",
+          "aliases": [
+            "반품 가능 기간"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 1390,
+      "input": {
+        "keywords": [
+          "로열티팀",
+          "골드 등급",
+          "비활성 등급",
+          "명품",
+          "반품 가능 기간"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 117,
+      "input": {
+        "entry_ids": [
+          "01KVJR9Z00CARX38G3P6PXTY00",
+          "01KVJR8DAT0QYQP58VG8XVY26Y",
+          "01KVJR95Y73MDS6D0ZABH2BT7Q",
+          "01KVJR96CRGGDCPSQMPSJT429F",
+          "01KVJR8C3CQK4N3GYED6PJV01Z",
+          "01KVJQZR9TTR7RS4DHVAW1GJ3R",
+          "01KVJRA1B5JAWWY32GKS8ATM9E",
+          "01KVJR7QYCE7TSJCBZH5HST8W3",
+          "01KVJQMA4K1QYFBB87M17A80G7",
+          "01KVJQJFHAE0M48WZJEX1FRDRD"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 42,
+        "edges": 43,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVJR9Z00CARX38G3P6PXTY00",
+    "01KVJR8DAT0QYQP58VG8XVY26Y",
+    "01KVJR95Y73MDS6D0ZABH2BT7Q",
+    "01KVJR96CRGGDCPSQMPSJT429F",
+    "01KVJR8C3CQK4N3GYED6PJV01Z",
+    "01KVJQZR9TTR7RS4DHVAW1GJ3R",
+    "01KVJRA1B5JAWWY32GKS8ATM9E",
+    "01KVJR7QYCE7TSJCBZH5HST8W3",
+    "01KVJQMA4K1QYFBB87M17A80G7",
+    "01KVJQJFHAE0M48WZJEX1FRDRD"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 27409,
+  "retrieved_chunks": [
+    {
+      "source_path": "loyalty/tier-rulebook.md",
+      "chunk_index": 9,
+      "score": 0.6373403386102456
+    },
+    {
+      "source_path": "loyalty/tier-transition-rulebook.pdf",
+      "chunk_index": 1,
+      "score": 0.6169791770584686
+    },
+    {
+      "source_path": "loyalty/tier-rulebook.md",
+      "chunk_index": 6,
+      "score": 0.6043444342710137
+    },
+    {
+      "source_path": "loyalty/tier-transition-rulebook.pdf",
+      "chunk_index": 2,
+      "score": 0.5872545081208856
+    },
+    {
+      "source_path": "loyalty/tier-rulebook.md",
+      "chunk_index": 2,
+      "score": 0.5233206918974521
+    },
+    {
+      "source_path": "loyalty/tier-rulebook.md",
+      "chunk_index": 7,
+      "score": 0.5132910875485176
+    },
+    {
+      "source_path": "hq-pm/policy-matrix.md",
+      "chunk_index": 3,
+      "score": 0.5023804605456123
+    },
+    {
+      "source_path": "loyalty/tier-rulebook.md",
+      "chunk_index": 3,
+      "score": 0.4803228984267752
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 14804,
+    "output_tokens": 199,
+    "latency_ms": 2688,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"b\",\"reasoning\":\"(A) 검색된 문서 발췌에서 여러 곳(특히 loyalty/tier-rulebook.md:6, loyalty/tier-transition-rulebook.pdf:2, hq-pm/policy-matrix.md:3 등)에서 명확하게 '비활성에서 골드로 복귀한 직후 30일 이내에는 명품 반품 연장이 적용되지 않고 기본 7일만 적용된다'고 반복적으로 명시하고 있다. 복귀 31일째부터 30일 연장이 정상 적용된다는 점도 구체적으로 예시와 함께 설명되어 있다. (B) 도메인 그래프에서도 '복귀 30일 유예 --적용된다--> 명품 반품 연장' 관계가 명확히 연결되어 있다. 두 출처 모두 일치하며, (A)의 구체적 예시와 규정이 결정적 근거다.\"}",
+    "parsed": {
+      "choice": "b",
+      "reasoning": "(A) 검색된 문서 발췌에서 여러 곳(특히 loyalty/tier-rulebook.md:6, loyalty/tier-transition-rulebook.pdf:2, hq-pm/policy-matrix.md:3 등)에서 명확하게 '비활성에서 골드로 복귀한 직후 30일 이내에는 명품 반품 연장이 적용되지 않고 기본 7일만 적용된다'고 반복적으로 명시하고 있다. 복귀 31일째부터 30일 연장이 정상 적용된다는 점도 구체적으로 예시와 함께 설명되어 있다. (B) 도메인 그래프에서도 '복귀 30일 유예 --적용된다--> 명품 반품 연장' 관계가 명확히 연결되어 있다. 두 출처 모두 일치하며, (A)의 구체적 예시와 규정이 결정적 근거다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 3752,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 94,
+    "chunk_setup_amortized": 3618,
+    "chunk_setup_total": 108550,
+    "graph_keyword_estimated": 40,
+    "questions_count_for_amortization": 30
+  },
+  "total_input_tokens": 15339,
+  "total_output_tokens": 277,
+  "total_tokens": 19368,
+  "total_latency_ms": 5822
+}

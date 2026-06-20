@@ -1,0 +1,170 @@
+{
+  "column": "opentology_aug",
+  "question_id": "Q20",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 483,
+    "output_tokens": 52,
+    "latency_ms": 835,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"production rate\",\"aliases\":[\"production rate\",\"production rate changes\"]},{\"canonical\":\"Boeing\",\"aliases\":[\"Boeing\"]},{\"canonical\":\"FY2023\",\"aliases\":[\"FY2023\",\"Fiscal Year 2023\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "production rate",
+          "aliases": [
+            "production rate",
+            "production rate changes"
+          ]
+        },
+        {
+          "canonical": "Boeing",
+          "aliases": [
+            "Boeing"
+          ]
+        },
+        {
+          "canonical": "FY2023",
+          "aliases": [
+            "FY2023",
+            "Fiscal Year 2023"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 1027,
+      "input": {
+        "keywords": [
+          "production rate",
+          "production rate changes",
+          "Boeing",
+          "FY2023",
+          "Fiscal Year 2023"
+        ],
+        "limit": 20,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 20
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 92,
+      "input": {
+        "entry_ids": [
+          "01KVJSDFW988SW127Y868MXJYG",
+          "01KVJSFM73ZXZK9KZS824Z6WFJ",
+          "01KVJSF7DTPGTPAB23V7FNWH6Z",
+          "01KVJSG9N1H5TYDEQ5KG35FD0X",
+          "01KVJSD6TGKSFWM0CDNFQEB958",
+          "01KVJSF4B34W3MK0JWYCM7Z0MB",
+          "01KVJSD6AKJKHFRC0TCQD7S7FW",
+          "01KVJSF4WHZ76YCQ0YEDSYP066",
+          "01KVJSAS2ZB9VDX33GHAVBGV7D",
+          "01KVJSF65N4DF4F4WT2PTTCVZE"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 36,
+        "edges": 29,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVJSDFW988SW127Y868MXJYG",
+    "01KVJSFM73ZXZK9KZS824Z6WFJ",
+    "01KVJSF7DTPGTPAB23V7FNWH6Z",
+    "01KVJSG9N1H5TYDEQ5KG35FD0X",
+    "01KVJSD6TGKSFWM0CDNFQEB958",
+    "01KVJSF4B34W3MK0JWYCM7Z0MB",
+    "01KVJSD6AKJKHFRC0TCQD7S7FW",
+    "01KVJSF4WHZ76YCQ0YEDSYP066",
+    "01KVJSAS2ZB9VDX33GHAVBGV7D",
+    "01KVJSF65N4DF4F4WT2PTTCVZE"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 15948,
+  "graph_selected_sources": [
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMERICANEXPRESS_2022_10K.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/BOEING_2022_10K.md"
+  ],
+  "used_fallback": null,
+  "retrieved_chunks": [
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 9,
+      "score": 0.6679189330028494
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 10,
+      "score": 0.656133891034765
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 8,
+      "score": 0.6346086543654856
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 29,
+      "score": 0.6180541283478972
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 33,
+      "score": 0.6038723259257138
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 34,
+      "score": 0.5907470722725006
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 4,
+      "score": 0.5763252267054925
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 35,
+      "score": 0.5727182044666256
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 11509,
+    "output_tokens": 189,
+    "latency_ms": 2269,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"c\",\"reasoning\":\"(A) 발췌에서 737, 777X, 787 각각에 대해 2023년 생산량 전망이 명확히 언급됨. 737은 2022년 월 31대에서 점진적 증산 계획, 787은 저율 생산에서 2023년 월 5대로 점진적 증산 계획, 777X는 2022~2023년 생산 중단(일시 정지) 후 2023년 재개 예정(즉, 2023년 생산량 증가). (B) 그래프는 구조적 관계만 제공하며, 정량적 전망은 (A)가 결정적 근거임. 따라서 보기 c) 'Boeing forecasts an increase in the production rates for the 737, 777X, and 787 aircraft in 2023.'이 정답.\"}",
+    "parsed": {
+      "choice": "c",
+      "reasoning": "(A) 발췌에서 737, 777X, 787 각각에 대해 2023년 생산량 전망이 명확히 언급됨. 737은 2022년 월 31대에서 점진적 증산 계획, 787은 저율 생산에서 2023년 월 5대로 점진적 증산 계획, 777X는 2022~2023년 생산 중단(일시 정지) 후 2023년 재개 예정(즉, 2023년 생산량 증가). (B) 그래프는 구조적 관계만 제공하며, 정량적 전망은 (A)가 결정적 근거임. 따라서 보기 c) 'Boeing forecasts an increase in the production rates for the 737, 777X, and 787 aircraft in 2023.'이 정답."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 20383,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 12,
+    "chunk_setup_amortized": 20331,
+    "chunk_setup_total": 426971,
+    "graph_keyword_estimated": 40,
+    "questions_count_for_amortization": 21
+  },
+  "total_input_tokens": 11992,
+  "total_output_tokens": 241,
+  "total_tokens": 32616,
+  "total_latency_ms": 4223
+}

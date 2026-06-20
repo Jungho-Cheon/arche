@@ -1,0 +1,171 @@
+{
+  "column": "opentology_aug",
+  "question_id": "Q18",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 484,
+    "output_tokens": 51,
+    "latency_ms": 918,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"Boeing\",\"aliases\":[\"Boeing\"]},{\"canonical\":\"primary customers\",\"aliases\":[\"primary customers\",\"main customers\"]},{\"canonical\":\"FY2022\",\"aliases\":[\"FY2022\",\"Fiscal Year 2022\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "Boeing",
+          "aliases": [
+            "Boeing"
+          ]
+        },
+        {
+          "canonical": "primary customers",
+          "aliases": [
+            "primary customers",
+            "main customers"
+          ]
+        },
+        {
+          "canonical": "FY2022",
+          "aliases": [
+            "FY2022",
+            "Fiscal Year 2022"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 823,
+      "input": {
+        "keywords": [
+          "Boeing",
+          "primary customers",
+          "main customers",
+          "FY2022",
+          "Fiscal Year 2022"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 93,
+      "input": {
+        "entry_ids": [
+          "01KVJQ021SS5BA9DB4EPA8F643",
+          "01KVJPVSE5NTW47B040XWXGM9D",
+          "01KVJPXH45EDESKF36KH20XM11",
+          "01KVJPXHQQW9E6YMWDFNNRT8CP",
+          "01KVJPWPGWKG0X8K9G0KC8DF4M",
+          "01KVJPWNS5DR9JNVDPCT07PZHN",
+          "01KVJQ0GDTCZFHWYQ25NWDE5ZT",
+          "01KVJPSB6TVQN9YC2SB6YRABQD",
+          "01KVJPZNQQ1XA6CT5A55G4KA08",
+          "01KVJQ0H3H7VTMWV68QYR8EG1N"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 35,
+        "edges": 31,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVJQ021SS5BA9DB4EPA8F643",
+    "01KVJPVSE5NTW47B040XWXGM9D",
+    "01KVJPXH45EDESKF36KH20XM11",
+    "01KVJPXHQQW9E6YMWDFNNRT8CP",
+    "01KVJPWPGWKG0X8K9G0KC8DF4M",
+    "01KVJPWNS5DR9JNVDPCT07PZHN",
+    "01KVJQ0GDTCZFHWYQ25NWDE5ZT",
+    "01KVJPSB6TVQN9YC2SB6YRABQD",
+    "01KVJPZNQQ1XA6CT5A55G4KA08",
+    "01KVJQ0H3H7VTMWV68QYR8EG1N"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 17316,
+  "graph_selected_sources": [
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMERICANEXPRESS_2022_10K.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMD_2022_10K.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/BOEING_2022_10K.md"
+  ],
+  "used_fallback": null,
+  "retrieved_chunks": [
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 4,
+      "score": 0.6370600113013074
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 22,
+      "score": 0.6170254769513455
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 10,
+      "score": 0.611043993815397
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 29,
+      "score": 0.6078948452039662
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 3,
+      "score": 0.6037893934043891
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 59,
+      "score": 0.6003331965093308
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 8,
+      "score": 0.5975667562816219
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 6,
+      "score": 0.5973675059301187
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 12065,
+    "output_tokens": 251,
+    "latency_ms": 2410,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"c\",\"reasoning\":\"(A) 발췌에서 Boeing의 주요 고객에 대한 직접적인 언급이 있습니다. 청크 7에서 'revenues from a limited number of commercial airlines'라고 명시되어 있고, 청크 2와 3에서 Boeing이 미국 정부(특히 국방 관련)로부터 상당한 매출을 올리고 있음을 알 수 있습니다. 또한, 청크 6의 세그먼트별 매출표를 보면 2022년 Commercial Airplanes(상업용 항공기) 매출이 $25,867M, Defense, Space & Security(국방, 우주, 보안) 매출이 $23,162M으로, 국방 부문이 전체 매출의 약 35%를 차지함을 알 수 있습니다. 이는 정부(특히 미국 정부)가 전체 매출의 상당 부분(약 40% 내외)을 차지함을 시사합니다. (B) 그래프에서도 Boeing의 주요 고객이 상업 항공사와 미국 정부(Defense, Space & Security 부문)임을 구조적으로 뒷받침합니다. 따라서 보기 c)가 가장 정확합니다.\"}",
+    "parsed": {
+      "choice": "c",
+      "reasoning": "(A) 발췌에서 Boeing의 주요 고객에 대한 직접적인 언급이 있습니다. 청크 7에서 'revenues from a limited number of commercial airlines'라고 명시되어 있고, 청크 2와 3에서 Boeing이 미국 정부(특히 국방 관련)로부터 상당한 매출을 올리고 있음을 알 수 있습니다. 또한, 청크 6의 세그먼트별 매출표를 보면 2022년 Commercial Airplanes(상업용 항공기) 매출이 $25,867M, Defense, Space & Security(국방, 우주, 보안) 매출이 $23,162M으로, 국방 부문이 전체 매출의 약 35%를 차지함을 알 수 있습니다. 이는 정부(특히 미국 정부)가 전체 매출의 상당 부분(약 40% 내외)을 차지함을 시사합니다. (B) 그래프에서도 Boeing의 주요 고객이 상업 항공사와 미국 정부(Defense, Space & Security 부문)임을 구조적으로 뒷받침합니다. 따라서 보기 c)가 가장 정확합니다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 20384,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 13,
+    "chunk_setup_amortized": 20331,
+    "chunk_setup_total": 426971,
+    "graph_keyword_estimated": 40,
+    "questions_count_for_amortization": 21
+  },
+  "total_input_tokens": 12549,
+  "total_output_tokens": 302,
+  "total_tokens": 33235,
+  "total_latency_ms": 4244
+}

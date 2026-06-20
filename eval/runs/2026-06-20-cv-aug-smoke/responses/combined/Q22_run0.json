@@ -1,0 +1,168 @@
+{
+  "column": "combined",
+  "question_id": "Q22",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 499,
+    "output_tokens": 69,
+    "latency_ms": 1034,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"거래 제한 회원\",\"aliases\":[\"거래 제한 회원\"]},{\"canonical\":\"로열티팀 동적 등급 산식\",\"aliases\":[\"로열티팀 동적 등급 산식\"]},{\"canonical\":\"승급\",\"aliases\":[\"승급\"]},{\"canonical\":\"복귀\",\"aliases\":[\"복귀\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "거래 제한 회원",
+          "aliases": [
+            "거래 제한 회원"
+          ]
+        },
+        {
+          "canonical": "로열티팀 동적 등급 산식",
+          "aliases": [
+            "로열티팀 동적 등급 산식"
+          ]
+        },
+        {
+          "canonical": "승급",
+          "aliases": [
+            "승급"
+          ]
+        },
+        {
+          "canonical": "복귀",
+          "aliases": [
+            "복귀"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 1208,
+      "input": {
+        "keywords": [
+          "거래 제한 회원",
+          "로열티팀 동적 등급 산식",
+          "승급",
+          "복귀"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 136,
+      "input": {
+        "entry_ids": [
+          "01KVJQJFHAE0M48WZJEX1FRDRD",
+          "01KVJR9Z00CARX38G3P6PXTY00",
+          "01KVJR95Y73MDS6D0ZABH2BT7Q",
+          "01KVJR9AY9WVN2M4RGE6ERV0ZY",
+          "01KVJQYE81YT4RXME67H5DW82R",
+          "01KVJQFDF57DKGEDEFVQARH8PC",
+          "01KVJQJJ2DMAJC6C73X738KTBV",
+          "01KVJQWWE4G87QY7GJ8397ZG28",
+          "01KVJR7TS6WX971HG127Z42HPB",
+          "01KVJR98QX34AGSXDY2Q8ST8TK"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 43,
+        "edges": 46,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVJQJFHAE0M48WZJEX1FRDRD",
+    "01KVJR9Z00CARX38G3P6PXTY00",
+    "01KVJR95Y73MDS6D0ZABH2BT7Q",
+    "01KVJR9AY9WVN2M4RGE6ERV0ZY",
+    "01KVJQYE81YT4RXME67H5DW82R",
+    "01KVJQFDF57DKGEDEFVQARH8PC",
+    "01KVJQJJ2DMAJC6C73X738KTBV",
+    "01KVJQWWE4G87QY7GJ8397ZG28",
+    "01KVJR7TS6WX971HG127Z42HPB",
+    "01KVJR98QX34AGSXDY2Q8ST8TK"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 28413,
+  "retrieved_chunks": [
+    {
+      "source_path": "loyalty/tier-rulebook.md",
+      "chunk_index": 0,
+      "score": 0.5046393061135034
+    },
+    {
+      "source_path": "loyalty/tier-rulebook.md",
+      "chunk_index": 7,
+      "score": 0.5014249241857673
+    },
+    {
+      "source_path": "loyalty/_GLOSSARY.md",
+      "chunk_index": 0,
+      "score": 0.4989231453078813
+    },
+    {
+      "source_path": "loyalty/tier-rulebook.md",
+      "chunk_index": 1,
+      "score": 0.48754942753896224
+    },
+    {
+      "source_path": "loyalty/tier-rulebook.md",
+      "chunk_index": 4,
+      "score": 0.4753315710009701
+    },
+    {
+      "source_path": "loyalty/tier-transition-rulebook.pdf",
+      "chunk_index": 0,
+      "score": 0.46809308446461145
+    },
+    {
+      "source_path": "loyalty/tier-rulebook.md",
+      "chunk_index": 2,
+      "score": 0.45571011172611103
+    },
+    {
+      "source_path": "loyalty/tier-rulebook.md",
+      "chunk_index": 6,
+      "score": 0.4553676669958834
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 14874,
+    "output_tokens": 210,
+    "latency_ms": 3160,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"a\",\"reasoning\":\"(A) 검색된 문서 발췌에서 '등급 제한(Restricted)은 법무팀 또는 CS팀이 거래 제한을 결정한 회원'이며, '동적 산식과 무관하게 강제 부여되며, 로열티팀은 진입 조건을 소유하지 않는다'고 명시되어 있다. 또한 '등급 제한 회원은 모든 승급/복귀 경로에서 제외되고'라는 문구가 반복적으로 등장한다. (B) 도메인 그래프에서도 등급 제한은 법무/CS가 강제 부여하며, 해제 후에야 동적 등급(실버, 골드, 이너 서클, 비활성)으로 복귀할 수 있음을 보여준다. 두 출처 모두 제한 회원은 로열티팀의 동적 등급 산식(자동 승급/복귀) 대상이 아님을 명확히 하므로, a)가 정답이다.\"}",
+    "parsed": {
+      "choice": "a",
+      "reasoning": "(A) 검색된 문서 발췌에서 '등급 제한(Restricted)은 법무팀 또는 CS팀이 거래 제한을 결정한 회원'이며, '동적 산식과 무관하게 강제 부여되며, 로열티팀은 진입 조건을 소유하지 않는다'고 명시되어 있다. 또한 '등급 제한 회원은 모든 승급/복귀 경로에서 제외되고'라는 문구가 반복적으로 등장한다. (B) 도메인 그래프에서도 등급 제한은 법무/CS가 강제 부여하며, 해제 후에야 동적 등급(실버, 골드, 이너 서클, 비활성)으로 복귀할 수 있음을 보여준다. 두 출처 모두 제한 회원은 로열티팀의 동적 등급 산식(자동 승급/복귀) 대상이 아님을 명확히 하므로, a)가 정답이다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 3694,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 44,
+    "chunk_setup_amortized": 3618,
+    "chunk_setup_total": 108550,
+    "graph_keyword_estimated": 32,
+    "questions_count_for_amortization": 30
+  },
+  "total_input_tokens": 15373,
+  "total_output_tokens": 279,
+  "total_tokens": 19346,
+  "total_latency_ms": 5538
+}

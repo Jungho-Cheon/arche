@@ -1,0 +1,185 @@
+{
+  "column": "opentology_aug",
+  "question_id": "Q06",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 494,
+    "output_tokens": 68,
+    "latency_ms": 1535,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"FY21\",\"aliases\":[\"FY21\"]},{\"canonical\":\"FY22\",\"aliases\":[\"FY22\"]},{\"canonical\":\"Embedded\",\"aliases\":[\"Embedded\"]},{\"canonical\":\"AMD reporting segment\",\"aliases\":[\"AMD reporting segment\",\"reporting segment\"]},{\"canonical\":\"sales proportion\",\"aliases\":[\"sales proportion\",\"sales proportionally\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "FY21",
+          "aliases": [
+            "FY21"
+          ]
+        },
+        {
+          "canonical": "FY22",
+          "aliases": [
+            "FY22"
+          ]
+        },
+        {
+          "canonical": "Embedded",
+          "aliases": [
+            "Embedded"
+          ]
+        },
+        {
+          "canonical": "AMD reporting segment",
+          "aliases": [
+            "AMD reporting segment",
+            "reporting segment"
+          ]
+        },
+        {
+          "canonical": "sales proportion",
+          "aliases": [
+            "sales proportion",
+            "sales proportionally"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 1060,
+      "input": {
+        "keywords": [
+          "FY21",
+          "FY22",
+          "Embedded",
+          "AMD reporting segment",
+          "reporting segment",
+          "sales proportion",
+          "sales proportionally"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 152,
+      "input": {
+        "entry_ids": [
+          "01KVJPBN18PK04B2N8STHK6BYQ",
+          "01KVJPBKPY90AB9AVKQ41N5WNV",
+          "01KVJPBME4MGXKS57XC04E00AT",
+          "01KVJPHTXW3KKAWJQ0F0BX8KG7",
+          "01KVJPG6TYNJKER43Y6G0WAPCQ",
+          "01KVJPBK3HFPFJQ7MQE4MGW9TP",
+          "01KVJPK1QY04VPCSQWCNFZEB6Y",
+          "01KVJPG07N7XD6RQXWH2HY5S6N",
+          "01KVJPHWATF0E2VTWJFGXAFX0M",
+          "01KVJPBC9ANC0VFX9KVGS9VNMQ"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 60,
+        "edges": 54,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVJPBN18PK04B2N8STHK6BYQ",
+    "01KVJPBKPY90AB9AVKQ41N5WNV",
+    "01KVJPBME4MGXKS57XC04E00AT",
+    "01KVJPHTXW3KKAWJQ0F0BX8KG7",
+    "01KVJPG6TYNJKER43Y6G0WAPCQ",
+    "01KVJPBK3HFPFJQ7MQE4MGW9TP",
+    "01KVJPK1QY04VPCSQWCNFZEB6Y",
+    "01KVJPG07N7XD6RQXWH2HY5S6N",
+    "01KVJPHWATF0E2VTWJFGXAFX0M",
+    "01KVJPBC9ANC0VFX9KVGS9VNMQ"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 24515,
+  "graph_selected_sources": [
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMD_2022_10K.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/BOEING_2022_10K.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMERICANEXPRESS_2022_10K.md"
+  ],
+  "used_fallback": null,
+  "retrieved_chunks": [
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 72,
+      "score": 0.6306993017064959
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 4,
+      "score": 0.6301622865319276
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 54,
+      "score": 0.6132235656669685
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 46,
+      "score": 0.6116621490783285
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 47,
+      "score": 0.6081017122697446
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 55,
+      "score": 0.6015958415092779
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 8,
+      "score": 0.5741209516043525
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 48,
+      "score": 0.5716421837035075
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 14677,
+    "output_tokens": 183,
+    "latency_ms": 5992,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"c\",\"reasoning\":\"(A) 발췌에서 FY21~FY22 각 사업부문별 매출(=net revenue) 수치가 표로 명확히 제시되어 있다. Embedded를 제외하면, Data Center: $3,694M→$6,043M(64% 증가), Client: $6,887M→$6,201M(감소), Gaming: $5,607M→$6,805M(21% 증가)임이 확인된다. Embedded는 $246M→$4,552M로 가장 크지만, 질문에서 제외하라고 했으므로 Data Center가 비율상 가장 크다. (B) 그래프는 각 세그먼트 정의만 제공하며, 정량적 변화는 (A)가 결정적이다. 따라서 정답은 c) Data Center segment.\"}",
+    "parsed": {
+      "choice": "c",
+      "reasoning": "(A) 발췌에서 FY21~FY22 각 사업부문별 매출(=net revenue) 수치가 표로 명확히 제시되어 있다. Embedded를 제외하면, Data Center: $3,694M→$6,043M(64% 증가), Client: $6,887M→$6,201M(감소), Gaming: $5,607M→$6,805M(21% 증가)임이 확인된다. Embedded는 $246M→$4,552M로 가장 크지만, 질문에서 제외하라고 했으므로 Data Center가 비율상 가장 크다. (B) 그래프는 각 세그먼트 정의만 제공하며, 정량적 변화는 (A)가 결정적이다. 따라서 정답은 c) Data Center segment."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 20410,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 23,
+    "chunk_setup_amortized": 20331,
+    "chunk_setup_total": 426971,
+    "graph_keyword_estimated": 56,
+    "questions_count_for_amortization": 21
+  },
+  "total_input_tokens": 15171,
+  "total_output_tokens": 251,
+  "total_tokens": 35832,
+  "total_latency_ms": 8739
+}

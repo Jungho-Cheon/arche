@@ -1,0 +1,65 @@
+{
+  "column": "chunk_rag",
+  "question_id": "Q13",
+  "run_index": 0,
+  "input_tokens": 4865,
+  "output_tokens": 179,
+  "embedding_tokens": 3695,
+  "embedding_tokens_breakdown": {
+    "question_embedding": 77,
+    "setup_amortized": 3618,
+    "setup_total": 108550,
+    "questions_count_for_amortization": 30
+  },
+  "total_tokens": 8739,
+  "latency_ms": 2011,
+  "model": "gpt-4.1",
+  "retrieved_chunks": [
+    {
+      "source_path": "global-pm/country-policy-matrix.md",
+      "chunk_index": 6,
+      "score": 0.621613164180046
+    },
+    {
+      "source_path": "legal-risk/gdpr-de-memo.pdf",
+      "chunk_index": 3,
+      "score": 0.5910645749907992
+    },
+    {
+      "source_path": "legal-risk/gdpr-de-memo.pdf",
+      "chunk_index": 1,
+      "score": 0.5763199402330501
+    },
+    {
+      "source_path": "cs-logistics/cs-macro-manual.md",
+      "chunk_index": 7,
+      "score": 0.5494259426613866
+    },
+    {
+      "source_path": "legal-risk/gdpr-de-memo.pdf",
+      "chunk_index": 0,
+      "score": 0.5000608901756785
+    },
+    {
+      "source_path": "legal-risk/gdpr-de-memo.pdf",
+      "chunk_index": 2,
+      "score": 0.4923764830187956
+    },
+    {
+      "source_path": "hq-pm/decision-log.md",
+      "chunk_index": 1,
+      "score": 0.49014727094343274
+    },
+    {
+      "source_path": "hq-pm/policy-matrix.md",
+      "chunk_index": 7,
+      "score": 0.46957429063781975
+    }
+  ],
+  "raw_response": "{\"choice\":\"a\",\"reasoning\":\"청크 1, 2, 3, 5, 6, 7, 8 모두에서 DE(독일) 회원 탈퇴 시 GDPR의 30일 이내 PII(개인 식별 정보) 완전 삭제 의무와 회계법의 10년 거래 기록 보존 의무가 충돌할 때, 해소 방식으로 '거래 기록은 회원 ID만 남기고 PII를 제거한 비식별 형태로 10년 보존한다'고 명확히 규정하고 있다. 이는 법무팀, 정책팀, 데이터 운영팀의 공식 결정(청크 7)이며, 실제 처리 순서와 항목(청크 2, 6)까지 구체적으로 명시되어 있다. 따라서 정답은 a)이다.\"}",
+  "parsed": {
+    "choice": "a",
+    "reasoning": "청크 1, 2, 3, 5, 6, 7, 8 모두에서 DE(독일) 회원 탈퇴 시 GDPR의 30일 이내 PII(개인 식별 정보) 완전 삭제 의무와 회계법의 10년 거래 기록 보존 의무가 충돌할 때, 해소 방식으로 '거래 기록은 회원 ID만 남기고 PII를 제거한 비식별 형태로 10년 보존한다'고 명확히 규정하고 있다. 이는 법무팀, 정책팀, 데이터 운영팀의 공식 결정(청크 7)이며, 실제 처리 순서와 항목(청크 2, 6)까지 구체적으로 명시되어 있다. 따라서 정답은 a)이다."
+  },
+  "parse_error": null
+}

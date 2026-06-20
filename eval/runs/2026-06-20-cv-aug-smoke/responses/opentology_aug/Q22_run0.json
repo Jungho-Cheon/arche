@@ -1,0 +1,197 @@
+{
+  "column": "opentology_aug",
+  "question_id": "Q22",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 499,
+    "output_tokens": 69,
+    "latency_ms": 1287,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"거래 제한 회원\",\"aliases\":[\"거래 제한 회원\"]},{\"canonical\":\"로열티팀 동적 등급 산식\",\"aliases\":[\"로열티팀 동적 등급 산식\"]},{\"canonical\":\"승급\",\"aliases\":[\"승급\"]},{\"canonical\":\"복귀\",\"aliases\":[\"복귀\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "거래 제한 회원",
+          "aliases": [
+            "거래 제한 회원"
+          ]
+        },
+        {
+          "canonical": "로열티팀 동적 등급 산식",
+          "aliases": [
+            "로열티팀 동적 등급 산식"
+          ]
+        },
+        {
+          "canonical": "승급",
+          "aliases": [
+            "승급"
+          ]
+        },
+        {
+          "canonical": "복귀",
+          "aliases": [
+            "복귀"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 1113,
+      "input": {
+        "keywords": [
+          "거래 제한 회원",
+          "로열티팀 동적 등급 산식",
+          "승급",
+          "복귀"
+        ],
+        "limit": 20,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 20
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 118,
+      "input": {
+        "entry_ids": [
+          "01KVJR9Z00CARX38G3P6PXTY00",
+          "01KVJQJFHAE0M48WZJEX1FRDRD",
+          "01KVJR7QYCE7TSJCBZH5HST8W3",
+          "01KVJR8C3CQK4N3GYED6PJV01Z",
+          "01KVJR9AY9WVN2M4RGE6ERV0ZY",
+          "01KVJR7TS6WX971HG127Z42HPB",
+          "01KVJR95Y73MDS6D0ZABH2BT7Q",
+          "01KVJRBWR0SN05KAGBDDBED74H",
+          "01KVJQX4T62D2982H1TVV057NJ",
+          "01KVJR14HC6WSB0BEG98NC75KZ"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 44,
+        "edges": 43,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVJR9Z00CARX38G3P6PXTY00",
+    "01KVJQJFHAE0M48WZJEX1FRDRD",
+    "01KVJR7QYCE7TSJCBZH5HST8W3",
+    "01KVJR8C3CQK4N3GYED6PJV01Z",
+    "01KVJR9AY9WVN2M4RGE6ERV0ZY",
+    "01KVJR7TS6WX971HG127Z42HPB",
+    "01KVJR95Y73MDS6D0ZABH2BT7Q",
+    "01KVJRBWR0SN05KAGBDDBED74H",
+    "01KVJQX4T62D2982H1TVV057NJ",
+    "01KVJR14HC6WSB0BEG98NC75KZ"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 27487,
+  "graph_selected_sources": [
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/legal-risk/_GLOSSARY.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/marketing/bfm2026-brief.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/loyalty/_GLOSSARY.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/hq-pm/decision-log.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/legal-risk/risk-checklist.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/loyalty/tier-transition-rulebook.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/loyalty/tier-rulebook.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/loyalty/tier-matrix.png",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/cs-logistics/cs-macro-manual.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/hq-pm/policy-matrix.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/hq-pm/quarterly-policy-brief.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/legal-risk/kyc-age-verification-memo.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/b2b/b2b-coupon-policy.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/b2b/b2b-ops-guide.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/b2b/enterprise-agreement-addendum.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/marketing/campaign-playbook.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/marketing/coupon-stacking-guide.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/seller-ops/_GLOSSARY.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/seller-ops/settlement-faq.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/cs-logistics/return-refund-flowchart.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/global-pm/country-launch-memo-jp.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/global-pm/country-launch-memo-vn.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/cs-logistics/cold-chain-sop.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/global-pm/country-policy-matrix.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/legal-risk/gdpr-de-memo.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/seller-ops/seller-agreement-annex.pdf"
+  ],
+  "used_fallback": null,
+  "retrieved_chunks": [
+    {
+      "source_path": "loyalty/tier-rulebook.md",
+      "chunk_index": 0,
+      "score": 0.5046393061135034
+    },
+    {
+      "source_path": "loyalty/tier-rulebook.md",
+      "chunk_index": 7,
+      "score": 0.5013569849496454
+    },
+    {
+      "source_path": "loyalty/_GLOSSARY.md",
+      "chunk_index": 0,
+      "score": 0.4990091905976328
+    },
+    {
+      "source_path": "loyalty/tier-rulebook.md",
+      "chunk_index": 1,
+      "score": 0.48746343953734034
+    },
+    {
+      "source_path": "loyalty/tier-rulebook.md",
+      "chunk_index": 4,
+      "score": 0.4753315710009701
+    },
+    {
+      "source_path": "loyalty/tier-transition-rulebook.pdf",
+      "chunk_index": 0,
+      "score": 0.46799150405193
+    },
+    {
+      "source_path": "loyalty/tier-rulebook.md",
+      "chunk_index": 2,
+      "score": 0.45555116526829287
+    },
+    {
+      "source_path": "loyalty/tier-rulebook.md",
+      "chunk_index": 6,
+      "score": 0.4553676669958834
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 14640,
+    "output_tokens": 156,
+    "latency_ms": 2523,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"a\",\"reasoning\":\"(A) 발췌에서 '등급 제한 회원은 모든 승급/복귀 경로에서 제외되고, R10 블랙프라이데이 자동 활성화 대상에서도 명시적으로 제외된다. 제한 해제는 법무팀의 별도 절차를 거친 뒤에야 동적 등급 재평가 대상으로 복귀한다.'라고 명확히 서술되어 있다. (B) 그래프에서도 등급 제한은 법무/CS가 강제 부여하며, 해제 후에야 다른 등급으로 복귀할 수 있음을 구조적으로 보여준다. 두 정보 모두 일치하며, (A)의 명시적 서술이 결정적 근거다.\"}",
+    "parsed": {
+      "choice": "a",
+      "reasoning": "(A) 발췌에서 '등급 제한 회원은 모든 승급/복귀 경로에서 제외되고, R10 블랙프라이데이 자동 활성화 대상에서도 명시적으로 제외된다. 제한 해제는 법무팀의 별도 절차를 거친 뒤에야 동적 등급 재평가 대상으로 복귀한다.'라고 명확히 서술되어 있다. (B) 그래프에서도 등급 제한은 법무/CS가 강제 부여하며, 해제 후에야 다른 등급으로 복귀할 수 있음을 구조적으로 보여준다. 두 정보 모두 일치하며, (A)의 명시적 서술이 결정적 근거다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 3694,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 44,
+    "chunk_setup_amortized": 3618,
+    "chunk_setup_total": 108550,
+    "graph_keyword_estimated": 32,
+    "questions_count_for_amortization": 30
+  },
+  "total_input_tokens": 15139,
+  "total_output_tokens": 225,
+  "total_tokens": 19058,
+  "total_latency_ms": 5041
+}

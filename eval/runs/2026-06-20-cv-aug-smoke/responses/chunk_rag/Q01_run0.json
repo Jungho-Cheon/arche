@@ -1,0 +1,65 @@
+{
+  "column": "chunk_rag",
+  "question_id": "Q01",
+  "run_index": 0,
+  "input_tokens": 4991,
+  "output_tokens": 235,
+  "embedding_tokens": 3712,
+  "embedding_tokens_breakdown": {
+    "question_embedding": 94,
+    "setup_amortized": 3618,
+    "setup_total": 108550,
+    "questions_count_for_amortization": 30
+  },
+  "total_tokens": 8938,
+  "latency_ms": 2954,
+  "model": "gpt-4.1",
+  "retrieved_chunks": [
+    {
+      "source_path": "loyalty/tier-rulebook.md",
+      "chunk_index": 9,
+      "score": 0.6373403386102456
+    },
+    {
+      "source_path": "loyalty/tier-transition-rulebook.pdf",
+      "chunk_index": 1,
+      "score": 0.6169791770584686
+    },
+    {
+      "source_path": "loyalty/tier-rulebook.md",
+      "chunk_index": 6,
+      "score": 0.6038252538510543
+    },
+    {
+      "source_path": "loyalty/tier-transition-rulebook.pdf",
+      "chunk_index": 2,
+      "score": 0.5872545081208856
+    },
+    {
+      "source_path": "loyalty/tier-rulebook.md",
+      "chunk_index": 2,
+      "score": 0.5233206918974521
+    },
+    {
+      "source_path": "loyalty/tier-rulebook.md",
+      "chunk_index": 7,
+      "score": 0.5132910875485176
+    },
+    {
+      "source_path": "hq-pm/policy-matrix.md",
+      "chunk_index": 3,
+      "score": 0.5023804605456123
+    },
+    {
+      "source_path": "loyalty/tier-rulebook.md",
+      "chunk_index": 3,
+      "score": 0.4803228984267752
+    }
+  ],
+  "raw_response": "{\"choice\":\"b\",\"reasoning\":\"청크 1, 2, 3, 5, 6, 7에서 반복적으로 명시된 규칙에 따르면, 비활성(휴면)에서 골드로 복귀한 회원이 복귀 후 30일 이내에 명품을 구매한 경우에는 골드의 명품 반품 연장(30일)이 적용되지 않고, 기본 반품 기간인 7일만 적용된다. 복귀 31일째부터 30일 연장이 정상 적용된다. 따라서 복귀 20일째에 산 명품의 반품 가능 기간은 7일이다. 이는 청크 1의 '복귀일 + 30일 = 유예 창', '유예 창 내 명품 반품 요청 → 기본 7일 적용', 청크 2의 '비활성에서 골드로 복귀한 직후 30일 이내의 명품 구매에는 이 연장이 적용되지 않고 기본 7일만 적용된다', 청크 5, 6, 7의 동일 규정에 근거한다.\"}",
+  "parsed": {
+    "choice": "b",
+    "reasoning": "청크 1, 2, 3, 5, 6, 7에서 반복적으로 명시된 규칙에 따르면, 비활성(휴면)에서 골드로 복귀한 회원이 복귀 후 30일 이내에 명품을 구매한 경우에는 골드의 명품 반품 연장(30일)이 적용되지 않고, 기본 반품 기간인 7일만 적용된다. 복귀 31일째부터 30일 연장이 정상 적용된다. 따라서 복귀 20일째에 산 명품의 반품 가능 기간은 7일이다. 이는 청크 1의 '복귀일 + 30일 = 유예 창', '유예 창 내 명품 반품 요청 → 기본 7일 적용', 청크 2의 '비활성에서 골드로 복귀한 직후 30일 이내의 명품 구매에는 이 연장이 적용되지 않고 기본 7일만 적용된다', 청크 5, 6, 7의 동일 규정에 근거한다."
+  },
+  "parse_error": null
+}

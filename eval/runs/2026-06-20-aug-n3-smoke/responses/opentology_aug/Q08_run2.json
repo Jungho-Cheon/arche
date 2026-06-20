@@ -1,0 +1,167 @@
+{
+  "column": "opentology_aug",
+  "question_id": "Q08",
+  "run_index": 2,
+  "anchor_extraction": {
+    "input_tokens": 494,
+    "output_tokens": 42,
+    "latency_ms": 1135,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"debt securities\",\"aliases\":[\"debt securities\"]},{\"canonical\":\"national securities exchange\",\"aliases\":[\"national securities exchange\"]},{\"canonical\":\"American Express\",\"aliases\":[\"American Express\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "debt securities",
+          "aliases": [
+            "debt securities"
+          ]
+        },
+        {
+          "canonical": "national securities exchange",
+          "aliases": [
+            "national securities exchange"
+          ]
+        },
+        {
+          "canonical": "American Express",
+          "aliases": [
+            "American Express"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 655,
+      "input": {
+        "keywords": [
+          "debt securities",
+          "national securities exchange",
+          "American Express"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 125,
+      "input": {
+        "entry_ids": [
+          "01KVJNAY4YAQA4NX0YGX0KZGX6",
+          "01KVJN8R3A53FHH587G7CKD53B",
+          "01KVJN9VC4Y9EJ0VH8X8CEY0WE",
+          "01KVJNBCXTWVBSY5D90H8K1W44",
+          "01KVJN8QA1J7ZVEXESS4NJK3MV",
+          "01KVJNCXBJ02MF6J4KHDY15ZP5",
+          "01KVJNBH3MCJ4VKPZC03YXBVMS",
+          "01KVJN9T239NKXWRDNGMR1881M",
+          "01KVJNAT6YTDYSTTXR2DQ66BA8",
+          "01KVJNCWHJ94JF8R2M2SP9MNKV"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 67,
+        "edges": 67,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVJNAY4YAQA4NX0YGX0KZGX6",
+    "01KVJN8R3A53FHH587G7CKD53B",
+    "01KVJN9VC4Y9EJ0VH8X8CEY0WE",
+    "01KVJNBCXTWVBSY5D90H8K1W44",
+    "01KVJN8QA1J7ZVEXESS4NJK3MV",
+    "01KVJNCXBJ02MF6J4KHDY15ZP5",
+    "01KVJNBH3MCJ4VKPZC03YXBVMS",
+    "01KVJN9T239NKXWRDNGMR1881M",
+    "01KVJNAT6YTDYSTTXR2DQ66BA8",
+    "01KVJNCWHJ94JF8R2M2SP9MNKV"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 31330,
+  "graph_selected_sources": [
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMD_2022_10K.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMERICANEXPRESS_2022_10K.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/BOEING_2022_10K.md"
+  ],
+  "used_fallback": null,
+  "retrieved_chunks": [
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 77,
+      "score": 0.6917995398022228
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 260,
+      "score": 0.656477060444306
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 262,
+      "score": 0.6523900270858309
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 137,
+      "score": 0.6435564288327854
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 76,
+      "score": 0.6385158430920869
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 49,
+      "score": 0.6312923267103732
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 0,
+      "score": 0.6204847404716521
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 136,
+      "score": 0.619287254981228
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 15418,
+    "output_tokens": 117,
+    "latency_ms": 1285,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"e\",\"reasoning\":\"Neither (A) nor (B) provides explicit information about which, if any, of American Express's debt securities are registered to trade on a national securities exchange as of 2022. (A) contains detailed tables of outstanding debt, maturities, and issuances, but does not specify registration status or exchange listing for any debt securities. (B) provides entity and relationship structure, but does not address securities registration or exchange trading status. Therefore, the only defensible answer is '정보 부족 / 알 수 없음' (e).\"}",
+    "parsed": {
+      "choice": "e",
+      "reasoning": "Neither (A) nor (B) provides explicit information about which, if any, of American Express's debt securities are registered to trade on a national securities exchange as of 2022. (A) contains detailed tables of outstanding debt, maturities, and issuances, but does not specify registration status or exchange listing for any debt securities. (B) provides entity and relationship structure, but does not address securities registration or exchange trading status. Therefore, the only defensible answer is '정보 부족 / 알 수 없음' (e)."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 20378,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 23,
+    "chunk_setup_amortized": 20331,
+    "chunk_setup_total": 426971,
+    "graph_keyword_estimated": 24,
+    "questions_count_for_amortization": 21
+  },
+  "total_input_tokens": 15912,
+  "total_output_tokens": 159,
+  "total_tokens": 36449,
+  "total_latency_ms": 3200
+}

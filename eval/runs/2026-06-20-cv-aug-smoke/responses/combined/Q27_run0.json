@@ -1,0 +1,161 @@
+{
+  "column": "combined",
+  "question_id": "Q27",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 510,
+    "output_tokens": 58,
+    "latency_ms": 966,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"다이렉트 소싱\",\"aliases\":[\"다이렉트 소싱\"]},{\"canonical\":\"셀러 유형\",\"aliases\":[\"셀러 유형\"]},{\"canonical\":\"콜드체인 사고 손실\",\"aliases\":[\"콜드체인 사고 손실\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "다이렉트 소싱",
+          "aliases": [
+            "다이렉트 소싱"
+          ]
+        },
+        {
+          "canonical": "셀러 유형",
+          "aliases": [
+            "셀러 유형"
+          ]
+        },
+        {
+          "canonical": "콜드체인 사고 손실",
+          "aliases": [
+            "콜드체인 사고 손실"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 971,
+      "input": {
+        "keywords": [
+          "다이렉트 소싱",
+          "셀러 유형",
+          "콜드체인 사고 손실"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 72,
+      "input": {
+        "entry_ids": [
+          "01KVJQA7E3G5KHEY31MBEMMEJ9",
+          "01KVJRM0ED7J787WH9HJQX85ZX",
+          "01KVJQM851V77CXWJNSW8BXNRF",
+          "01KVJQNKGX3DVZD10HEQ2SBQGN",
+          "01KVJRJ5B6WWX6069X5ZTYQ19X",
+          "01KVJR15V2702DDSCPJFPYNA47",
+          "01KVJQRTE5XYV3Q1VASD5MSKWS",
+          "01KVJQGJWAV4ZXMXH53305C1E0",
+          "01KVJQDJ2KYZXY247C4N8CQWB3",
+          "01KVJQPHTYRA63Y9EP92GAW67W"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 29,
+        "edges": 21,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVJQA7E3G5KHEY31MBEMMEJ9",
+    "01KVJRM0ED7J787WH9HJQX85ZX",
+    "01KVJQM851V77CXWJNSW8BXNRF",
+    "01KVJQNKGX3DVZD10HEQ2SBQGN",
+    "01KVJRJ5B6WWX6069X5ZTYQ19X",
+    "01KVJR15V2702DDSCPJFPYNA47",
+    "01KVJQRTE5XYV3Q1VASD5MSKWS",
+    "01KVJQGJWAV4ZXMXH53305C1E0",
+    "01KVJQDJ2KYZXY247C4N8CQWB3",
+    "01KVJQPHTYRA63Y9EP92GAW67W"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 21218,
+  "retrieved_chunks": [
+    {
+      "source_path": "seller-ops/settlement-faq.md",
+      "chunk_index": 9,
+      "score": 0.39638743318618613
+    },
+    {
+      "source_path": "cs-logistics/cold-chain-sop.pdf",
+      "chunk_index": 2,
+      "score": 0.379738598251401
+    },
+    {
+      "source_path": "cs-logistics/cold-chain-sop.pdf",
+      "chunk_index": 1,
+      "score": 0.37737414135944125
+    },
+    {
+      "source_path": "cs-logistics/cold-chain-sop.pdf",
+      "chunk_index": 3,
+      "score": 0.37167989812074703
+    },
+    {
+      "source_path": "seller-ops/settlement-faq.md",
+      "chunk_index": 8,
+      "score": 0.35760686516604784
+    },
+    {
+      "source_path": "seller-ops/settlement-faq.md",
+      "chunk_index": 3,
+      "score": 0.3514538682778699
+    },
+    {
+      "source_path": "seller-ops/settlement-faq.md",
+      "chunk_index": 10,
+      "score": 0.35109030534517305
+    },
+    {
+      "source_path": "hq-pm/_GLOSSARY.md",
+      "chunk_index": 0,
+      "score": 0.3425041462041309
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 12152,
+    "output_tokens": 169,
+    "latency_ms": 2457,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"a\",\"reasoning\":\"(A) 검색된 문서 발췌에서 '다이렉트 소싱'이 1P(직매입)임을 명확히 밝히고 있으며, 1P(직매입) 상품의 콜드체인 사고 손실은 본사가 부담한다고 여러 표와 설명(Q5, SOP 등)에서 반복적으로 명시되어 있다. (B) 도메인 그래프에서도 '다이렉트 소싱'이 1P(직매입)임을 연결하고, 1P(사입) 유형의 손실 귀속이 본사임을 뒷받침한다. 두 출처 모두 일치하며, (A)의 구체적 표와 사례가 결정적 근거다.\"}",
+    "parsed": {
+      "choice": "a",
+      "reasoning": "(A) 검색된 문서 발췌에서 '다이렉트 소싱'이 1P(직매입)임을 명확히 밝히고 있으며, 1P(직매입) 상품의 콜드체인 사고 손실은 본사가 부담한다고 여러 표와 설명(Q5, SOP 등)에서 반복적으로 명시되어 있다. (B) 도메인 그래프에서도 '다이렉트 소싱'이 1P(직매입)임을 연결하고, 1P(사입) 유형의 손실 귀속이 본사임을 뒷받침한다. 두 출처 모두 일치하며, (A)의 구체적 표와 사례가 결정적 근거다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 3699,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 57,
+    "chunk_setup_amortized": 3618,
+    "chunk_setup_total": 108550,
+    "graph_keyword_estimated": 24,
+    "questions_count_for_amortization": 30
+  },
+  "total_input_tokens": 12662,
+  "total_output_tokens": 227,
+  "total_tokens": 16588,
+  "total_latency_ms": 4466
+}

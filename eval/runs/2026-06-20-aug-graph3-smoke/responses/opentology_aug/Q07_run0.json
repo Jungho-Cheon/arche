@@ -1,0 +1,169 @@
+{
+  "column": "opentology_aug",
+  "question_id": "Q07",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 480,
+    "output_tokens": 43,
+    "latency_ms": 1928,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"AMD\",\"aliases\":[\"AMD\"]},{\"canonical\":\"customer concentration\",\"aliases\":[\"customer concentration\"]},{\"canonical\":\"FY22\",\"aliases\":[\"FY22\",\"fiscal year 2022\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "AMD",
+          "aliases": [
+            "AMD"
+          ]
+        },
+        {
+          "canonical": "customer concentration",
+          "aliases": [
+            "customer concentration"
+          ]
+        },
+        {
+          "canonical": "FY22",
+          "aliases": [
+            "FY22",
+            "fiscal year 2022"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 721,
+      "input": {
+        "keywords": [
+          "AMD",
+          "customer concentration",
+          "FY22",
+          "fiscal year 2022"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 158,
+      "input": {
+        "entry_ids": [
+          "01KVJPFXD4TMS9J4YQ0YWSMFTH",
+          "01KVJPF2ESPEHR7EMZVP7SM8HV",
+          "01KVJPFWQRRNPPDHN03GZQHSYR",
+          "01KVJPEZE4FY7D66ZQ3GPX7TAY",
+          "01KVJPGD184VXT1E5N9SG4KTKY",
+          "01KVJPBC9ANC0VFX9KVGS9VNMQ",
+          "01KVJPHS19NSJE6N9EDC3QTY5M",
+          "01KVJPEA4K9DRP9FZCAWZ8C42G",
+          "01KVJPJ2AX7MMJCF4Y5C5T40JD",
+          "01KVJPFWAWFHT7SEE4S02MD712"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 71,
+        "edges": 64,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVJPFXD4TMS9J4YQ0YWSMFTH",
+    "01KVJPF2ESPEHR7EMZVP7SM8HV",
+    "01KVJPFWQRRNPPDHN03GZQHSYR",
+    "01KVJPEZE4FY7D66ZQ3GPX7TAY",
+    "01KVJPGD184VXT1E5N9SG4KTKY",
+    "01KVJPBC9ANC0VFX9KVGS9VNMQ",
+    "01KVJPHS19NSJE6N9EDC3QTY5M",
+    "01KVJPEA4K9DRP9FZCAWZ8C42G",
+    "01KVJPJ2AX7MMJCF4Y5C5T40JD",
+    "01KVJPFWAWFHT7SEE4S02MD712"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 30290,
+  "graph_selected_sources": [
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMERICANEXPRESS_2022_10K.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMD_2022_10K.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/BOEING_2022_10K.md"
+  ],
+  "used_fallback": null,
+  "retrieved_chunks": [
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 46,
+      "score": 0.6231920299154547
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 47,
+      "score": 0.6212902682587397
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 14,
+      "score": 0.6137327522684403
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 13,
+      "score": 0.6106508809999924
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 3,
+      "score": 0.6044748507247555
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 4,
+      "score": 0.5971100410863437
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 2,
+      "score": 0.5959317817888855
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 0,
+      "score": 0.5905995883597538
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 16769,
+    "output_tokens": 89,
+    "latency_ms": 1589,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"e\",\"reasoning\":\"Upon reviewing the provided (A) excerpts from the AMD 2022 10-K, there is no mention of customer concentration or any quantitative disclosure about the percentage of revenue attributable to specific customers in FY22. The (B) domain graph also does not include any entity or relationship regarding customer concentration or major customers for AMD. Therefore, there is insufficient information to answer the question from the given corpus.\"}",
+    "parsed": {
+      "choice": "e",
+      "reasoning": "Upon reviewing the provided (A) excerpts from the AMD 2022 10-K, there is no mention of customer concentration or any quantitative disclosure about the percentage of revenue attributable to specific customers in FY22. The (B) domain graph also does not include any entity or relationship regarding customer concentration or major customers for AMD. Therefore, there is insufficient information to answer the question from the given corpus."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 20372,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 9,
+    "chunk_setup_amortized": 20331,
+    "chunk_setup_total": 426971,
+    "graph_keyword_estimated": 32,
+    "questions_count_for_amortization": 21
+  },
+  "total_input_tokens": 17249,
+  "total_output_tokens": 132,
+  "total_tokens": 37753,
+  "total_latency_ms": 4396
+}

@@ -1,0 +1,163 @@
+{
+  "column": "opentology_aug",
+  "question_id": "Q10",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 507,
+    "output_tokens": 37,
+    "latency_ms": 819,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"AMEX\",\"aliases\":[\"AMEX\",\"American Express\"]},{\"canonical\":\"operating margin\",\"aliases\":[\"operating margin\",\"operating margin profile\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "AMEX",
+          "aliases": [
+            "AMEX",
+            "American Express"
+          ]
+        },
+        {
+          "canonical": "operating margin",
+          "aliases": [
+            "operating margin",
+            "operating margin profile"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 891,
+      "input": {
+        "keywords": [
+          "AMEX",
+          "American Express",
+          "operating margin",
+          "operating margin profile"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 130,
+      "input": {
+        "entry_ids": [
+          "01KVJN9T239NKXWRDNGMR1881M",
+          "01KVJNAYVKV2YGK5G7BPGZFVME",
+          "01KVJN9VC4Y9EJ0VH8X8CEY0WE",
+          "01KVJNCXBJ02MF6J4KHDY15ZP5",
+          "01KVJNBCXTWVBSY5D90H8K1W44",
+          "01KVJNCGRQ44PR9KNYPXC9XXDP",
+          "01KVJNCWHJ94JF8R2M2SP9MNKV",
+          "01KVJNCG3QWJ73RWHPHTGFV1Y9",
+          "01KVJNBGDAE872XDPHTTEVA16P",
+          "01KVJN9TT33X03A9D6MKHNS90G"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 66,
+        "edges": 68,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVJN9T239NKXWRDNGMR1881M",
+    "01KVJNAYVKV2YGK5G7BPGZFVME",
+    "01KVJN9VC4Y9EJ0VH8X8CEY0WE",
+    "01KVJNCXBJ02MF6J4KHDY15ZP5",
+    "01KVJNBCXTWVBSY5D90H8K1W44",
+    "01KVJNCGRQ44PR9KNYPXC9XXDP",
+    "01KVJNCWHJ94JF8R2M2SP9MNKV",
+    "01KVJNCG3QWJ73RWHPHTGFV1Y9",
+    "01KVJNBGDAE872XDPHTTEVA16P",
+    "01KVJN9TT33X03A9D6MKHNS90G"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 31164,
+  "graph_selected_sources": [
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMERICANEXPRESS_2022_10K.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/BOEING_2022_10K.md"
+  ],
+  "used_fallback": null,
+  "retrieved_chunks": [
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 54,
+      "score": 0.6197582363891557
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 72,
+      "score": 0.6086180487361017
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 53,
+      "score": 0.602671236270432
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 51,
+      "score": 0.6013704277668529
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 49,
+      "score": 0.5901896402479946
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 4,
+      "score": 0.5891314304669097
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 6,
+      "score": 0.5846181347355626
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 3,
+      "score": 0.580663696267684
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 16156,
+    "output_tokens": 269,
+    "latency_ms": 2241,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"b\",\"reasoning\":\"(A) 발췌에서 AMEX의 실적 평가는 'spend-centric' 모델에 기반하며, 네트워크 볼륨, 빌드 비즈니스, 카드 수수료, 서비스 수수료, 순이자수익 등 다양한 수익원과 비용 항목(마케팅, 보상, 신용손실충당금 등)으로 설명됩니다. 실제로 여러 곳에서 'billed business', 'network volumes', 'net income', 'revenue net of interest expense', 'discount revenue' 등이 주요 지표로 반복 언급되고, 운영마진(operating margin)이라는 용어는 등장하지 않습니다. 또한, 금융업(특히 카드/네트워크/은행 복합모델)에서는 전통적 제조업/서비스업의 'operating margin'이 실질적 성과지표로 적합하지 않다는 점이 (A)에서 명확히 드러납니다. (B) 그래프에서도 AMEX의 사업구조가 복합적임을 보여주며, 운영마진이 핵심 지표가 아님을 뒷받침합니다. 따라서 정답은 b) Performance is not measured through operating margin for AMEX 입니다.\"}",
+    "parsed": {
+      "choice": "b",
+      "reasoning": "(A) 발췌에서 AMEX의 실적 평가는 'spend-centric' 모델에 기반하며, 네트워크 볼륨, 빌드 비즈니스, 카드 수수료, 서비스 수수료, 순이자수익 등 다양한 수익원과 비용 항목(마케팅, 보상, 신용손실충당금 등)으로 설명됩니다. 실제로 여러 곳에서 'billed business', 'network volumes', 'net income', 'revenue net of interest expense', 'discount revenue' 등이 주요 지표로 반복 언급되고, 운영마진(operating margin)이라는 용어는 등장하지 않습니다. 또한, 금융업(특히 카드/네트워크/은행 복합모델)에서는 전통적 제조업/서비스업의 'operating margin'이 실질적 성과지표로 적합하지 않다는 점이 (A)에서 명확히 드러납니다. (B) 그래프에서도 AMEX의 사업구조가 복합적임을 보여주며, 운영마진이 핵심 지표가 아님을 뒷받침합니다. 따라서 정답은 b) Performance is not measured through operating margin for AMEX 입니다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 20399,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 36,
+    "chunk_setup_amortized": 20331,
+    "chunk_setup_total": 426971,
+    "graph_keyword_estimated": 32,
+    "questions_count_for_amortization": 21
+  },
+  "total_input_tokens": 16663,
+  "total_output_tokens": 306,
+  "total_tokens": 37368,
+  "total_latency_ms": 4081
+}

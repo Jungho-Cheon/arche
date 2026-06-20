@@ -1,0 +1,187 @@
+{
+  "column": "opentology_aug",
+  "question_id": "Q08",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 494,
+    "output_tokens": 42,
+    "latency_ms": 776,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"debt securities\",\"aliases\":[\"debt securities\"]},{\"canonical\":\"national securities exchange\",\"aliases\":[\"national securities exchange\"]},{\"canonical\":\"American Express\",\"aliases\":[\"American Express\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "debt securities",
+          "aliases": [
+            "debt securities"
+          ]
+        },
+        {
+          "canonical": "national securities exchange",
+          "aliases": [
+            "national securities exchange"
+          ]
+        },
+        {
+          "canonical": "American Express",
+          "aliases": [
+            "American Express"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 658,
+      "input": {
+        "keywords": [
+          "debt securities",
+          "national securities exchange",
+          "American Express"
+        ],
+        "limit": 20,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 20
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 41,
+      "input": {
+        "entry_ids": [
+          "01KVJT4J837TSR57YA8FSM3PJA",
+          "01KVJT4CSZSMGY3B163VGRCP10",
+          "01KVJT6M8VMJSYCA91X1C0AKYJ",
+          "01KVJT1MN000PG2D8GXDBCF91Y",
+          "01KVJT3YEH04T5E9EF4ASTQYRJ",
+          "01KVJT7AYMYNKYTHDW0V0TD63C",
+          "01KVJT6AQZSWY9CGS8HZXYE0PH",
+          "01KVJT4C8CMY0WEBWBPASS9A9H",
+          "01KVJT4JYSPHEN9K3STPJJ4JXD",
+          "01KVJT6ES6ZNF5GFDM5F295R82"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 18,
+        "edges": 15,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVJT4J837TSR57YA8FSM3PJA",
+    "01KVJT4CSZSMGY3B163VGRCP10",
+    "01KVJT6M8VMJSYCA91X1C0AKYJ",
+    "01KVJT1MN000PG2D8GXDBCF91Y",
+    "01KVJT3YEH04T5E9EF4ASTQYRJ",
+    "01KVJT7AYMYNKYTHDW0V0TD63C",
+    "01KVJT6AQZSWY9CGS8HZXYE0PH",
+    "01KVJT4C8CMY0WEBWBPASS9A9H",
+    "01KVJT4JYSPHEN9K3STPJJ4JXD",
+    "01KVJT6ES6ZNF5GFDM5F295R82"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 9188,
+  "graph_selected_sources": [
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMERICANEXPRESS_2022_10K.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/BOEING_2022_10K.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMD_2022_10K.md"
+  ],
+  "used_fallback": null,
+  "retrieved_chunks": [
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 77,
+      "score": 0.6917995398022228
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 260,
+      "score": 0.6565701634597274
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 262,
+      "score": 0.6523882484456659
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 137,
+      "score": 0.6435061108722907
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 76,
+      "score": 0.6385158430920869
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 49,
+      "score": 0.6314253582016033
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 0,
+      "score": 0.6203828421590969
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 136,
+      "score": 0.6193309736963255
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 6,
+      "score": 0.6102723884251245
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 131,
+      "score": 0.6099056765089762
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 4,
+      "score": 0.6025587642324939
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 93,
+      "score": 0.5949182508430003
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 12318,
+    "output_tokens": 401,
+    "latency_ms": 2984,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"c\",\"reasoning\":\"(A) 발췌의 청크 7(AMERICANEXPRESS_2022_10K.md:0)에서 'Securities registered pursuant to Section 12(b) of the Act: Title of each class Trading Symbol(s) Name of each exchange on which registered Common Shares (par value $0.20 per Share) AXP New York Stock Exchange'라고 명시되어 있으나, 이는 보통주에 대한 내용이다. 그러나, 같은 10-K의 표준 구조상, 만약 부채 증권(채권 등)이 거래소에 등록되어 있다면 이 표에 함께 명시된다. 본 발췌에는 부채 증권이 명시되어 있지 않으므로, 보통주 외에는 등록된 부채 증권이 없다는 해석이 가능하다. 하지만, (A)에서 다른 청크(예: TABLE 20: DEBT ISSUANCES 등)에서는 다양한 부채 증권이 발행되었음을 보여주지만, 이들이 거래소에 등록되어 있는지에 대한 직접적 언급은 없다. (B) 그래프에서도 부채 증권의 거래소 등록 여부에 대한 구조적 관계는 나타나지 않는다. 그러나, 10-K 표준에 따라 부채 증권이 거래소에 등록되어 있다면 반드시 Section 12(b) 표에 명시되어야 하므로, (A) 발췌가 결정적 근거가 된다. 따라서, 보기 d) 'There are no debt securities registered to trade on a national securities exchange under American Express' name as of 2022'가 가장 근거에 부합한다. 그러나, 보기 c) 'multiple debt securities registered'는 (A)에서 명시적으로 부정된다. 결론적으로, (A) 발췌가 결정적 근거이며, 정답은 d)이다.\"}",
+    "parsed": {
+      "choice": "c",
+      "reasoning": "(A) 발췌의 청크 7(AMERICANEXPRESS_2022_10K.md:0)에서 'Securities registered pursuant to Section 12(b) of the Act: Title of each class Trading Symbol(s) Name of each exchange on which registered Common Shares (par value $0.20 per Share) AXP New York Stock Exchange'라고 명시되어 있으나, 이는 보통주에 대한 내용이다. 그러나, 같은 10-K의 표준 구조상, 만약 부채 증권(채권 등)이 거래소에 등록되어 있다면 이 표에 함께 명시된다. 본 발췌에는 부채 증권이 명시되어 있지 않으므로, 보통주 외에는 등록된 부채 증권이 없다는 해석이 가능하다. 하지만, (A)에서 다른 청크(예: TABLE 20: DEBT ISSUANCES 등)에서는 다양한 부채 증권이 발행되었음을 보여주지만, 이들이 거래소에 등록되어 있는지에 대한 직접적 언급은 없다. (B) 그래프에서도 부채 증권의 거래소 등록 여부에 대한 구조적 관계는 나타나지 않는다. 그러나, 10-K 표준에 따라 부채 증권이 거래소에 등록되어 있다면 반드시 Section 12(b) 표에 명시되어야 하므로, (A) 발췌가 결정적 근거가 된다. 따라서, 보기 d) 'There are no debt securities registered to trade on a national securities exchange under American Express' name as of 2022'가 가장 근거에 부합한다. 그러나, 보기 c) 'multiple debt securities registered'는 (A)에서 명시적으로 부정된다. 결론적으로, (A) 발췌가 결정적 근거이며, 정답은 d)이다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 20378,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 23,
+    "chunk_setup_amortized": 20331,
+    "chunk_setup_total": 426971,
+    "graph_keyword_estimated": 24,
+    "questions_count_for_amortization": 21
+  },
+  "total_input_tokens": 12812,
+  "total_output_tokens": 443,
+  "total_tokens": 33633,
+  "total_latency_ms": 4459
+}

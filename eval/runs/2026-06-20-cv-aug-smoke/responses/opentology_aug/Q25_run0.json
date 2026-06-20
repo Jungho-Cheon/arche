@@ -1,0 +1,207 @@
+{
+  "column": "opentology_aug",
+  "question_id": "Q25",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 507,
+    "output_tokens": 109,
+    "latency_ms": 1240,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"신선식품 콜드체인 사고\",\"aliases\":[\"신선식품 콜드체인 사고\"]},{\"canonical\":\"환불\",\"aliases\":[\"환불\"]},{\"canonical\":\"MP(입점사) 셀러\",\"aliases\":[\"MP(입점사) 셀러\",\"입점사 셀러\",\"MP 셀러\"]},{\"canonical\":\"손실\",\"aliases\":[\"손실\"]},{\"canonical\":\"손실 처리\",\"aliases\":[\"손실 처리\",\"손실 보전\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "신선식품 콜드체인 사고",
+          "aliases": [
+            "신선식품 콜드체인 사고"
+          ]
+        },
+        {
+          "canonical": "환불",
+          "aliases": [
+            "환불"
+          ]
+        },
+        {
+          "canonical": "MP(입점사) 셀러",
+          "aliases": [
+            "MP(입점사) 셀러",
+            "입점사 셀러",
+            "MP 셀러"
+          ]
+        },
+        {
+          "canonical": "손실",
+          "aliases": [
+            "손실"
+          ]
+        },
+        {
+          "canonical": "손실 처리",
+          "aliases": [
+            "손실 처리",
+            "손실 보전"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 1873,
+      "input": {
+        "keywords": [
+          "신선식품 콜드체인 사고",
+          "환불",
+          "MP(입점사) 셀러",
+          "입점사 셀러",
+          "MP 셀러",
+          "손실",
+          "손실 처리",
+          "손실 보전"
+        ],
+        "limit": 20,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 20
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 79,
+      "input": {
+        "entry_ids": [
+          "01KVJR75V2BG0YDB2CG50ECJRS",
+          "01KVJQMAYA92RH9BT0DXNDGCT9",
+          "01KVJRC94PG9RPHK5DRJ1GSRM0",
+          "01KVJQH1PXBTCRG48GGGHYQBKF",
+          "01KVJQH861DG8W5ZGWH34AYX3N",
+          "01KVJRDH2KKE4MQQQKSG43VQXS",
+          "01KVJQDJ2KYZXY247C4N8CQWB3",
+          "01KVJQH34K8HENKEJZ8ZQJFPKE",
+          "01KVJQGN4M8FPR9X4FNNEKQP2G",
+          "01KVJRJT81NT6SS9AZF2D983MW"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 27,
+        "edges": 23,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVJR75V2BG0YDB2CG50ECJRS",
+    "01KVJQMAYA92RH9BT0DXNDGCT9",
+    "01KVJRC94PG9RPHK5DRJ1GSRM0",
+    "01KVJQH1PXBTCRG48GGGHYQBKF",
+    "01KVJQH861DG8W5ZGWH34AYX3N",
+    "01KVJRDH2KKE4MQQQKSG43VQXS",
+    "01KVJQDJ2KYZXY247C4N8CQWB3",
+    "01KVJQH34K8HENKEJZ8ZQJFPKE",
+    "01KVJQGN4M8FPR9X4FNNEKQP2G",
+    "01KVJRJT81NT6SS9AZF2D983MW"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 16291,
+  "graph_selected_sources": [
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/marketing/bfm2026-brief.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/cs-logistics/cold-chain-sop.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/seller-ops/seller-agreement-annex.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/legal-risk/risk-checklist.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/cs-logistics/return-refund-flowchart.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/seller-ops/settlement-faq.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/b2b/enterprise-agreement-addendum.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/seller-ops/settlement-cycle-chart.png",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/marketing/campaign-playbook.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/loyalty/tier-rulebook.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/cs-logistics/_GLOSSARY.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/global-pm/_GLOSSARY.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/hq-pm/_GLOSSARY.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/hq-pm/policy-matrix.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/marketing/_GLOSSARY.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/seller-ops/_GLOSSARY.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/global-pm/country-launch-memo-jp.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/hq-pm/quarterly-policy-brief.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/b2b/b2b-coupon-policy.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/b2b/b2b-ops-guide.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/hq-pm/decision-log.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/loyalty/tier-transition-rulebook.pdf",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/commerce-verbose-20260618/corpus/marketing/coupon-stacking-guide.md"
+  ],
+  "used_fallback": null,
+  "retrieved_chunks": [
+    {
+      "source_path": "seller-ops/settlement-faq.md",
+      "chunk_index": 9,
+      "score": 0.5773235242476715
+    },
+    {
+      "source_path": "seller-ops/settlement-faq.md",
+      "chunk_index": 4,
+      "score": 0.5737119184916382
+    },
+    {
+      "source_path": "cs-logistics/cold-chain-sop.pdf",
+      "chunk_index": 0,
+      "score": 0.5712246610375141
+    },
+    {
+      "source_path": "seller-ops/seller-agreement-annex.pdf",
+      "chunk_index": 2,
+      "score": 0.5627455851058768
+    },
+    {
+      "source_path": "cs-logistics/cold-chain-sop.pdf",
+      "chunk_index": 3,
+      "score": 0.556070253286315
+    },
+    {
+      "source_path": "seller-ops/settlement-faq.md",
+      "chunk_index": 3,
+      "score": 0.5475252165603511
+    },
+    {
+      "source_path": "seller-ops/settlement-faq.md",
+      "chunk_index": 5,
+      "score": 0.5471816654770271
+    },
+    {
+      "source_path": "cs-logistics/cold-chain-sop.pdf",
+      "chunk_index": 2,
+      "score": 0.5359464130102498
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 10858,
+    "output_tokens": 238,
+    "latency_ms": 1949,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"a\",\"reasoning\":\"(A) 발췌에서 'MP 면 셀러 차감 후 보증보험으로 보전됩니다.'(seller-ops/settlement-faq.md:4,6)와 'MP(입점사)는 상품 소유/판매 주체가 셀러이므로 셀러가 차감을 부담하되, MP 는 입점 시 가입한 셀러 보증보험으로 충당하는 점이 다르다.'(cs-logistics/cold-chain-sop.pdf:2) 등 명확하게 '셀러 정산금에서 먼저 차감되고, 그 차감분을 보증보험으로 보전'되는 구조임을 반복적으로 설명한다. (B) 그래프에서도 'MP --셀러 차감 및 보증보험이 적용된다--> 손실 귀속' 등 구조적 관계가 일치한다. 두 정보 모두 보기 a)와 정확히 일치하므로 a)가 정답이다. 결정적 근거는 (A) 발췌의 절차적 설명과 (B) 그래프의 구조적 관계 일치이다.\"}",
+    "parsed": {
+      "choice": "a",
+      "reasoning": "(A) 발췌에서 'MP 면 셀러 차감 후 보증보험으로 보전됩니다.'(seller-ops/settlement-faq.md:4,6)와 'MP(입점사)는 상품 소유/판매 주체가 셀러이므로 셀러가 차감을 부담하되, MP 는 입점 시 가입한 셀러 보증보험으로 충당하는 점이 다르다.'(cs-logistics/cold-chain-sop.pdf:2) 등 명확하게 '셀러 정산금에서 먼저 차감되고, 그 차감분을 보증보험으로 보전'되는 구조임을 반복적으로 설명한다. (B) 그래프에서도 'MP --셀러 차감 및 보증보험이 적용된다--> 손실 귀속' 등 구조적 관계가 일치한다. 두 정보 모두 보기 a)와 정확히 일치하므로 a)가 정답이다. 결정적 근거는 (A) 발췌의 절차적 설명과 (B) 그래프의 구조적 관계 일치이다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 3738,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 56,
+    "chunk_setup_amortized": 3618,
+    "chunk_setup_total": 108550,
+    "graph_keyword_estimated": 64,
+    "questions_count_for_amortization": 30
+  },
+  "total_input_tokens": 11365,
+  "total_output_tokens": 347,
+  "total_tokens": 15450,
+  "total_latency_ms": 5141
+}

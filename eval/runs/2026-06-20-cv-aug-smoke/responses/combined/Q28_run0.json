@@ -1,0 +1,185 @@
+{
+  "column": "combined",
+  "question_id": "Q28",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 508,
+    "output_tokens": 110,
+    "latency_ms": 1180,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"독일(DE) 회원\",\"aliases\":[\"독일(DE) 회원\",\"DE 회원\"]},{\"canonical\":\"PII\",\"aliases\":[\"PII\",\"개인식별정보\"]},{\"canonical\":\"비식별화\",\"aliases\":[\"비식별화\",\"비식별 처리\"]},{\"canonical\":\"거래 기록\",\"aliases\":[\"거래 기록\",\"거래내역\"]},{\"canonical\":\"마케팅 리타겟팅 광고\",\"aliases\":[\"마케팅 리타겟팅 광고\",\"리타겟팅 광고\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "독일(DE) 회원",
+          "aliases": [
+            "독일(DE) 회원",
+            "DE 회원"
+          ]
+        },
+        {
+          "canonical": "PII",
+          "aliases": [
+            "PII",
+            "개인식별정보"
+          ]
+        },
+        {
+          "canonical": "비식별화",
+          "aliases": [
+            "비식별화",
+            "비식별 처리"
+          ]
+        },
+        {
+          "canonical": "거래 기록",
+          "aliases": [
+            "거래 기록",
+            "거래내역"
+          ]
+        },
+        {
+          "canonical": "마케팅 리타겟팅 광고",
+          "aliases": [
+            "마케팅 리타겟팅 광고",
+            "리타겟팅 광고"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 1579,
+      "input": {
+        "keywords": [
+          "독일(DE) 회원",
+          "DE 회원",
+          "PII",
+          "개인식별정보",
+          "비식별화",
+          "비식별 처리",
+          "거래 기록",
+          "거래내역",
+          "마케팅 리타겟팅 광고",
+          "리타겟팅 광고"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 75,
+      "input": {
+        "entry_ids": [
+          "01KVJR17AE2D9F3K7XDW8VGZAG",
+          "01KVJR2WF8AN4229XHT8VE6G6H",
+          "01KVJR2FV443ZFH5XY45AWN0NQ",
+          "01KVJR3DHEPM6C5PDEH9A0JQ6H",
+          "01KVJQJJ2DMAJC6C73X738KTBV",
+          "01KVJQFDF57DKGEDEFVQARH8PC",
+          "01KVJR2GKW4EDK0M6J7XA613GH",
+          "01KVJR25T6QRKS74N4DD96QFP2",
+          "01KVJR0FCY03B69SRCWKJEYW5E",
+          "01KVJR1V1CNYT98FKJ33F26YS0"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 32,
+        "edges": 23,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVJR17AE2D9F3K7XDW8VGZAG",
+    "01KVJR2WF8AN4229XHT8VE6G6H",
+    "01KVJR2FV443ZFH5XY45AWN0NQ",
+    "01KVJR3DHEPM6C5PDEH9A0JQ6H",
+    "01KVJQJJ2DMAJC6C73X738KTBV",
+    "01KVJQFDF57DKGEDEFVQARH8PC",
+    "01KVJR2GKW4EDK0M6J7XA613GH",
+    "01KVJR25T6QRKS74N4DD96QFP2",
+    "01KVJR0FCY03B69SRCWKJEYW5E",
+    "01KVJR1V1CNYT98FKJ33F26YS0"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 19024,
+  "retrieved_chunks": [
+    {
+      "source_path": "legal-risk/gdpr-de-memo.pdf",
+      "chunk_index": 3,
+      "score": 0.5319447113972543
+    },
+    {
+      "source_path": "global-pm/country-policy-matrix.md",
+      "chunk_index": 6,
+      "score": 0.5283936419384957
+    },
+    {
+      "source_path": "legal-risk/gdpr-de-memo.pdf",
+      "chunk_index": 1,
+      "score": 0.5050654243905105
+    },
+    {
+      "source_path": "marketing/campaign-playbook.md",
+      "chunk_index": 7,
+      "score": 0.49507106069274437
+    },
+    {
+      "source_path": "cs-logistics/cs-macro-manual.md",
+      "chunk_index": 7,
+      "score": 0.4897456617512934
+    },
+    {
+      "source_path": "legal-risk/gdpr-de-memo.pdf",
+      "chunk_index": 2,
+      "score": 0.46218616008223895
+    },
+    {
+      "source_path": "hq-pm/decision-log.md",
+      "chunk_index": 1,
+      "score": 0.4317011890458498
+    },
+    {
+      "source_path": "cs-logistics/cs-macro-manual.md",
+      "chunk_index": 8,
+      "score": 0.4023784620660065
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 11468,
+    "output_tokens": 183,
+    "latency_ms": 2746,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"a\",\"reasoning\":\"(A) 검색된 문서 발췌에서 명확하게 '비식별화 거래 기록을 광고 모수로 역추적하는 시도 자체가 GDPR 위반 소지가 있으므로 금지한다'고 명시되어 있다(청크 4). 또한, 비식별화된 거래 기록은 회원 ID만 남기고 PII를 제거한 형태로 10년간 보존되지만, 이 데이터는 마케팅 타겟팅에 쓸 수 없다고 반복적으로 언급된다. (B) 도메인 그래프에서도 비식별화가 PII를 제거하고 회원 ID만 남기는 처리임을 보여주지만, 광고 활용 가능 여부에 대한 직접적 언급은 없다. 따라서 (A)의 구체적이고 명시적인 금지 근거가 결정적이다.\"}",
+    "parsed": {
+      "choice": "a",
+      "reasoning": "(A) 검색된 문서 발췌에서 명확하게 '비식별화 거래 기록을 광고 모수로 역추적하는 시도 자체가 GDPR 위반 소지가 있으므로 금지한다'고 명시되어 있다(청크 4). 또한, 비식별화된 거래 기록은 회원 ID만 남기고 PII를 제거한 형태로 10년간 보존되지만, 이 데이터는 마케팅 타겟팅에 쓸 수 없다고 반복적으로 언급된다. (B) 도메인 그래프에서도 비식별화가 PII를 제거하고 회원 ID만 남기는 처리임을 보여주지만, 광고 활용 가능 여부에 대한 직접적 언급은 없다. 따라서 (A)의 구체적이고 명시적인 금지 근거가 결정적이다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 3754,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 56,
+    "chunk_setup_amortized": 3618,
+    "chunk_setup_total": 108550,
+    "graph_keyword_estimated": 80,
+    "questions_count_for_amortization": 30
+  },
+  "total_input_tokens": 11976,
+  "total_output_tokens": 293,
+  "total_tokens": 16023,
+  "total_latency_ms": 5580
+}

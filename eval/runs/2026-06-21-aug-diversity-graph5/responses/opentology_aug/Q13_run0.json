@@ -1,0 +1,167 @@
+{
+  "column": "opentology_aug",
+  "question_id": "Q13",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 487,
+    "output_tokens": 38,
+    "latency_ms": 776,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"American Express\",\"aliases\":[\"American Express\"]},{\"canonical\":\"Balance Sheet\",\"aliases\":[\"Balance Sheet\"]},{\"canonical\":\"liability\",\"aliases\":[\"liability\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "American Express",
+          "aliases": [
+            "American Express"
+          ]
+        },
+        {
+          "canonical": "Balance Sheet",
+          "aliases": [
+            "Balance Sheet"
+          ]
+        },
+        {
+          "canonical": "liability",
+          "aliases": [
+            "liability"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 868,
+      "input": {
+        "keywords": [
+          "American Express",
+          "Balance Sheet",
+          "liability"
+        ],
+        "limit": 20,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 20
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 184,
+      "input": {
+        "entry_ids": [
+          "01KVJS88EGTSG96NYREEYDEYKV",
+          "01KVJS9SXN1PBN9D6ASJWRH9GA",
+          "01KVJS9V9RNSZB2RKM5579JY5N",
+          "01KVJSBXB7CTH8X93RW43Y6WRD",
+          "01KVJSFJYE84Q83XH6R3PX8W28",
+          "01KVJSAS2ZB9VDX33GHAVBGV7D",
+          "01KVJSBCB9MJ5JNJ82Z9KW9S3S",
+          "01KVJSD21KZSEHT4JGS7MXWQ74",
+          "01KVJSD1EDWKW7X1GTRC0Q5ZC7",
+          "01KVJSBTHYZXADE92KN6Q214SV"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 67,
+        "edges": 63,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVJS88EGTSG96NYREEYDEYKV",
+    "01KVJS9SXN1PBN9D6ASJWRH9GA",
+    "01KVJS9V9RNSZB2RKM5579JY5N",
+    "01KVJSBXB7CTH8X93RW43Y6WRD",
+    "01KVJSFJYE84Q83XH6R3PX8W28",
+    "01KVJSAS2ZB9VDX33GHAVBGV7D",
+    "01KVJSBCB9MJ5JNJ82Z9KW9S3S",
+    "01KVJSD21KZSEHT4JGS7MXWQ74",
+    "01KVJSD1EDWKW7X1GTRC0Q5ZC7",
+    "01KVJSBTHYZXADE92KN6Q214SV"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 30560,
+  "graph_selected_sources": [
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMERICANEXPRESS_2022_10K.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMD_2022_10K.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/BOEING_2022_10K.md"
+  ],
+  "used_fallback": null,
+  "retrieved_chunks": [
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 77,
+      "score": 0.6824459113751863
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 137,
+      "score": 0.6694014806918115
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 151,
+      "score": 0.6660343963677496
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 72,
+      "score": 0.6535545052022463
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 164,
+      "score": 0.6421725353600571
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 136,
+      "score": 0.6361374650397575
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 177,
+      "score": 0.6173713191547353
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 6,
+      "score": 0.6113648788609296
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 15587,
+    "output_tokens": 223,
+    "latency_ms": 2814,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"d\",\"reasoning\":\"(A) contains a table in 청크 3 (AMERICANEXPRESS_2022_10K.md:151) that summarizes the carrying values of major financial liabilities as of December 31, 2022. The table shows: 'Financial liabilities for which carrying values equal or approximate fair value' at $123 billion, 'Certificates of deposit' at $16 billion, and 'Long-term debt' at $43 billion. The $123 billion line is not labeled as 'accounts payable' or 'accrued expenses' but is described as 'financial liabilities for which carrying values equal or approximate fair value.' However, in the context of American Express's business model (which is deposit-taking), this $123 billion most likely refers to 'customer deposits,' as this is the largest liability class for a bank and is consistent with the structure of their balance sheet. (B) The domain graph does not provide a breakdown of balance sheet items or their magnitudes. Therefore, the decisive evidence is from (A), and the correct answer is 'customer deposits.'\"}",
+    "parsed": {
+      "choice": "d",
+      "reasoning": "(A) contains a table in 청크 3 (AMERICANEXPRESS_2022_10K.md:151) that summarizes the carrying values of major financial liabilities as of December 31, 2022. The table shows: 'Financial liabilities for which carrying values equal or approximate fair value' at $123 billion, 'Certificates of deposit' at $16 billion, and 'Long-term debt' at $43 billion. The $123 billion line is not labeled as 'accounts payable' or 'accrued expenses' but is described as 'financial liabilities for which carrying values equal or approximate fair value.' However, in the context of American Express's business model (which is deposit-taking), this $123 billion most likely refers to 'customer deposits,' as this is the largest liability class for a bank and is consistent with the structure of their balance sheet. (B) The domain graph does not provide a breakdown of balance sheet items or their magnitudes. Therefore, the decisive evidence is from (A), and the correct answer is 'customer deposits.'"
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 20371,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 16,
+    "chunk_setup_amortized": 20331,
+    "chunk_setup_total": 426971,
+    "graph_keyword_estimated": 24,
+    "questions_count_for_amortization": 21
+  },
+  "total_input_tokens": 16074,
+  "total_output_tokens": 261,
+  "total_tokens": 36706,
+  "total_latency_ms": 4642
+}

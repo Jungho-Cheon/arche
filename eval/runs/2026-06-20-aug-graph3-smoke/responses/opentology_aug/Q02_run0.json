@@ -1,0 +1,167 @@
+{
+  "column": "opentology_aug",
+  "question_id": "Q02",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 486,
+    "output_tokens": 32,
+    "latency_ms": 858,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"AMD\",\"aliases\":[\"AMD\"]},{\"canonical\":\"products\",\"aliases\":[\"products\"]},{\"canonical\":\"services\",\"aliases\":[\"services\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "AMD",
+          "aliases": [
+            "AMD"
+          ]
+        },
+        {
+          "canonical": "products",
+          "aliases": [
+            "products"
+          ]
+        },
+        {
+          "canonical": "services",
+          "aliases": [
+            "services"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 923,
+      "input": {
+        "keywords": [
+          "AMD",
+          "products",
+          "services"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 176,
+      "input": {
+        "entry_ids": [
+          "01KVJPECTXT2A663WV3RG31A78",
+          "01KVJPC5ARJM118BTVTDXAF3MC",
+          "01KVJPBC9ANC0VFX9KVGS9VNMQ",
+          "01KVJPHB7PGW46X902666HD2TR",
+          "01KVJPEBZFGEG2BN1GX5F9EVQ2",
+          "01KVJPG51DBZYR7S7HY06W16WN",
+          "01KVJPJRM3HT2C684AVXWY3RF6",
+          "01KVJPJT42T31QA6NN6MDZ16QC",
+          "01KVJPC74DW7QEXWP5EB3V935B",
+          "01KVJPFWAWFHT7SEE4S02MD712"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 76,
+        "edges": 69,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVJPECTXT2A663WV3RG31A78",
+    "01KVJPC5ARJM118BTVTDXAF3MC",
+    "01KVJPBC9ANC0VFX9KVGS9VNMQ",
+    "01KVJPHB7PGW46X902666HD2TR",
+    "01KVJPEBZFGEG2BN1GX5F9EVQ2",
+    "01KVJPG51DBZYR7S7HY06W16WN",
+    "01KVJPJRM3HT2C684AVXWY3RF6",
+    "01KVJPJT42T31QA6NN6MDZ16QC",
+    "01KVJPC74DW7QEXWP5EB3V935B",
+    "01KVJPFWAWFHT7SEE4S02MD712"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 32226,
+  "graph_selected_sources": [
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/BOEING_2022_10K.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMD_2022_10K.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMERICANEXPRESS_2022_10K.md"
+  ],
+  "used_fallback": null,
+  "retrieved_chunks": [
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 3,
+      "score": 0.6948737522034684
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 13,
+      "score": 0.693449802145358
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 10,
+      "score": 0.6856974893309582
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 4,
+      "score": 0.6735344221039425
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 2,
+      "score": 0.6703390978121893
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 48,
+      "score": 0.6649822182742322
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 47,
+      "score": 0.6639077045578893
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 46,
+      "score": 0.649953616908637
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 17348,
+    "output_tokens": 184,
+    "latency_ms": 3611,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"a\",\"reasoning\":\"(A) 발췌에서 AMD가 FY22 기준으로 판매하는 주요 제품과 서비스에 대해 명확하게 기술하고 있다. 구체적으로, 서버용 CPU, GPU, DPU, FPGA, Adaptive SoC(데이터센터용), 데스크탑/노트북용 CPU, APU, 칩셋, 디스크리트 GPU, 세미커스텀 SoC, 개발 서비스, 임베디드 CPU, GPU, APU, FPGA, Adaptive SoC 등 다양한 제품군을 언급한다. (B) 그래프에서도 AMD가 이러한 제품군을 운영하고 있음을 구조적으로 보여주며, 각 세그먼트별로 제품이 연결되어 있다. 두 정보가 일치하며, (A)에서 가장 상세하게 명시되어 있으므로 a)가 정답이다.\"}",
+    "parsed": {
+      "choice": "a",
+      "reasoning": "(A) 발췌에서 AMD가 FY22 기준으로 판매하는 주요 제품과 서비스에 대해 명확하게 기술하고 있다. 구체적으로, 서버용 CPU, GPU, DPU, FPGA, Adaptive SoC(데이터센터용), 데스크탑/노트북용 CPU, APU, 칩셋, 디스크리트 GPU, 세미커스텀 SoC, 개발 서비스, 임베디드 CPU, GPU, APU, FPGA, Adaptive SoC 등 다양한 제품군을 언급한다. (B) 그래프에서도 AMD가 이러한 제품군을 운영하고 있음을 구조적으로 보여주며, 각 세그먼트별로 제품이 연결되어 있다. 두 정보가 일치하며, (A)에서 가장 상세하게 명시되어 있으므로 a)가 정답이다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 20370,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 15,
+    "chunk_setup_amortized": 20331,
+    "chunk_setup_total": 426971,
+    "graph_keyword_estimated": 24,
+    "questions_count_for_amortization": 21
+  },
+  "total_input_tokens": 17834,
+  "total_output_tokens": 216,
+  "total_tokens": 38420,
+  "total_latency_ms": 5568
+}

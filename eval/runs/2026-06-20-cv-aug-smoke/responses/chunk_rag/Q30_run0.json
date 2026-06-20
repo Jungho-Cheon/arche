@@ -1,0 +1,65 @@
+{
+  "column": "chunk_rag",
+  "question_id": "Q30",
+  "run_index": 0,
+  "input_tokens": 4968,
+  "output_tokens": 138,
+  "embedding_tokens": 3681,
+  "embedding_tokens_breakdown": {
+    "question_embedding": 63,
+    "setup_amortized": 3618,
+    "setup_total": 108550,
+    "questions_count_for_amortization": 30
+  },
+  "total_tokens": 8787,
+  "latency_ms": 2072,
+  "model": "gpt-4.1",
+  "retrieved_chunks": [
+    {
+      "source_path": "loyalty/tier-rulebook.md",
+      "chunk_index": 3,
+      "score": 0.6366358621674673
+    },
+    {
+      "source_path": "loyalty/tier-rulebook.md",
+      "chunk_index": 2,
+      "score": 0.576216618045765
+    },
+    {
+      "source_path": "loyalty/_GLOSSARY.md",
+      "chunk_index": 1,
+      "score": 0.5138755673613673
+    },
+    {
+      "source_path": "loyalty/tier-rulebook.md",
+      "chunk_index": 4,
+      "score": 0.49939656927528003
+    },
+    {
+      "source_path": "loyalty/tier-transition-rulebook.pdf",
+      "chunk_index": 1,
+      "score": 0.4765037128098351
+    },
+    {
+      "source_path": "loyalty/tier-transition-rulebook.pdf",
+      "chunk_index": 2,
+      "score": 0.4692326100508777
+    },
+    {
+      "source_path": "loyalty/tier-rulebook.md",
+      "chunk_index": 5,
+      "score": 0.4333515978513129
+    },
+    {
+      "source_path": "loyalty/tier-rulebook.md",
+      "chunk_index": 9,
+      "score": 0.42838823323489883
+    }
+  ],
+  "raw_response": "{\"choice\":\"a\",\"reasoning\":\"청크 1, 2, 4, 6, 7에서 이너 서클(VVIP) 승급 조건은 '직전 12개월 누적 결제액 500만 원 이상' AND '최근 NPS 응답 점수 9 이상'이 모두 충족되어야 한다고 명시되어 있다. NPS 9 미만이면 금액이 아무리 높아도 승급되지 않는다(청크 4, 6, 7). NPS 7은 이 조건을 충족하지 못하므로 승급하지 않는다. 따라서 정답은 a)이다.\"}",
+  "parsed": {
+    "choice": "a",
+    "reasoning": "청크 1, 2, 4, 6, 7에서 이너 서클(VVIP) 승급 조건은 '직전 12개월 누적 결제액 500만 원 이상' AND '최근 NPS 응답 점수 9 이상'이 모두 충족되어야 한다고 명시되어 있다. NPS 9 미만이면 금액이 아무리 높아도 승급되지 않는다(청크 4, 6, 7). NPS 7은 이 조건을 충족하지 못하므로 승급하지 않는다. 따라서 정답은 a)이다."
+  },
+  "parse_error": null
+}

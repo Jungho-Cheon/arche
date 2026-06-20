@@ -1,0 +1,156 @@
+{
+  "column": "combined",
+  "question_id": "Q10",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 493,
+    "output_tokens": 38,
+    "latency_ms": 910,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"디지털콘텐츠 상품\",\"aliases\":[\"디지털콘텐츠 상품\"]},{\"canonical\":\"BNPL\",\"aliases\":[\"BNPL\",\"후불결제\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "디지털콘텐츠 상품",
+          "aliases": [
+            "디지털콘텐츠 상품"
+          ]
+        },
+        {
+          "canonical": "BNPL",
+          "aliases": [
+            "BNPL",
+            "후불결제"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 710,
+      "input": {
+        "keywords": [
+          "디지털콘텐츠 상품",
+          "BNPL",
+          "후불결제"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 70,
+      "input": {
+        "entry_ids": [
+          "01KVJQSHJ0HY169DA0QSY3EZVT",
+          "01KVJR3YBSF0Q5JYBHS6798XNC",
+          "01KVJRCDEDNT8DXXFG2FDJKM3D",
+          "01KVJQQ2HAXWKD71WMYCXT0KF1",
+          "01KVJR47P4QBMFF7HKK8ZD00JC",
+          "01KVJR16T5VQ6RPYSYZ8EWPA08",
+          "01KVJQYMGHT3566ZAXAYXQQB4Z",
+          "01KVJQK8VKRBB7MFG144CMZP8R",
+          "01KVJQRGAZFGAWJP7EQR1DJYG9",
+          "01KVJQFP5E0EQDKHGYFJSQXRDP"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 27,
+        "edges": 21,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVJQSHJ0HY169DA0QSY3EZVT",
+    "01KVJR3YBSF0Q5JYBHS6798XNC",
+    "01KVJRCDEDNT8DXXFG2FDJKM3D",
+    "01KVJQQ2HAXWKD71WMYCXT0KF1",
+    "01KVJR47P4QBMFF7HKK8ZD00JC",
+    "01KVJR16T5VQ6RPYSYZ8EWPA08",
+    "01KVJQYMGHT3566ZAXAYXQQB4Z",
+    "01KVJQK8VKRBB7MFG144CMZP8R",
+    "01KVJQRGAZFGAWJP7EQR1DJYG9",
+    "01KVJQFP5E0EQDKHGYFJSQXRDP"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 17319,
+  "retrieved_chunks": [
+    {
+      "source_path": "hq-pm/policy-matrix.md",
+      "chunk_index": 5,
+      "score": 0.6580806191159125
+    },
+    {
+      "source_path": "legal-risk/kyc-age-verification-memo.pdf",
+      "chunk_index": 3,
+      "score": 0.5701629829384848
+    },
+    {
+      "source_path": "hq-pm/policy-matrix.md",
+      "chunk_index": 6,
+      "score": 0.5622513538643097
+    },
+    {
+      "source_path": "hq-pm/quarterly-policy-brief.pdf",
+      "chunk_index": 1,
+      "score": 0.5584915392835398
+    },
+    {
+      "source_path": "global-pm/country-launch-memo-jp.pdf",
+      "chunk_index": 4,
+      "score": 0.5411170862578343
+    },
+    {
+      "source_path": "legal-risk/kyc-age-verification-memo.pdf",
+      "chunk_index": 2,
+      "score": 0.5310774240547728
+    },
+    {
+      "source_path": "marketing/campaign-playbook.md",
+      "chunk_index": 8,
+      "score": 0.5280031389340711
+    },
+    {
+      "source_path": "legal-risk/risk-checklist.md",
+      "chunk_index": 2,
+      "score": 0.5267577313270061
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 10522,
+    "output_tokens": 212,
+    "latency_ms": 4021,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"a\",\"reasoning\":\"(A) 검색된 문서 발췌에서 디지털콘텐츠와 BNPL(후불결제)의 결합은 전면 금지(R4)되어 있으며, 결제 화면에서 BNPL 버튼이 비활성화된다고 명시되어 있다(legal-risk/kyc-age-verification-memo.pdf, marketing/campaign-playbook.md 등). 또한 마케팅 캠페인 설계 시 디지털콘텐츠는 BNPL 프로모션 대상에서 자동 제외되어야 하며, 이 규칙을 누락하면 캠페인 승인이 반려된다고 구체적으로 설명한다. (B) 도메인 그래프에서도 '디지털콘텐츠 --결합이 금지된다--> BNPL' 관계가 여러 출처에서 반복적으로 명시되어 있다. 두 출처 모두 일치하며, 가장 구체적이고 명확한 근거가 (A) 발췌에 있으므로 a) 불가가 정답이다.\"}",
+    "parsed": {
+      "choice": "a",
+      "reasoning": "(A) 검색된 문서 발췌에서 디지털콘텐츠와 BNPL(후불결제)의 결합은 전면 금지(R4)되어 있으며, 결제 화면에서 BNPL 버튼이 비활성화된다고 명시되어 있다(legal-risk/kyc-age-verification-memo.pdf, marketing/campaign-playbook.md 등). 또한 마케팅 캠페인 설계 시 디지털콘텐츠는 BNPL 프로모션 대상에서 자동 제외되어야 하며, 이 규칙을 누락하면 캠페인 승인이 반려된다고 구체적으로 설명한다. (B) 도메인 그래프에서도 '디지털콘텐츠 --결합이 금지된다--> BNPL' 관계가 여러 출처에서 반복적으로 명시되어 있다. 두 출처 모두 일치하며, 가장 구체적이고 명확한 근거가 (A) 발췌에 있으므로 a) 불가가 정답이다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 3678,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 36,
+    "chunk_setup_amortized": 3618,
+    "chunk_setup_total": 108550,
+    "graph_keyword_estimated": 24,
+    "questions_count_for_amortization": 30
+  },
+  "total_input_tokens": 11015,
+  "total_output_tokens": 250,
+  "total_tokens": 14943,
+  "total_latency_ms": 5711
+}

@@ -1,0 +1,158 @@
+{
+  "column": "combined",
+  "question_id": "Q18",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 508,
+    "output_tokens": 51,
+    "latency_ms": 998,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"웰컴 쿠폰\",\"aliases\":[\"웰컴 쿠폰\",\"CPN-WELCOME\"]},{\"canonical\":\"장바구니 쿠폰\",\"aliases\":[\"장바구니 쿠폰\",\"CPN-CART\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "웰컴 쿠폰",
+          "aliases": [
+            "웰컴 쿠폰",
+            "CPN-WELCOME"
+          ]
+        },
+        {
+          "canonical": "장바구니 쿠폰",
+          "aliases": [
+            "장바구니 쿠폰",
+            "CPN-CART"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 937,
+      "input": {
+        "keywords": [
+          "웰컴 쿠폰",
+          "CPN-WELCOME",
+          "장바구니 쿠폰",
+          "CPN-CART"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 92,
+      "input": {
+        "entry_ids": [
+          "01KVJQB0NFVT99D1AAM3GZM71Z",
+          "01KVJR97B66MZEW89ZNEZ2A778",
+          "01KVJQC96S0VSQXFCEP9XYYH3V",
+          "01KVJRBF3V2N2FQ0BDZGC3781T",
+          "01KVJRBFYBJ6RCG96YY6CYB8C9",
+          "01KVJQB16Z94GF9337CE4P5AE2",
+          "01KVJQERVB40DXK5WHWENXD286",
+          "01KVJQA9EHBM28CF1QWZEVD0RQ",
+          "01KVJQT0V2CNSF36NVKKVVCSEV",
+          "01KVJQZSTVPE2S2XF5SDFTT54E"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 26,
+        "edges": 27,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVJQB0NFVT99D1AAM3GZM71Z",
+    "01KVJR97B66MZEW89ZNEZ2A778",
+    "01KVJQC96S0VSQXFCEP9XYYH3V",
+    "01KVJRBF3V2N2FQ0BDZGC3781T",
+    "01KVJRBFYBJ6RCG96YY6CYB8C9",
+    "01KVJQB16Z94GF9337CE4P5AE2",
+    "01KVJQERVB40DXK5WHWENXD286",
+    "01KVJQA9EHBM28CF1QWZEVD0RQ",
+    "01KVJQT0V2CNSF36NVKKVVCSEV",
+    "01KVJQZSTVPE2S2XF5SDFTT54E"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 14246,
+  "retrieved_chunks": [
+    {
+      "source_path": "marketing/coupon-stacking-guide.md",
+      "chunk_index": 1,
+      "score": 0.572198377588385
+    },
+    {
+      "source_path": "b2b/b2b-coupon-policy.md",
+      "chunk_index": 1,
+      "score": 0.5109108612945957
+    },
+    {
+      "source_path": "marketing/coupon-stacking-guide.md",
+      "chunk_index": 5,
+      "score": 0.5079820462161498
+    },
+    {
+      "source_path": "marketing/coupon-stacking-guide.md",
+      "chunk_index": 2,
+      "score": 0.500363434748042
+    },
+    {
+      "source_path": "b2b/b2b-ops-guide.md",
+      "chunk_index": 3,
+      "score": 0.4892041217665647
+    },
+    {
+      "source_path": "marketing/coupon-stacking-guide.md",
+      "chunk_index": 4,
+      "score": 0.4861734338838302
+    },
+    {
+      "source_path": "hq-pm/policy-matrix.md",
+      "chunk_index": 5,
+      "score": 0.4796479249408895
+    },
+    {
+      "source_path": "cs-logistics/cs-macro-manual.md",
+      "chunk_index": 6,
+      "score": 0.47159966252464763
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 9868,
+    "output_tokens": 175,
+    "latency_ms": 2656,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"a\",\"reasoning\":\"(A) 검색된 문서 발췌에서 명확하게 'WELCOME + CART = O'가 마케팅이 활용하는 유일한 자유 결합임을 여러 번 강조하고 있다. 특히 '매트릭스에서 굵게 표시한 WELCOME + CART = O가 마케팅이 활용하는 유일한 자유 결합이다'라는 문구와, '같은 프로모션 안에서도 이 조합만은 예외로 허용했다'는 설명이 있다. (B) 도메인 그래프에서도 'CPN-WELCOME-* --조합이 허용된다--> CPN-CART-*'라는 관계가 명시되어 있다. 두 출처가 일치하며, (A)의 설명이 매우 구체적이므로 a)가 정답이다.\"}",
+    "parsed": {
+      "choice": "a",
+      "reasoning": "(A) 검색된 문서 발췌에서 명확하게 'WELCOME + CART = O'가 마케팅이 활용하는 유일한 자유 결합임을 여러 번 강조하고 있다. 특히 '매트릭스에서 굵게 표시한 WELCOME + CART = O가 마케팅이 활용하는 유일한 자유 결합이다'라는 문구와, '같은 프로모션 안에서도 이 조합만은 예외로 허용했다'는 설명이 있다. (B) 도메인 그래프에서도 'CPN-WELCOME-* --조합이 허용된다--> CPN-CART-*'라는 관계가 명시되어 있다. 두 출처가 일치하며, (A)의 설명이 매우 구체적이므로 a)가 정답이다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 3709,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 59,
+    "chunk_setup_amortized": 3618,
+    "chunk_setup_total": 108550,
+    "graph_keyword_estimated": 32,
+    "questions_count_for_amortization": 30
+  },
+  "total_input_tokens": 10376,
+  "total_output_tokens": 226,
+  "total_tokens": 14311,
+  "total_latency_ms": 4683
+}

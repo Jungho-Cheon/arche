@@ -1,0 +1,65 @@
+{
+  "column": "chunk_rag",
+  "question_id": "Q25",
+  "run_index": 0,
+  "input_tokens": 4710,
+  "output_tokens": 187,
+  "embedding_tokens": 3674,
+  "embedding_tokens_breakdown": {
+    "question_embedding": 56,
+    "setup_amortized": 3618,
+    "setup_total": 108550,
+    "questions_count_for_amortization": 30
+  },
+  "total_tokens": 8571,
+  "latency_ms": 2426,
+  "model": "gpt-4.1",
+  "retrieved_chunks": [
+    {
+      "source_path": "seller-ops/settlement-faq.md",
+      "chunk_index": 9,
+      "score": 0.5772250325014024
+    },
+    {
+      "source_path": "seller-ops/settlement-faq.md",
+      "chunk_index": 4,
+      "score": 0.573573507742092
+    },
+    {
+      "source_path": "cs-logistics/cold-chain-sop.pdf",
+      "chunk_index": 0,
+      "score": 0.5712152246214821
+    },
+    {
+      "source_path": "seller-ops/seller-agreement-annex.pdf",
+      "chunk_index": 2,
+      "score": 0.5626610865156915
+    },
+    {
+      "source_path": "cs-logistics/cold-chain-sop.pdf",
+      "chunk_index": 3,
+      "score": 0.5557461428440565
+    },
+    {
+      "source_path": "seller-ops/settlement-faq.md",
+      "chunk_index": 3,
+      "score": 0.5473963380472043
+    },
+    {
+      "source_path": "seller-ops/settlement-faq.md",
+      "chunk_index": 5,
+      "score": 0.547099755675221
+    },
+    {
+      "source_path": "cs-logistics/cs-macro-manual.md",
+      "chunk_index": 3,
+      "score": 0.5367976956462348
+    }
+  ],
+  "raw_response": "{\"choice\":\"a\",\"reasoning\":\"청크 2, 청크 4, 청크 5, 청크 6, 청크 8 모두에서 MP(입점사) 셀러의 신선식품 콜드체인 사고 환불 손실은 '셀러 정산금에서 먼저 차감되고, 그 차감분은 입점 시 의무 가입한 셀러 보증보험으로 보전된다'고 명확히 설명하고 있다. 예를 들어 청크 4에서는 'MP (Marketplace) 셀러 차감 판매 책임이 셀러에게 있으므로 셀러 정산금에서 차감하며, 셀러 보증보험으로 담보한다'고 되어 있고, 청크 2와 6, 8에서도 동일한 구조임을 반복적으로 확인할 수 있다. 따라서 정답은 a)이다.\"}",
+  "parsed": {
+    "choice": "a",
+    "reasoning": "청크 2, 청크 4, 청크 5, 청크 6, 청크 8 모두에서 MP(입점사) 셀러의 신선식품 콜드체인 사고 환불 손실은 '셀러 정산금에서 먼저 차감되고, 그 차감분은 입점 시 의무 가입한 셀러 보증보험으로 보전된다'고 명확히 설명하고 있다. 예를 들어 청크 4에서는 'MP (Marketplace) 셀러 차감 판매 책임이 셀러에게 있으므로 셀러 정산금에서 차감하며, 셀러 보증보험으로 담보한다'고 되어 있고, 청크 2와 6, 8에서도 동일한 구조임을 반복적으로 확인할 수 있다. 따라서 정답은 a)이다."
+  },
+  "parse_error": null
+}

@@ -1,0 +1,191 @@
+{
+  "column": "opentology_aug",
+  "question_id": "Q03",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 483,
+    "output_tokens": 47,
+    "latency_ms": 1024,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"revenue\",\"aliases\":[\"revenue\"]},{\"canonical\":\"FY22\",\"aliases\":[\"FY22\",\"fiscal year 2022\"]},{\"canonical\":\"AMD\",\"aliases\":[\"AMD\",\"Advanced Micro Devices\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "revenue",
+          "aliases": [
+            "revenue"
+          ]
+        },
+        {
+          "canonical": "FY22",
+          "aliases": [
+            "FY22",
+            "fiscal year 2022"
+          ]
+        },
+        {
+          "canonical": "AMD",
+          "aliases": [
+            "AMD",
+            "Advanced Micro Devices"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 899,
+      "input": {
+        "keywords": [
+          "revenue",
+          "FY22",
+          "fiscal year 2022",
+          "AMD",
+          "Advanced Micro Devices"
+        ],
+        "limit": 20,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 20
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 100,
+      "input": {
+        "entry_ids": [
+          "01KVJT1HTEY8JTJD02BDCB1T4R",
+          "01KVJT7FVBYXA51S69YA5RTX3J",
+          "01KVJT7F2ZYC3NVWPG0YRYT604",
+          "01KVJT6DFKWXD0S74T2DZB1J21",
+          "01KVJT2CBCVJ4SP5AEKE0696YT",
+          "01KVJT1VHRVM5ZDSJXEJBB1WET",
+          "01KVJT1Y7157P5AVAW2549J457",
+          "01KVJT4NF0NPK4ECBEVSS86D41",
+          "01KVJTAQBBTD9AHVN7W54VC3WM",
+          "01KVJT9QR4T2T313V1XH75TJF6"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 57,
+        "edges": 52,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVJT1HTEY8JTJD02BDCB1T4R",
+    "01KVJT7FVBYXA51S69YA5RTX3J",
+    "01KVJT7F2ZYC3NVWPG0YRYT604",
+    "01KVJT6DFKWXD0S74T2DZB1J21",
+    "01KVJT2CBCVJ4SP5AEKE0696YT",
+    "01KVJT1VHRVM5ZDSJXEJBB1WET",
+    "01KVJT1Y7157P5AVAW2549J457",
+    "01KVJT4NF0NPK4ECBEVSS86D41",
+    "01KVJTAQBBTD9AHVN7W54VC3WM",
+    "01KVJT9QR4T2T313V1XH75TJF6"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 24692,
+  "graph_selected_sources": [
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/BOEING_2022_10K.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMD_2022_10K.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMERICANEXPRESS_2022_10K.md"
+  ],
+  "used_fallback": null,
+  "retrieved_chunks": [
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 47,
+      "score": 0.6829650203916264
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 46,
+      "score": 0.6661280892735956
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 14,
+      "score": 0.6291907312394861
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 13,
+      "score": 0.6285062534867079
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 48,
+      "score": 0.6251869297412167
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 2,
+      "score": 0.6208889244032165
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 4,
+      "score": 0.6190694298308678
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 3,
+      "score": 0.6168456211600265
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 55,
+      "score": 0.6129489588848502
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 72,
+      "score": 0.6083526796404386
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 54,
+      "score": 0.6082551232744056
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 49,
+      "score": 0.6076924024942547
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 17700,
+    "output_tokens": 215,
+    "latency_ms": 2185,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"a\",\"reasoning\":\"(A) 발췌에서 FY22(2022년) AMD의 매출 변화는 EPYC 서버 프로세서의 판매 증가, 게임 부문의 세미커스텀 제품 판매 증가, 그리고 Xilinx 인수로 인한 임베디드 제품 매출의 포함이 주요 원인임이 명확히 언급되어 있습니다. 예를 들어, 'The increase in net revenue was driven by a 64% increase in Data Center segment revenue primarily due to higher sales of our EPYC™ server processors, a 21% increase in Gaming segment revenue primarily due to higher semi-custom product sales, and a significant increase in Embedded segment revenue from the prior year period driven by the inclusion of Xilinx embedded product sales.' (B) 그래프에서도 AMD가 Xilinx를 인수했음을 구조적으로 보여주지만, 정량적·구체적 매출 변화의 원인은 (A)에서 직접적으로 확인됩니다. 따라서 (A)가 결정적 근거입니다.\"}",
+    "parsed": {
+      "choice": "a",
+      "reasoning": "(A) 발췌에서 FY22(2022년) AMD의 매출 변화는 EPYC 서버 프로세서의 판매 증가, 게임 부문의 세미커스텀 제품 판매 증가, 그리고 Xilinx 인수로 인한 임베디드 제품 매출의 포함이 주요 원인임이 명확히 언급되어 있습니다. 예를 들어, 'The increase in net revenue was driven by a 64% increase in Data Center segment revenue primarily due to higher sales of our EPYC™ server processors, a 21% increase in Gaming segment revenue primarily due to higher semi-custom product sales, and a significant increase in Embedded segment revenue from the prior year period driven by the inclusion of Xilinx embedded product sales.' (B) 그래프에서도 AMD가 Xilinx를 인수했음을 구조적으로 보여주지만, 정량적·구체적 매출 변화의 원인은 (A)에서 직접적으로 확인됩니다. 따라서 (A)가 결정적 근거입니다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 20383,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 12,
+    "chunk_setup_amortized": 20331,
+    "chunk_setup_total": 426971,
+    "graph_keyword_estimated": 40,
+    "questions_count_for_amortization": 21
+  },
+  "total_input_tokens": 18183,
+  "total_output_tokens": 262,
+  "total_tokens": 38828,
+  "total_latency_ms": 4208
+}

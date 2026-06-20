@@ -1,0 +1,185 @@
+{
+  "column": "opentology_aug",
+  "question_id": "Q11",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 508,
+    "output_tokens": 40,
+    "latency_ms": 818,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"gross margin\",\"aliases\":[\"gross margin\"]},{\"canonical\":\"FY2022\",\"aliases\":[\"FY2022\"]},{\"canonical\":\"American Express\",\"aliases\":[\"American Express\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "gross margin",
+          "aliases": [
+            "gross margin"
+          ]
+        },
+        {
+          "canonical": "FY2022",
+          "aliases": [
+            "FY2022"
+          ]
+        },
+        {
+          "canonical": "American Express",
+          "aliases": [
+            "American Express"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 756,
+      "input": {
+        "keywords": [
+          "gross margin",
+          "FY2022",
+          "American Express"
+        ],
+        "limit": 20,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 20
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 196,
+      "input": {
+        "entry_ids": [
+          "01KVJT5CVABCZDRHBSEM3HE630",
+          "01KVJT5DCCDX6669DKZE47DC41",
+          "01KVJT4NF0NPK4ECBEVSS86D41",
+          "01KVJT595GHA3K4CG1901BR042",
+          "01KVJT4JYSPHEN9K3STPJJ4JXD",
+          "01KVJT5GYFB4D5ZSHM796R3SG7",
+          "01KVJT54KXB1D5VKF2FTPF622B",
+          "01KVJT3X5C89HWRQK8Y3RMP5GD",
+          "01KVJT3YEH04T5E9EF4ASTQYRJ",
+          "01KVJT5G5VSSVDYH2KY6P93QHX"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 80,
+        "edges": 79,
+        "truncated": true
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVJT5CVABCZDRHBSEM3HE630",
+    "01KVJT5DCCDX6669DKZE47DC41",
+    "01KVJT4NF0NPK4ECBEVSS86D41",
+    "01KVJT595GHA3K4CG1901BR042",
+    "01KVJT4JYSPHEN9K3STPJJ4JXD",
+    "01KVJT5GYFB4D5ZSHM796R3SG7",
+    "01KVJT54KXB1D5VKF2FTPF622B",
+    "01KVJT3X5C89HWRQK8Y3RMP5GD",
+    "01KVJT3YEH04T5E9EF4ASTQYRJ",
+    "01KVJT5G5VSSVDYH2KY6P93QHX"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 37434,
+  "graph_selected_sources": [
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMERICANEXPRESS_2022_10K.md"
+  ],
+  "used_fallback": null,
+  "retrieved_chunks": [
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 72,
+      "score": 0.6388861675745708
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 51,
+      "score": 0.6309756462113131
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 4,
+      "score": 0.6251633614688344
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 6,
+      "score": 0.6134742105795243
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 49,
+      "score": 0.5989020782658506
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 5,
+      "score": 0.5972900986455024
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 54,
+      "score": 0.5962724360171529
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 53,
+      "score": 0.5934037867113717
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 115,
+      "score": 0.5858340796538337
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 3,
+      "score": 0.5788825676248782
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 165,
+      "score": 0.5755868519957829
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 32,
+      "score": 0.5746346751401455
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 19858,
+    "output_tokens": 178,
+    "latency_ms": 3186,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"a\",\"reasoning\":\"(A) The excerpts from the 10-K repeatedly discuss American Express's performance in terms of revenue lines (discount revenue, net card fees, service fees, net interest income) and expenses (marketing, rewards, business development, compensation, etc.), but do not mention 'gross margin' as a key metric. Instead, the company focuses on metrics like net income, return on equity, and capital ratios. (B) The domain graph confirms that American Express operates a spend-centric model and an integrated payments platform, which is structurally different from companies that sell physical goods and report cost of goods sold (COGS) and gross margin. Therefore, gross margin is not a useful or standard metric for American Express, and performance is not measured through it. This is directly supported by the content and structure of both (A) and (B).\"}",
+    "parsed": {
+      "choice": "a",
+      "reasoning": "(A) The excerpts from the 10-K repeatedly discuss American Express's performance in terms of revenue lines (discount revenue, net card fees, service fees, net interest income) and expenses (marketing, rewards, business development, compensation, etc.), but do not mention 'gross margin' as a key metric. Instead, the company focuses on metrics like net income, return on equity, and capital ratios. (B) The domain graph confirms that American Express operates a spend-centric model and an integrated payments platform, which is structurally different from companies that sell physical goods and report cost of goods sold (COGS) and gross margin. Therefore, gross margin is not a useful or standard metric for American Express, and performance is not measured through it. This is directly supported by the content and structure of both (A) and (B)."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 20392,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 37,
+    "chunk_setup_amortized": 20331,
+    "chunk_setup_total": 426971,
+    "graph_keyword_estimated": 24,
+    "questions_count_for_amortization": 21
+  },
+  "total_input_tokens": 20366,
+  "total_output_tokens": 218,
+  "total_tokens": 40976,
+  "total_latency_ms": 4956
+}

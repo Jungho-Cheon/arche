@@ -1,0 +1,167 @@
+{
+  "column": "opentology_aug",
+  "question_id": "Q08",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 494,
+    "output_tokens": 42,
+    "latency_ms": 930,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"debt securities\",\"aliases\":[\"debt securities\"]},{\"canonical\":\"national securities exchange\",\"aliases\":[\"national securities exchange\"]},{\"canonical\":\"American Express\",\"aliases\":[\"American Express\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "debt securities",
+          "aliases": [
+            "debt securities"
+          ]
+        },
+        {
+          "canonical": "national securities exchange",
+          "aliases": [
+            "national securities exchange"
+          ]
+        },
+        {
+          "canonical": "American Express",
+          "aliases": [
+            "American Express"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 1036,
+      "input": {
+        "keywords": [
+          "debt securities",
+          "national securities exchange",
+          "American Express"
+        ],
+        "limit": 20,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 20
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 106,
+      "input": {
+        "entry_ids": [
+          "01KVJS8KCPQAHH7T4YVCXDHMKC",
+          "01KVJSBCB9MJ5JNJ82Z9KW9S3S",
+          "01KVJS9V9RNSZB2RKM5579JY5N",
+          "01KVJS8KY7B1AGRANJ2G4QVNQM",
+          "01KVJSEP7HGT2096FDR20AM9P5",
+          "01KVJSG9N1H5TYDEQ5KG35FD0X",
+          "01KVJSD21KZSEHT4JGS7MXWQ74",
+          "01KVJSBTHYZXADE92KN6Q214SV",
+          "01KVJSD9R346QCMCXFH80DBJHP",
+          "01KVJSD44Y5B8P8DQ3FB8XW9FN"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 42,
+        "edges": 37,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVJS8KCPQAHH7T4YVCXDHMKC",
+    "01KVJSBCB9MJ5JNJ82Z9KW9S3S",
+    "01KVJS9V9RNSZB2RKM5579JY5N",
+    "01KVJS8KY7B1AGRANJ2G4QVNQM",
+    "01KVJSEP7HGT2096FDR20AM9P5",
+    "01KVJSG9N1H5TYDEQ5KG35FD0X",
+    "01KVJSD21KZSEHT4JGS7MXWQ74",
+    "01KVJSBTHYZXADE92KN6Q214SV",
+    "01KVJSD9R346QCMCXFH80DBJHP",
+    "01KVJSD44Y5B8P8DQ3FB8XW9FN"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 20436,
+  "graph_selected_sources": [
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMERICANEXPRESS_2022_10K.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/BOEING_2022_10K.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMD_2022_10K.md"
+  ],
+  "used_fallback": null,
+  "retrieved_chunks": [
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 77,
+      "score": 0.6917995398022228
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 260,
+      "score": 0.6565701634597274
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 262,
+      "score": 0.6523882484456659
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 137,
+      "score": 0.6435564288327854
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 76,
+      "score": 0.6385158430920869
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 49,
+      "score": 0.6314253582016033
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 0,
+      "score": 0.6203828421590969
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 136,
+      "score": 0.619287254981228
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 12131,
+    "output_tokens": 207,
+    "latency_ms": 2135,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"d\",\"reasoning\":\"(A) The relevant section in the 10-K (see 청크 7) lists 'Common Shares (par value $0.20 per Share) AXP New York Stock Exchange' as the only security registered under Section 12(b) of the Exchange Act, which is the section for securities traded on a national securities exchange. There is no mention of any debt securities (such as notes or bonds) being registered to trade on the NYSE or any other national securities exchange. The other tables and sections (청크 1, 4, 8) discuss the issuance and outstanding balances of various debt securities, but do not indicate that any are exchange-listed. (B) The domain graph does not provide any cross-document relationship indicating that American Express debt securities are listed on a national securities exchange. Therefore, the decisive evidence is from (A): only common shares are registered to trade on the NYSE, and no debt securities are so registered as of 2022.\"}",
+    "parsed": {
+      "choice": "d",
+      "reasoning": "(A) The relevant section in the 10-K (see 청크 7) lists 'Common Shares (par value $0.20 per Share) AXP New York Stock Exchange' as the only security registered under Section 12(b) of the Exchange Act, which is the section for securities traded on a national securities exchange. There is no mention of any debt securities (such as notes or bonds) being registered to trade on the NYSE or any other national securities exchange. The other tables and sections (청크 1, 4, 8) discuss the issuance and outstanding balances of various debt securities, but do not indicate that any are exchange-listed. (B) The domain graph does not provide any cross-document relationship indicating that American Express debt securities are listed on a national securities exchange. Therefore, the decisive evidence is from (A): only common shares are registered to trade on the NYSE, and no debt securities are so registered as of 2022."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 20378,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 23,
+    "chunk_setup_amortized": 20331,
+    "chunk_setup_total": 426971,
+    "graph_keyword_estimated": 24,
+    "questions_count_for_amortization": 21
+  },
+  "total_input_tokens": 12625,
+  "total_output_tokens": 249,
+  "total_tokens": 33252,
+  "total_latency_ms": 4207
+}

@@ -1,0 +1,65 @@
+{
+  "column": "chunk_rag",
+  "question_id": "Q08",
+  "run_index": 0,
+  "input_tokens": 4835,
+  "output_tokens": 164,
+  "embedding_tokens": 3688,
+  "embedding_tokens_breakdown": {
+    "question_embedding": 70,
+    "setup_amortized": 3618,
+    "setup_total": 108550,
+    "questions_count_for_amortization": 30
+  },
+  "total_tokens": 8687,
+  "latency_ms": 2129,
+  "model": "gpt-4.1",
+  "retrieved_chunks": [
+    {
+      "source_path": "cs-logistics/cold-chain-sop.pdf",
+      "chunk_index": 3,
+      "score": 0.5776064752683471
+    },
+    {
+      "source_path": "seller-ops/settlement-faq.md",
+      "chunk_index": 4,
+      "score": 0.5760785996148309
+    },
+    {
+      "source_path": "seller-ops/settlement-faq.md",
+      "chunk_index": 9,
+      "score": 0.5758599575456775
+    },
+    {
+      "source_path": "seller-ops/settlement-faq.md",
+      "chunk_index": 3,
+      "score": 0.5561354678744265
+    },
+    {
+      "source_path": "cs-logistics/cold-chain-sop.pdf",
+      "chunk_index": 0,
+      "score": 0.5457225952767399
+    },
+    {
+      "source_path": "cs-logistics/cold-chain-sop.pdf",
+      "chunk_index": 2,
+      "score": 0.5447800296908458
+    },
+    {
+      "source_path": "cs-logistics/cs-macro-manual.md",
+      "chunk_index": 3,
+      "score": 0.5430386692913259
+    },
+    {
+      "source_path": "seller-ops/seller-agreement-annex.pdf",
+      "chunk_index": 2,
+      "score": 0.5425209115696339
+    }
+  ],
+  "raw_response": "{\"choice\":\"a\",\"reasoning\":\"여러 발췌(특히 청크 2, 4, 5, 6, 8)에서 신선식품 콜드체인 사고 환불 시 손실 귀속은 셀러 유형에 따라 다르며, 1P(사입/직매입) 상품은 회사가 재고 소유권을 가지므로 환불 손실을 본사가 전액 부담한다고 명확히 설명한다. 셀러 정산금에서 차감하지 않는다고 반복적으로 언급되어 있다. 따라서 정답은 a) 본사 손실. 1P 는 매입으로 재고 소유권이 회사에 있어 회사가 전액 부담하고 셀러 차감이 없다.\"}",
+  "parsed": {
+    "choice": "a",
+    "reasoning": "여러 발췌(특히 청크 2, 4, 5, 6, 8)에서 신선식품 콜드체인 사고 환불 시 손실 귀속은 셀러 유형에 따라 다르며, 1P(사입/직매입) 상품은 회사가 재고 소유권을 가지므로 환불 손실을 본사가 전액 부담한다고 명확히 설명한다. 셀러 정산금에서 차감하지 않는다고 반복적으로 언급되어 있다. 따라서 정답은 a) 본사 손실. 1P 는 매입으로 재고 소유권이 회사에 있어 회사가 전액 부담하고 셀러 차감이 없다."
+  },
+  "parse_error": null
+}
