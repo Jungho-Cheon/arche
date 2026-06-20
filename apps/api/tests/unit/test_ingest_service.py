@@ -305,18 +305,39 @@ class FakeGraph(GraphRepository):
     def entity_exists(self, *, entity_id):
         return entity_id in self._entities
 
-    # Chunk store (시제품 backbone — PR 3). 단위 테스트는 동작 무력.
+    # Chunk store (시제품 backbone — PR 3). in-memory store 로 통합 흐름 검증.
+    def __init_chunk_store__(self):
+        if not hasattr(self, "_chunks"):
+            self._chunks: dict[str, dict] = {}
+
     def upsert_chunks(self, *, chunks, embeddings):
+        self.__init_chunk_store__()
+        if len(chunks) != len(embeddings):
+            raise ValueError("chunks/embeddings length mismatch")
+        for c, emb in zip(chunks, embeddings):
+            self._chunks[c.id] = {
+                "source_path": c.source_path,
+                "chunk_index": c.chunk_index,
+                "total_chunks": c.total_chunks,
+                "text": c.text,
+                "token_count": c.token_count,
+                "embedding": list(emb),
+            }
         return len(chunks)
 
     def delete_chunks_by_source(self, *, source_path):
-        return 0
+        self.__init_chunk_store__()
+        deleted = [k for k, v in self._chunks.items() if v["source_path"] == source_path]
+        for k in deleted:
+            del self._chunks[k]
+        return len(deleted)
 
     def vector_search_chunks(self, *, embedding, top_k):
         return []
 
     def count_chunks(self) -> int:
-        return 0
+        self.__init_chunk_store__()
+        return len(self._chunks)
 
     def close(self) -> None:
         pass
@@ -365,6 +386,46 @@ def test_ingest_creates_entities_and_relations(tmp_path: Path, fake_graph: FakeG
     assert result.relations_created == 1
     assert result.relations_skipped_dangling == 0
     assert result.short_circuited is False
+
+
+def test_ingest_stores_chunks_for_text_modal(tmp_path: Path, fake_graph: FakeGraph):
+    """시제품 backbone (PR 3): text 모달 ingest 시 (:Chunk) 노드가 저장된다."""
+    p = tmp_path / "doc.md"
+    p.write_text("문장 하나. 문장 둘. 문장 셋.", encoding="utf-8")
+    extracted = ExtractedGraph(entities=[], relations=[])
+    service = _build_service(fake_graph, extracted)
+
+    assert fake_graph.count_chunks() == 0
+    service.ingest_file(p)
+
+    # 작은 텍스트는 단일 chunk 로 저장된다.
+    assert fake_graph.count_chunks() == 1
+    chunk_id = f"{p.resolve()}#0"
+    assert chunk_id in fake_graph._chunks
+    stored = fake_graph._chunks[chunk_id]
+    assert stored["source_path"] == str(p.resolve())
+    assert stored["chunk_index"] == 0
+    assert "문장 하나" in stored["text"]
+    assert stored["token_count"] > 0
+    assert len(stored["embedding"]) > 0
+
+
+def test_ingest_reingest_replaces_chunks(tmp_path: Path, fake_graph: FakeGraph):
+    """시제품 backbone (PR 3): 같은 source 재 ingest 시 옛 chunks 가 삭제 후 새 chunks 로 교체."""
+    p = tmp_path / "doc.md"
+    p.write_text("첫 본문.", encoding="utf-8")
+    extracted = ExtractedGraph(entities=[], relations=[])
+    service = _build_service(fake_graph, extracted)
+    service.ingest_file(p)
+    assert fake_graph.count_chunks() == 1
+
+    # 본문 변경 → hash 가 달라져 새 ingest 가 돈다.
+    p.write_text("새 본문 — 토큰이 더 많다.", encoding="utf-8")
+    service.ingest_file(p)
+    # chunks 는 여전히 1 개 (작은 텍스트, 분할 없음). 단 text 가 갱신됨.
+    assert fake_graph.count_chunks() == 1
+    chunk_id = f"{p.resolve()}#0"
+    assert "새 본문" in fake_graph._chunks[chunk_id]["text"]
 
 
 def test_short_circuit_on_unchanged_file(tmp_path: Path, fake_graph: FakeGraph):

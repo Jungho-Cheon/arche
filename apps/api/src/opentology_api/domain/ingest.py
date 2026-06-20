@@ -31,7 +31,7 @@ from typing import Callable
 from ulid import ULID
 
 from ..adapters.embedding import EmbeddingProvider
-from ..adapters.graph import GraphRepository
+from ..adapters.graph import GraphRepository, StoredChunk
 from ..adapters.image_loader import IMAGE_EXTS, load_image_as_b64
 from ..adapters.llm import ImageInput, LLMProvider
 from ..adapters.pdf import PdfPage, extract_pdf
@@ -419,6 +419,21 @@ class IngestService:
                 path=path, raw_bytes=raw_bytes, ext=ext
             )
 
+            # Chunk store 저장 — 시제품 backbone (PRD 6 §1.1) 의 의존성.
+            # text 모달 한정: 같은 source 의 옛 chunks 를 먼저 삭제하고 (재
+            # ingest 시 chunk_index 가 달라질 수 있어 부분 갱신은 부정합) 새
+            # chunks 를 embed + upsert. PDF / 이미지는 PR 후속 (page 단위 의미
+            # + chunk_index 매핑 결정 필요).
+            #
+            # WHY try 블록 안 + finalize_run 보다 앞: chunks 저장 실패는 LLM
+            # extraction 결과를 무효화하지 않는다 — 단 chunk retrieval 정확도가
+            # 흔들릴 뿐. failed run 마킹은 LLM/entity 실패에만 적용되도록 본
+            # 단계는 best-effort. 단 batch embed 가 실패해 예외가 올라가면
+            # except 가 잡아 finalize_run("failed") 를 호출하므로 일관성은 유지.
+            self._store_chunks_for_text_modal(
+                source_path=source_path, ext=ext, raw_bytes=raw_bytes
+            )
+
             matcher = EntityMatcher(repo=self._graph, embedder=self._embedder)
             merger = EntityMerger()
 
@@ -536,6 +551,58 @@ class IngestService:
                 emitted_relation_ids=[],
             )
             raise
+
+    # ---------- Chunk store 저장 (시제품 backbone) ----------
+
+    def _store_chunks_for_text_modal(
+        self, *, source_path: str, ext: str, raw_bytes: bytes
+    ) -> None:
+        """text 모달 (.txt/.md) 의 chunks 를 embed + Neo4j (:Chunk) 에 upsert.
+
+        흐름:
+          1. 같은 source_path 의 옛 chunks 전체 삭제 (재 ingest 시 chunk_index
+             분할이 바뀔 수 있어 부분 갱신은 부정합).
+          2. chunk_text 로 분할 (ingest LLM 호출과 *동일한* 분할기 — 같은 통제
+             변수).
+          3. 각 chunk text 를 batch embed.
+          4. StoredChunk 리스트로 graph.upsert_chunks.
+
+        PDF / 이미지는 *본 단계에서 저장 안 함* — page 단위 의미 + chunk_index
+        매핑 결정이 별도 design. follow-up.
+        """
+        if ext not in TEXT_EXTS:
+            return
+        text = raw_bytes.decode("utf-8", errors="replace")
+        chunks = chunk_text(text, model_context_tokens=self._model_context_tokens)
+        if not chunks:
+            # 빈 파일은 삭제만 (옛 chunks 정리).
+            self._graph.delete_chunks_by_source(source_path=source_path)
+            return
+
+        # 기존 chunks 정리.
+        self._graph.delete_chunks_by_source(source_path=source_path)
+
+        # 청크 텍스트 embed.
+        texts = [c.text for c in chunks]
+        embeddings = self._embedder.embed(texts)
+        if len(embeddings) != len(chunks):
+            raise ValueError(
+                f"embed returned {len(embeddings)} vectors for {len(chunks)} chunks "
+                f"(source={source_path})"
+            )
+
+        stored = [
+            StoredChunk(
+                id=f"{source_path}#{c.chunk_index}",
+                source_path=source_path,
+                chunk_index=c.chunk_index,
+                total_chunks=c.total_chunks,
+                text=c.text,
+                token_count=count_tokens(c.text),
+            )
+            for c in chunks
+        ]
+        self._graph.upsert_chunks(chunks=stored, embeddings=embeddings)
 
     # ---------- 모달별 LLM 호출 input 정규화 ----------
 
