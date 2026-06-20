@@ -1,0 +1,85 @@
+{
+  "run_ts": "2026-06-19-2126",
+  "questions_count": 30,
+  "runs_count": 3,
+  "override_count_total": 0,
+  "columns": {
+    "full_context": {
+      "column": "full_context",
+      "response_count": 90,
+      "accuracy": 1.0,
+      "reasoning_quality_median": 2.0,
+      "faithfulness_mean": 0.3222222222222222,
+      "input_tokens_median": 69642.5,
+      "input_tokens_p95": 69679.0,
+      "output_tokens_median": 214.5,
+      "output_tokens_p95": 316.0,
+      "total_tokens_median": 69860.0,
+      "total_tokens_p95": 69955.0,
+      "latency_ms_median": 8077.5,
+      "latency_ms_p95": 17468.0,
+      "total_cost_usd": 12.693520000000005,
+      "failure_modes": {
+        "parse_error": 0,
+        "wrong_choice": 0,
+        "unknown_choice": 0
+      },
+      "override_count": 0
+    },
+    "chunk_rag": {
+      "column": "chunk_rag",
+      "response_count": 90,
+      "accuracy": 0.9666666666666667,
+      "reasoning_quality_median": 2.0,
+      "faithfulness_mean": 0.3555555555555555,
+      "input_tokens_median": 4680.0,
+      "input_tokens_p95": 4991.0,
+      "output_tokens_median": 169.5,
+      "output_tokens_p95": 228.0,
+      "total_tokens_median": 8523.0,
+      "total_tokens_p95": 8857.0,
+      "latency_ms_median": 2835.5,
+      "latency_ms_p95": 4585.0,
+      "total_cost_usd": 1.6207920000000002,
+      "failure_modes": {
+        "parse_error": 0,
+        "wrong_choice": 3,
+        "unknown_choice": 0
+      },
+      "override_count": 0
+    },
+    "opentology": {
+      "column": "opentology",
+      "response_count": 90,
+      "accuracy": 0.9666666666666667,
+      "reasoning_quality_median": 2.0,
+      "faithfulness_mean": 0.3444444444444444,
+      "input_tokens_median": 8311.0,
+      "input_tokens_p95": 15244.0,
+      "output_tokens_median": 205.5,
+      "output_tokens_p95": 324.0,
+      "total_tokens_median": 8545.5,
+      "total_tokens_p95": 15558.0,
+      "latency_ms_median": 5765.0,
+      "latency_ms_p95": 9718.0,
+      "total_cost_usd": 1.7557479999999994,
+      "failure_modes": {
+        "parse_error": 0,
+        "wrong_choice": 3,
+        "unknown_choice": 0
+      },
+      "override_count": 0
+    }
+  },
+  "pareto": {
+    "passed": false,
+    "accuracy_ok": false,
+    "tokens_ok": false,
+    "latency_ok": false,
+    "reasons": [
+      "Accuracy 0.967 < Full-context 1.000",
+      "Total tokens (median) 8546 > Chunk RAG 8523",
+      "Latency (median) 5765ms > Chunk RAG 2836ms"
+    ]
+  }
+}

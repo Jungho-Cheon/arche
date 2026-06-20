@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>오로라마켓 등급 전환 룰북 (발행본) — LOY-RB-2026-03</title>
+<style>
+  body { font-family: 'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif; font-size: 11pt; line-height: 1.6; margin: 25mm; color: #1a1a1a; }
+  h1 { font-size: 22pt; letter-spacing: -0.5px; margin: 0 0 4px 0; }
+  h2 { font-size: 15pt; border-bottom: 2px solid #2b3a55; padding-bottom: 4px; margin-top: 28px; color: #2b3a55; }
+  h3 { font-size: 12pt; margin-top: 18px; color: #3a3a3a; }
+  .cover { text-align: center; padding: 70px 0 90px; border-bottom: 4px double #2b3a55; }
+  .cover .sub { color: #5a5a5a; font-size: 12pt; margin-top: 10px; }
+  .cover .code { margin-top: 36px; font-size: 10pt; color: #777; letter-spacing: 1px; }
+  .meta { font-size: 9.5pt; color: #666; margin-top: 6px; }
+  .toc { background: #f5f6f9; border: 1px solid #d6dae4; border-radius: 6px; padding: 16px 26px; margin: 24px 0; }
+  .toc ol { margin: 6px 0; padding-left: 22px; }
+  table { border-collapse: collapse; width: 100%; margin: 14px 0; font-size: 9.5pt; }
+  th, td { border: 1px solid #c2c8d4; padding: 7px 9px; text-align: left; vertical-align: top; }
+  th { background: #2b3a55; color: #fff; font-weight: 600; }
+  .matrix th, .matrix td { text-align: center; }
+  .matrix .diag { background: #e8ebf2; color: #888; }
+  .matrix .from { background: #2b3a55; color:#fff; }
+  .callout { background: #fff6e5; border-left: 5px solid #e0a000; border-radius: 4px; padding: 12px 16px; margin: 16px 0; font-size: 10pt; }
+  .rule { background: #eef4ff; border-left: 5px solid #3a6bd0; border-radius: 4px; padding: 12px 16px; margin: 16px 0; font-size: 10pt; }
+  sup { color: #3a6bd0; font-weight: 600; }
+  .footnotes { margin-top: 36px; border-top: 1px solid #c2c8d4; padding-top: 12px; font-size: 9pt; color: #555; }
+  .footnotes ol { padding-left: 20px; }
+  .legend { font-size: 9pt; color: #555; margin-top: 8px; }
+  .pagebreak { page-break-before: always; }
+</style>
+</head>
+<body>
+
+<div class="cover">
+  <h1>오로라마켓 회원 등급 전환 룰북</h1>
+  <div class="sub">Tier Transition Rulebook — 발행본 (Published Edition)</div>
+  <div class="sub">로열티 / 등급팀 (Loyalty &amp; Tier Team)</div>
+  <div class="code">문서 코드 LOY-RB-2026-03 / v3.2</div>
+  <div class="meta">발행일 2026-05-30 / 의결 등급위원회 LTC-2026-017 (2026-05-28)</div>
+  <div class="meta">작성 책임 한지서 (로열티팀 리드) / 검토 오세린 (등급정책 매니저)</div>
+</div>
+
+<div class="toc">
+  <strong>목차</strong>
+  <ol>
+    <li>등급 별칭과 정식 명칭</li>
+    <li>5 등급 정의 요약</li>
+    <li>5 × 5 전환 매트릭스</li>
+    <li>비활성 → 골드 복귀 30 일 유예 (R2 핵심)</li>
+    <li>R10 블랙프라이데이 자동 활성화</li>
+    <li>이너 서클 연동 규칙 (R3 / R7)</li>
+  </ol>
+</div>
+
+<h2>1. 등급 별칭과 정식 명칭</h2>
+<p>본 발행본은 로열티팀 내부 호칭으로 작성된다. 타 부서 문서와 대조 시 아래 매핑을 사용한다.</p>
+<table>
+  <tr><th>로열티 호칭</th><th>정식 명칭</th><th>타 부서 호칭</th></tr>
+  <tr><td>실버 (Silver)</td><td>Standard (일반)</td><td>마케팅 "일반 회원"</td></tr>
+  <tr><td>골드 (Gold)</td><td>VIP</td><td>본사 PM "VIP" / 마케팅 "프리미엄 멤버" / CS "V 회원"</td></tr>
+  <tr><td>이너 서클 (INNER)</td><td>VVIP</td><td>본사 PM "VVIP" / 마케팅 "다이아 등급" / CS "VV 회원"</td></tr>
+  <tr><td>비활성 (Inactive)</td><td>Dormant (휴면)</td><td>마케팅 "수면 회원" / CS "수면 고객"</td></tr>
+  <tr><td>등급 제한 (Restricted)</td><td>Restricted (블랙리스트)</td><td>법무 / CS "제한 회원"</td></tr>
+</table>
+
+<h2>2. 5 등급 정의 요약</h2>
+<table>
+  <tr><th>등급</th><th>승급/진입 조건</th><th>핵심 혜택</th></tr>
+  <tr><td>실버</td><td>가입 즉시 부여 (요건 없음)</td><td>기준선 혜택, 반품 7 일</td></tr>
+  <tr><td>골드</td><td>12 개월 누적 120 만 원 <strong>OR</strong> 6 개월 12 주문</td><td>명품 반품 30 일 연장<sup>1</sup></td></tr>
+  <tr><td>이너 서클</td><td>12 개월 누적 500 만 원 <strong>AND</strong> NPS 9 이상<sup>2</sup></td><td>전 카테고리 반품 30 일, R3 예외 자격</td></tr>
+  <tr><td>비활성</td><td>12 개월 0 주문 + 180 일 미로그인</td><td>혜택 정지 (이력 보존)</td></tr>
+  <tr><td>등급 제한</td><td>법무/CS 강제 부여<sup>3</sup></td><td>거래 정지</td></tr>
+</table>
+
+<div class="pagebreak"></div>
+<h2>3. 5 × 5 전환 매트릭스</h2>
+<p>행 (From) 에서 열 (To) 로의 전환 가부와 조건이다. 대각선 (동일 등급) 은 전환 없음.</p>
+<table class="matrix">
+  <tr>
+    <th class="diag">From \ To</th>
+    <th>실버</th><th>골드</th><th>이너 서클</th><th>비활성</th><th>등급 제한</th>
+  </tr>
+  <tr>
+    <td class="from">실버</td>
+    <td class="diag">—</td>
+    <td>승급: 120만 OR 12주문</td>
+    <td>직행 승급: 500만 AND NPS9</td>
+    <td>강등: 12개월 0주문+180일</td>
+    <td>강제: 법무/CS</td>
+  </tr>
+  <tr>
+    <td class="from">골드</td>
+    <td>강등: 2주기 미달</td>
+    <td class="diag">—</td>
+    <td>승급: 500만 AND NPS9</td>
+    <td>강등: 12개월 0주문+180일</td>
+    <td>강제: 법무/CS</td>
+  </tr>
+  <tr>
+    <td class="from">이너 서클</td>
+    <td>(골드 경유)</td>
+    <td>강등: 500만 미달 2주기 (NPS 단독 미달 시 1회 유예)</td>
+    <td class="diag">—</td>
+    <td>강등: 12개월 0주문+180일</td>
+    <td>강제: 법무/CS</td>
+  </tr>
+  <tr>
+    <td class="from">비활성</td>
+    <td>복귀: 유효주문 1건</td>
+    <td>복귀: 즉시 골드조건 충족 → <strong>30일 유예</strong><sup>1</sup></td>
+    <td>복귀+재평가 후 (직행 불가)</td>
+    <td class="diag">—</td>
+    <td>강제: 법무/CS</td>
+  </tr>
+  <tr>
+    <td class="from">등급 제한</td>
+    <td colspan="3">해제 후에만 동적 재평가 대상 복귀 (법무팀 절차)</td>
+    <td>해제 후 무행동 시</td>
+    <td class="diag">—</td>
+  </tr>
+</table>
+<p class="legend">동적 전환 (실버/골드/이너 서클/비활성) 은 매월 1 일 00:00 KST 일괄 재평가. 단건 금액 충족 시 즉시 승급. 강등은 연속 2 회 재평가 미달 시.</p>
+
+<h2>4. 비활성 → 골드 복귀 30 일 유예 (R2 핵심)</h2>
+<div class="rule">
+  <strong>R2 연동.</strong> 골드 회원의 명품 반품은 기본 7 일에서 30 일로 연장된다. 그러나 <strong>비활성에서 골드로 복귀한 직후 30 일 이내</strong> 의 명품 구매에는 이 연장이 적용되지 않고 <strong>기본 7 일</strong> 만 적용된다. 복귀 31 일째부터 30 일 연장이 정상화된다.
+</div>
+<p>이 유예 창 (Reactivation Grace Window) 은 휴면 계정을 깨워 명품을 30 일 동안 사실상 무료 사용 후 반품하는 악용을 막기 위한 장치다. CS팀이 "V 회원" 명품 반품을 응대할 때 복귀 30 일 이내 여부를 본 룰북 정의로 판정한다.</p>
+<div class="callout">
+  <strong>경계 주의.</strong> 30 일 유예는 "골드의 명품 반품 연장 (R2)" 에만 적용된다. 이너 서클의 전 카테고리 30 일 반품이나 R3 신선식품 예외에는 적용되지 않는다.
+</div>
+
+<h2>5. R10 블랙프라이데이 자동 활성화</h2>
+<p>캠페인 <strong>CMP-KR-BFM2026</strong> 에서 KR 비활성 (수면) 회원은 자동 활성화되며 5,000 원 부활 쿠폰 (CPN-REVIVE-* 계열) 이 지급된다. <strong>등급 제한 회원은 제외</strong>. 자동 활성화로 깨어난 회원이 부활 쿠폰으로 명품을 사도, 복귀 30 일 이내라면 4 절의 명품 반품 7 일 유예가 동일하게 적용된다. CMP-US-BFM2026 (명품+1P 추가 5%) 은 등급 자동 활성화와 무관하며 JP/DE/VN 은 미참여다.</p>
+
+<h2>6. 이너 서클 연동 규칙 (R3 / R7)</h2>
+<p>이너 서클 (VVIP) 자격은 본사 PM 의 R3 신선식품 환불 예외 판정 (결제 7 일 이내 + 콜드체인 사고 증빙 → 100% 환불) 과, 셀러측 R7 정산 hold (이너 서클이 산 명품은 정산 주기에서 +14 일 추가 hold) 의 트리거가 된다. 본 룰북의 500 만 원 + NPS 9 정의가 이 두 규칙이 참조하는 VVIP 정의와 동일한 숫자임을 명시한다.</p>
+
+<div class="footnotes">
+  <ol>
+    <li>복귀 30 일 이내 명품 구매는 골드라도 반품 7 일. 4 절 참조.</li>
+    <li>금액과 NPS 가 모두 (AND) 충족되어야 이너 서클. 금액만 높고 NPS 8 이하면 승급 보류.</li>
+    <li>등급 제한 진입 조건은 법무팀 결정대로. 로열티팀은 산식을 소유하지 않는다.</li>
+  </ol>
+</div>
+
+</body>
+</html>

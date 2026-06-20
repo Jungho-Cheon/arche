@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>5 개국 KYC 및 연령 검증 메모 + 후불결제 법적 검토</title>
+<style>
+  body { font-family: 'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif; font-size: 11pt; line-height: 1.6; margin: 25mm; color: #1a1a1a; }
+  h1 { font-size: 20pt; border-bottom: 3px solid #1e3a5f; padding-bottom: 8px; color: #1e3a5f; }
+  h2 { font-size: 14pt; margin-top: 28px; color: #2c4a6e; border-left: 5px solid #2c4a6e; padding-left: 10px; }
+  h3 { font-size: 12pt; color: #555; margin-top: 18px; }
+  .cover { page-break-after: always; padding-top: 60mm; }
+  .cover .doc-no { color: #7f8c8d; font-size: 10pt; letter-spacing: 1px; }
+  .cover .meta { margin-top: 40mm; font-size: 10pt; color: #555; }
+  .cover .meta td { padding: 4px 14px 4px 0; vertical-align: top; }
+  .toc { page-break-after: always; }
+  .toc ol { line-height: 2; }
+  table.data { border-collapse: collapse; width: 100%; margin: 14px 0; font-size: 10pt; }
+  table.data th, table.data td { border: 1px solid #bbb; padding: 7px 10px; text-align: left; }
+  table.data th { background: #e8eef4; }
+  .callout { background: #eaf4fb; border-left: 5px solid #2980b9; padding: 12px 16px; margin: 16px 0; }
+  .callout.warn { background: #fdedec; border-left-color: #e74c3c; }
+  .irac { background: #f4f6f7; border: 1px solid #d5dbdb; padding: 4px 14px; margin: 10px 0; border-radius: 4px; }
+  sup { color: #2980b9; font-weight: bold; }
+  .footnotes { margin-top: 36px; border-top: 1px solid #ccc; padding-top: 12px; font-size: 9pt; color: #555; }
+  .footnotes ol { padding-left: 18px; }
+  .label { display: inline-block; background: #1e3a5f; color: #fff; font-size: 8pt; padding: 2px 8px; border-radius: 3px; margin-right: 6px; }
+</style>
+</head>
+<body>
+
+<div class="cover">
+  <div class="doc-no">AURORA MARKET — LEGAL &amp; RISK MEMORANDUM</div>
+  <h1>5 개국 고객확인 (KYC) 및<br>주류 연령 검증 메모</h1>
+  <p style="font-size:12pt; color:#555;">국가별 연령 기준, 검증 실패 처리, 후불결제 (BNPL) 결합 법적 검토</p>
+  <table class="meta">
+    <tr><td>문서번호</td><td>LR-MEMO-KYC-2026-019</td></tr>
+    <tr><td>분류</td><td>대외비 (Confidential) / 법무 의견서</td></tr>
+    <tr><td>작성</td><td>법무팀 시니어 카운슬 한지윤</td></tr>
+    <tr><td>검토</td><td>리스크오피서 서민재 (결제), 노아 클라인 (DE)</td></tr>
+    <tr><td>심의</td><td>제 13 차 리스크 심의회 (ARC), 2026-05-21</td></tr>
+    <tr><td>최초 작성</td><td>2026-05-14</td></tr>
+    <tr><td>최종 개정</td><td>2026-06-16</td></tr>
+    <tr><td>적용 규칙</td><td><span class="label">R1</span> 핵심 / <span class="label">R4</span> / <span class="label">R9</span></td></tr>
+  </table>
+</div>
+
+<div class="toc">
+  <h2>목차</h2>
+  <ol>
+    <li>요약 (Executive Summary)</li>
+    <li>쟁점 (Issue)</li>
+    <li>준거 규범 (Rule) — 국가별 연령 매트릭스</li>
+    <li>분석 (Analysis) — KYC 절차와 검증 실패 처리</li>
+    <li>후불결제 (BNPL) 결합 검토 (R4 / R9)</li>
+    <li>결론 (Conclusion)</li>
+  </ol>
+</div>
+
+<h1>본문</h1>
+
+<h2>1. 요약 (Executive Summary)</h2>
+<p>오로라마켓 (Aurora Market) 은 5 개 운영국 (KR, JP, US, DE, VN) 에서 주류를 판매하며, 각국의 음주 가능 연령이 서로 달라 단일 기준으로 통제할 수 없다. 본 메모는 교차 도메인 규칙 <strong>R1</strong> 에 따라 국가별 연령 기준, 고객확인 (KYC, Know Your Customer) 절차, 검증 실패 시 자동 취소 및 환불 처리를 정리한다. 아울러 주류 결제와 후불결제 (BNPL) 가 결합될 수 있는지, VN 의 결제 규제 (R9) 가 어떻게 작용하는지를 함께 검토한다.</p>
+<p>핵심 결론은 두 가지다. 첫째, <strong>DE 는 주종에 따라 연령 기준이 갈린다</strong> (맥주 16 세, 증류주 18 세) 는 점이 5 개국 중 유일한 분기이며 시스템상 별도 처리가 필요하다. 둘째, <strong>VN 은 BNPL 자체가 불가</strong> (R9) 하므로 주류 + BNPL 결합 검토 대상에서 VN 은 원천 제외된다.</p>
+
+<h2>2. 쟁점 (Issue)</h2>
+<div class="irac">
+<p><strong>Issue.</strong> (1) 5 개국에서 주류 구매자의 연령을 어떤 기준으로, 어떤 절차로 확인하는가? (2) 검증에 실패한 주문은 어떻게 처리하는가? (3) 주류 결제에 후불결제 (BNPL) 를 결합할 수 있는가?</p>
+</div>
+
+<h2>3. 준거 규범 (Rule) — 국가별 연령 매트릭스</h2>
+<div class="callout">
+<strong>R1 (정본).</strong> 주류 카테고리 연령 및 국가 규제 — KR/JP 19 세 이상, US 21 세 이상, DE 맥주 16 세 / 증류주 18 세, VN 18 세 이상. 5 개국 외 배송 차단. 연령 검증 실패 시 자동 취소 + 환불.
+</div>
+<table class="data">
+  <tr><th>국가</th><th>통화</th><th>음주 가능 연령</th><th>비고</th></tr>
+  <tr><td>KR (대한민국)</td><td>KRW</td><td>19 세 이상</td><td>본사 소재</td></tr>
+  <tr><td>JP (일본)</td><td>JPY</td><td>19 세 이상</td><td></td></tr>
+  <tr><td>US (미국)</td><td>USD</td><td>21 세 이상</td><td>5 개국 중 최고 기준</td></tr>
+  <tr><td>DE (독일)</td><td>EUR</td><td>맥주 16 세 / 증류주 18 세</td><td>주종별 분기 (유일)</td></tr>
+  <tr><td>VN (베트남)</td><td>VND</td><td>18 세 이상</td><td></td></tr>
+</table>
+<p>주류 상품은 ID 형식 `AM-WIN-{6자리}` (예: `AM-WIN-103821`) 로 등록되며, 상품 등록 시 DE 노출 상품에 한해 "맥주 / 증류주" 구분 태그를 의무화한다. 태그가 없으면 DE 에서 보수적으로 18 세 기준을 적용해 16-17 세 맥주 구매를 막게 되므로, 정확한 분기를 위해 태그가 필수다.</p>
+
+<h2>4. 분석 (Analysis) — KYC 절차와 검증 실패 처리</h2>
+<h3>4.1 KYC 절차</h3>
+<p>고객확인 (KYC) 은 주류 주문 시점에 발동한다. 회원 등급 (Standard, VIP, VVIP, 휴면, 제한 회원 (Restricted)) 과 무관하게 동일하게 적용되며, 등급이 높다고 검증을 면제하지 않는다. 다만 <strong>제한 회원 (Restricted)</strong> 은 주류 여부와 무관하게 신규 주문 자체가 차단되므로 KYC 단계 이전에 걸러진다.</p>
+<table class="data">
+  <tr><th>단계</th><th>내용</th></tr>
+  <tr><td>1. 배송지 국가 확인</td><td>5 개국 외 차단 (R1). 우회 배송지 변경 탐지 룰 적용</td></tr>
+  <tr><td>2. 연령 확인</td><td>해당 국가 기준 + DE 는 주종 태그 기준으로 검증</td></tr>
+  <tr><td>3. 신원 일치 확인</td><td>결제자와 수령자 정보 일관성 점검</td></tr>
+  <tr><td>4. 통과 / 실패 판정</td><td>실패 시 자동 취소 + 자동 환불 (4.2)</td></tr>
+</table>
+
+<h3>4.2 검증 실패 처리 — 자동 취소 + 환불</h3>
+<p>연령 검증에 실패하면 <strong>자동 취소 후 자동 환불</strong>한다 (R1). "부분 통과 추정" 이나 "사후 보완" 은 허용하지 않는다. 미성년 판매라는 법적 노출은 한 건이라도 발생하면 회복이 어렵기 때문에, 의심 주문은 보류가 아니라 차단을 원칙으로 한다. CS 팀 운영상 환불은 결제수단별 표준 환불 흐름을 따른다.</p>
+<div class="callout warn">
+<strong>가공 사례 (LR-2026-027).</strong> 2026-05 DE 법인에서 16 세 맥주 / 18 세 증류주 경계를 시스템이 18 세로 일괄 처리해, 16-17 세의 적법한 맥주 주문이 전량 거부된 운영 사고가 있었다. 규제 위반은 아니었으나 매출 손실이 발생했고, 이를 계기로 DE 주종 태그 의무화가 본 메모에 반영되었다.
+</div>
+
+<h2>5. 후불결제 (BNPL) 결합 검토 (R4 / R9)</h2>
+<h3>5.1 R4 — 디지털콘텐츠 + BNPL 결합 금지</h3>
+<div class="irac">
+<p><strong>Rule (R4).</strong> 디지털콘텐츠 + 후불결제 (BNPL) 결합 금지. 마케팅 BNPL 캠페인에서 디지털콘텐츠 자동 제외 필수.</p>
+</div>
+<p>주류는 디지털콘텐츠가 아니므로 R4 의 직접 대상은 아니다. 다만 본 메모가 BNPL 을 함께 다루는 이유는, 주류 + BNPL 결합 시 "미성년자가 후불로 주류를 구매하고 결제를 이행하지 않는" 이중 위험 (연령 + 채권 회수 불능) 이 생기기 때문이다. 본 팀은 주류 + BNPL 결합을 별도 내부 지침 LR-G-009<sup>1</sup> 로 보수적으로 제한할 것을 권고하며, 디지털콘텐츠 + BNPL 결합 금지 (R4) 는 결제 화면에서 BNPL 버튼 비활성화로 강제됨을 확인한다.</p>
+
+<h3>5.2 R9 — VN BNPL / 디지털상품권 미허용</h3>
+<div class="irac">
+<p><strong>Rule (R9).</strong> VN 결제 규제 — 선불 디지털상품권 미허용 (외환 규제 취지), 후불결제 (BNPL) 미허용 (금융 규제 취지).</p>
+</div>
+<p>VN 에서는 BNPL 과 선불 디지털상품권이 결제 단계에서 원천 차단된다. 따라서 VN 의 주류 + BNPL 결합은 검토할 필요 없이 불가다. 이 차단은 사후 환불이 아니라 결제 화면 노출 제거 단계에서 처리되어야 하며, 외환 및 금융 규제의 취지에 따른 사전 차단임을 명확히 한다.</p>
+
+<table class="data">
+  <tr><th>결합 유형</th><th>KR</th><th>JP</th><th>US</th><th>DE</th><th>VN</th></tr>
+  <tr><td>디지털콘텐츠 + BNPL</td><td>금지(R4)</td><td>금지(R4)</td><td>금지(R4)</td><td>금지(R4)</td><td>금지(R4+R9)</td></tr>
+  <tr><td>주류 + BNPL</td><td>제한권고</td><td>제한권고</td><td>제한권고</td><td>제한권고</td><td>불가(R9)</td></tr>
+  <tr><td>선불 디지털상품권</td><td>허용</td><td>허용</td><td>허용</td><td>허용</td><td>불가(R9)</td></tr>
+</table>
+
+<h2>6. 결론 (Conclusion)</h2>
+<div class="irac">
+<p><strong>Conclusion.</strong> (1) 주류 KYC 는 R1 의 국가별 연령 기준을 적용하되, DE 는 맥주 16 세 / 증류주 18 세로 주종 분기하므로 상품 태그를 의무화한다. (2) 검증 실패 주문은 자동 취소 + 환불하며 보류하지 않는다. (3) 디지털콘텐츠 + BNPL 은 R4 로 전면 금지, VN 은 R9 로 BNPL 및 선불 디지털상품권이 원천 불가다. 주류 + BNPL 은 LR-G-009 로 보수적 제한을 권고한다. (4) 제한 회원 (Restricted) 은 KYC 이전 단계에서 신규 주문이 차단된다.</p>
+</div>
+
+<div class="footnotes">
+<ol>
+  <li>내부 컴플라이언스 지침 LR-G-009 (주류 결제수단 제한) — 사내 가공 규정.</li>
+</ol>
+</div>
+
+</body>
+</html>

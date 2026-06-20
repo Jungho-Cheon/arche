@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import os
 import shutil
+import time
 from datetime import datetime
 from pathlib import Path
 from typing import Annotated
@@ -186,6 +187,13 @@ def run(
             help="opentology 컬럼 한정 — anchor 추출용 별도 모델 (기본은 답변 모델과 동일)",
         ),
     ] = None,
+    run_id_override: Annotated[
+        str | None,
+        typer.Option(
+            "--run-id",
+            help="기존 run 디렉토리 ID 지정 (resume). 미지정 시 새 ts 생성",
+        ),
+    ] = None,
 ) -> None:
     """전체 실행 — 베이스라인 두 컬럼 + opentology × N runs."""
     _load_env()
@@ -198,7 +206,7 @@ def run(
     if unknown:
         raise typer.BadParameter(f"알 수 없는 컬럼: {sorted(unknown)}")
 
-    run_id = make_run_id()
+    run_id = run_id_override or make_run_id()
     dirs = RunDirs.create(output, run_id)
 
     # questions.yaml 사본 + 해시.
@@ -232,18 +240,45 @@ def run(
     loader = FileLoader(corpus)
     llm = OpenAIProvider(model_id=cfg.llm_model_id, api_key=cfg.openai_api_key)
 
+    # WHY 컬럼 간 sleep: full_context 컬럼이 큰 입력(코퍼스 전체)을 짧은 시간에
+    # 다 소비해 OpenAI TPM 버킷을 포화시킨다. 다음 컬럼 (chunk_rag) 첫 호출이
+    # 곧바로 429 로 떨어지지 않게 60 초 휴지를 둔다. SDK 의 max_retries 만으론
+    # 분 단위 회복을 흡수하지 못한다.
+    _intercolumn_sleep_s = int(os.environ.get("OPENTOLOGY_EVAL_INTERCOLUMN_SLEEP_S", "60"))
+    _completed_first = False
+
+    def _pause_between_columns(label: str) -> None:
+        nonlocal _completed_first
+        if _completed_first and _intercolumn_sleep_s > 0:
+            typer.echo(f"[pause] {_intercolumn_sleep_s}s before {label} (TPM 회복 대기)")
+            time.sleep(_intercolumn_sleep_s)
+        _completed_first = True
+
+    # WHY 응답 파일 존재 시 건너뛰기 (resume): N=3 본 측정처럼 호출 수가 많을 때
+    # 환경 SIGTERM/네트워크 중단으로 중간에 죽으면 비싼 LLM 호출이 사라진다.
+    # 같은 run-dir 로 다시 호출하면 이미 작성된 응답을 보존하고 빠진 것만 채운다.
+    # 실패한 응답을 재실행하고 싶으면 해당 파일을 지운 뒤 재호출.
+    def _should_skip(path: Path) -> bool:
+        return path.exists() and path.stat().st_size > 0
+
     if "full_context" in requested:
+        _pause_between_columns("full_context")
         fc = FullContextRunner(loader=loader, llm=llm)
         corpus_serialized = fc.setup_corpus()
         for q in qset.questions:
             for r in range(runs):
+                out_path = dirs.full_context / f"{q.id}_run{r}.json"
+                if _should_skip(out_path):
+                    typer.echo(f"[full_context] {q.id} run{r} skip (existing)")
+                    continue
                 payload = fc.ask(
                     corpus=corpus_serialized, question=q, run_index=r
                 )
-                write_response_json(dirs.full_context / f"{q.id}_run{r}.json", payload)
+                write_response_json(out_path, payload)
                 typer.echo(f"[full_context] {q.id} run{r} done")
 
     if "chunk_rag" in requested:
+        _pause_between_columns("chunk_rag")
         embedder = OpenAIEmbeddingProvider(
             model_id=cfg.embedding_model_id, api_key=cfg.openai_api_key
         )
@@ -251,13 +286,18 @@ def run(
         crag.setup()
         for q in qset.questions:
             for r in range(runs):
+                out_path = dirs.chunk_rag / f"{q.id}_run{r}.json"
+                if _should_skip(out_path):
+                    typer.echo(f"[chunk_rag] {q.id} run{r} skip (existing)")
+                    continue
                 payload = crag.ask(
                     question=q, run_index=r, questions_count=len(qset.questions)
                 )
-                write_response_json(dirs.chunk_rag / f"{q.id}_run{r}.json", payload)
+                write_response_json(out_path, payload)
                 typer.echo(f"[chunk_rag] {q.id} run{r} done")
 
     if "opentology" in requested:
+        _pause_between_columns("opentology")
         anchor_llm = None
         if anchor_llm_model:
             anchor_id = (
@@ -283,10 +323,12 @@ def run(
                 )
             for q in qset.questions:
                 for r in range(runs):
+                    out_path = dirs.opentology / f"{q.id}_run{r}.json"
+                    if _should_skip(out_path):
+                        typer.echo(f"[opentology] {q.id} run{r} skip (existing)")
+                        continue
                     payload = orun.ask(question=q, run_index=r)
-                    write_response_json(
-                        dirs.opentology / f"{q.id}_run{r}.json", payload
-                    )
+                    write_response_json(out_path, payload)
                     typer.echo(f"[opentology] {q.id} run{r} done")
 
     typer.echo(f"run complete: {dirs.root}")

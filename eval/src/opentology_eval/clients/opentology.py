@@ -353,7 +353,10 @@ class OpentologyClient:
         *,
         task_id: str,
         poll_interval_seconds: float = 1.0,
-        max_wait_seconds: float = 600.0,
+        # WHY 3600s: 33 파일 코퍼스 (95K 토큰) ingest 가 LLM 호출 33 회 순차 진행으로
+        # 20-30 분 소요. 기본 600s 는 30 파일급 코퍼스에 부족. 1 시간 한도가 측정
+        # 시나리오의 현실적 상한.
+        max_wait_seconds: float = 3600.0,
     ) -> dict[str, Any]:
         """ingest task 완료 대기 — running → succeeded/failed 까지 polling.
 

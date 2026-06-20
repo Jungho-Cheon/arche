@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>오로라마켓 등급 피라미드 — 혜택 매트릭스</title>
+<style>
+  body { width: 1200px; height: 800px; margin: 0; padding: 24px; background: white; font-family: 'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif; box-sizing: border-box; color: #1a1a1a; }
+  .head { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 3px solid #2b3a55; padding-bottom: 12px; }
+  .head h1 { font-size: 28px; margin: 0; letter-spacing: -0.5px; }
+  .head .tag { font-size: 14px; color: #5a5a5a; }
+  .wrap { display: flex; gap: 28px; margin-top: 22px; height: 670px; }
+  .pyramid { width: 560px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; }
+  .tier { color: #fff; text-align: center; padding: 14px 0; border-radius: 6px; position: relative; }
+  .tier .name { font-size: 22px; font-weight: 700; }
+  .tier .alias { font-size: 14px; opacity: 0.92; margin-top: 2px; }
+  .t-inner { width: 300px; background: #1f2a44; }
+  .t-gold  { width: 420px; background: #3a6bd0; }
+  .t-silver{ width: 540px; background: #6b7a99; }
+  .mark { font-size: 26px; line-height: 1; }
+  .side-row { display:flex; gap:14px; margin-top: 14px; }
+  .badge { flex:1; border: 2px solid #c2c8d4; border-radius: 8px; padding: 12px; font-size: 14px; }
+  .badge.inactive { border-color:#b0a060; background:#fbf7e9; }
+  .badge.restricted { border-color:#c06060; background:#fbeeee; }
+  .badge .bname { font-size: 16px; font-weight: 700; }
+  .panel { flex: 1; border: 2px solid #d6dae4; border-radius: 10px; padding: 18px 20px; }
+  .panel h2 { font-size: 18px; margin: 0 0 10px; color: #2b3a55; }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; }
+  th, td { border: 1px solid #c2c8d4; padding: 7px 8px; text-align: center; }
+  th { background: #2b3a55; color: #fff; }
+  td.first { text-align: left; font-weight: 600; }
+  .ok { color: #1f7a3a; font-weight: 700; }
+  .no { color: #b03030; font-weight: 700; }
+  .note { margin-top: 14px; font-size: 13px; color: #444; background:#eef4ff; border-left:5px solid #3a6bd0; padding:10px 12px; border-radius:4px; }
+</style>
+</head>
+<body>
+  <div class="head">
+    <h1>오로라마켓 회원 등급 피라미드 &amp; 혜택</h1>
+    <div class="tag">로열티/등급팀 / LOY-RB-2026-03 v3.2</div>
+  </div>
+
+  <div class="wrap">
+    <div class="pyramid">
+      <div class="tier t-inner">
+        <div class="mark">◆</div>
+        <div class="name">이너 서클 (INNER)</div>
+        <div class="alias">VVIP / 500만 AND NPS 9 / 전 카테고리 반품 30일</div>
+      </div>
+      <div class="tier t-gold">
+        <div class="mark">▲</div>
+        <div class="name">골드 (Gold)</div>
+        <div class="alias">VIP / 120만 OR 6개월 12주문 / 명품 반품 30일</div>
+      </div>
+      <div class="tier t-silver">
+        <div class="mark">■</div>
+        <div class="name">실버 (Silver)</div>
+        <div class="alias">Standard / 가입 즉시 / 기준선 혜택, 반품 7일</div>
+      </div>
+
+      <div class="side-row">
+        <div class="badge inactive">
+          <div class="bname">● 비활성 (Inactive)</div>
+          Dormant / 12개월 0주문 + 180일 미로그인 / 혜택 정지 (이력 보존) / R10 BFM 자동 활성화 대상
+        </div>
+        <div class="badge restricted">
+          <div class="bname">◆ 등급 제한 (Restricted)</div>
+          블랙리스트 / 법무/CS 강제 부여 / 모든 전환 제외 / R10 자동 활성화 제외
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>혜택 매트릭스</h2>
+      <table>
+        <tr><th>혜택</th><th>실버</th><th>골드</th><th>이너 서클</th></tr>
+        <tr><td class="first">기본 반품</td><td>7일</td><td>7일</td><td>30일</td></tr>
+        <tr><td class="first">명품 반품 (R2)</td><td class="no">✕</td><td>30일*</td><td>30일</td></tr>
+        <tr><td class="first">신선 환불 예외 (R3)</td><td class="no">✕</td><td class="no">✕</td><td class="ok">○</td></tr>
+        <tr><td class="first">적립률</td><td>1%</td><td>2%</td><td>4%</td></tr>
+        <tr><td class="first">무료배송 기준</td><td>3만</td><td>1.5만</td><td>전 주문</td></tr>
+        <tr><td class="first">상담 채널</td><td class="no">—</td><td>우선</td><td>컨시어지</td></tr>
+        <tr><td class="first">명품 정산 hold (R7)</td><td class="no">—</td><td class="no">—</td><td>+14일</td></tr>
+      </table>
+      <div class="note">
+        <strong>*골드 명품 반품 30일</strong> — 단, <strong>비활성 → 골드 복귀 30일 이내</strong>는 연장 미적용 (기본 7일). 휴면 계정 악용 차단을 위한 유예 창. <br>
+        <strong>이너 서클 게이트</strong> — 12개월 누적 500만 원 <strong>AND</strong> NPS 9 이상 (둘 다 충족). 금액만 높고 NPS 8 이하면 승급 보류.
+      </div>
+    </div>
+  </div>
+</body>
+</html>

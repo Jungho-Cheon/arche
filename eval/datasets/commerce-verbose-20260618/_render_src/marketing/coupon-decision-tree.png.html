@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>쿠폰 적용 의사결정 트리 — 오로라마켓 마케팅</title>
+<style>
+  body {
+    width: 1200px;
+    height: 800px;
+    margin: 0;
+    padding: 24px;
+    background: white;
+    font-family: 'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif;
+    box-sizing: border-box;
+    color: #1a1a1a;
+  }
+  .title { font-size: 26px; font-weight: 800; letter-spacing: -0.5px; }
+  .subtitle { font-size: 15px; color: #666; margin-top: 4px; margin-bottom: 18px; }
+  .canvas { position: relative; width: 1152px; height: 690px; }
+
+  .node {
+    position: absolute;
+    border: 2px solid #1a1a1a;
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-size: 16px;
+    line-height: 1.35;
+    text-align: center;
+    background: #ffffff;
+    box-sizing: border-box;
+  }
+  .start { background: #1a1a1a; color: #fff; font-weight: 700; font-size: 18px; }
+  .decision { background: #f4f6fb; font-weight: 600; }
+  .yes { background: #eef7ee; }
+  .no { background: #fbeeee; }
+  .terminal { border-style: dashed; font-size: 15px; }
+
+  .label { position: absolute; font-size: 14px; font-weight: 700; color: #444; }
+  .arrow-v { position: absolute; width: 0; height: 0; border-left: 7px solid transparent; border-right: 7px solid transparent; border-top: 11px solid #1a1a1a; }
+  .arrow-line-v { position: absolute; width: 2px; background: #1a1a1a; }
+  .arrow-line-h { position: absolute; height: 2px; background: #1a1a1a; }
+  .legend { position: absolute; bottom: 0; left: 0; font-size: 13px; color: #555; }
+  .chip { display: inline-block; border: 1px solid #999; border-radius: 4px; padding: 2px 8px; margin-right: 6px; font-size: 12px; }
+</style>
+</head>
+<body>
+  <div class="title">쿠폰 적용 의사결정 트리</div>
+  <div class="subtitle">한 주문에 쿠폰을 겹쳐도 되는가 — 마케팅 본부 stacking 판단 흐름</div>
+
+  <div class="canvas">
+
+    <!-- START -->
+    <div class="node start" style="left:476px; top:0; width:200px;">쿠폰 2 장을<br>겹쳐 적용?</div>
+    <div class="arrow-line-v" style="left:575px; top:66px; height:24px;"></div>
+    <div class="arrow-v" style="left:569px; top:90px;"></div>
+
+    <!-- D1 B2B -->
+    <div class="node decision" style="left:436px; top:104px; width:280px;">둘 중 하나가<br><b>CPN-B2B-*</b> 인가?</div>
+    <!-- D1 YES right -->
+    <div class="arrow-line-h" style="left:716px; top:138px; width:150px;"></div>
+    <div class="label" style="left:730px; top:114px;">예</div>
+    <div class="node terminal" style="left:866px; top:108px; width:286px;">B2B 부서 stacking 기준 적용<br>(마케팅 단독 판단 금지)</div>
+    <!-- D1 NO down -->
+    <div class="arrow-line-v" style="left:575px; top:170px; height:24px;"></div>
+    <div class="arrow-v" style="left:569px; top:194px;"></div>
+    <div class="label" style="left:585px; top:172px;">아니오</div>
+
+    <!-- D2 REVIVE -->
+    <div class="node decision" style="left:436px; top:208px; width:280px;">둘 중 하나가<br><b>CPN-REVIVE-*</b> (부활) 인가?</div>
+    <!-- D2 YES right -->
+    <div class="arrow-line-h" style="left:716px; top:242px; width:150px;"></div>
+    <div class="label" style="left:730px; top:218px;">예</div>
+    <div class="node no terminal" style="left:866px; top:212px; width:286px;">결합 불가 ✚ 부활 쿠폰은<br><b>항상 단독 적용</b></div>
+    <!-- D2 NO down -->
+    <div class="arrow-line-v" style="left:575px; top:274px; height:24px;"></div>
+    <div class="arrow-v" style="left:569px; top:298px;"></div>
+    <div class="label" style="left:585px; top:276px;">아니오</div>
+
+    <!-- D3 WELCOME+CART -->
+    <div class="node decision" style="left:416px; top:312px; width:320px;">조합이<br><b>WELCOME + CART</b> 인가?</div>
+    <!-- D3 YES right -->
+    <div class="arrow-line-h" style="left:736px; top:346px; width:130px;"></div>
+    <div class="label" style="left:746px; top:322px;">예</div>
+    <div class="node yes terminal" style="left:866px; top:316px; width:286px;">결합 허용 ● 마케팅 주력 묶음<br>(신규 유입 + 객단가 상승)</div>
+    <!-- D3 NO down -->
+    <div class="arrow-line-v" style="left:575px; top:378px; height:24px;"></div>
+    <div class="arrow-v" style="left:569px; top:402px;"></div>
+    <div class="label" style="left:585px; top:380px;">아니오</div>
+
+    <!-- D4 same promotion -->
+    <div class="node decision" style="left:416px; top:416px; width:320px;">두 쿠폰이<br><b>같은 PROMO-* </b>에 묶였는가?</div>
+    <!-- D4 YES right -->
+    <div class="arrow-line-h" style="left:736px; top:450px; width:130px;"></div>
+    <div class="label" style="left:746px; top:426px;">예</div>
+    <div class="node no terminal" style="left:866px; top:420px; width:286px;">결합 불가 ■ 같은 프로모션 내<br>중복 적용 금지 (기본 원칙)</div>
+    <!-- D4 NO down -->
+    <div class="arrow-line-v" style="left:575px; top:482px; height:24px;"></div>
+    <div class="arrow-v" style="left:569px; top:506px;"></div>
+    <div class="label" style="left:585px; top:484px;">아니오 (다른 프로모션)</div>
+
+    <!-- TERMINAL conditional -->
+    <div class="node yes terminal" style="left:386px; top:520px; width:380px;">조건부 허용 ▲ 마진 검토 후<br><b>캠페인 매니저 사전 승인</b> 시 결합 가능</div>
+
+    <!-- legend -->
+    <div class="legend">
+      <span class="chip">● 허용</span>
+      <span class="chip">■ 불가</span>
+      <span class="chip">▲ 조건부</span>
+      <span class="chip">✚ 단독</span>
+      WELCOME = 웰컴 쿠폰 / CART = 장바구니 쿠폰 / REVIVE = 부활 쿠폰 / 같은 프로모션 안에서는 중복 불가가 기본
+    </div>
+
+  </div>
+</body>
+</html>
