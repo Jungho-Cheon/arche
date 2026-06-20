@@ -1,0 +1,168 @@
+{
+  "column": "opentology_aug",
+  "question_id": "Q17",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 506,
+    "output_tokens": 46,
+    "latency_ms": 870,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"Boeing\",\"aliases\":[\"Boeing\"]},{\"canonical\":\"gross margin\",\"aliases\":[\"gross margin\",\"gross margin profile\"]},{\"canonical\":\"FY2022\",\"aliases\":[\"FY2022\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "Boeing",
+          "aliases": [
+            "Boeing"
+          ]
+        },
+        {
+          "canonical": "gross margin",
+          "aliases": [
+            "gross margin",
+            "gross margin profile"
+          ]
+        },
+        {
+          "canonical": "FY2022",
+          "aliases": [
+            "FY2022"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 650,
+      "input": {
+        "keywords": [
+          "Boeing",
+          "gross margin",
+          "gross margin profile",
+          "FY2022"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 164,
+      "input": {
+        "entry_ids": [
+          "01KVHVJAC0HJ24RDC9RT5V52EP",
+          "01KVHVJB12EN4X3PKS7Z835PEE",
+          "01KVHVJ8EA0SQZ67W4GA85RCP3",
+          "01KVHVJZ8XZ0NTDF22581S4VGX",
+          "01KVHVDK5KE0HAF8PGVK3QN090",
+          "01KVHVGTZATSJA08Y3MYCK8ZMY",
+          "01KVHVGY5W8J69ASESMFEDW7WW",
+          "01KVHV94VGG7VDVVCDH5KCATB3",
+          "01KVHVK01S8MD3KQXYVHTHFTJ5",
+          "01KVHV949NZP17TXM80K6G34R2"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 68,
+        "edges": 64,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVHVJAC0HJ24RDC9RT5V52EP",
+    "01KVHVJB12EN4X3PKS7Z835PEE",
+    "01KVHVJ8EA0SQZ67W4GA85RCP3",
+    "01KVHVJZ8XZ0NTDF22581S4VGX",
+    "01KVHVDK5KE0HAF8PGVK3QN090",
+    "01KVHVGTZATSJA08Y3MYCK8ZMY",
+    "01KVHVGY5W8J69ASESMFEDW7WW",
+    "01KVHV94VGG7VDVVCDH5KCATB3",
+    "01KVHVK01S8MD3KQXYVHTHFTJ5",
+    "01KVHV949NZP17TXM80K6G34R2"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 30179,
+  "graph_selected_sources": [
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMD_2022_10K.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMERICANEXPRESS_2022_10K.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/BOEING_2022_10K.md"
+  ],
+  "retrieved_chunks": [
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 22,
+      "score": 0.591216358687371
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 60,
+      "score": 0.5872210971543989
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 10,
+      "score": 0.5787216671604144
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 24,
+      "score": 0.5778952784327755
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 27,
+      "score": 0.5752266908669927
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 26,
+      "score": 0.5748229981165867
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 54,
+      "score": 0.5738823253500929
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 4,
+      "score": 0.5727290381853226
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 16845,
+    "output_tokens": 339,
+    "latency_ms": 4709,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"b\",\"reasoning\":\"(A) 발췌에서 Boeing의 재무제표와 경영진 논의(MD&A) 부분을 보면, 회사는 'gross margin'이라는 용어를 거의 사용하지 않고, 대신 'operating margin'과 'loss from operations' 등 영업이익률 중심으로 실적을 평가합니다. 실제로 Consolidated Statements of Operations(청크 7)에서도 매출총이익(gross profit)이나 매출총이익률(gross margin) 항목이 별도로 표시되지 않고, 'Total revenues'에서 'Total costs and expenses'를 뺀 'Loss from operations'만을 주요 성과지표로 제시합니다. 또한 MD&A(청크 1, 4, 5, 6)에서도 영업이익률(operating margin)과 세그먼트별 영업실적이 강조되고 있습니다. (B) 그래프 구조에서도 Boeing의 주요 성과지표로 gross margin이 아닌 operating margin, segment별 실적, cash flow 등이 중심임을 알 수 있습니다. 따라서 Boeing과 같은 대형 제조·방산 복합기업은 매출원가 산정이 복잡하고, 프로그램 회계, 장기계약, 서비스 매출 등으로 인해 gross margin 자체가 실질적 의미가 약하며, 실제로도 외부 보고와 경영진 평가에 gross margin을 사용하지 않습니다. 이 점에서 보기 b)가 정답이며, (A) 발췌의 재무제표 구조와 MD&A 설명이 결정적 근거입니다.\"}",
+    "parsed": {
+      "choice": "b",
+      "reasoning": "(A) 발췌에서 Boeing의 재무제표와 경영진 논의(MD&A) 부분을 보면, 회사는 'gross margin'이라는 용어를 거의 사용하지 않고, 대신 'operating margin'과 'loss from operations' 등 영업이익률 중심으로 실적을 평가합니다. 실제로 Consolidated Statements of Operations(청크 7)에서도 매출총이익(gross profit)이나 매출총이익률(gross margin) 항목이 별도로 표시되지 않고, 'Total revenues'에서 'Total costs and expenses'를 뺀 'Loss from operations'만을 주요 성과지표로 제시합니다. 또한 MD&A(청크 1, 4, 5, 6)에서도 영업이익률(operating margin)과 세그먼트별 영업실적이 강조되고 있습니다. (B) 그래프 구조에서도 Boeing의 주요 성과지표로 gross margin이 아닌 operating margin, segment별 실적, cash flow 등이 중심임을 알 수 있습니다. 따라서 Boeing과 같은 대형 제조·방산 복합기업은 매출원가 산정이 복잡하고, 프로그램 회계, 장기계약, 서비스 매출 등으로 인해 gross margin 자체가 실질적 의미가 약하며, 실제로도 외부 보고와 경영진 평가에 gross margin을 사용하지 않습니다. 이 점에서 보기 b)가 정답이며, (A) 발췌의 재무제표 구조와 MD&A 설명이 결정적 근거입니다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 20398,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 35,
+    "chunk_setup_amortized": 20331,
+    "chunk_setup_total": 426971,
+    "graph_keyword_estimated": 32,
+    "questions_count_for_amortization": 21
+  },
+  "total_input_tokens": 17351,
+  "total_output_tokens": 385,
+  "total_tokens": 38134,
+  "total_latency_ms": 6393
+}
