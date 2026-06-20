@@ -1,0 +1,153 @@
+{
+  "column": "opentology_triple",
+  "question_id": "Q14",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 484,
+    "output_tokens": 27,
+    "latency_ms": 810,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"American Express\",\"aliases\":[\"American Express\"]},{\"canonical\":\"card members\",\"aliases\":[\"card members\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "American Express",
+          "aliases": [
+            "American Express"
+          ]
+        },
+        {
+          "canonical": "card members",
+          "aliases": [
+            "card members"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 633,
+      "input": {
+        "keywords": [
+          "American Express",
+          "card members"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 175,
+      "input": {
+        "entry_ids": [
+          "01KVHVCP9JF4XN5VCF0HAQ0ANF",
+          "01KVHVFPRJK3HJNPANNJ47FG55",
+          "01KVHVDJ3YT8MDHAPZXV3QDY6H",
+          "01KVHVFQJBHM6CJDY43KR672ME",
+          "01KVHVCQG19MMR0HZR7AP9FJ0M",
+          "01KVHVEGQRTBB9ZNM04TFST0BE",
+          "01KVHVCPZJW2SENJEEKSYQQ4HB",
+          "01KVHVESTC9KMTJN4RT65BZK6H",
+          "01KVHVDZPRQR3K1QJF0YN81VYN",
+          "01KVHVCZC1P9CA34G3APNJ4YWQ"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 69,
+        "edges": 71,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVHVCP9JF4XN5VCF0HAQ0ANF",
+    "01KVHVFPRJK3HJNPANNJ47FG55",
+    "01KVHVDJ3YT8MDHAPZXV3QDY6H",
+    "01KVHVFQJBHM6CJDY43KR672ME",
+    "01KVHVCQG19MMR0HZR7AP9FJ0M",
+    "01KVHVEGQRTBB9ZNM04TFST0BE",
+    "01KVHVCPZJW2SENJEEKSYQQ4HB",
+    "01KVHVESTC9KMTJN4RT65BZK6H",
+    "01KVHVDZPRQR3K1QJF0YN81VYN",
+    "01KVHVCZC1P9CA34G3APNJ4YWQ"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 33390,
+  "graph_selected_sources": [
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMERICANEXPRESS_2022_10K.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMD_2022_10K.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/BOEING_2022_10K.md"
+  ],
+  "focused_chunks": [
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 54,
+      "score": 0.6252907481136231
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 6,
+      "score": 0.6178771366507546
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 53,
+      "score": 0.6109168587133122
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 99,
+      "score": 0.5883026926683458
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 72,
+      "score": 0.5791012787007733
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 4,
+      "score": 0.5788586595828755
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 32,
+      "score": 0.5728452816540859
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 57,
+      "score": 0.5693429504965442
+    }
+  ],
+  "global_chunks": [],
+  "answer_generation": {
+    "input_tokens": 16689,
+    "output_tokens": 111,
+    "latency_ms": 1707,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"b\",\"reasoning\":\"(B) 발췌에서 'Card Member retention remained high, demonstrating the impact of investments we have made in our premium value propositions.'라는 명확한 진술이 있습니다. (C) 전체 코퍼스 발췌에서도 동일한 내용이 반복되어 일치합니다. (A) 그래프 구조상으로도 Card Member 관련 리텐션 저하에 대한 부정적 신호가 없습니다. 따라서 둘 이상이 일치하므로 정답은 b)입니다.\"}",
+    "parsed": {
+      "choice": "b",
+      "reasoning": "(B) 발췌에서 'Card Member retention remained high, demonstrating the impact of investments we have made in our premium value propositions.'라는 명확한 진술이 있습니다. (C) 전체 코퍼스 발췌에서도 동일한 내용이 반복되어 일치합니다. (A) 그래프 구조상으로도 Card Member 관련 리텐션 저하에 대한 부정적 신호가 없습니다. 따라서 둘 이상이 일치하므로 정답은 b)입니다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 20360,
+  "total_input_tokens": 17173,
+  "total_output_tokens": 138,
+  "total_tokens": 37671,
+  "total_latency_ms": 3325
+}

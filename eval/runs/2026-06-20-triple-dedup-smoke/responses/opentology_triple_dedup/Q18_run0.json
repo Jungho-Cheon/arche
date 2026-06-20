@@ -1,0 +1,164 @@
+{
+  "column": "opentology_triple",
+  "question_id": "Q18",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 484,
+    "output_tokens": 51,
+    "latency_ms": 1020,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"Boeing\",\"aliases\":[\"Boeing\"]},{\"canonical\":\"primary customers\",\"aliases\":[\"primary customers\",\"main customers\"]},{\"canonical\":\"FY2022\",\"aliases\":[\"FY2022\",\"Fiscal Year 2022\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "Boeing",
+          "aliases": [
+            "Boeing"
+          ]
+        },
+        {
+          "canonical": "primary customers",
+          "aliases": [
+            "primary customers",
+            "main customers"
+          ]
+        },
+        {
+          "canonical": "FY2022",
+          "aliases": [
+            "FY2022",
+            "Fiscal Year 2022"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 821,
+      "input": {
+        "keywords": [
+          "Boeing",
+          "primary customers",
+          "main customers",
+          "FY2022",
+          "Fiscal Year 2022"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 216,
+      "input": {
+        "entry_ids": [
+          "01KVHVJAC0HJ24RDC9RT5V52EP",
+          "01KVHVJB12EN4X3PKS7Z835PEE",
+          "01KVHVFRZ8XBW6BQJBF8XDTXMS",
+          "01KVHVEPF8H0HSM6NSPNHFFZ17",
+          "01KVHVJ8EA0SQZ67W4GA85RCP3",
+          "01KVHVJZ8XZ0NTDF22581S4VGX",
+          "01KVHVHGM15GM1MGSYPCXT9Z2S",
+          "01KVHV949NZP17TXM80K6G34R2",
+          "01KVHVGTZATSJA08Y3MYCK8ZMY",
+          "01KVHVGY5W8J69ASESMFEDW7WW"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 72,
+        "edges": 67,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVHVJAC0HJ24RDC9RT5V52EP",
+    "01KVHVJB12EN4X3PKS7Z835PEE",
+    "01KVHVFRZ8XBW6BQJBF8XDTXMS",
+    "01KVHVEPF8H0HSM6NSPNHFFZ17",
+    "01KVHVJ8EA0SQZ67W4GA85RCP3",
+    "01KVHVJZ8XZ0NTDF22581S4VGX",
+    "01KVHVHGM15GM1MGSYPCXT9Z2S",
+    "01KVHV949NZP17TXM80K6G34R2",
+    "01KVHVGTZATSJA08Y3MYCK8ZMY",
+    "01KVHVGY5W8J69ASESMFEDW7WW"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 32135,
+  "graph_selected_sources": [
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMD_2022_10K.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMERICANEXPRESS_2022_10K.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/BOEING_2022_10K.md"
+  ],
+  "focused_chunks": [
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 4,
+      "score": 0.6370781509243166
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 22,
+      "score": 0.6170254769513455
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 10,
+      "score": 0.611043993815397
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 29,
+      "score": 0.6078948452039662
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 3,
+      "score": 0.6038096799187167
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 59,
+      "score": 0.6003331965093308
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 8,
+      "score": 0.5975667562816219
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 6,
+      "score": 0.5973675059301187
+    }
+  ],
+  "global_chunks": [],
+  "answer_generation": {
+    "input_tokens": 17080,
+    "output_tokens": 411,
+    "latency_ms": 4399,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"c\",\"reasoning\":\"(A) 도메인 그래프에서 Boeing의 주요 사업 부문이 Commercial Airplanes (BCA), Defense, Space & Security (BDS), Global Services (BGS), Boeing Capital (BCC)임을 명확히 보여주고, BCA(상업용 항공기)와 BDS(방위/정부)가 모두 핵심임을 알 수 있습니다. (B) 발췌에서 'We are a global market leader in the design, development, manufacture, sale, service and support of commercial jetliners, military aircraft, satellites, missile defense, human space flight and launch systems and services. We are one of the two major manufacturers of 100+ seat airplanes for the worldwide commercial airline industry and one of the largest defense contractors in the U.S.'라는 문구와, 'Our strategy is centered on successful execution in healthy core businesses – Commercial Airplanes (BCA), Defense, Space & Security (BDS) and Global Services (BGS)' 등에서 상업용 항공사와 미국 정부(방위)가 모두 주요 고객임을 확인할 수 있습니다. (C) 전체 코퍼스 발췌에서도 'Our Commercial Airplanes business depends on our ability to maintain a healthy production system...' 등에서 상업용 항공사와 정부(특히 미 국방부)가 모두 주요 고객임을 반복적으로 언급합니다. 또한, (B)와 (C)에서 정부 매출 비중이 40%임을 직접적으로 언급하지는 않지만, (B)에서 'Defense, Space & Security 23,162 / Total revenues 66,608'로 약 35%임을 계산할 수 있고, BGS 일부도 정부 매출임을 감안하면 40% 내외임을 추정할 수 있습니다. 따라서 보기 c)가 가장 정확하며, (A), (B), (C) 모두에서 일치하는 근거가 있습니다.\"}",
+    "parsed": {
+      "choice": "c",
+      "reasoning": "(A) 도메인 그래프에서 Boeing의 주요 사업 부문이 Commercial Airplanes (BCA), Defense, Space & Security (BDS), Global Services (BGS), Boeing Capital (BCC)임을 명확히 보여주고, BCA(상업용 항공기)와 BDS(방위/정부)가 모두 핵심임을 알 수 있습니다. (B) 발췌에서 'We are a global market leader in the design, development, manufacture, sale, service and support of commercial jetliners, military aircraft, satellites, missile defense, human space flight and launch systems and services. We are one of the two major manufacturers of 100+ seat airplanes for the worldwide commercial airline industry and one of the largest defense contractors in the U.S.'라는 문구와, 'Our strategy is centered on successful execution in healthy core businesses – Commercial Airplanes (BCA), Defense, Space & Security (BDS) and Global Services (BGS)' 등에서 상업용 항공사와 미국 정부(방위)가 모두 주요 고객임을 확인할 수 있습니다. (C) 전체 코퍼스 발췌에서도 'Our Commercial Airplanes business depends on our ability to maintain a healthy production system...' 등에서 상업용 항공사와 정부(특히 미 국방부)가 모두 주요 고객임을 반복적으로 언급합니다. 또한, (B)와 (C)에서 정부 매출 비중이 40%임을 직접적으로 언급하지는 않지만, (B)에서 'Defense, Space & Security 23,162 / Total revenues 66,608'로 약 35%임을 계산할 수 있고, BGS 일부도 정부 매출임을 감안하면 40% 내외임을 추정할 수 있습니다. 따라서 보기 c)가 가장 정확하며, (A), (B), (C) 모두에서 일치하는 근거가 있습니다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 20384,
+  "total_input_tokens": 17564,
+  "total_output_tokens": 462,
+  "total_tokens": 38410,
+  "total_latency_ms": 6456
+}

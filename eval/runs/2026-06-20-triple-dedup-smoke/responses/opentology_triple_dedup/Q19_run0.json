@@ -1,0 +1,155 @@
+{
+  "column": "opentology_triple",
+  "question_id": "Q19",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 480,
+    "output_tokens": 34,
+    "latency_ms": 919,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"Boeing\",\"aliases\":[\"Boeing\"]},{\"canonical\":\"cyclicality\",\"aliases\":[\"cyclicality\",\"business cycle\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "Boeing",
+          "aliases": [
+            "Boeing"
+          ]
+        },
+        {
+          "canonical": "cyclicality",
+          "aliases": [
+            "cyclicality",
+            "business cycle"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 678,
+      "input": {
+        "keywords": [
+          "Boeing",
+          "cyclicality",
+          "business cycle"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 142,
+      "input": {
+        "entry_ids": [
+          "01KVHVGY5W8J69ASESMFEDW7WW",
+          "01KVHVGTZATSJA08Y3MYCK8ZMY",
+          "01KVHVJ12EWBA2E6F4BFQ41FJD",
+          "01KVHVCTAQJG7W5EWB30M9SV7Z",
+          "01KVHVK01S8MD3KQXYVHTHFTJ5",
+          "01KVHVJ2RATVW2DWJ726TTH4WS",
+          "01KVHVJ95CG2CG4G5SV133ZA99",
+          "01KVHVK0RTQSYFZRSYDZAV1DWC",
+          "01KVHVJAC0HJ24RDC9RT5V52EP",
+          "01KVHVJC9JY0ZH02BCFT2AVPBJ"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 58,
+        "edges": 56,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVHVGY5W8J69ASESMFEDW7WW",
+    "01KVHVGTZATSJA08Y3MYCK8ZMY",
+    "01KVHVJ12EWBA2E6F4BFQ41FJD",
+    "01KVHVCTAQJG7W5EWB30M9SV7Z",
+    "01KVHVK01S8MD3KQXYVHTHFTJ5",
+    "01KVHVJ2RATVW2DWJ726TTH4WS",
+    "01KVHVJ95CG2CG4G5SV133ZA99",
+    "01KVHVK0RTQSYFZRSYDZAV1DWC",
+    "01KVHVJAC0HJ24RDC9RT5V52EP",
+    "01KVHVJC9JY0ZH02BCFT2AVPBJ"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 25537,
+  "graph_selected_sources": [
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMERICANEXPRESS_2022_10K.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/BOEING_2022_10K.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMD_2022_10K.md"
+  ],
+  "focused_chunks": [
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 10,
+      "score": 0.6042995974646638
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 8,
+      "score": 0.6011372895129947
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 12,
+      "score": 0.5878395994281217
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 22,
+      "score": 0.5785636012092696
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 19,
+      "score": 0.5602878005909513
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 60,
+      "score": 0.5579593813051397
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 4,
+      "score": 0.5577678464052328
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 29,
+      "score": 0.5572811778368237
+    }
+  ],
+  "global_chunks": [],
+  "answer_generation": {
+    "input_tokens": 15491,
+    "output_tokens": 298,
+    "latency_ms": 3264,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"c\",\"reasoning\":\"(A) 도메인 그래프에는 Boeing이 상업용 항공기(Commercial Airplanes) 사업을 영위하며, 항공사 등 민간 고객과의 관계가 명시되어 있고, 경쟁사로 Airbus, COMAC 등 민간 항공기 제조사가 나열되어 있습니다. (B) 발췌에서는 Boeing의 상업용 항공기 사업이 항공사들의 재무상황, 항공여객 수요, 글로벌 경제 상황, 연료비 등 외부 요인에 영향을 받으며, 특히 COVID-19 팬데믹, 인플레이션, 공급망 문제 등으로 인해 실적이 영향을 받았다는 점이 반복적으로 언급됩니다. 또한 'airline financial performance, which influences demand for new capacity, has been adversely impacted by the COVID-19 pandemic' 등 항공사 산업의 경기 변동성이 Boeing에 영향을 미친다는 직접적 진술이 있습니다. (C) 전체 코퍼스 발췌에서도 동일하게 Boeing의 사업이 항공산업의 경기 변동성에 노출되어 있다는 점이 강조됩니다. 따라서 셋 중 둘 이상이 일치하며, 결정적으로 (B)와 (C)에서 Boeing의 사업이 경기 변동성(사이클)에 노출되어 있다는 명확한 진술이 있으므로, 정답은 c)입니다.\"}",
+    "parsed": {
+      "choice": "c",
+      "reasoning": "(A) 도메인 그래프에는 Boeing이 상업용 항공기(Commercial Airplanes) 사업을 영위하며, 항공사 등 민간 고객과의 관계가 명시되어 있고, 경쟁사로 Airbus, COMAC 등 민간 항공기 제조사가 나열되어 있습니다. (B) 발췌에서는 Boeing의 상업용 항공기 사업이 항공사들의 재무상황, 항공여객 수요, 글로벌 경제 상황, 연료비 등 외부 요인에 영향을 받으며, 특히 COVID-19 팬데믹, 인플레이션, 공급망 문제 등으로 인해 실적이 영향을 받았다는 점이 반복적으로 언급됩니다. 또한 'airline financial performance, which influences demand for new capacity, has been adversely impacted by the COVID-19 pandemic' 등 항공사 산업의 경기 변동성이 Boeing에 영향을 미친다는 직접적 진술이 있습니다. (C) 전체 코퍼스 발췌에서도 동일하게 Boeing의 사업이 항공산업의 경기 변동성에 노출되어 있다는 점이 강조됩니다. 따라서 셋 중 둘 이상이 일치하며, 결정적으로 (B)와 (C)에서 Boeing의 사업이 경기 변동성(사이클)에 노출되어 있다는 명확한 진술이 있으므로, 정답은 c)입니다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 20364,
+  "total_input_tokens": 15971,
+  "total_output_tokens": 332,
+  "total_tokens": 36667,
+  "total_latency_ms": 5003
+}

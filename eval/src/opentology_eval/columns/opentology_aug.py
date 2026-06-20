@@ -42,7 +42,7 @@ from ..clients import (
     OpentologyUnavailableError,
     PrimitiveCall,
 )
-from ..columns.chunk_rag import TOP_K
+from ..columns.chunk_rag import TOP_K, _MemoryIndex
 from ..columns.opentology import (
     EMBEDDING_TOKENS_PER_KEYWORD,
     _AnchorResult,
@@ -115,6 +115,9 @@ class _SourceGroupedIndex:
 
     chunk_rag 의 _MemoryIndex 와 달리 전체 cosine search 가 아니라 *source
     필터링 후* search. graph 가 결정한 source 안에서만 top-k.
+
+    basename collision 가드: corpus 안 같은 파일명이 다른 디렉토리에 있으면
+    절대 경로 우선 비교 후 basename fallback.
     """
 
     def __init__(self) -> None:
@@ -128,6 +131,10 @@ class _SourceGroupedIndex:
     def total_chunks(self) -> int:
         return sum(len(v) for v in self._by_source.values())
 
+    def all_basenames(self) -> set[str]:
+        from pathlib import PurePath
+        return {PurePath(sp).name for sp in self._by_source.keys()}
+
     def search_in_sources(
         self,
         query_embedding: list[float],
@@ -136,25 +143,50 @@ class _SourceGroupedIndex:
     ) -> list[tuple[float, Chunk]]:
         """주어진 source_path 들의 chunks 중 cosine top-k.
 
-        WHY basename 매칭: graph 의 source_refs 는 절대 경로 (ingest 시 절대로
-        저장), chunk_rag 인덱스는 corpus_root 상대 경로. 두 경로 표현이 달라
-        직접 비교가 0 매칭이 된다. corpus 안의 파일명이 unique 하다는 *측정 통제
-        변수 안의 가정* (1 corpus 1 디렉토리) 으로 basename 매칭이 충분.
-        source_paths 가 비면 빈 결과 (graph 단독으로 답해야 한다는 신호).
+        WHY 절대 경로 우선 + basename fallback: graph 의 source_refs 는 절대
+        경로 (ingest 시 절대로 저장), chunk_rag 인덱스는 corpus_root 상대 경로.
+        가능한 매칭 우선순위:
+          (1) 절대 경로 그대로 (corpus_root 가 graph 와 같은 절대일 때)
+          (2) basename — 1 corpus 1 디렉토리 가정 안의 fallback
+        basename 이 중복되는 corpus 에서는 (1) 만 적중하고 (2) 는 0 매칭 — 그
+        경우 source 0 fallback 가드가 chunk_rag 전체 검색으로 폴백시킨다.
+
+        source_paths 가 비면 빈 결과 (호출자가 fallback 결정).
         """
         if not source_paths or top_k <= 0:
             return []
         from pathlib import PurePath
 
+        wanted_abs = set(source_paths)
         wanted_names = {PurePath(p).name for p in source_paths}
         scored: list[tuple[float, Chunk]] = []
         for sp, entries in self._by_source.items():
-            if PurePath(sp).name not in wanted_names:
-                continue
-            for e in entries:
-                scored.append((_cos(query_embedding, e.embedding), e.chunk))
+            if sp in wanted_abs or PurePath(sp).name in wanted_names:
+                for e in entries:
+                    scored.append((_cos(query_embedding, e.embedding), e.chunk))
         scored.sort(key=lambda x: x[0], reverse=True)
         return scored[:top_k]
+
+
+def _adaptive_top_k(*, base: int, num_sources: int) -> int:
+    """source 좁힘 정도에 따라 top-k 적응.
+
+    근거: Q07 후퇴 분석 — graph 가 1 source 로 정확히 좁힐 때 top-k=8 안에
+    *정답 청크* 가 안 들어가는 케이스 존재 (낮은 embedding 유사도 답). source
+    가 1 개로 좁아질수록 *그 안의 청크 풀* 도 작아지니 top-k 를 늘려도 토큰
+    폭증이 작다.
+
+    근거 (반대): source 가 많아지면 각 source 별 chunk 풀이 합쳐져 후보가
+    많아지므로 굳이 top-k 를 키울 필요 ↓.
+
+    적응 규칙 (smoke 실험 기반 추정, 후속 측정에서 보정):
+      sources == 1 → base + 4   (정답 청크 누락 회복)
+      sources 2-3 → base
+      sources >= 4 → base       (보수적 — too much 위험)
+    """
+    if num_sources == 1:
+        return base + 4
+    return base
 
 
 def _cos(a: list[float], b: list[float]) -> float:
@@ -226,7 +258,13 @@ class OpentologyAugRunner:
     find_path_max_hops: int = 4
     find_path_max_paths: int = 5
     find_entities_limit: int = 10
+    # 적응형 top-k (sources == 1 일 때 base + 4).
+    adaptive_top_k: bool = True
+    # robust fallback — graph 가 0 source 또는 0 entry 일 때 chunk_rag 단독 전환.
+    chunk_fallback_on_empty_graph: bool = True
     index: _SourceGroupedIndex = field(default_factory=_SourceGroupedIndex)
+    # global (전체 코퍼스) 인덱스 — fallback 시 사용. chunk_rag 와 동일 결과.
+    global_index: _MemoryIndex = field(default_factory=_MemoryIndex)
     setup_embedding_tokens: int = 0
 
     def __post_init__(self) -> None:
@@ -250,6 +288,7 @@ class OpentologyAugRunner:
         self.setup_embedding_tokens = emb.token_count
         for chunk, vec in zip(chunks, emb.vectors):
             self.index.add(chunk, vec)
+            self.global_index.add(chunk, vec)
 
     # ---------- ask ----------
 
@@ -335,12 +374,32 @@ class OpentologyAugRunner:
         # (4) graph 가 결정한 source 들 추출
         source_paths = _collect_source_paths(subgraph_data, path_results)
 
-        # (5) 질문 임베딩 → source 범위 안에서 top-k
+        # (5) 질문 임베딩 → source 범위 안에서 top-k (적응형)
         q_emb_result = self.embedder.embed([question.question])
         q_embedding_tokens = q_emb_result.token_count
-        hits = self.index.search_in_sources(
-            q_emb_result.vectors[0], source_paths, self.top_k
-        )
+
+        # robust fallback: graph 가 0 source 가리키면 chunk_rag 단독 전환
+        # (전체 코퍼스 top-k). 옛 동작은 빈 chunks 로 LLM 호출 — graph 단독
+        # 동작과 사실상 같아 답이 e (정보 부족) 로 떨어졌다.
+        used_fallback: str | None = None
+        if not source_paths and self.chunk_fallback_on_empty_graph:
+            used_fallback = "empty_graph_to_chunk_rag"
+            hits = self.global_index.search(q_emb_result.vectors[0], self.top_k)
+        else:
+            eff_top_k = (
+                _adaptive_top_k(base=self.top_k, num_sources=len(source_paths))
+                if self.adaptive_top_k
+                else self.top_k
+            )
+            hits = self.index.search_in_sources(
+                q_emb_result.vectors[0], source_paths, eff_top_k
+            )
+            # basename 충돌 / 매칭 0 → graph fallback (전체)
+            if not hits and self.chunk_fallback_on_empty_graph:
+                used_fallback = "no_chunk_match_to_chunk_rag"
+                hits = self.global_index.search(
+                    q_emb_result.vectors[0], self.top_k
+                )
 
         chunk_blocks: list[str] = []
         for i, (_score, ch) in enumerate(hits, start=1):
@@ -405,6 +464,7 @@ class OpentologyAugRunner:
             "primitive_error": primitive_error,
             "subgraph_serialized_chars": len(subgraph_text),
             "graph_selected_sources": source_paths,
+            "used_fallback": used_fallback,
             "retrieved_chunks": [
                 {
                     "source_path": ch.source_path,

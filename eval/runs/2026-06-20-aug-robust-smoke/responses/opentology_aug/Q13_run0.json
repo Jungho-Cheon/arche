@@ -1,0 +1,166 @@
+{
+  "column": "opentology_aug",
+  "question_id": "Q13",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 487,
+    "output_tokens": 38,
+    "latency_ms": 818,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"American Express\",\"aliases\":[\"American Express\"]},{\"canonical\":\"Balance Sheet\",\"aliases\":[\"Balance Sheet\"]},{\"canonical\":\"liability\",\"aliases\":[\"liability\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "American Express",
+          "aliases": [
+            "American Express"
+          ]
+        },
+        {
+          "canonical": "Balance Sheet",
+          "aliases": [
+            "Balance Sheet"
+          ]
+        },
+        {
+          "canonical": "liability",
+          "aliases": [
+            "liability"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 570,
+      "input": {
+        "keywords": [
+          "American Express",
+          "Balance Sheet",
+          "liability"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 130,
+      "input": {
+        "entry_ids": [
+          "01KVJN9T239NKXWRDNGMR1881M",
+          "01KVJN9VC4Y9EJ0VH8X8CEY0WE",
+          "01KVJNCXBJ02MF6J4KHDY15ZP5",
+          "01KVJNGD0DSX37WAC8M2BXVB7G",
+          "01KVJNCWHJ94JF8R2M2SP9MNKV",
+          "01KVJNCG3QWJ73RWHPHTGFV1Y9",
+          "01KVJNBCXTWVBSY5D90H8K1W44",
+          "01KVJNCGRQ44PR9KNYPXC9XXDP",
+          "01KVJN9TT33X03A9D6MKHNS90G",
+          "01KVJNAMDAZY3T9JQ0P1CHTCSS"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 66,
+        "edges": 67,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVJN9T239NKXWRDNGMR1881M",
+    "01KVJN9VC4Y9EJ0VH8X8CEY0WE",
+    "01KVJNCXBJ02MF6J4KHDY15ZP5",
+    "01KVJNGD0DSX37WAC8M2BXVB7G",
+    "01KVJNCWHJ94JF8R2M2SP9MNKV",
+    "01KVJNCG3QWJ73RWHPHTGFV1Y9",
+    "01KVJNBCXTWVBSY5D90H8K1W44",
+    "01KVJNCGRQ44PR9KNYPXC9XXDP",
+    "01KVJN9TT33X03A9D6MKHNS90G",
+    "01KVJNAMDAZY3T9JQ0P1CHTCSS"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 30729,
+  "graph_selected_sources": [
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMERICANEXPRESS_2022_10K.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/BOEING_2022_10K.md"
+  ],
+  "used_fallback": null,
+  "retrieved_chunks": [
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 77,
+      "score": 0.6824459113751863
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 137,
+      "score": 0.6694014806918115
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 151,
+      "score": 0.6660343963677496
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 72,
+      "score": 0.6534701892175202
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 164,
+      "score": 0.6421725353600571
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 136,
+      "score": 0.6361374650397575
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 177,
+      "score": 0.6173713191547353
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 6,
+      "score": 0.6113648788609296
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 15543,
+    "output_tokens": 223,
+    "latency_ms": 2608,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"d\",\"reasoning\":\"(A) contains a table in 청크 3 (AMERICANEXPRESS_2022_10K.md:151) summarizing the carrying values of major financial liabilities as of December 31, 2022. It shows: 'Financial liabilities for which carrying values equal or approximate fair value' at $123 billion, 'Certificates of deposit' at $16 billion, and 'Long-term debt' at $43 billion. The $123 billion line is not labeled as 'customer deposits' in the table, but the context and the structure of American Express's balance sheet (as a bank holding company) indicate that the largest liability is customer deposits, which are typically the largest line item for banks and are included in 'financial liabilities for which carrying values equal or approximate fair value.' This is further supported by the fact that long-term debt is only $43 billion, much less than $123 billion. (B) does not provide direct balance sheet figures, only structural relationships. Therefore, (A) is decisive, and the answer is d) Customer deposits.\"}",
+    "parsed": {
+      "choice": "d",
+      "reasoning": "(A) contains a table in 청크 3 (AMERICANEXPRESS_2022_10K.md:151) summarizing the carrying values of major financial liabilities as of December 31, 2022. It shows: 'Financial liabilities for which carrying values equal or approximate fair value' at $123 billion, 'Certificates of deposit' at $16 billion, and 'Long-term debt' at $43 billion. The $123 billion line is not labeled as 'customer deposits' in the table, but the context and the structure of American Express's balance sheet (as a bank holding company) indicate that the largest liability is customer deposits, which are typically the largest line item for banks and are included in 'financial liabilities for which carrying values equal or approximate fair value.' This is further supported by the fact that long-term debt is only $43 billion, much less than $123 billion. (B) does not provide direct balance sheet figures, only structural relationships. Therefore, (A) is decisive, and the answer is d) Customer deposits."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 20371,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 16,
+    "chunk_setup_amortized": 20331,
+    "chunk_setup_total": 426971,
+    "graph_keyword_estimated": 24,
+    "questions_count_for_amortization": 21
+  },
+  "total_input_tokens": 16030,
+  "total_output_tokens": 261,
+  "total_tokens": 36662,
+  "total_latency_ms": 4126
+}

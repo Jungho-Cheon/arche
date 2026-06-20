@@ -1,0 +1,105 @@
+{
+  "column": "opentology",
+  "question_id": "Q14",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 484,
+    "output_tokens": 27,
+    "latency_ms": 780,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"American Express\",\"aliases\":[\"American Express\"]},{\"canonical\":\"card members\",\"aliases\":[\"card members\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "American Express",
+          "aliases": [
+            "American Express"
+          ]
+        },
+        {
+          "canonical": "card members",
+          "aliases": [
+            "card members"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 770,
+      "input": {
+        "keywords": [
+          "American Express",
+          "card members"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 138,
+      "input": {
+        "entry_ids": [
+          "01KVJKZJJ7T3J85J23THVA7NM2",
+          "01KVJKZZ4QT8TGYDGG7G523X9Z",
+          "01KVJMJSG7F5J9028MTANSNKRR",
+          "01KVJMJR30V3TPJZAZEXHDJKZJ",
+          "01KVJMH8HY3CVYCGC64KHNZYZF",
+          "01KVJKZZPVS27CMNAPSJ13ZEG0",
+          "01KVJMG7XDM95PJ4RXJY8PB8JQ",
+          "01KVJMG6JVH49DC10JHWY1XWZ7",
+          "01KVJMJT1D67TFT78FXHWD179W",
+          "01KVJKZQA4V017HHNTTGM8TPBW"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 67,
+        "edges": 69,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVJKZJJ7T3J85J23THVA7NM2",
+    "01KVJKZZ4QT8TGYDGG7G523X9Z",
+    "01KVJMJSG7F5J9028MTANSNKRR",
+    "01KVJMJR30V3TPJZAZEXHDJKZJ",
+    "01KVJMH8HY3CVYCGC64KHNZYZF",
+    "01KVJKZZPVS27CMNAPSJ13ZEG0",
+    "01KVJMG7XDM95PJ4RXJY8PB8JQ",
+    "01KVJMG6JVH49DC10JHWY1XWZ7",
+    "01KVJMJT1D67TFT78FXHWD179W",
+    "01KVJKZQA4V017HHNTTGM8TPBW"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 33770,
+  "answer_generation": {
+    "input_tokens": 11176,
+    "output_tokens": 156,
+    "latency_ms": 2624,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"b\",\"reasoning\":\"The graph provides data on 'Cards-in-force' and 'Proprietary cards-in-force' for 2022 and previous years. 'Cards-in-force' increased from 121.7M in 2021 to 133.3M in 2022 (a 10% increase), and 'Proprietary cards-in-force' increased from 71.4M in 2021 to 76.7M in 2022 (a 7% increase). This indicates that not only did American Express retain its card members, but it also grew its card member base in 2022. Therefore, the correct answer is (b) Yes, American Express was able to retain card members during 2022.\"}",
+    "parsed": {
+      "choice": "b",
+      "reasoning": "The graph provides data on 'Cards-in-force' and 'Proprietary cards-in-force' for 2022 and previous years. 'Cards-in-force' increased from 121.7M in 2021 to 133.3M in 2022 (a 10% increase), and 'Proprietary cards-in-force' increased from 71.4M in 2021 to 76.7M in 2022 (a 7% increase). This indicates that not only did American Express retain its card members, but it also grew its card member base in 2022. Therefore, the correct answer is (b) Yes, American Express was able to retain card members during 2022."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 16,
+  "total_input_tokens": 11660,
+  "total_output_tokens": 183,
+  "total_tokens": 11859,
+  "total_latency_ms": 4312
+}

@@ -1,0 +1,200 @@
+{
+  "column": "opentology_triple",
+  "question_id": "Q01",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 506,
+    "output_tokens": 40,
+    "latency_ms": 2357,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"AMD\",\"aliases\":[\"AMD\"]},{\"canonical\":\"quick ratio\",\"aliases\":[\"quick ratio\"]},{\"canonical\":\"liquidity profile\",\"aliases\":[\"liquidity profile\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "AMD",
+          "aliases": [
+            "AMD"
+          ]
+        },
+        {
+          "canonical": "quick ratio",
+          "aliases": [
+            "quick ratio"
+          ]
+        },
+        {
+          "canonical": "liquidity profile",
+          "aliases": [
+            "liquidity profile"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 613,
+      "input": {
+        "keywords": [
+          "AMD",
+          "quick ratio",
+          "liquidity profile"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 217,
+      "input": {
+        "entry_ids": [
+          "01KVHVDS2Y4RWB9SRG0CXKWX2A",
+          "01KVHV8TWX6BRMKWKKK5N8EF0W",
+          "01KVHV99K0MJYZQXRKN8KSA80E",
+          "01KVHVAWCP5E2D5CKYF2DXSZS9",
+          "01KVHVBC175A369PF2MBT3W8PG",
+          "01KVHVB0PXPED74SEFYRGSRDV4",
+          "01KVHVFY5SR7S5GEXTEQGVVZMZ",
+          "01KVHV9EJJ9X60SHPAYR83K8X5",
+          "01KVHV98RZVW3P2NW10NDXG4HX",
+          "01KVHVDQ8JEBX21R1S2H3FE9A1"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 80,
+        "edges": 74,
+        "truncated": true
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVHVDS2Y4RWB9SRG0CXKWX2A",
+    "01KVHV8TWX6BRMKWKKK5N8EF0W",
+    "01KVHV99K0MJYZQXRKN8KSA80E",
+    "01KVHVAWCP5E2D5CKYF2DXSZS9",
+    "01KVHVBC175A369PF2MBT3W8PG",
+    "01KVHVB0PXPED74SEFYRGSRDV4",
+    "01KVHVFY5SR7S5GEXTEQGVVZMZ",
+    "01KVHV9EJJ9X60SHPAYR83K8X5",
+    "01KVHV98RZVW3P2NW10NDXG4HX",
+    "01KVHVDQ8JEBX21R1S2H3FE9A1"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 32137,
+  "graph_selected_sources": [
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMD_2022_10K.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMERICANEXPRESS_2022_10K.md"
+  ],
+  "focused_chunks": [
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 113,
+      "score": 0.5475798954376654
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 47,
+      "score": 0.544336564784259
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 45,
+      "score": 0.5372316342365769
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 46,
+      "score": 0.535076417121566
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 64,
+      "score": 0.531475343652093
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 78,
+      "score": 0.5234554945486118
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 0,
+      "score": 0.5176177138559108
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 106,
+      "score": 0.5010971990986399
+    }
+  ],
+  "global_chunks": [
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 113,
+      "score": 0.5475798954376654
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 47,
+      "score": 0.544336564784259
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 45,
+      "score": 0.5372316342365769
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 46,
+      "score": 0.535076417121566
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 64,
+      "score": 0.531475343652093
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 78,
+      "score": 0.5234554945486118
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 0,
+      "score": 0.5176177138559108
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 106,
+      "score": 0.5010971990986399
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 23201,
+    "output_tokens": 185,
+    "latency_ms": 3801,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"e\",\"reasoning\":\"(A) 도메인 그래프에는 AMD의 유동성 지표(quick ratio, current ratio 등)에 대한 정보가 없다. (B)와 (C) 발췌에서도 AMD의 FY22 quick ratio 수치(1.57 등)나 quick ratio 계산에 필요한 구체적 수치(유동자산, 재고 제외, 유동부채 등)가 명시적으로 제시되어 있지 않다. 현금, 단기투자, 총부채, 현금흐름 등 일부 재무 정보는 있으나, quick ratio를 직접 계산하거나 확인할 수 있는 데이터(특히 유동부채, 재고 등)가 부족하다. 또한 quick ratio의 적합성에 대한 논의도 명확히 언급된 부분이 없다. 따라서 정보 부족(e)이 정답이다.\"}",
+    "parsed": {
+      "choice": "e",
+      "reasoning": "(A) 도메인 그래프에는 AMD의 유동성 지표(quick ratio, current ratio 등)에 대한 정보가 없다. (B)와 (C) 발췌에서도 AMD의 FY22 quick ratio 수치(1.57 등)나 quick ratio 계산에 필요한 구체적 수치(유동자산, 재고 제외, 유동부채 등)가 명시적으로 제시되어 있지 않다. 현금, 단기투자, 총부채, 현금흐름 등 일부 재무 정보는 있으나, quick ratio를 직접 계산하거나 확인할 수 있는 데이터(특히 유동부채, 재고 등)가 부족하다. 또한 quick ratio의 적합성에 대한 논의도 명확히 언급된 부분이 없다. 따라서 정보 부족(e)이 정답이다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 20390,
+  "total_input_tokens": 23707,
+  "total_output_tokens": 225,
+  "total_tokens": 44322,
+  "total_latency_ms": 6988
+}

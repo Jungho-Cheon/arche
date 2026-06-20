@@ -1,0 +1,160 @@
+{
+  "column": "opentology_triple",
+  "question_id": "Q13",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 487,
+    "output_tokens": 38,
+    "latency_ms": 1021,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"American Express\",\"aliases\":[\"American Express\"]},{\"canonical\":\"Balance Sheet\",\"aliases\":[\"Balance Sheet\"]},{\"canonical\":\"liability\",\"aliases\":[\"liability\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "American Express",
+          "aliases": [
+            "American Express"
+          ]
+        },
+        {
+          "canonical": "Balance Sheet",
+          "aliases": [
+            "Balance Sheet"
+          ]
+        },
+        {
+          "canonical": "liability",
+          "aliases": [
+            "liability"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 737,
+      "input": {
+        "keywords": [
+          "American Express",
+          "Balance Sheet",
+          "liability"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 183,
+      "input": {
+        "entry_ids": [
+          "01KVHVBC175A369PF2MBT3W8PG",
+          "01KVHVCP9JF4XN5VCF0HAQ0ANF",
+          "01KVHVK4BTE3KQ2EN98KBAJ6J4",
+          "01KVHVFQJBHM6CJDY43KR672ME",
+          "01KVHVCQG19MMR0HZR7AP9FJ0M",
+          "01KVHVEGQRTBB9ZNM04TFST0BE",
+          "01KVHVFPRJK3HJNPANNJ47FG55",
+          "01KVHVCPZJW2SENJEEKSYQQ4HB",
+          "01KVHVESTC9KMTJN4RT65BZK6H",
+          "01KVHVEWGSRCZCP4BBGND5RH2P"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 79,
+        "edges": 80,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVHVBC175A369PF2MBT3W8PG",
+    "01KVHVCP9JF4XN5VCF0HAQ0ANF",
+    "01KVHVK4BTE3KQ2EN98KBAJ6J4",
+    "01KVHVFQJBHM6CJDY43KR672ME",
+    "01KVHVCQG19MMR0HZR7AP9FJ0M",
+    "01KVHVEGQRTBB9ZNM04TFST0BE",
+    "01KVHVFPRJK3HJNPANNJ47FG55",
+    "01KVHVCPZJW2SENJEEKSYQQ4HB",
+    "01KVHVESTC9KMTJN4RT65BZK6H",
+    "01KVHVEWGSRCZCP4BBGND5RH2P"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 37945,
+  "graph_selected_sources": [
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMD_2022_10K.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMERICANEXPRESS_2022_10K.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/BOEING_2022_10K.md"
+  ],
+  "focused_chunks": [
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 77,
+      "score": 0.6824459113751863
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 137,
+      "score": 0.6694014806918115
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 151,
+      "score": 0.6660343963677496
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 72,
+      "score": 0.6534701892175202
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 164,
+      "score": 0.642257995217793
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 136,
+      "score": 0.6361374650397575
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 177,
+      "score": 0.6173713191547353
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 6,
+      "score": 0.6113648788609296
+    }
+  ],
+  "global_chunks": [],
+  "answer_generation": {
+    "input_tokens": 17781,
+    "output_tokens": 245,
+    "latency_ms": 3120,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"d\",\"reasoning\":\"(B) 발췌의 청크 3에서 2022년 American Express의 주요 부채 항목별 장부가액이 요약되어 있습니다. 'Financial liabilities for which carrying values equal or approximate fair value'가 1230억 달러(123 billion)로, 'Long-term debt' 430억 달러(43 billion), 'Certificates of deposit' 160억 달러(16 billion)보다 훨씬 큽니다. 여기서 'Financial liabilities for which carrying values equal or approximate fair value'는 주로 'Customer deposits'를 의미합니다(동일 표의 (d) 주석: 'Presented as a component of Customer deposits on the Consolidated Balance Sheets'). 따라서 2022년 American Express의 가장 큰 부채는 'Customer deposits'입니다. (A) 그래프 구조상도 American Express National Bank가 FDIC 예금 보험을 적용받는 등 예금이 주요 부채임을 뒷받침합니다. (C) 전체 코퍼스 발췌에서도 이를 반박하는 정보는 없습니다. 따라서 정답은 d) Customer deposits입니다.\"}",
+    "parsed": {
+      "choice": "d",
+      "reasoning": "(B) 발췌의 청크 3에서 2022년 American Express의 주요 부채 항목별 장부가액이 요약되어 있습니다. 'Financial liabilities for which carrying values equal or approximate fair value'가 1230억 달러(123 billion)로, 'Long-term debt' 430억 달러(43 billion), 'Certificates of deposit' 160억 달러(16 billion)보다 훨씬 큽니다. 여기서 'Financial liabilities for which carrying values equal or approximate fair value'는 주로 'Customer deposits'를 의미합니다(동일 표의 (d) 주석: 'Presented as a component of Customer deposits on the Consolidated Balance Sheets'). 따라서 2022년 American Express의 가장 큰 부채는 'Customer deposits'입니다. (A) 그래프 구조상도 American Express National Bank가 FDIC 예금 보험을 적용받는 등 예금이 주요 부채임을 뒷받침합니다. (C) 전체 코퍼스 발췌에서도 이를 반박하는 정보는 없습니다. 따라서 정답은 d) Customer deposits입니다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 20371,
+  "total_input_tokens": 18268,
+  "total_output_tokens": 283,
+  "total_tokens": 38922,
+  "total_latency_ms": 5061
+}

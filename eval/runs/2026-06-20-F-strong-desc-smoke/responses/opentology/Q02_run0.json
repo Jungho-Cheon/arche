@@ -1,0 +1,112 @@
+{
+  "column": "opentology",
+  "question_id": "Q02",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 486,
+    "output_tokens": 32,
+    "latency_ms": 787,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"AMD\",\"aliases\":[\"AMD\"]},{\"canonical\":\"products\",\"aliases\":[\"products\"]},{\"canonical\":\"services\",\"aliases\":[\"services\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "AMD",
+          "aliases": [
+            "AMD"
+          ]
+        },
+        {
+          "canonical": "products",
+          "aliases": [
+            "products"
+          ]
+        },
+        {
+          "canonical": "services",
+          "aliases": [
+            "services"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 669,
+      "input": {
+        "keywords": [
+          "AMD",
+          "products",
+          "services"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 56,
+      "input": {
+        "entry_ids": [
+          "01KVJKZKWB25JPFXFJVF84J0YG",
+          "01KVJKZK6ZMRN1D9DR4VS8S84F",
+          "01KVJKXHJFZXHBSYFY4Z3472MM",
+          "01KVJKY2GH3GWRCBX02GGQDMS4",
+          "01KVJMHB6D50ZBDADC3X37CG0Z",
+          "01KVJKY1T4SAW03MV255EKXRWC",
+          "01KVJKY8DVFM3SY44PEGNBMBJ4",
+          "01KVJMG7XDM95PJ4RXJY8PB8JQ",
+          "01KVJKXM6KZFMQCAF0F4BSR7X1",
+          "01KVJKY16XZH1KYVQMSAGEJD00"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 30,
+        "edges": 23,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVJKZKWB25JPFXFJVF84J0YG",
+    "01KVJKZK6ZMRN1D9DR4VS8S84F",
+    "01KVJKXHJFZXHBSYFY4Z3472MM",
+    "01KVJKY2GH3GWRCBX02GGQDMS4",
+    "01KVJMHB6D50ZBDADC3X37CG0Z",
+    "01KVJKY1T4SAW03MV255EKXRWC",
+    "01KVJKY8DVFM3SY44PEGNBMBJ4",
+    "01KVJMG7XDM95PJ4RXJY8PB8JQ",
+    "01KVJKXM6KZFMQCAF0F4BSR7X1",
+    "01KVJKY16XZH1KYVQMSAGEJD00"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 16536,
+  "answer_generation": {
+    "input_tokens": 5324,
+    "output_tokens": 167,
+    "latency_ms": 1839,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"a\",\"reasoning\":\"그래프에서 AMD의 4개 주요 사업 부문(데이터센터, 클라이언트, 게이밍, 임베디드)이 명확히 명시되어 있고, 각 부문별로 판매하는 주요 제품(서버 CPU, GPU, DPU, FPGA, Adaptive SoC, PC용 CPU/APU/칩셋, 디스크리트 GPU, 세미커스텀 SoC, 개발 서비스, 임베디드 CPU/GPU/APU/FPGA/Adaptive SoC)이 구체적으로 나와 있다. 각 제품군은 보기 a)의 설명과 정확히 일치한다. b), c), d)는 일부 제품군을 누락하거나 잘못 기술하고 있다. 따라서 a)가 정답이다.\"}",
+    "parsed": {
+      "choice": "a",
+      "reasoning": "그래프에서 AMD의 4개 주요 사업 부문(데이터센터, 클라이언트, 게이밍, 임베디드)이 명확히 명시되어 있고, 각 부문별로 판매하는 주요 제품(서버 CPU, GPU, DPU, FPGA, Adaptive SoC, PC용 CPU/APU/칩셋, 디스크리트 GPU, 세미커스텀 SoC, 개발 서비스, 임베디드 CPU/GPU/APU/FPGA/Adaptive SoC)이 구체적으로 나와 있다. 각 제품군은 보기 a)의 설명과 정확히 일치한다. b), c), d)는 일부 제품군을 누락하거나 잘못 기술하고 있다. 따라서 a)가 정답이다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 24,
+  "total_input_tokens": 5810,
+  "total_output_tokens": 199,
+  "total_tokens": 6033,
+  "total_latency_ms": 3351
+}

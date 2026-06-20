@@ -1,0 +1,201 @@
+{
+  "column": "opentology_triple",
+  "question_id": "Q08",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 494,
+    "output_tokens": 42,
+    "latency_ms": 742,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"debt securities\",\"aliases\":[\"debt securities\"]},{\"canonical\":\"national securities exchange\",\"aliases\":[\"national securities exchange\"]},{\"canonical\":\"American Express\",\"aliases\":[\"American Express\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "debt securities",
+          "aliases": [
+            "debt securities"
+          ]
+        },
+        {
+          "canonical": "national securities exchange",
+          "aliases": [
+            "national securities exchange"
+          ]
+        },
+        {
+          "canonical": "American Express",
+          "aliases": [
+            "American Express"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 371,
+      "input": {
+        "keywords": [
+          "debt securities",
+          "national securities exchange",
+          "American Express"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 184,
+      "input": {
+        "entry_ids": [
+          "01KVHVAFBT4Q7NJ1NJ6RN2098P",
+          "01KVHVCQG19MMR0HZR7AP9FJ0M",
+          "01KVHVAG6JEHW8957CND36XNP1",
+          "01KVHVFQJBHM6CJDY43KR672ME",
+          "01KVHVESTC9KMTJN4RT65BZK6H",
+          "01KVHVCP9JF4XN5VCF0HAQ0ANF",
+          "01KVHVGZC1FB3X8CZBDEXWEQF0",
+          "01KVHVDW2Z241W7VMD53AE0HDB",
+          "01KVHVEGQRTBB9ZNM04TFST0BE",
+          "01KVHVFPRJK3HJNPANNJ47FG55"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 72,
+        "edges": 73,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVHVAFBT4Q7NJ1NJ6RN2098P",
+    "01KVHVCQG19MMR0HZR7AP9FJ0M",
+    "01KVHVAG6JEHW8957CND36XNP1",
+    "01KVHVFQJBHM6CJDY43KR672ME",
+    "01KVHVESTC9KMTJN4RT65BZK6H",
+    "01KVHVCP9JF4XN5VCF0HAQ0ANF",
+    "01KVHVGZC1FB3X8CZBDEXWEQF0",
+    "01KVHVDW2Z241W7VMD53AE0HDB",
+    "01KVHVEGQRTBB9ZNM04TFST0BE",
+    "01KVHVFPRJK3HJNPANNJ47FG55"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 34492,
+  "graph_selected_sources": [
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMD_2022_10K.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMERICANEXPRESS_2022_10K.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/BOEING_2022_10K.md"
+  ],
+  "focused_chunks": [
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 77,
+      "score": 0.6917995398022228
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 260,
+      "score": 0.656477060444306
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 262,
+      "score": 0.6523882484456659
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 137,
+      "score": 0.6435564288327854
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 76,
+      "score": 0.6385158430920869
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 49,
+      "score": 0.6314253582016033
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 0,
+      "score": 0.6203828421590969
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 136,
+      "score": 0.619287254981228
+    }
+  ],
+  "global_chunks": [
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 77,
+      "score": 0.6917995398022228
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 260,
+      "score": 0.656477060444306
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 262,
+      "score": 0.6523882484456659
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 137,
+      "score": 0.6435564288327854
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 76,
+      "score": 0.6385158430920869
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 49,
+      "score": 0.6314253582016033
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 0,
+      "score": 0.6203828421590969
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 136,
+      "score": 0.619287254981228
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 22141,
+    "output_tokens": 235,
+    "latency_ms": 3344,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"e\",\"reasoning\":\"(A) 도메인 그래프에는 American Express의 주식(AXP)이 뉴욕증권거래소(NYSE)에 상장되어 있다는 정보는 있으나, 부채(채권) 증권의 상장 여부에 대한 정보는 없다. (B)와 (C) 발췌에서도 장기채, 단기채, 자산유동화증권 등 다양한 부채 상품의 발행 내역, 금리, 만기, 신용등급, 그리고 주식(AXP)이 NYSE에 상장되어 있다는 언급은 있으나, 특정 부채 증권이 '국가 증권거래소(national securities exchange)'에 등록되어 거래된다는 명시적 진술은 없다. 오히려 발췌들은 대부분 부채의 발행, 만기, 금리, 신용등급, 자산유동화 구조, 예금보험 등만 다루고 있다. 따라서 보기 중 어느 것도 명확히 뒷받침되지 않으므로 정보 부족(e)이 정답이다.\"}",
+    "parsed": {
+      "choice": "e",
+      "reasoning": "(A) 도메인 그래프에는 American Express의 주식(AXP)이 뉴욕증권거래소(NYSE)에 상장되어 있다는 정보는 있으나, 부채(채권) 증권의 상장 여부에 대한 정보는 없다. (B)와 (C) 발췌에서도 장기채, 단기채, 자산유동화증권 등 다양한 부채 상품의 발행 내역, 금리, 만기, 신용등급, 그리고 주식(AXP)이 NYSE에 상장되어 있다는 언급은 있으나, 특정 부채 증권이 '국가 증권거래소(national securities exchange)'에 등록되어 거래된다는 명시적 진술은 없다. 오히려 발췌들은 대부분 부채의 발행, 만기, 금리, 신용등급, 자산유동화 구조, 예금보험 등만 다루고 있다. 따라서 보기 중 어느 것도 명확히 뒷받침되지 않으므로 정보 부족(e)이 정답이다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 20378,
+  "total_input_tokens": 22635,
+  "total_output_tokens": 277,
+  "total_tokens": 43290,
+  "total_latency_ms": 4641
+}

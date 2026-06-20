@@ -1,0 +1,119 @@
+{
+  "column": "opentology",
+  "question_id": "Q12",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 491,
+    "output_tokens": 55,
+    "latency_ms": 3173,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"effective tax rate\",\"aliases\":[\"effective tax rate\"]},{\"canonical\":\"American Express\",\"aliases\":[\"American Express\"]},{\"canonical\":\"FY2021\",\"aliases\":[\"FY2021\"]},{\"canonical\":\"FY2022\",\"aliases\":[\"FY2022\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "effective tax rate",
+          "aliases": [
+            "effective tax rate"
+          ]
+        },
+        {
+          "canonical": "American Express",
+          "aliases": [
+            "American Express"
+          ]
+        },
+        {
+          "canonical": "FY2021",
+          "aliases": [
+            "FY2021"
+          ]
+        },
+        {
+          "canonical": "FY2022",
+          "aliases": [
+            "FY2022"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 508,
+      "input": {
+        "keywords": [
+          "effective tax rate",
+          "American Express",
+          "FY2021",
+          "FY2022"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 127,
+      "input": {
+        "entry_ids": [
+          "01KVJMJPETXANTPQ0YVPX0YTPG",
+          "01KVJMJJ0MS5XPGXKS4X5DSJ4R",
+          "01KVJMKR8DH4QTTF2JYXE0J53W",
+          "01KVJMKNA61SAZDCJ849R8JVCQ",
+          "01KVJMGCJ5QV1J6SRJ7V4KZXNW",
+          "01KVJKZJJ7T3J85J23THVA7NM2",
+          "01KVJMJD8G7DT3PX17WMWE1WD2",
+          "01KVJMJCJH3CH0143T5PS6GVTY",
+          "01KVJMG53ACYJ4K0GQYXF4PGN0",
+          "01KVJMH8HY3CVYCGC64KHNZYZF"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 77,
+        "edges": 72,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVJMJPETXANTPQ0YVPX0YTPG",
+    "01KVJMJJ0MS5XPGXKS4X5DSJ4R",
+    "01KVJMKR8DH4QTTF2JYXE0J53W",
+    "01KVJMKNA61SAZDCJ849R8JVCQ",
+    "01KVJMGCJ5QV1J6SRJ7V4KZXNW",
+    "01KVJKZJJ7T3J85J23THVA7NM2",
+    "01KVJMJD8G7DT3PX17WMWE1WD2",
+    "01KVJMJCJH3CH0143T5PS6GVTY",
+    "01KVJMG53ACYJ4K0GQYXF4PGN0",
+    "01KVJMH8HY3CVYCGC64KHNZYZF"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 38553,
+  "answer_generation": {
+    "input_tokens": 12440,
+    "output_tokens": 134,
+    "latency_ms": 3095,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"c\",\"reasoning\":\"그래프에서 'Effective tax rate' 엔티티의 설명에 따르면, 2021년에는 24.6%, 2022년에는 21.6%로 보고되었다. 따라서 2021년에서 2022년으로 효과세율이 24.6%에서 21.6%로 하락했다. 보기 c)가 이 내용을 정확히 반영한다. 다른 보기는 연도 또는 수치가 일치하지 않거나, 정보가 부족하다는 선택지가 있으나, 그래프에 명확한 수치가 있으므로 c)가 정답이다.\"}",
+    "parsed": {
+      "choice": "c",
+      "reasoning": "그래프에서 'Effective tax rate' 엔티티의 설명에 따르면, 2021년에는 24.6%, 2022년에는 21.6%로 보고되었다. 따라서 2021년에서 2022년으로 효과세율이 24.6%에서 21.6%로 하락했다. 보기 c)가 이 내용을 정확히 반영한다. 다른 보기는 연도 또는 수치가 일치하지 않거나, 정보가 부족하다는 선택지가 있으나, 그래프에 명확한 수치가 있으므로 c)가 정답이다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 32,
+  "total_input_tokens": 12931,
+  "total_output_tokens": 189,
+  "total_tokens": 13152,
+  "total_latency_ms": 6903
+}

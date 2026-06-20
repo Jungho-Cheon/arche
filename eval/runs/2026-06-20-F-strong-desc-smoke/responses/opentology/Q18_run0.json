@@ -1,0 +1,116 @@
+{
+  "column": "opentology",
+  "question_id": "Q18",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 484,
+    "output_tokens": 51,
+    "latency_ms": 1127,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"Boeing\",\"aliases\":[\"Boeing\"]},{\"canonical\":\"primary customers\",\"aliases\":[\"primary customers\",\"main customers\"]},{\"canonical\":\"FY2022\",\"aliases\":[\"FY2022\",\"Fiscal Year 2022\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "Boeing",
+          "aliases": [
+            "Boeing"
+          ]
+        },
+        {
+          "canonical": "primary customers",
+          "aliases": [
+            "primary customers",
+            "main customers"
+          ]
+        },
+        {
+          "canonical": "FY2022",
+          "aliases": [
+            "FY2022",
+            "Fiscal Year 2022"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 1031,
+      "input": {
+        "keywords": [
+          "Boeing",
+          "primary customers",
+          "main customers",
+          "FY2022",
+          "Fiscal Year 2022"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 154,
+      "input": {
+        "entry_ids": [
+          "01KVJMJCJH3CH0143T5PS6GVTY",
+          "01KVJMJD8G7DT3PX17WMWE1WD2",
+          "01KVJMMR0GPA97SH46HJMC2HQC",
+          "01KVJMKH2EW8T157PRNW8SD92G",
+          "01KVJMFVA7KEN9603CSKQ65N7S",
+          "01KVJKZNX9399QY5KQS0WSFF37",
+          "01KVJKZJJ7T3J85J23THVA7NM2",
+          "01KVJKY04WQN8ZXTG6QZQ9W44T",
+          "01KVJMKMNY9BQWTVF1T6MS9QB8",
+          "01KVJMKY1VVMC0GPE0G8S1H94A"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 80,
+        "edges": 78,
+        "truncated": true
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVJMJCJH3CH0143T5PS6GVTY",
+    "01KVJMJD8G7DT3PX17WMWE1WD2",
+    "01KVJMMR0GPA97SH46HJMC2HQC",
+    "01KVJMKH2EW8T157PRNW8SD92G",
+    "01KVJMFVA7KEN9603CSKQ65N7S",
+    "01KVJKZNX9399QY5KQS0WSFF37",
+    "01KVJKZJJ7T3J85J23THVA7NM2",
+    "01KVJKY04WQN8ZXTG6QZQ9W44T",
+    "01KVJMKMNY9BQWTVF1T6MS9QB8",
+    "01KVJMKY1VVMC0GPE0G8S1H94A"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 41032,
+  "answer_generation": {
+    "input_tokens": 13155,
+    "output_tokens": 111,
+    "latency_ms": 1564,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"e\",\"reasoning\":\"제공된 도메인 그래프에는 Boeing의 주요 고객에 대한 정보가 포함되어 있지 않다. Boeing 관련 엔티티와 관계는 주로 퇴직연금, 보상, 플랜, 내부 조직 등에 관한 내용이며, 고객(특히 FY2022 기준 주요 고객)에 대한 직접적인 언급이나 매출 비중 정보가 없다. 따라서 보기 중에서 정답을 도출할 수 있는 근거가 없어 '정보 부족'을 선택한다.\"}",
+    "parsed": {
+      "choice": "e",
+      "reasoning": "제공된 도메인 그래프에는 Boeing의 주요 고객에 대한 정보가 포함되어 있지 않다. Boeing 관련 엔티티와 관계는 주로 퇴직연금, 보상, 플랜, 내부 조직 등에 관한 내용이며, 고객(특히 FY2022 기준 주요 고객)에 대한 직접적인 언급이나 매출 비중 정보가 없다. 따라서 보기 중에서 정답을 도출할 수 있는 근거가 없어 '정보 부족'을 선택한다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 40,
+  "total_input_tokens": 13639,
+  "total_output_tokens": 162,
+  "total_tokens": 13841,
+  "total_latency_ms": 3876
+}

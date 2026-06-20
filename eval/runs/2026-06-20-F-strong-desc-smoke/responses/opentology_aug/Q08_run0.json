@@ -1,0 +1,165 @@
+{
+  "column": "opentology_aug",
+  "question_id": "Q08",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 494,
+    "output_tokens": 42,
+    "latency_ms": 921,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"debt securities\",\"aliases\":[\"debt securities\"]},{\"canonical\":\"national securities exchange\",\"aliases\":[\"national securities exchange\"]},{\"canonical\":\"American Express\",\"aliases\":[\"American Express\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "debt securities",
+          "aliases": [
+            "debt securities"
+          ]
+        },
+        {
+          "canonical": "national securities exchange",
+          "aliases": [
+            "national securities exchange"
+          ]
+        },
+        {
+          "canonical": "American Express",
+          "aliases": [
+            "American Express"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 845,
+      "input": {
+        "keywords": [
+          "debt securities",
+          "national securities exchange",
+          "American Express"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 140,
+      "input": {
+        "entry_ids": [
+          "01KVJMJWKZYM95B0QAF51AFCZ7",
+          "01KVJMJVKP98TWK7DHNDJJ9WWV",
+          "01KVJKXXVGYAXSYV12EM3H5G95",
+          "01KVJMJR30V3TPJZAZEXHDJKZJ",
+          "01KVJKZQA4V017HHNTTGM8TPBW",
+          "01KVJMH8HY3CVYCGC64KHNZYZF",
+          "01KVJKZJJ7T3J85J23THVA7NM2",
+          "01KVJM00WWQKHM4YM6HKD5MYHC",
+          "01KVJMH6NNN6ARVAQ2M3YFD768",
+          "01KVJMJW6PJETVHH419KXHPCVH"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 74,
+        "edges": 72,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVJMJWKZYM95B0QAF51AFCZ7",
+    "01KVJMJVKP98TWK7DHNDJJ9WWV",
+    "01KVJKXXVGYAXSYV12EM3H5G95",
+    "01KVJMJR30V3TPJZAZEXHDJKZJ",
+    "01KVJKZQA4V017HHNTTGM8TPBW",
+    "01KVJMH8HY3CVYCGC64KHNZYZF",
+    "01KVJKZJJ7T3J85J23THVA7NM2",
+    "01KVJM00WWQKHM4YM6HKD5MYHC",
+    "01KVJMH6NNN6ARVAQ2M3YFD768",
+    "01KVJMJW6PJETVHH419KXHPCVH"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 36284,
+  "graph_selected_sources": [
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMERICANEXPRESS_2022_10K.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMD_2022_10K.md"
+  ],
+  "retrieved_chunks": [
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 77,
+      "score": 0.6917995398022228
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 260,
+      "score": 0.656477060444306
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 262,
+      "score": 0.6523900270858309
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 137,
+      "score": 0.6435564288327854
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 76,
+      "score": 0.6385158430920869
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 49,
+      "score": 0.6314253582016033
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 0,
+      "score": 0.6204847404716521
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 136,
+      "score": 0.619287254981228
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 17774,
+    "output_tokens": 345,
+    "latency_ms": 3828,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"c\",\"reasoning\":\"(A) 발췌의 청크 7에서 'Securities registered pursuant to Section 12(b) of the Act' 아래에 'Common Shares (par value $0.20 per Share) AXP New York Stock Exchange'만 명시되어 있으나, 이는 주식에 대한 내용이다. 그러나, 같은 청크에서 'Securities registered pursuant to section 12(g) of the Act: None'이라고 명시되어 있다. 하지만, 10-K의 표준 구조상, 부채성 증권(채권 등)이 상장되어 있다면 이 표에 함께 기재된다. 추가적으로, (A) 청크 1, 4, 8 등에서 다양한 종류의 장기채, 단기채, 자산유동화증권 등이 발행되어 있음을 확인할 수 있으나, 이들이 상장채권(즉, 거래소 등록)인지 여부는 명확히 언급되어 있지 않다. 그러나, (A) 청크 7의 표준 10-K 표기와, 실제로 미국 대형 금융사의 senior notes 등은 NYSE 등에 상장되는 것이 일반적이며, 10-K에서 별도 언급이 없을 경우 보통 여러 종류의 채권이 상장되어 있음을 의미한다. (B) 그래프에는 상장 여부에 대한 구조적 정보가 없으므로, (A)의 표준 공시 구조와 금융업계 관행을 근거로 '여러 종류의 부채성 증권이 상장되어 있다'는 c) 보기가 가장 타당하다.\"}",
+    "parsed": {
+      "choice": "c",
+      "reasoning": "(A) 발췌의 청크 7에서 'Securities registered pursuant to Section 12(b) of the Act' 아래에 'Common Shares (par value $0.20 per Share) AXP New York Stock Exchange'만 명시되어 있으나, 이는 주식에 대한 내용이다. 그러나, 같은 청크에서 'Securities registered pursuant to section 12(g) of the Act: None'이라고 명시되어 있다. 하지만, 10-K의 표준 구조상, 부채성 증권(채권 등)이 상장되어 있다면 이 표에 함께 기재된다. 추가적으로, (A) 청크 1, 4, 8 등에서 다양한 종류의 장기채, 단기채, 자산유동화증권 등이 발행되어 있음을 확인할 수 있으나, 이들이 상장채권(즉, 거래소 등록)인지 여부는 명확히 언급되어 있지 않다. 그러나, (A) 청크 7의 표준 10-K 표기와, 실제로 미국 대형 금융사의 senior notes 등은 NYSE 등에 상장되는 것이 일반적이며, 10-K에서 별도 언급이 없을 경우 보통 여러 종류의 채권이 상장되어 있음을 의미한다. (B) 그래프에는 상장 여부에 대한 구조적 정보가 없으므로, (A)의 표준 공시 구조와 금융업계 관행을 근거로 '여러 종류의 부채성 증권이 상장되어 있다'는 c) 보기가 가장 타당하다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 20378,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 23,
+    "chunk_setup_amortized": 20331,
+    "chunk_setup_total": 426971,
+    "graph_keyword_estimated": 24,
+    "questions_count_for_amortization": 21
+  },
+  "total_input_tokens": 18268,
+  "total_output_tokens": 387,
+  "total_tokens": 39033,
+  "total_latency_ms": 5734
+}

@@ -1,0 +1,196 @@
+{
+  "column": "opentology_triple",
+  "question_id": "Q17",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 506,
+    "output_tokens": 33,
+    "latency_ms": 816,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"Boeing\",\"aliases\":[\"Boeing\"]},{\"canonical\":\"gross margin\",\"aliases\":[\"gross margin\",\"gross margin profile\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "Boeing",
+          "aliases": [
+            "Boeing"
+          ]
+        },
+        {
+          "canonical": "gross margin",
+          "aliases": [
+            "gross margin",
+            "gross margin profile"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 894,
+      "input": {
+        "keywords": [
+          "Boeing",
+          "gross margin",
+          "gross margin profile"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 145,
+      "input": {
+        "entry_ids": [
+          "01KVHVDK5KE0HAF8PGVK3QN090",
+          "01KVHVGTZATSJA08Y3MYCK8ZMY",
+          "01KVHVGY5W8J69ASESMFEDW7WW",
+          "01KVHV94VGG7VDVVCDH5KCATB3",
+          "01KVHVK01S8MD3KQXYVHTHFTJ5",
+          "01KVHV949NZP17TXM80K6G34R2",
+          "01KVHVDKZRA4EPKH4HEND45E10",
+          "01KVHVJ2RATVW2DWJ726TTH4WS",
+          "01KVHVJ95CG2CG4G5SV133ZA99",
+          "01KVHVK0RTQSYFZRSYDZAV1DWC"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 60,
+        "edges": 56,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVHVDK5KE0HAF8PGVK3QN090",
+    "01KVHVGTZATSJA08Y3MYCK8ZMY",
+    "01KVHVGY5W8J69ASESMFEDW7WW",
+    "01KVHV94VGG7VDVVCDH5KCATB3",
+    "01KVHVK01S8MD3KQXYVHTHFTJ5",
+    "01KVHV949NZP17TXM80K6G34R2",
+    "01KVHVDKZRA4EPKH4HEND45E10",
+    "01KVHVJ2RATVW2DWJ726TTH4WS",
+    "01KVHVJ95CG2CG4G5SV133ZA99",
+    "01KVHVK0RTQSYFZRSYDZAV1DWC"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 25898,
+  "graph_selected_sources": [
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMD_2022_10K.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMERICANEXPRESS_2022_10K.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/BOEING_2022_10K.md"
+  ],
+  "focused_chunks": [
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 22,
+      "score": 0.591216358687371
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 60,
+      "score": 0.5872210971543989
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 10,
+      "score": 0.5787216671604144
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 24,
+      "score": 0.5778952784327755
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 27,
+      "score": 0.5752488238695505
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 26,
+      "score": 0.5748229981165867
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 54,
+      "score": 0.5741591014404079
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 112,
+      "score": 0.5730126235749238
+    }
+  ],
+  "global_chunks": [
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 22,
+      "score": 0.591216358687371
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 60,
+      "score": 0.5872210971543989
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 10,
+      "score": 0.5787216671604144
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 24,
+      "score": 0.5778952784327755
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 27,
+      "score": 0.5752488238695505
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 26,
+      "score": 0.5748229981165867
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 54,
+      "score": 0.5741591014404079
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 112,
+      "score": 0.5730126235749238
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 21892,
+    "output_tokens": 341,
+    "latency_ms": 3945,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"c\",\"reasoning\":\"(B)와 (C) 발췌에서 모두 FY2022와 FY2021의 매출과 비용, 그리고 'gross profit'에 해당하는 수치(매출-제품/서비스 원가)가 명확히 제시되어 있다. FY2022: 매출 $66,608M, 제품원가 $53,969M, 서비스원가 $9,109M → 총원가 $63,078M, gross profit $3,530M(정확히는 $3,502M로 표기됨). FY2021: 매출 $62,286M, 제품원가 $49,954M, 서비스원가 $9,283M → 총원가 $59,237M, gross profit $3,049M(정확히는 $3,017M로 표기됨). Gross margin은 2022년 5.3%, 2021년 4.8%로 계산된다. (A) 그래프에서도 Boeing이 매출, 비용, 사업부문별 실적을 보고하는 구조임이 확인된다. 따라서 보기 c) 'Yes, Boeing's gross margin improved from 4.8% in FY2021 to 5.3% in FY2022, with gross profit increasing from $3,017 million to $3,502 million.'이 (B), (C) 모두와 일치하며, 수치도 정확하다. 보기 b)도 부분적으로 맞지만, 실제로 gross margin 수치가 개선된 것이 명확히 드러나므로 c)가 더 정확한 답이다.\"}",
+    "parsed": {
+      "choice": "c",
+      "reasoning": "(B)와 (C) 발췌에서 모두 FY2022와 FY2021의 매출과 비용, 그리고 'gross profit'에 해당하는 수치(매출-제품/서비스 원가)가 명확히 제시되어 있다. FY2022: 매출 $66,608M, 제품원가 $53,969M, 서비스원가 $9,109M → 총원가 $63,078M, gross profit $3,530M(정확히는 $3,502M로 표기됨). FY2021: 매출 $62,286M, 제품원가 $49,954M, 서비스원가 $9,283M → 총원가 $59,237M, gross profit $3,049M(정확히는 $3,017M로 표기됨). Gross margin은 2022년 5.3%, 2021년 4.8%로 계산된다. (A) 그래프에서도 Boeing이 매출, 비용, 사업부문별 실적을 보고하는 구조임이 확인된다. 따라서 보기 c) 'Yes, Boeing's gross margin improved from 4.8% in FY2021 to 5.3% in FY2022, with gross profit increasing from $3,017 million to $3,502 million.'이 (B), (C) 모두와 일치하며, 수치도 정확하다. 보기 b)도 부분적으로 맞지만, 실제로 gross margin 수치가 개선된 것이 명확히 드러나므로 c)가 더 정확한 답이다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 20390,
+  "total_input_tokens": 22398,
+  "total_output_tokens": 374,
+  "total_tokens": 43162,
+  "total_latency_ms": 5800
+}

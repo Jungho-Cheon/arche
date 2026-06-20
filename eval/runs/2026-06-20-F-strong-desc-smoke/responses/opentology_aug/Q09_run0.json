@@ -1,0 +1,152 @@
+{
+  "column": "opentology_aug",
+  "question_id": "Q09",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 488,
+    "output_tokens": 19,
+    "latency_ms": 831,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"American Express\",\"aliases\":[\"American Express\",\"Amex\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "American Express",
+          "aliases": [
+            "American Express",
+            "Amex"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 513,
+      "input": {
+        "keywords": [
+          "American Express",
+          "Amex"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 151,
+      "input": {
+        "entry_ids": [
+          "01KVJKZJJ7T3J85J23THVA7NM2",
+          "01KVJKZXXAZ6FN029GDEPEP70A",
+          "01KVJMJR30V3TPJZAZEXHDJKZJ",
+          "01KVJMH8HY3CVYCGC64KHNZYZF",
+          "01KVJKZQA4V017HHNTTGM8TPBW",
+          "01KVJMH6NNN6ARVAQ2M3YFD768",
+          "01KVJMJESSH7J8RN7XMF0978VE",
+          "01KVJMHGT2KQJA29EXQ8G5CR54",
+          "01KVJKZPGEG45QPH2SRXGGY453",
+          "01KVJMHHJHVGTVGMXCA671XQNE"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 80,
+        "edges": 79,
+        "truncated": true
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVJKZJJ7T3J85J23THVA7NM2",
+    "01KVJKZXXAZ6FN029GDEPEP70A",
+    "01KVJMJR30V3TPJZAZEXHDJKZJ",
+    "01KVJMH8HY3CVYCGC64KHNZYZF",
+    "01KVJKZQA4V017HHNTTGM8TPBW",
+    "01KVJMH6NNN6ARVAQ2M3YFD768",
+    "01KVJMJESSH7J8RN7XMF0978VE",
+    "01KVJMHGT2KQJA29EXQ8G5CR54",
+    "01KVJKZPGEG45QPH2SRXGGY453",
+    "01KVJMHHJHVGTVGMXCA671XQNE"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 39328,
+  "graph_selected_sources": [
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMERICANEXPRESS_2022_10K.md"
+  ],
+  "retrieved_chunks": [
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 6,
+      "score": 0.6906732304308199
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 4,
+      "score": 0.6838434649872712
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 5,
+      "score": 0.6784436467328375
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 165,
+      "score": 0.6561015521598221
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 3,
+      "score": 0.6476672110386512
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 260,
+      "score": 0.6227594642017279
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 7,
+      "score": 0.6085093085237565
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 48,
+      "score": 0.6077538231173956
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 17807,
+    "output_tokens": 178,
+    "latency_ms": 2049,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"a\",\"reasoning\":\"(A) 발췌에서 'Jurisdictions that represent a significant portion of our billed business outside of the United States include the United Kingdom (UK), the European Union (EU), Australia, Japan, Canada and Mexico.'라는 구체적 언급이 있습니다. 이로부터 미국(United States), 유럽(Europe: UK, EU), 아시아(Asia: Japan), 그리고 라틴 아메리카(Latin America: Mexico) 및 캐나다가 주요 지역임을 알 수 있습니다. (B) 그래프에는 지역 구분이 명확히 구조적으로 표현되어 있지 않으나, (A)에서의 구체적 국가/지역 언급이 결정적 근거입니다. 따라서 가장 근접한 보기는 a) United States, Europe, Asia, and Latin America 입니다.\"}",
+    "parsed": {
+      "choice": "a",
+      "reasoning": "(A) 발췌에서 'Jurisdictions that represent a significant portion of our billed business outside of the United States include the United Kingdom (UK), the European Union (EU), Australia, Japan, Canada and Mexico.'라는 구체적 언급이 있습니다. 이로부터 미국(United States), 유럽(Europe: UK, EU), 아시아(Asia: Japan), 그리고 라틴 아메리카(Latin America: Mexico) 및 캐나다가 주요 지역임을 알 수 있습니다. (B) 그래프에는 지역 구분이 명확히 구조적으로 표현되어 있지 않으나, (A)에서의 구체적 국가/지역 언급이 결정적 근거입니다. 따라서 가장 근접한 보기는 a) United States, Europe, Asia, and Latin America 입니다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 20364,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 17,
+    "chunk_setup_amortized": 20331,
+    "chunk_setup_total": 426971,
+    "graph_keyword_estimated": 16,
+    "questions_count_for_amortization": 21
+  },
+  "total_input_tokens": 18295,
+  "total_output_tokens": 197,
+  "total_tokens": 38856,
+  "total_latency_ms": 3544
+}

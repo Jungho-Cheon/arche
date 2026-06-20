@@ -1,0 +1,201 @@
+{
+  "column": "opentology_triple",
+  "question_id": "Q11",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 508,
+    "output_tokens": 40,
+    "latency_ms": 885,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"gross margin\",\"aliases\":[\"gross margin\"]},{\"canonical\":\"FY2022\",\"aliases\":[\"FY2022\"]},{\"canonical\":\"American Express\",\"aliases\":[\"American Express\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "gross margin",
+          "aliases": [
+            "gross margin"
+          ]
+        },
+        {
+          "canonical": "FY2022",
+          "aliases": [
+            "FY2022"
+          ]
+        },
+        {
+          "canonical": "American Express",
+          "aliases": [
+            "American Express"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 622,
+      "input": {
+        "keywords": [
+          "gross margin",
+          "FY2022",
+          "American Express"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 191,
+      "input": {
+        "entry_ids": [
+          "01KVHVCP9JF4XN5VCF0HAQ0ANF",
+          "01KVHVFQJBHM6CJDY43KR672ME",
+          "01KVHVCQG19MMR0HZR7AP9FJ0M",
+          "01KVHVEGQRTBB9ZNM04TFST0BE",
+          "01KVHVFPRJK3HJNPANNJ47FG55",
+          "01KVHVCPZJW2SENJEEKSYQQ4HB",
+          "01KVHVESTC9KMTJN4RT65BZK6H",
+          "01KVHVCTAQJG7W5EWB30M9SV7Z",
+          "01KVHVHGM15GM1MGSYPCXT9Z2S",
+          "01KVHVDK5KE0HAF8PGVK3QN090"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 71,
+        "edges": 72,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVHVCP9JF4XN5VCF0HAQ0ANF",
+    "01KVHVFQJBHM6CJDY43KR672ME",
+    "01KVHVCQG19MMR0HZR7AP9FJ0M",
+    "01KVHVEGQRTBB9ZNM04TFST0BE",
+    "01KVHVFPRJK3HJNPANNJ47FG55",
+    "01KVHVCPZJW2SENJEEKSYQQ4HB",
+    "01KVHVESTC9KMTJN4RT65BZK6H",
+    "01KVHVCTAQJG7W5EWB30M9SV7Z",
+    "01KVHVHGM15GM1MGSYPCXT9Z2S",
+    "01KVHVDK5KE0HAF8PGVK3QN090"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 34151,
+  "graph_selected_sources": [
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMERICANEXPRESS_2022_10K.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/BOEING_2022_10K.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMD_2022_10K.md"
+  ],
+  "focused_chunks": [
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 72,
+      "score": 0.638829820835636
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 51,
+      "score": 0.6309442813787864
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 4,
+      "score": 0.6252159914691284
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 6,
+      "score": 0.6136194655704628
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 49,
+      "score": 0.5988632588716658
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 5,
+      "score": 0.5973117319550698
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 54,
+      "score": 0.5962724360171529
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 53,
+      "score": 0.5934037867113717
+    }
+  ],
+  "global_chunks": [
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 72,
+      "score": 0.638829820835636
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 51,
+      "score": 0.6309442813787864
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 4,
+      "score": 0.6252159914691284
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 6,
+      "score": 0.6136194655704628
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 49,
+      "score": 0.5988632588716658
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 5,
+      "score": 0.5973117319550698
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 54,
+      "score": 0.5962724360171529
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 53,
+      "score": 0.5934037867113717
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 22810,
+    "output_tokens": 270,
+    "latency_ms": 3285,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"a\",\"reasoning\":\"(A) 도메인 그래프와 (B), (C) 발췌 모두 American Express의 사업 모델과 재무 성과를 설명할 때 'gross margin'이라는 용어를 사용하지 않으며, 실제로 은행/카드사와 같은 금융 서비스 기업은 gross margin(매출총이익률) 대신 'net interest income', 'discount revenue', 'service fees', 'operating expenses' 등 다양한 수익/비용 항목을 중심으로 성과를 측정합니다. (B2, C2)에서 회사의 주요 수익원과 비용 구조가 상세히 설명되어 있지만, 제조업이나 유통업에서처럼 매출원가(COGS)와 매출총이익(gross margin) 개념이 적용되지 않음을 명확히 알 수 있습니다. (B7, C7)에서도 수익성 지표로 gross margin이 언급되지 않고, 대신 다양한 수익/비용 항목과 그 변동이 설명됩니다. 따라서 정답은 'a) Performance is not measured through gross margin for American Express'가 되며, 이는 (B), (C) 발췌와 (A) 그래프 구조 모두에서 일관되게 확인됩니다.\"}",
+    "parsed": {
+      "choice": "a",
+      "reasoning": "(A) 도메인 그래프와 (B), (C) 발췌 모두 American Express의 사업 모델과 재무 성과를 설명할 때 'gross margin'이라는 용어를 사용하지 않으며, 실제로 은행/카드사와 같은 금융 서비스 기업은 gross margin(매출총이익률) 대신 'net interest income', 'discount revenue', 'service fees', 'operating expenses' 등 다양한 수익/비용 항목을 중심으로 성과를 측정합니다. (B2, C2)에서 회사의 주요 수익원과 비용 구조가 상세히 설명되어 있지만, 제조업이나 유통업에서처럼 매출원가(COGS)와 매출총이익(gross margin) 개념이 적용되지 않음을 명확히 알 수 있습니다. (B7, C7)에서도 수익성 지표로 gross margin이 언급되지 않고, 대신 다양한 수익/비용 항목과 그 변동이 설명됩니다. 따라서 정답은 'a) Performance is not measured through gross margin for American Express'가 되며, 이는 (B), (C) 발췌와 (A) 그래프 구조 모두에서 일관되게 확인됩니다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 20392,
+  "total_input_tokens": 23318,
+  "total_output_tokens": 310,
+  "total_tokens": 44020,
+  "total_latency_ms": 4983
+}

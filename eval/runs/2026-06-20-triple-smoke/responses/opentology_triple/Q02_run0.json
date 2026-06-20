@@ -1,0 +1,201 @@
+{
+  "column": "opentology_triple",
+  "question_id": "Q02",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 486,
+    "output_tokens": 32,
+    "latency_ms": 1022,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"AMD\",\"aliases\":[\"AMD\"]},{\"canonical\":\"products\",\"aliases\":[\"products\"]},{\"canonical\":\"services\",\"aliases\":[\"services\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "AMD",
+          "aliases": [
+            "AMD"
+          ]
+        },
+        {
+          "canonical": "products",
+          "aliases": [
+            "products"
+          ]
+        },
+        {
+          "canonical": "services",
+          "aliases": [
+            "services"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 685,
+      "input": {
+        "keywords": [
+          "AMD",
+          "products",
+          "services"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 218,
+      "input": {
+        "entry_ids": [
+          "01KVHVDH3619W87GXP9H13YJH9",
+          "01KVHVGX1D2SSPE30JBTW7YVN9",
+          "01KVHV8TWX6BRMKWKKK5N8EF0W",
+          "01KVHVDG2HH8NASWVJND7R7030",
+          "01KVHV99K0MJYZQXRKN8KSA80E",
+          "01KVHVETT52D58KMX4B4TBDPE0",
+          "01KVHVAWCP5E2D5CKYF2DXSZS9",
+          "01KVHVK3S5VKXBF4QYATTK53RM",
+          "01KVHVEVA4GM91VE8TCHY58H5V",
+          "01KVHVFXGCSD0ZZC4EKKE392V4"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 80,
+        "edges": 71,
+        "truncated": true
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVHVDH3619W87GXP9H13YJH9",
+    "01KVHVGX1D2SSPE30JBTW7YVN9",
+    "01KVHV8TWX6BRMKWKKK5N8EF0W",
+    "01KVHVDG2HH8NASWVJND7R7030",
+    "01KVHV99K0MJYZQXRKN8KSA80E",
+    "01KVHVETT52D58KMX4B4TBDPE0",
+    "01KVHVAWCP5E2D5CKYF2DXSZS9",
+    "01KVHVK3S5VKXBF4QYATTK53RM",
+    "01KVHVEVA4GM91VE8TCHY58H5V",
+    "01KVHVFXGCSD0ZZC4EKKE392V4"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 31374,
+  "graph_selected_sources": [
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMD_2022_10K.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMERICANEXPRESS_2022_10K.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/BOEING_2022_10K.md"
+  ],
+  "focused_chunks": [
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 3,
+      "score": 0.6949071551202403
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 13,
+      "score": 0.6934068813069868
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 10,
+      "score": 0.6857203211067443
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 4,
+      "score": 0.6735775429631151
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 2,
+      "score": 0.6703390978121893
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 48,
+      "score": 0.6649822182742322
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 47,
+      "score": 0.6639077045578893
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 46,
+      "score": 0.649953616908637
+    }
+  ],
+  "global_chunks": [
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 3,
+      "score": 0.6949071551202403
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 13,
+      "score": 0.6934068813069868
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 10,
+      "score": 0.6857203211067443
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 4,
+      "score": 0.6735775429631151
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 2,
+      "score": 0.6703390978121893
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 48,
+      "score": 0.6649822182742322
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 47,
+      "score": 0.6639077045578893
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 46,
+      "score": 0.649953616908637
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 24486,
+    "output_tokens": 205,
+    "latency_ms": 3846,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"a\",\"reasoning\":\"(A) 도메인 그래프에서 AMD가 FY22 기준으로 판매하는 주요 제품 및 서비스로 서버용 CPU, GPU, DPU, FPGA, Adaptive SoC(데이터센터용), PC용 CPU/APU/칩셋, 디스크리트 GPU, 세미커스텀 SoC, 개발 서비스, 임베디드용 CPU/GPU/APU/FPGA/Adaptive SoC가 모두 명시되어 있습니다. (B)와 (C) 발췌에서도 동일하게 이들 제품군이 반복적으로 언급되고, 특히 AMD가 세미커스텀 SoC, 개발 서비스, 임베디드 제품까지 제공함이 명확히 드러납니다. b, c, d 보기들은 일부 제품군을 누락하거나 잘못 기술하고 있습니다. (A), (B), (C) 모두가 보기 a와 일치하므로 a가 정답입니다.\"}",
+    "parsed": {
+      "choice": "a",
+      "reasoning": "(A) 도메인 그래프에서 AMD가 FY22 기준으로 판매하는 주요 제품 및 서비스로 서버용 CPU, GPU, DPU, FPGA, Adaptive SoC(데이터센터용), PC용 CPU/APU/칩셋, 디스크리트 GPU, 세미커스텀 SoC, 개발 서비스, 임베디드용 CPU/GPU/APU/FPGA/Adaptive SoC가 모두 명시되어 있습니다. (B)와 (C) 발췌에서도 동일하게 이들 제품군이 반복적으로 언급되고, 특히 AMD가 세미커스텀 SoC, 개발 서비스, 임베디드 제품까지 제공함이 명확히 드러납니다. b, c, d 보기들은 일부 제품군을 누락하거나 잘못 기술하고 있습니다. (A), (B), (C) 모두가 보기 a와 일치하므로 a가 정답입니다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 20370,
+  "total_input_tokens": 24972,
+  "total_output_tokens": 237,
+  "total_tokens": 45579,
+  "total_latency_ms": 5771
+}

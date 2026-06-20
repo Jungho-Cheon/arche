@@ -1,0 +1,157 @@
+{
+  "column": "opentology_aug",
+  "question_id": "Q14",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 484,
+    "output_tokens": 27,
+    "latency_ms": 698,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"American Express\",\"aliases\":[\"American Express\"]},{\"canonical\":\"card members\",\"aliases\":[\"card members\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "American Express",
+          "aliases": [
+            "American Express"
+          ]
+        },
+        {
+          "canonical": "card members",
+          "aliases": [
+            "card members"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 602,
+      "input": {
+        "keywords": [
+          "American Express",
+          "card members"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 133,
+      "input": {
+        "entry_ids": [
+          "01KVJKZJJ7T3J85J23THVA7NM2",
+          "01KVJKZZ4QT8TGYDGG7G523X9Z",
+          "01KVJMJSG7F5J9028MTANSNKRR",
+          "01KVJMJR30V3TPJZAZEXHDJKZJ",
+          "01KVJMH8HY3CVYCGC64KHNZYZF",
+          "01KVJKZZPVS27CMNAPSJ13ZEG0",
+          "01KVJMG7XDM95PJ4RXJY8PB8JQ",
+          "01KVJMG6JVH49DC10JHWY1XWZ7",
+          "01KVJMJT1D67TFT78FXHWD179W",
+          "01KVJKZQA4V017HHNTTGM8TPBW"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 67,
+        "edges": 69,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVJKZJJ7T3J85J23THVA7NM2",
+    "01KVJKZZ4QT8TGYDGG7G523X9Z",
+    "01KVJMJSG7F5J9028MTANSNKRR",
+    "01KVJMJR30V3TPJZAZEXHDJKZJ",
+    "01KVJMH8HY3CVYCGC64KHNZYZF",
+    "01KVJKZZPVS27CMNAPSJ13ZEG0",
+    "01KVJMG7XDM95PJ4RXJY8PB8JQ",
+    "01KVJMG6JVH49DC10JHWY1XWZ7",
+    "01KVJMJT1D67TFT78FXHWD179W",
+    "01KVJKZQA4V017HHNTTGM8TPBW"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 33770,
+  "graph_selected_sources": [
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMERICANEXPRESS_2022_10K.md"
+  ],
+  "retrieved_chunks": [
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 54,
+      "score": 0.6253459095761862
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 6,
+      "score": 0.6178771366507546
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 53,
+      "score": 0.6110299071109268
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 99,
+      "score": 0.5882135575209241
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 72,
+      "score": 0.5791012787007733
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 4,
+      "score": 0.5788586595828755
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 32,
+      "score": 0.5728452816540859
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 57,
+      "score": 0.5691376264442947
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 17787,
+    "output_tokens": 110,
+    "latency_ms": 1491,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"b\",\"reasoning\":\"(A) contains explicit statements that card member retention remained high in 2022: 'Net card fees increased 17 percent year over-year, as new card acquisitions reached record levels in 2022 and Card Member retention remained high, demonstrating the impact of investments we have made in our premium value propositions.' This is a direct answer to the question. (B) does not contradict this and does not provide more granular or conflicting structural information. Therefore, (A) is decisive and supports choice (b).\"}",
+    "parsed": {
+      "choice": "b",
+      "reasoning": "(A) contains explicit statements that card member retention remained high in 2022: 'Net card fees increased 17 percent year over-year, as new card acquisitions reached record levels in 2022 and Card Member retention remained high, demonstrating the impact of investments we have made in our premium value propositions.' This is a direct answer to the question. (B) does not contradict this and does not provide more granular or conflicting structural information. Therefore, (A) is decisive and supports choice (b)."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 20360,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 13,
+    "chunk_setup_amortized": 20331,
+    "chunk_setup_total": 426971,
+    "graph_keyword_estimated": 16,
+    "questions_count_for_amortization": 21
+  },
+  "total_input_tokens": 18271,
+  "total_output_tokens": 137,
+  "total_tokens": 38768,
+  "total_latency_ms": 2924
+}

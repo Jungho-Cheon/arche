@@ -1,0 +1,164 @@
+{
+  "column": "opentology_aug",
+  "question_id": "Q13",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 487,
+    "output_tokens": 38,
+    "latency_ms": 819,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"American Express\",\"aliases\":[\"American Express\"]},{\"canonical\":\"Balance Sheet\",\"aliases\":[\"Balance Sheet\"]},{\"canonical\":\"liability\",\"aliases\":[\"liability\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "American Express",
+          "aliases": [
+            "American Express"
+          ]
+        },
+        {
+          "canonical": "Balance Sheet",
+          "aliases": [
+            "Balance Sheet"
+          ]
+        },
+        {
+          "canonical": "liability",
+          "aliases": [
+            "liability"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 859,
+      "input": {
+        "keywords": [
+          "American Express",
+          "Balance Sheet",
+          "liability"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 155,
+      "input": {
+        "entry_ids": [
+          "01KVJMJT1D67TFT78FXHWD179W",
+          "01KVJKZZPVS27CMNAPSJ13ZEG0",
+          "01KVJKZJJ7T3J85J23THVA7NM2",
+          "01KVJMJR30V3TPJZAZEXHDJKZJ",
+          "01KVJMH8HY3CVYCGC64KHNZYZF",
+          "01KVJMJS3SN40567S553SEXP5V",
+          "01KVJM00WWQKHM4YM6HKD5MYHC",
+          "01KVJMH6NNN6ARVAQ2M3YFD768",
+          "01KVJKZQA4V017HHNTTGM8TPBW",
+          "01KVJMJESSH7J8RN7XMF0978VE"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 80,
+        "edges": 80,
+        "truncated": true
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVJMJT1D67TFT78FXHWD179W",
+    "01KVJKZZPVS27CMNAPSJ13ZEG0",
+    "01KVJKZJJ7T3J85J23THVA7NM2",
+    "01KVJMJR30V3TPJZAZEXHDJKZJ",
+    "01KVJMH8HY3CVYCGC64KHNZYZF",
+    "01KVJMJS3SN40567S553SEXP5V",
+    "01KVJM00WWQKHM4YM6HKD5MYHC",
+    "01KVJMH6NNN6ARVAQ2M3YFD768",
+    "01KVJKZQA4V017HHNTTGM8TPBW",
+    "01KVJMJESSH7J8RN7XMF0978VE"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 39950,
+  "graph_selected_sources": [
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMERICANEXPRESS_2022_10K.md"
+  ],
+  "retrieved_chunks": [
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 77,
+      "score": 0.6824459113751863
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 137,
+      "score": 0.6694014806918115
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 151,
+      "score": 0.6660343963677496
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 72,
+      "score": 0.6534701892175202
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 164,
+      "score": 0.6421725353600571
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 136,
+      "score": 0.6361374650397575
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 177,
+      "score": 0.6173713191547353
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 6,
+      "score": 0.6113648788609296
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 19244,
+    "output_tokens": 123,
+    "latency_ms": 3637,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"d\",\"reasoning\":\"(A) provides detailed balance sheet figures, including long-term debt ($42.6B as of Dec 31, 2022) and customer deposits ($110.2B as of Dec 31, 2022). (B) confirms these numbers and their definitions. Comparing the values, customer deposits are significantly larger than long-term debt or any other listed liability. Therefore, the largest liability in American Express's Balance Sheet in 2022 was customer deposits. The decisive evidence is the quantitative data in (A), supported by the entity relationships in (B).\"}",
+    "parsed": {
+      "choice": "d",
+      "reasoning": "(A) provides detailed balance sheet figures, including long-term debt ($42.6B as of Dec 31, 2022) and customer deposits ($110.2B as of Dec 31, 2022). (B) confirms these numbers and their definitions. Comparing the values, customer deposits are significantly larger than long-term debt or any other listed liability. Therefore, the largest liability in American Express's Balance Sheet in 2022 was customer deposits. The decisive evidence is the quantitative data in (A), supported by the entity relationships in (B)."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 20371,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 16,
+    "chunk_setup_amortized": 20331,
+    "chunk_setup_total": 426971,
+    "graph_keyword_estimated": 24,
+    "questions_count_for_amortization": 21
+  },
+  "total_input_tokens": 19731,
+  "total_output_tokens": 161,
+  "total_tokens": 40263,
+  "total_latency_ms": 5470
+}
