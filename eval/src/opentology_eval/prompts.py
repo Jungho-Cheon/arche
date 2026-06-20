@@ -114,6 +114,44 @@ def build_opentology_answer_user(
     )
 
 
+# --- Combined 컬럼 (post-MVP 진단) — chunk + subgraph 단일 호출 ---
+#
+# WHY 별도 컬럼: 95K 본 측정 결과 chunk(96.7%) 와 graph(96.7%) 의 오답 집합이
+# 완전히 비겹침 (Q02 chunk-only, Q25 graph-only). 따로 호출 후 라우팅하면 비용이
+# 약 2 배, 라우터 자체가 또 다른 휴리스틱. 두 retrieval 결과를 하나의 컨텍스트로
+# 합쳐 단일 LLM 호출에 넣으면 LLM 이 두 신호를 내부 비교한다 (라우터 불필요).
+# 가설: Combined ≥ max(chunk, graph).
+
+COMBINED_SYSTEM = """당신은 도메인 전문가입니다. 아래에 같은 코퍼스에서 두 가지 방식으로
+추출된 정보가 함께 제공됩니다:
+  (A) 검색된 문서 발췌 — 벡터 RAG 의 top-k 청크.
+  (B) 도메인 그래프 — 질문에서 추출한 엔티티 주변의 서브그래프와 경로.
+
+두 정보를 모두 읽고, 사용자의 질문에 대한 정답 보기를 고른 뒤 이유를 설명하세요.
+
+답변 형식 (반드시 이 JSON 스키마):
+{
+  "choice": "a" | "b" | "c" | "d" | "e",
+  "reasoning": "정답으로 가는 추론 과정. (A) 발췌 또는 (B) 그래프 중 어느 근거가 결정적이었는지 명시."
+}
+
+원칙:
+- 두 출처가 일치하면 그 답을 우선.
+- 두 출처가 상충하면 더 구체적이고 명시적인 근거를 가진 쪽을 택하고, 그 이유를 reasoning 에 명시.
+- 어느 쪽에도 답이 없으면 "정보 부족" 옵션을 선택."""
+
+
+def build_combined_user(
+    *, chunks_block: str, subgraph_text: str, question: str, options_block: str
+) -> str:
+    return (
+        f"[A. 검색된 문서 발췌]\n{chunks_block}\n\n"
+        f"[B. 도메인 그래프]\n{subgraph_text}\n\n"
+        f"[질문]\n{question}\n\n"
+        f"[보기]\n{options_block}"
+    )
+
+
 # WHY json_schema (strict): anchor 추출의 파싱 안정성을 답변 생성과 같은 방식으로 강제.
 # OpenAI 의 strict=True 는 schema 위반 시 자동 retry / 거부.
 RESPONSE_FORMAT_ANCHOR_ENTITIES: dict = {
