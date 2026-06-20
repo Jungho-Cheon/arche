@@ -1,0 +1,65 @@
+{
+  "column": "chunk_rag",
+  "question_id": "Q14",
+  "run_index": 0,
+  "input_tokens": 6724,
+  "output_tokens": 85,
+  "embedding_tokens": 20344,
+  "embedding_tokens_breakdown": {
+    "question_embedding": 13,
+    "setup_amortized": 20331,
+    "setup_total": 426971,
+    "questions_count_for_amortization": 21
+  },
+  "total_tokens": 27153,
+  "latency_ms": 1412,
+  "model": "gpt-4.1",
+  "retrieved_chunks": [
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 54,
+      "score": 0.6253209351340883
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 6,
+      "score": 0.6180776472949111
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 53,
+      "score": 0.6109771703025769
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 99,
+      "score": 0.5882163990957492
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 72,
+      "score": 0.5791058967179893
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 4,
+      "score": 0.5788888115049232
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 32,
+      "score": 0.5729777791332021
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 57,
+      "score": 0.5691548585947402
+    }
+  ],
+  "raw_response": "{\"choice\":\"b\",\"reasoning\":\"청크 1과 청크 3에서 2022년에 대해 'Card Member retention remained high'라고 명확히 언급하고 있습니다. 이는 American Express가 2022년 동안 카드 회원을 성공적으로 유지했음을 의미합니다. 따라서 보기 b) 'Yes, American Express was able to retain card members during 2022.'가 정답입니다.\"}",
+  "parsed": {
+    "choice": "b",
+    "reasoning": "청크 1과 청크 3에서 2022년에 대해 'Card Member retention remained high'라고 명확히 언급하고 있습니다. 이는 American Express가 2022년 동안 카드 회원을 성공적으로 유지했음을 의미합니다. 따라서 보기 b) 'Yes, American Express was able to retain card members during 2022.'가 정답입니다."
+  },
+  "parse_error": null
+}

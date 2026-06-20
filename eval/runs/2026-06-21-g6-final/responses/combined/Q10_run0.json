@@ -1,0 +1,158 @@
+{
+  "column": "combined",
+  "question_id": "Q10",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 507,
+    "output_tokens": 37,
+    "latency_ms": 1114,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"AMEX\",\"aliases\":[\"AMEX\",\"American Express\"]},{\"canonical\":\"operating margin\",\"aliases\":[\"operating margin\",\"operating margin profile\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "AMEX",
+          "aliases": [
+            "AMEX",
+            "American Express"
+          ]
+        },
+        {
+          "canonical": "operating margin",
+          "aliases": [
+            "operating margin",
+            "operating margin profile"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 674,
+      "input": {
+        "keywords": [
+          "AMEX",
+          "American Express",
+          "operating margin",
+          "operating margin profile"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 196,
+      "input": {
+        "entry_ids": [
+          "01KVJT3X5C89HWRQK8Y3RMP5GD",
+          "01KVJT5CVABCZDRHBSEM3HE630",
+          "01KVJT3YEH04T5E9EF4ASTQYRJ",
+          "01KVJT6AQZSWY9CGS8HZXYE0PH",
+          "01KVJT529E25Z5SRMP7PXBRDZ2",
+          "01KVJT7AYMYNKYTHDW0V0TD63C",
+          "01KVJT5G5VSSVDYH2KY6P93QHX",
+          "01KVJT79R7N0482Q7YRZZKE24K",
+          "01KVJT52TPAPK5QHVR01WKDN4R",
+          "01KVJT4PHYWVRCVRE3RB5AP17A"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 80,
+        "edges": 78,
+        "truncated": true
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVJT3X5C89HWRQK8Y3RMP5GD",
+    "01KVJT5CVABCZDRHBSEM3HE630",
+    "01KVJT3YEH04T5E9EF4ASTQYRJ",
+    "01KVJT6AQZSWY9CGS8HZXYE0PH",
+    "01KVJT529E25Z5SRMP7PXBRDZ2",
+    "01KVJT7AYMYNKYTHDW0V0TD63C",
+    "01KVJT5G5VSSVDYH2KY6P93QHX",
+    "01KVJT79R7N0482Q7YRZZKE24K",
+    "01KVJT52TPAPK5QHVR01WKDN4R",
+    "01KVJT4PHYWVRCVRE3RB5AP17A"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 37104,
+  "retrieved_chunks": [
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 54,
+      "score": 0.619700489632218
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 72,
+      "score": 0.6085186661930683
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 53,
+      "score": 0.6026396137608135
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 51,
+      "score": 0.6012891128600275
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 49,
+      "score": 0.5901288425595155
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 4,
+      "score": 0.5889559052985764
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 6,
+      "score": 0.5845059490104674
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 3,
+      "score": 0.5805269911287801
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 17638,
+    "output_tokens": 277,
+    "latency_ms": 4166,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"b\",\"reasoning\":\"(A) 검색된 문서 발췌에서 AMEX의 실적 평가는 주로 네트워크 볼륨(카드 사용액), 수익 성장, 신용 지표, 카드 회원 확보 및 유지, 그리고 다양한 수익원(할인 수수료, 카드 수수료, 서비스 수수료, 순이자수익 등)에 기반함을 반복적으로 강조하고 있습니다. 특히 'billed business'와 'discount revenue'가 가장 중요한 지표로 언급되며, 실제로 'operating margin'이라는 용어는 등장하지 않고, 경영진 논의에서도 이익률보다는 수익 성장, 신용 손실 충당금, 투자, 비용 효율성 등이 주요 평가 기준임을 알 수 있습니다. (B) 도메인 그래프에서도 AMEX의 비즈니스 모델이 'spend-centric'임을 명확히 보여주며, 카드 사용액과 네트워크 볼륨이 핵심임을 뒷받침합니다. 따라서 AMEX와 같은 결제 네트워크/카드사에서는 전통적인 제조업/서비스업에서의 'operating margin'이 주요 성과 지표가 아니며, 이 점을 명확히 설명하는 것이 정답입니다.\"}",
+    "parsed": {
+      "choice": "b",
+      "reasoning": "(A) 검색된 문서 발췌에서 AMEX의 실적 평가는 주로 네트워크 볼륨(카드 사용액), 수익 성장, 신용 지표, 카드 회원 확보 및 유지, 그리고 다양한 수익원(할인 수수료, 카드 수수료, 서비스 수수료, 순이자수익 등)에 기반함을 반복적으로 강조하고 있습니다. 특히 'billed business'와 'discount revenue'가 가장 중요한 지표로 언급되며, 실제로 'operating margin'이라는 용어는 등장하지 않고, 경영진 논의에서도 이익률보다는 수익 성장, 신용 손실 충당금, 투자, 비용 효율성 등이 주요 평가 기준임을 알 수 있습니다. (B) 도메인 그래프에서도 AMEX의 비즈니스 모델이 'spend-centric'임을 명확히 보여주며, 카드 사용액과 네트워크 볼륨이 핵심임을 뒷받침합니다. 따라서 AMEX와 같은 결제 네트워크/카드사에서는 전통적인 제조업/서비스업에서의 'operating margin'이 주요 성과 지표가 아니며, 이 점을 명확히 설명하는 것이 정답입니다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 20399,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 36,
+    "chunk_setup_amortized": 20331,
+    "chunk_setup_total": 426971,
+    "graph_keyword_estimated": 32,
+    "questions_count_for_amortization": 21
+  },
+  "total_input_tokens": 18145,
+  "total_output_tokens": 314,
+  "total_tokens": 38858,
+  "total_latency_ms": 6150
+}

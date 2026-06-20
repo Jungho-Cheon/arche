@@ -1,0 +1,191 @@
+{
+  "column": "opentology_aug",
+  "question_id": "Q18",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 484,
+    "output_tokens": 51,
+    "latency_ms": 884,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"Boeing\",\"aliases\":[\"Boeing\"]},{\"canonical\":\"primary customers\",\"aliases\":[\"primary customers\",\"main customers\"]},{\"canonical\":\"FY2022\",\"aliases\":[\"FY2022\",\"Fiscal Year 2022\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "Boeing",
+          "aliases": [
+            "Boeing"
+          ]
+        },
+        {
+          "canonical": "primary customers",
+          "aliases": [
+            "primary customers",
+            "main customers"
+          ]
+        },
+        {
+          "canonical": "FY2022",
+          "aliases": [
+            "FY2022",
+            "Fiscal Year 2022"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 1195,
+      "input": {
+        "keywords": [
+          "Boeing",
+          "primary customers",
+          "main customers",
+          "FY2022",
+          "Fiscal Year 2022"
+        ],
+        "limit": 20,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 20
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 80,
+      "input": {
+        "entry_ids": [
+          "01KVJT9QR4T2T313V1XH75TJF6",
+          "01KVJT4NF0NPK4ECBEVSS86D41",
+          "01KVJT9N6B3CXMJ2PDR22GSEW1",
+          "01KVJT7FVBYXA51S69YA5RTX3J",
+          "01KVJT7F2ZYC3NVWPG0YRYT604",
+          "01KVJTAYE40VP67QRT1Q0XGR5W",
+          "01KVJT7HYHV1T52X34CFK0FDWG",
+          "01KVJTARR72X00NCK0MVFETHTD",
+          "01KVJT1Y7157P5AVAW2549J457",
+          "01KVJTAA1VTT87ZEGV59W7W0T5"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 41,
+        "edges": 36,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVJT9QR4T2T313V1XH75TJF6",
+    "01KVJT4NF0NPK4ECBEVSS86D41",
+    "01KVJT9N6B3CXMJ2PDR22GSEW1",
+    "01KVJT7FVBYXA51S69YA5RTX3J",
+    "01KVJT7F2ZYC3NVWPG0YRYT604",
+    "01KVJTAYE40VP67QRT1Q0XGR5W",
+    "01KVJT7HYHV1T52X34CFK0FDWG",
+    "01KVJTARR72X00NCK0MVFETHTD",
+    "01KVJT1Y7157P5AVAW2549J457",
+    "01KVJTAA1VTT87ZEGV59W7W0T5"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 19880,
+  "graph_selected_sources": [
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/BOEING_2022_10K.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMD_2022_10K.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMERICANEXPRESS_2022_10K.md"
+  ],
+  "used_fallback": null,
+  "retrieved_chunks": [
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 4,
+      "score": 0.6370600113013074
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 22,
+      "score": 0.617037922401241
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 10,
+      "score": 0.6110731828086124
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 29,
+      "score": 0.6078948452039662
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 3,
+      "score": 0.6037893934043891
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 59,
+      "score": 0.6003331965093308
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 8,
+      "score": 0.5975667562816219
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 6,
+      "score": 0.5973675059301187
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 24,
+      "score": 0.5902895741601766
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 12,
+      "score": 0.5894495668964663
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 30,
+      "score": 0.5843714006574878
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 2,
+      "score": 0.5747227922351514
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 15619,
+    "output_tokens": 241,
+    "latency_ms": 2158,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"c\",\"reasoning\":\"(A) 발췌에서 Boeing의 주요 고객은 상업 항공사와 미국 정부임이 명확히 드러난다. 청크 10에서 'In 2022, non-U.S. customers, which includes foreign military sales (FMS), accounted for approximately 41% of our revenues.'라고 명시되어 있고, 청크 2, 7, 12 등에서 Boeing이 상업 항공사와 미국 정부(특히 국방부)에 상당한 매출을 올리고 있음을 반복적으로 언급한다. 또한, 청크 7에서 'We derive a substantial portion of our revenue from the U.S. government, primarily from defense related programs with the United States Department of Defense (U.S. DoD).'라고 하여 정부 매출 비중이 상당함을 알 수 있다. (B) 그래프에는 고객 비중에 대한 정량 정보는 없으나, (A)에서 상업 항공사와 미국 정부가 모두 주요 고객임이 수치와 함께 명확히 제시되어 있으므로, 보기 c)가 정답이다.\"}",
+    "parsed": {
+      "choice": "c",
+      "reasoning": "(A) 발췌에서 Boeing의 주요 고객은 상업 항공사와 미국 정부임이 명확히 드러난다. 청크 10에서 'In 2022, non-U.S. customers, which includes foreign military sales (FMS), accounted for approximately 41% of our revenues.'라고 명시되어 있고, 청크 2, 7, 12 등에서 Boeing이 상업 항공사와 미국 정부(특히 국방부)에 상당한 매출을 올리고 있음을 반복적으로 언급한다. 또한, 청크 7에서 'We derive a substantial portion of our revenue from the U.S. government, primarily from defense related programs with the United States Department of Defense (U.S. DoD).'라고 하여 정부 매출 비중이 상당함을 알 수 있다. (B) 그래프에는 고객 비중에 대한 정량 정보는 없으나, (A)에서 상업 항공사와 미국 정부가 모두 주요 고객임이 수치와 함께 명확히 제시되어 있으므로, 보기 c)가 정답이다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 20384,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 13,
+    "chunk_setup_amortized": 20331,
+    "chunk_setup_total": 426971,
+    "graph_keyword_estimated": 40,
+    "questions_count_for_amortization": 21
+  },
+  "total_input_tokens": 16103,
+  "total_output_tokens": 292,
+  "total_tokens": 36779,
+  "total_latency_ms": 4317
+}

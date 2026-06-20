@@ -42,6 +42,16 @@ SYSTEM_PROMPT = """당신은 도메인 문서에서 엔티티와 관계를 추�
 2. 엔티티 이름은 본문 표기 그대로. 정규화는 별칭 필드로.
 3. 관계는 능동형 동사구로 ("적용된다", "포함한다", "대체한다" 등).
 4. 같은 엔티티가 본문에 여러 번 나오면 한 번만 추출하고 별칭을 모은다.
+5. **주체 entity 우선 추출 (필수)**. 회사·조직·사람·법인·정부기관·서비스 같은
+   *문서의 주체* 가 되는 entity 는 항상 추출하고, 정식 명칭과 약어 / 통칭을
+   별칭으로 묶는다. 예:
+   - 회사: "Advanced Micro Devices, Inc." (aliases: ["AMD", "Advanced Micro Devices"])
+     이름이 본문 head 에 한 번이라도 나오면 *반드시* entity 로. 제품 (AMD
+     Ryzen, AMD Radeon) 만 entity 로 잡고 회사 자체를 빠뜨리면 추출 실패.
+   - 법인 / 기관: "Boeing Company" / "American Express Company" / "SEC" 등.
+   - 사람: 임원·서명인 등 본문에서 역할이 명시된 인물.
+   주체 entity 가 누락되면 본 추출은 *실패* — 후속 retrieval 이 모든 정보를
+   잃는다.
 
 결과는 반드시 지정된 JSON 스키마로 응답하세요.
 """

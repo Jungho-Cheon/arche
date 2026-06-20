@@ -1,0 +1,178 @@
+{
+  "column": "opentology_aug",
+  "question_id": "Q14",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 484,
+    "output_tokens": 27,
+    "latency_ms": 921,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"American Express\",\"aliases\":[\"American Express\"]},{\"canonical\":\"card members\",\"aliases\":[\"card members\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "American Express",
+          "aliases": [
+            "American Express"
+          ]
+        },
+        {
+          "canonical": "card members",
+          "aliases": [
+            "card members"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 594,
+      "input": {
+        "keywords": [
+          "American Express",
+          "card members"
+        ],
+        "limit": 20,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 20
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 200,
+      "input": {
+        "entry_ids": [
+          "01KVJT3X5C89HWRQK8Y3RMP5GD",
+          "01KVJT5G5VSSVDYH2KY6P93QHX",
+          "01KVJT56CKJW0JK8Z6518HB0Q5",
+          "01KVJT79R7N0482Q7YRZZKE24K",
+          "01KVJT3YEH04T5E9EF4ASTQYRJ",
+          "01KVJT7AYMYNKYTHDW0V0TD63C",
+          "01KVJT5CVABCZDRHBSEM3HE630",
+          "01KVJT6AQZSWY9CGS8HZXYE0PH",
+          "01KVJT52TPAPK5QHVR01WKDN4R",
+          "01KVJT4PHYWVRCVRE3RB5AP17A"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 80,
+        "edges": 78,
+        "truncated": true
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVJT3X5C89HWRQK8Y3RMP5GD",
+    "01KVJT5G5VSSVDYH2KY6P93QHX",
+    "01KVJT56CKJW0JK8Z6518HB0Q5",
+    "01KVJT79R7N0482Q7YRZZKE24K",
+    "01KVJT3YEH04T5E9EF4ASTQYRJ",
+    "01KVJT7AYMYNKYTHDW0V0TD63C",
+    "01KVJT5CVABCZDRHBSEM3HE630",
+    "01KVJT6AQZSWY9CGS8HZXYE0PH",
+    "01KVJT52TPAPK5QHVR01WKDN4R",
+    "01KVJT4PHYWVRCVRE3RB5AP17A"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 37104,
+  "graph_selected_sources": [
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMERICANEXPRESS_2022_10K.md"
+  ],
+  "used_fallback": null,
+  "retrieved_chunks": [
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 54,
+      "score": 0.6252907481136231
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 6,
+      "score": 0.6178771366507546
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 53,
+      "score": 0.6109168587133122
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 99,
+      "score": 0.5882135575209241
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 72,
+      "score": 0.5792011244350403
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 4,
+      "score": 0.5788586595828755
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 32,
+      "score": 0.5728452816540859
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 57,
+      "score": 0.5691926904583112
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 77,
+      "score": 0.5630774624777749
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 260,
+      "score": 0.555936186073119
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 5,
+      "score": 0.5556107884578712
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 93,
+      "score": 0.5555145440362037
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 19827,
+    "output_tokens": 113,
+    "latency_ms": 1992,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"b\",\"reasoning\":\"(A) contains explicit statements that 'Card Member retention remained high' in 2022, and that new card acquisitions reached record levels, demonstrating the impact of investments in premium value propositions. This is a direct and clear answer to the question about card member retention in 2022. (B) is not needed for this question, as (A) provides a decisive, quantitative, and qualitative answer. Therefore, the answer is (b): Yes, American Express was able to retain card members during 2022.\"}",
+    "parsed": {
+      "choice": "b",
+      "reasoning": "(A) contains explicit statements that 'Card Member retention remained high' in 2022, and that new card acquisitions reached record levels, demonstrating the impact of investments in premium value propositions. This is a direct and clear answer to the question about card member retention in 2022. (B) is not needed for this question, as (A) provides a decisive, quantitative, and qualitative answer. Therefore, the answer is (b): Yes, American Express was able to retain card members during 2022."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 20360,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 13,
+    "chunk_setup_amortized": 20331,
+    "chunk_setup_total": 426971,
+    "graph_keyword_estimated": 16,
+    "questions_count_for_amortization": 21
+  },
+  "total_input_tokens": 20311,
+  "total_output_tokens": 140,
+  "total_tokens": 40811,
+  "total_latency_ms": 3707
+}

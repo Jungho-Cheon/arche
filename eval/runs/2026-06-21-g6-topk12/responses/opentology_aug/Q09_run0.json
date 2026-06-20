@@ -1,0 +1,193 @@
+{
+  "column": "opentology_aug",
+  "question_id": "Q09",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 488,
+    "output_tokens": 19,
+    "latency_ms": 762,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"American Express\",\"aliases\":[\"American Express\",\"Amex\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "American Express",
+          "aliases": [
+            "American Express",
+            "Amex"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 701,
+      "input": {
+        "keywords": [
+          "American Express",
+          "Amex"
+        ],
+        "limit": 20,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 20
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 196,
+      "input": {
+        "entry_ids": [
+          "01KVJT3X5C89HWRQK8Y3RMP5GD",
+          "01KVJT3YEH04T5E9EF4ASTQYRJ",
+          "01KVJT529E25Z5SRMP7PXBRDZ2",
+          "01KVJT55SSKRS0TF1VV11QWAFF",
+          "01KVJT5G5VSSVDYH2KY6P93QHX",
+          "01KVJT7AYMYNKYTHDW0V0TD63C",
+          "01KVJT79R7N0482Q7YRZZKE24K",
+          "01KVJT6AQZSWY9CGS8HZXYE0PH",
+          "01KVJT52TPAPK5QHVR01WKDN4R",
+          "01KVJT4Q8T8E6MXHADJVHTRB0Q"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 80,
+        "edges": 78,
+        "truncated": true
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVJT3X5C89HWRQK8Y3RMP5GD",
+    "01KVJT3YEH04T5E9EF4ASTQYRJ",
+    "01KVJT529E25Z5SRMP7PXBRDZ2",
+    "01KVJT55SSKRS0TF1VV11QWAFF",
+    "01KVJT5G5VSSVDYH2KY6P93QHX",
+    "01KVJT7AYMYNKYTHDW0V0TD63C",
+    "01KVJT79R7N0482Q7YRZZKE24K",
+    "01KVJT6AQZSWY9CGS8HZXYE0PH",
+    "01KVJT52TPAPK5QHVR01WKDN4R",
+    "01KVJT4Q8T8E6MXHADJVHTRB0Q"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 37094,
+  "graph_selected_sources": [
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMERICANEXPRESS_2022_10K.md"
+  ],
+  "used_fallback": null,
+  "retrieved_chunks": [
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 6,
+      "score": 0.6906920281222371
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 4,
+      "score": 0.6838434715106759
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 5,
+      "score": 0.6784096137068761
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 165,
+      "score": 0.6561004644112959
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 3,
+      "score": 0.6476781733749001
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 260,
+      "score": 0.6228858807777864
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 7,
+      "score": 0.6085201144199257
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 48,
+      "score": 0.6077735868415576
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 261,
+      "score": 0.6072113095942708
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 99,
+      "score": 0.5980439034607556
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 72,
+      "score": 0.5961488037800944
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 11,
+      "score": 0.5929111420167336
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 51,
+      "score": 0.5920671970049147
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 167,
+      "score": 0.5786407018946018
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 49,
+      "score": 0.5709513694786165
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 262,
+      "score": 0.5707445411926617
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 21996,
+    "output_tokens": 180,
+    "latency_ms": 2316,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"b\",\"reasoning\":\"(A) 발췌의 청크 14에서 2022년 기준 American Express의 지역별 실적이 표로 제시되어 있으며, United States, EMEA (Europe, the Middle East and Africa), APAC (Asia Pacific, Australia and New Zealand), LACC (Latin America, Canada and the Caribbean), Other Unallocated, Consolidated로 구분되어 있습니다. 이 네 개의 지역 구분(United States, EMEA, APAC, LACC)이 American Express의 주요 운영 지역임을 명확히 보여줍니다. (B) 그래프에는 구조적으로 지역 구분에 대한 정보가 없으므로, (A)의 정량적/표 근거가 결정적입니다. 따라서 정답은 b) United States, EMEA, APAC, and LACC 입니다.\"}",
+    "parsed": {
+      "choice": "b",
+      "reasoning": "(A) 발췌의 청크 14에서 2022년 기준 American Express의 지역별 실적이 표로 제시되어 있으며, United States, EMEA (Europe, the Middle East and Africa), APAC (Asia Pacific, Australia and New Zealand), LACC (Latin America, Canada and the Caribbean), Other Unallocated, Consolidated로 구분되어 있습니다. 이 네 개의 지역 구분(United States, EMEA, APAC, LACC)이 American Express의 주요 운영 지역임을 명확히 보여줍니다. (B) 그래프에는 구조적으로 지역 구분에 대한 정보가 없으므로, (A)의 정량적/표 근거가 결정적입니다. 따라서 정답은 b) United States, EMEA, APAC, and LACC 입니다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 20364,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 17,
+    "chunk_setup_amortized": 20331,
+    "chunk_setup_total": 426971,
+    "graph_keyword_estimated": 16,
+    "questions_count_for_amortization": 21
+  },
+  "total_input_tokens": 22484,
+  "total_output_tokens": 199,
+  "total_tokens": 43047,
+  "total_latency_ms": 3975
+}

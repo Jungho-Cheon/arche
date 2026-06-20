@@ -1,0 +1,65 @@
+{
+  "column": "chunk_rag",
+  "question_id": "Q08",
+  "run_index": 0,
+  "input_tokens": 6116,
+  "output_tokens": 244,
+  "embedding_tokens": 20354,
+  "embedding_tokens_breakdown": {
+    "question_embedding": 23,
+    "setup_amortized": 20331,
+    "setup_total": 426971,
+    "questions_count_for_amortization": 21
+  },
+  "total_tokens": 26714,
+  "latency_ms": 2818,
+  "model": "gpt-4.1",
+  "retrieved_chunks": [
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 77,
+      "score": 0.6917995398022228
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 260,
+      "score": 0.6565701634597274
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 262,
+      "score": 0.6523900270858309
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 137,
+      "score": 0.6435061108722907
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 76,
+      "score": 0.6385158430920869
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 49,
+      "score": 0.6314253582016033
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 0,
+      "score": 0.6204847404716521
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 136,
+      "score": 0.6193309736963255
+    }
+  ],
+  "raw_response": "{\"choice\":\"e\",\"reasoning\":\"제공된 발췌들(청크 1, 4, 5, 6, 7, 8 등)에서는 American Express의 다양한 부채(장기채, 단기채, 자산유동화증권 등) 발행 내역, 미상환 잔액, 이자율, 만기, 신용등급, 그리고 주식(보통주)이 뉴욕증권거래소(NYSE)에 상장되어 있다는 정보는 명확히 언급되어 있습니다. 그러나, 특정 부채(채권) 증권이 미국의 전국 증권거래소(예: NYSE, NASDAQ 등)에 등록되어 거래되고 있는지에 대한 직접적인 언급이나 표시는 없습니다. 청크 7에서 'Common Shares (par value $0.20 per Share) AXP New York Stock Exchange'라고 명시되어 있으나, 이는 보통주에 대한 내용입니다. 부채(채권) 증권의 상장 여부는 확인할 수 없습니다. 따라서, 보기 중 '정보 부족 / 알 수 없음'이 정답입니다.\"}",
+  "parsed": {
+    "choice": "e",
+    "reasoning": "제공된 발췌들(청크 1, 4, 5, 6, 7, 8 등)에서는 American Express의 다양한 부채(장기채, 단기채, 자산유동화증권 등) 발행 내역, 미상환 잔액, 이자율, 만기, 신용등급, 그리고 주식(보통주)이 뉴욕증권거래소(NYSE)에 상장되어 있다는 정보는 명확히 언급되어 있습니다. 그러나, 특정 부채(채권) 증권이 미국의 전국 증권거래소(예: NYSE, NASDAQ 등)에 등록되어 거래되고 있는지에 대한 직접적인 언급이나 표시는 없습니다. 청크 7에서 'Common Shares (par value $0.20 per Share) AXP New York Stock Exchange'라고 명시되어 있으나, 이는 보통주에 대한 내용입니다. 부채(채권) 증권의 상장 여부는 확인할 수 없습니다. 따라서, 보기 중 '정보 부족 / 알 수 없음'이 정답입니다."
+  },
+  "parse_error": null
+}

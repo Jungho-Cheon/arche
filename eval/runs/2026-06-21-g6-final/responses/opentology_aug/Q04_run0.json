@@ -1,0 +1,171 @@
+{
+  "column": "opentology_aug",
+  "question_id": "Q04",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 506,
+    "output_tokens": 49,
+    "latency_ms": 929,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"operating margin\",\"aliases\":[\"operating margin\"]},{\"canonical\":\"FY22\",\"aliases\":[\"FY22\",\"fiscal year 2022\"]},{\"canonical\":\"AMD\",\"aliases\":[\"AMD\",\"Advanced Micro Devices\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "operating margin",
+          "aliases": [
+            "operating margin"
+          ]
+        },
+        {
+          "canonical": "FY22",
+          "aliases": [
+            "FY22",
+            "fiscal year 2022"
+          ]
+        },
+        {
+          "canonical": "AMD",
+          "aliases": [
+            "AMD",
+            "Advanced Micro Devices"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 1024,
+      "input": {
+        "keywords": [
+          "operating margin",
+          "FY22",
+          "fiscal year 2022",
+          "AMD",
+          "Advanced Micro Devices"
+        ],
+        "limit": 20,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 20
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 150,
+      "input": {
+        "entry_ids": [
+          "01KVJT1HTEY8JTJD02BDCB1T4R",
+          "01KVJT2J4YSG5CG9WMVGEQ81CK",
+          "01KVJT21KWRTJ6E2XQ5XP6R27V",
+          "01KVJT7FVBYXA51S69YA5RTX3J",
+          "01KVJT7F2ZYC3NVWPG0YRYT604",
+          "01KVJT2CBCVJ4SP5AEKE0696YT",
+          "01KVJT1VHRVM5ZDSJXEJBB1WET",
+          "01KVJT2K1QHE650TG55AX3YWQ3",
+          "01KVJT9N6B3CXMJ2PDR22GSEW1",
+          "01KVJTAA1VTT87ZEGV59W7W0T5"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 80,
+        "edges": 76,
+        "truncated": true
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVJT1HTEY8JTJD02BDCB1T4R",
+    "01KVJT2J4YSG5CG9WMVGEQ81CK",
+    "01KVJT21KWRTJ6E2XQ5XP6R27V",
+    "01KVJT7FVBYXA51S69YA5RTX3J",
+    "01KVJT7F2ZYC3NVWPG0YRYT604",
+    "01KVJT2CBCVJ4SP5AEKE0696YT",
+    "01KVJT1VHRVM5ZDSJXEJBB1WET",
+    "01KVJT2K1QHE650TG55AX3YWQ3",
+    "01KVJT9N6B3CXMJ2PDR22GSEW1",
+    "01KVJTAA1VTT87ZEGV59W7W0T5"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 35801,
+  "graph_selected_sources": [
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMD_2022_10K.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMERICANEXPRESS_2022_10K.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/BOEING_2022_10K.md"
+  ],
+  "used_fallback": null,
+  "retrieved_chunks": [
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 47,
+      "score": 0.5931201677607411
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 46,
+      "score": 0.5928808972108613
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 3,
+      "score": 0.571578897566881
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 14,
+      "score": 0.5636321137877073
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 13,
+      "score": 0.5634274334986279
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 2,
+      "score": 0.5622325222775966
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 64,
+      "score": 0.5503617449125477
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 4,
+      "score": 0.5413186958734493
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 18032,
+    "output_tokens": 119,
+    "latency_ms": 1949,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"b\",\"reasoning\":\"The decisive evidence comes from (A) the original excerpt, specifically from AMD_2022_10K.md:47, which states: 'The decrease in operating income was primarily driven by amortization of intangible assets associated with the Xilinx acquisition.' This directly addresses the cause of the operating margin change, linking it to the Xilinx acquisition's intangible asset amortization. The domain graph (B) supports the context of the Xilinx acquisition but does not provide the specific causal detail. Therefore, (A) is decisive and supports choice (b).\"}",
+    "parsed": {
+      "choice": "b",
+      "reasoning": "The decisive evidence comes from (A) the original excerpt, specifically from AMD_2022_10K.md:47, which states: 'The decrease in operating income was primarily driven by amortization of intangible assets associated with the Xilinx acquisition.' This directly addresses the cause of the operating margin change, linking it to the Xilinx acquisition's intangible asset amortization. The domain graph (B) supports the context of the Xilinx acquisition but does not provide the specific causal detail. Therefore, (A) is decisive and supports choice (b)."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 20406,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 35,
+    "chunk_setup_amortized": 20331,
+    "chunk_setup_total": 426971,
+    "graph_keyword_estimated": 40,
+    "questions_count_for_amortization": 21
+  },
+  "total_input_tokens": 18538,
+  "total_output_tokens": 168,
+  "total_tokens": 39112,
+  "total_latency_ms": 4052
+}

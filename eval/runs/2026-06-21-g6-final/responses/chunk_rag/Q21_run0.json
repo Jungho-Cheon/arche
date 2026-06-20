@@ -1,0 +1,65 @@
+{
+  "column": "chunk_rag",
+  "question_id": "Q21",
+  "run_index": 0,
+  "input_tokens": 6469,
+  "output_tokens": 131,
+  "embedding_tokens": 20348,
+  "embedding_tokens_breakdown": {
+    "question_embedding": 17,
+    "setup_amortized": 20331,
+    "setup_total": 426971,
+    "questions_count_for_amortization": 21
+  },
+  "total_tokens": 26948,
+  "latency_ms": 2784,
+  "model": "gpt-4.1",
+  "retrieved_chunks": [
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 59,
+      "score": 0.6108321225790505
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 55,
+      "score": 0.6088133707972482
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 26,
+      "score": 0.5971466327345664
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 27,
+      "score": 0.5971158354332934
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 24,
+      "score": 0.5920169626239471
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 54,
+      "score": 0.5811962157422487
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 56,
+      "score": 0.5811313339397806
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 43,
+      "score": 0.5767675785379341
+    }
+  ],
+  "raw_response": "{\"choice\":\"e\",\"reasoning\":\"청크 5에서 Boeing의 effective income tax rate가 2022년에는 (0.6)%이고, 2021년에는 14.8%라고 명시되어 있습니다. 하지만 보기의 숫자(0.62%, -14.76% 등)와는 일치하지 않습니다. 제공된 발췌에서는 소수점 둘째 자리까지의 수치나 부호가 보기에 정확히 일치하지 않으므로, 보기 중 정확하게 선택할 수 있는 정보가 없습니다. 따라서 '정보 부족 / 알 수 없음'이 정답입니다.\"}",
+  "parsed": {
+    "choice": "e",
+    "reasoning": "청크 5에서 Boeing의 effective income tax rate가 2022년에는 (0.6)%이고, 2021년에는 14.8%라고 명시되어 있습니다. 하지만 보기의 숫자(0.62%, -14.76% 등)와는 일치하지 않습니다. 제공된 발췌에서는 소수점 둘째 자리까지의 수치나 부호가 보기에 정확히 일치하지 않으므로, 보기 중 정확하게 선택할 수 있는 정보가 없습니다. 따라서 '정보 부족 / 알 수 없음'이 정답입니다."
+  },
+  "parse_error": null
+}

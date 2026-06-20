@@ -198,18 +198,51 @@ graph #1 (PoC) 만 *우연히* "Advanced Micro Devices" entity 가 강하게 추
 
 ## 최종 결론 — 우월성의 *조건* 확정
 
-| 조건 | 본 PR 효과 | 누적 효과 (추정) |
-|---|---|---|
-| baseline (no diversity, graph variance 그대로) | mean 70.2% | chunk parity 또는 그 이하 |
-| + anchor diversity (find_entities per-keyword top-N) | +1 문항 | mean 71-72% |
-| + 회사 / 조직 entity 강제 추출 (ingest prompt amend) | +N pp 가능 | mean 75-80% (가설) |
-| + EntityConsolidator (M6.5b #40, entity 정합성) | graph variance ↓ | mean 77-83% (가설) |
-| + Ingest seed/replay invariance | distribution narrow | stable acc |
+### 본 PR 의 모든 fix 시도 결과
 
-**aug 우월성 입증 = 위 4 가지 중 *최소 2-3 개* 충족 후의 새 측정에서 acc ≥ chunk + 3pp**. 본 PR 의 anchor diversity 만으로는 *부족*.
+| 시점 / 시도 | graph | chunk | aug | combined | aug vs chunk |
+|---|---|---|---|---|---|
+| baseline PoC | #1 | 71.4% | 81.0% | (n/a) | +9.6pp ⭐ |
+| no fix | #2-4 | 71.4% | 66.7% × 3 회 | (n/a) | -4.7pp × 3 |
+| no fix N=3 majority | #2 | 71.4% | 71.4% | 81.0% | 동률 |
+| + anchor diversity | #5 | 71.4% | 71.4% | 76.2% | 동률 |
+| + 회사 entity prompt | #6 | 71.4% | **71.4%** | 66.7% | **동률** |
+| + top_k 12 (실험) | #6 | 71.4% | 66.7% (-2 문항) | (n/a) | -4.8pp |
 
-본 PR 이 확정한 것:
-1. **현재 aug ≯ chunk** (그래서 default 는 Combined 유지)
+### Aug 우월성 입증의 *실패* — 정직한 답
+
+**6 graph + 4 fix 시도 후에도 aug ≯ chunk parity**. graph #1 (PoC 81%) 은 *cherry-picked outlier* 로 확인. 본 PR 의 추가 시도:
+
+1. **Anchor diversity 가드** (find_entities per-keyword top-N) — +1 문항 (#2-4 의 67% → #5 의 71%). 효과 있지만 chunk parity 까지만.
+2. **회사 entity 강제 ingest prompt** — AMD/AXP/BA 회사 entity 가 graph 에 들어옴 확인. 그러나 aug acc 동률.
+3. **Top-k 확장 8 → 12** — *후퇴* (Q09 회복 ↔ Q20/Q21 후퇴 = 순 -1). naive triple 측정과 같은 attention 분산 패턴.
+4. **Combined 도 graph #6 에서 후퇴** (76 → 67%). 즉 *모든 컬럼이 graph variance 에 좌우*.
+
+### 본 측정으로 입증 *불가* 한 가설
+
+> "aug 가 chunk 보다 일관 우월"
+
+데이터로는 **잘못된 가설**. aug 의 평균 acc 는 chunk 와 통계적 동률 또는 *약간 미달*. 우월성은 *graph #1 같은 특정 graph state* 에서만 일시적.
+
+### 입증 *가능* 한 가설 (본 PR 결과로 좁혀짐)
+
+1. **graph 의 entity coverage 가 강할 때 aug 우월 가능** — graph #1 의 outlier 가 직접 증거. 단 그 강함을 *재현 가능하게* 만들 prerequisites:
+   - EntityConsolidator (M6.5b #40) — entity 정합성
+   - Ingest seed / replay invariance — graph distribution narrow
+   - 회사 / 주체 entity 강제 prompt (본 PR ✓)
+2. **aug 의 알고리즘 자체 (graph-guided chunk retrieval) 는 정설과 일치** — 단 *현재 ingest 의 변동성* 안에서 효과 발현 *불일관*.
+
+### Default 컬럼 결정 (변경 없음)
+
+- **Combined** = 모든 graph state 에서 chunk 보다 *평균* 으로 위 (76-81% vs chunk 71.4%)
+- **aug** = graph state 에 따라 67-81%, mean 70-71%, **chunk parity 또는 미달**
+
+→ **Default 는 Combined 유지**. aug 는 M6.5b 후 *재검증 가치 있는 후보*.
+
+### 본 PR 이 확정한 것
+
+1. **현재 aug ≯ chunk** — 6 graph × 4 fix 시도로 일관 확인
 2. **graph variance 의 진짜 정체** = 회사 / 조직 entity 의 ingest 추출 비결정성
-3. **anchor diversity 코드 가드** = +1 문항 회복 (보존 가치 있음)
-4. **commerce-verbose 데이터셋 결함** = 추후 셔플 필요
+3. **fix 4 종 적용** — anchor diversity (+1 문항), 회사 entity prompt (graph 안정성 ↑ but acc 동률), top_k 12 (후퇴), basename 충돌 가드 (예방적)
+4. **Triple / Higher-k / 더 많은 fix 는 *attention 분산* 패턴** — 정설의 "더 많은 컨텍스트 ≠ 더 좋음" 의 추가 증거
+5. **commerce-verbose 데이터셋 결함** = 정답 a=27/30, 추후 셔플 필요

@@ -1,0 +1,65 @@
+{
+  "column": "chunk_rag",
+  "question_id": "Q16",
+  "run_index": 0,
+  "input_tokens": 7083,
+  "output_tokens": 107,
+  "embedding_tokens": 20345,
+  "embedding_tokens_breakdown": {
+    "question_embedding": 14,
+    "setup_amortized": 20331,
+    "setup_total": 426971,
+    "questions_count_for_amortization": 21
+  },
+  "total_tokens": 27535,
+  "latency_ms": 2803,
+  "model": "gpt-4.1",
+  "retrieved_chunks": [
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 19,
+      "score": 0.6312957954787064
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 29,
+      "score": 0.6251257497133926
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 108,
+      "score": 0.6231839386182381
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 22,
+      "score": 0.6230350707929352
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 6,
+      "score": 0.6221772327863071
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 10,
+      "score": 0.6220250056838729
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 43,
+      "score": 0.6158752686815674
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 4,
+      "score": 0.6092555836458021
+    }
+  ],
+  "raw_response": "{\"choice\":\"a\",\"reasoning\":\"청크 3에서 'Multiple legal actions have been filed against us as a result of the October 29, 2018 accident of Lion Air Flight 610 and the March 10, 2019 accident of Ethiopian Airlines Flight 302.'라는 명확한 언급이 있습니다. 이는 2018년 Lion Air와 2019년 Ethiopian Airlines 추락 사고와 관련된 소송이 현재 진행 중임을 의미합니다. 따라서 보기 a)가 정답입니다.\"}",
+  "parsed": {
+    "choice": "a",
+    "reasoning": "청크 3에서 'Multiple legal actions have been filed against us as a result of the October 29, 2018 accident of Lion Air Flight 610 and the March 10, 2019 accident of Ethiopian Airlines Flight 302.'라는 명확한 언급이 있습니다. 이는 2018년 Lion Air와 2019년 Ethiopian Airlines 추락 사고와 관련된 소송이 현재 진행 중임을 의미합니다. 따라서 보기 a)가 정답입니다."
+  },
+  "parse_error": null
+}
