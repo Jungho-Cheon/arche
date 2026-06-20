@@ -238,6 +238,19 @@ class FakeGraph(GraphRepository):
     def apply_relation_diff(self, *, relation_id, source_path):
         return "missing"
 
+    # Chunk store (시제품 backbone — PR 3). FakeGraph 는 in-memory 흉내만.
+    def upsert_chunks(self, *, chunks, embeddings):
+        return len(chunks)
+
+    def delete_chunks_by_source(self, *, source_path):
+        return 0
+
+    def vector_search_chunks(self, *, embedding, top_k):
+        return []
+
+    def count_chunks(self) -> int:
+        return 0
+
     def close(self) -> None:
         pass
 

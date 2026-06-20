@@ -179,6 +179,18 @@ class StubGraph(GraphRepository):
     def entity_exists(self, *, entity_id) -> bool:  # noqa: D401
         return any(n.id == entity_id for n in self._nodes)
 
+    def upsert_chunks(self, *, chunks, embeddings):
+        return len(chunks)
+
+    def delete_chunks_by_source(self, *, source_path):
+        return 0
+
+    def vector_search_chunks(self, *, embedding, top_k):
+        return []
+
+    def count_chunks(self):
+        return 0
+
     def close(self) -> None:
         pass
 

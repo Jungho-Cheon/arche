@@ -305,6 +305,19 @@ class FakeGraph(GraphRepository):
     def entity_exists(self, *, entity_id):
         return entity_id in self._entities
 
+    # Chunk store (시제품 backbone — PR 3). 단위 테스트는 동작 무력.
+    def upsert_chunks(self, *, chunks, embeddings):
+        return len(chunks)
+
+    def delete_chunks_by_source(self, *, source_path):
+        return 0
+
+    def vector_search_chunks(self, *, embedding, top_k):
+        return []
+
+    def count_chunks(self) -> int:
+        return 0
+
     def close(self) -> None:
         pass
 

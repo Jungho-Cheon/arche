@@ -89,6 +89,34 @@ class DenseHit:
 
 
 @dataclass(frozen=True)
+class StoredChunk:
+    """Neo4j (:Chunk) 노드의 어댑터 표현.
+
+    `id` 형식 = `f"{source_path}#{chunk_index}"`. UNIQUE 보장 (PR 3 에서 추가
+    한 chunk_id_unique constraint). text 자체를 저장 — 외부 사용자가 `/answer`
+    또는 `/retrieve` 호출 시 chunk 본문을 받아야 LLM 컨텍스트로 쓸 수 있다.
+
+    WHY embedding 필드 별도: vector_search 후 cosine 재정렬을 어댑터에서 안 하고
+    Neo4j 의 vector index 가 cosine 정렬해 반환. 단 노출 시 메타로 같이 돌려준다.
+    """
+
+    id: str
+    source_path: str
+    chunk_index: int
+    total_chunks: int
+    text: str
+    token_count: int
+
+
+@dataclass(frozen=True)
+class ChunkHit:
+    """vector_search_chunks 결과 한 건. score 는 cosine similarity (0..1)."""
+
+    chunk: StoredChunk
+    score: float
+
+
+@dataclass(frozen=True)
 class EntityTypeStat:
     type: str
     count: int
@@ -153,6 +181,12 @@ INGESTION_RUN_SOURCE_INDEX = "ingestion_run_source_idx"
 ENTITY_LABEL = "Entity"
 RELATION_TYPE_LABEL_DEFAULT = "RELATES_TO"  # 폴백 — 추출 시 type 이 비면
 EMITTED_IN = "EMITTED_IN"
+# Chunk (PRD 6 §1.1 의 /retrieve + /answer 가 사용하는 chunk store).
+# 시제품 backbone spec (docs/superpowers/specs/post-mvp-prototype-backbone.md)
+# 의 PR 3 에서 도입. Entity 와 동일한 vector index 패턴을 따라 인프라 단일화.
+CHUNK_LABEL = "Chunk"
+CHUNK_VECTOR_INDEX = "chunk_embedding_idx"
+CHUNK_SOURCE_PATH_INDEX = "chunk_source_path_idx"
 
 
 class GraphRepository(ABC):
@@ -358,6 +392,37 @@ class GraphRepository(ABC):
     def entity_exists(self, *, entity_id: str) -> bool:
         """단일 ID 가 그래프에 존재하는지 — find_path / get_neighbors 의 사전 검증."""
 
+    # ----- Chunk store (PRD 6 §1.1 — /retrieve, /answer 의 의존성) -----
+
+    @abstractmethod
+    def upsert_chunks(self, *, chunks: list[StoredChunk], embeddings: list[list[float]]) -> int:
+        """(:Chunk) 노드 batch UPSERT.
+
+        `chunks[i]` 와 `embeddings[i]` 는 같은 index. id 기준 MERGE — 같은
+        source_path + chunk_index 의 재 ingest 는 text/embedding 을 덮어쓴다.
+        반환: UPSERT 된 노드 수.
+        """
+
+    @abstractmethod
+    def delete_chunks_by_source(self, *, source_path: str) -> int:
+        """주어진 source_path 의 모든 (:Chunk) 노드 삭제. 재 ingest 전 청소.
+
+        반환: 삭제된 노드 수.
+        """
+
+    @abstractmethod
+    def vector_search_chunks(
+        self, *, embedding: list[float], top_k: int
+    ) -> list[ChunkHit]:
+        """질문 embedding 으로 chunk top-k 회수. cosine similarity 정렬.
+
+        WHY top_k 우선: PRD 6 §1.3 의 `chunk_top_k` 노브가 이걸 직접 제어.
+        """
+
+    @abstractmethod
+    def count_chunks(self) -> int:
+        """(:Chunk) 총 개수 — `/healthz` 와 운영 가시성용."""
+
     @abstractmethod
     def close(self) -> None: ...
 
@@ -460,6 +525,27 @@ class Neo4jGraphRepository(GraphRepository):
             s.run(
                 f"CREATE INDEX {INGESTION_RUN_SOURCE_INDEX} IF NOT EXISTS "
                 f"FOR (r:{INGESTION_RUN_LABEL}) ON (r.source_path)"
+            ).consume()
+            # Chunk store — PR 3 (시제품 backbone) 에서 도입.
+            # UNIQUE: id = "{source_path}#{chunk_index}". 재 ingest 시 같은 청크
+            # 가 덮어써지도록.
+            s.run(
+                f"CREATE CONSTRAINT chunk_id_unique IF NOT EXISTS "
+                f"FOR (c:{CHUNK_LABEL}) REQUIRE c.id IS UNIQUE"
+            ).consume()
+            # vector index — chunk_top_k retrieval 의 핫패스.
+            s.run(
+                f"CREATE VECTOR INDEX {CHUNK_VECTOR_INDEX} IF NOT EXISTS "
+                f"FOR (c:{CHUNK_LABEL}) ON (c.embedding) "
+                f"OPTIONS {{ indexConfig: {{ "
+                f"`vector.dimensions`: {int(dim)}, "
+                f"`vector.similarity_function`: 'cosine' "
+                f"}} }}"
+            ).consume()
+            # source_path 인덱스 — delete_chunks_by_source 의 핫패스.
+            s.run(
+                f"CREATE INDEX {CHUNK_SOURCE_PATH_INDEX} IF NOT EXISTS "
+                f"FOR (c:{CHUNK_LABEL}) ON (c.source_path)"
             ).consume()
             # 백필 — normalize 결과를 직접 계산해 Cypher 에 박는다.
             # WHY 두 단계 (조회 → 업데이트): Neo4j Cypher 에는 Python 함수가
@@ -1057,6 +1143,110 @@ class Neo4jGraphRepository(GraphRepository):
                 id=entity_id,
             ).single()
         return rec is not None
+
+    # ---------- Chunk store ----------
+
+    def upsert_chunks(
+        self, *, chunks: list[StoredChunk], embeddings: list[list[float]]
+    ) -> int:
+        """(:Chunk) batch UPSERT — id 기준 MERGE.
+
+        WHY UNWIND 단일 transaction: 같은 source_path 의 chunk 들이 한 번에
+        들어온다. 개별 MERGE 보다 UNWIND batch 가 round-trip 을 한 자리에 모아
+        ingest 비용을 줄인다.
+        """
+        if not chunks:
+            return 0
+        if len(chunks) != len(embeddings):
+            raise ValueError(
+                f"chunks ({len(chunks)}) and embeddings ({len(embeddings)}) length mismatch"
+            )
+        rows = [
+            {
+                "id": c.id,
+                "source_path": c.source_path,
+                "chunk_index": c.chunk_index,
+                "total_chunks": c.total_chunks,
+                "text": c.text,
+                "token_count": c.token_count,
+                "embedding": emb,
+            }
+            for c, emb in zip(chunks, embeddings)
+        ]
+        with self._driver.session() as s:
+            result = s.run(
+                f"UNWIND $rows AS row "
+                f"MERGE (c:{CHUNK_LABEL} {{id: row.id}}) "
+                f"SET c.source_path = row.source_path, "
+                f"    c.chunk_index = row.chunk_index, "
+                f"    c.total_chunks = row.total_chunks, "
+                f"    c.text = row.text, "
+                f"    c.token_count = row.token_count, "
+                f"    c.embedding = row.embedding "
+                f"RETURN count(c) AS n",
+                rows=rows,
+            )
+            row = result.single()
+            return int(row["n"]) if row else 0
+
+    def delete_chunks_by_source(self, *, source_path: str) -> int:
+        with self._driver.session() as s:
+            result = s.run(
+                f"MATCH (c:{CHUNK_LABEL} {{source_path: $sp}}) "
+                f"WITH c, c.id AS _ "  # iterator 안전성
+                f"DETACH DELETE c "
+                f"RETURN count(_) AS n",
+                sp=source_path,
+            )
+            row = result.single()
+            return int(row["n"]) if row else 0
+
+    def vector_search_chunks(
+        self, *, embedding: list[float], top_k: int
+    ) -> list[ChunkHit]:
+        """db.index.vector.queryNodes — Neo4j 5.15+ 표준 vector ANN.
+
+        WHY 결과 후처리: queryNodes 는 score 를 cosine similarity 로 돌려준다
+        (vector.similarity_function = 'cosine'). top_k 안에서 그대로 정렬돼 옴.
+        """
+        if top_k <= 0:
+            return []
+        with self._driver.session() as s:
+            rows = s.run(
+                f"CALL db.index.vector.queryNodes("
+                f"'{CHUNK_VECTOR_INDEX}', $k, $emb) "
+                f"YIELD node, score "
+                f"RETURN node.id AS id, node.source_path AS source_path, "
+                f"       node.chunk_index AS chunk_index, "
+                f"       node.total_chunks AS total_chunks, "
+                f"       node.text AS text, node.token_count AS token_count, "
+                f"       score",
+                k=int(top_k),
+                emb=list(embedding),
+            ).data()
+        hits: list[ChunkHit] = []
+        for r in rows:
+            hits.append(
+                ChunkHit(
+                    chunk=StoredChunk(
+                        id=str(r["id"]),
+                        source_path=str(r["source_path"]),
+                        chunk_index=int(r["chunk_index"]),
+                        total_chunks=int(r["total_chunks"] or 1),
+                        text=str(r["text"] or ""),
+                        token_count=int(r["token_count"] or 0),
+                    ),
+                    score=float(r["score"] or 0.0),
+                )
+            )
+        return hits
+
+    def count_chunks(self) -> int:
+        with self._driver.session() as s:
+            row = s.run(
+                f"MATCH (c:{CHUNK_LABEL}) RETURN count(c) AS n"
+            ).single()
+            return int(row["n"]) if row else 0
 
     def get_entity_with_counts(
         self, *, entity_id: str
