@@ -1,0 +1,161 @@
+{
+  "column": "combined",
+  "question_id": "Q08",
+  "run_index": 2,
+  "anchor_extraction": {
+    "input_tokens": 494,
+    "output_tokens": 42,
+    "latency_ms": 1018,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"debt securities\",\"aliases\":[\"debt securities\"]},{\"canonical\":\"national securities exchange\",\"aliases\":[\"national securities exchange\"]},{\"canonical\":\"American Express\",\"aliases\":[\"American Express\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "debt securities",
+          "aliases": [
+            "debt securities"
+          ]
+        },
+        {
+          "canonical": "national securities exchange",
+          "aliases": [
+            "national securities exchange"
+          ]
+        },
+        {
+          "canonical": "American Express",
+          "aliases": [
+            "American Express"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 881,
+      "input": {
+        "keywords": [
+          "debt securities",
+          "national securities exchange",
+          "American Express"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 183,
+      "input": {
+        "entry_ids": [
+          "01KVHVAFBT4Q7NJ1NJ6RN2098P",
+          "01KVHVCQG19MMR0HZR7AP9FJ0M",
+          "01KVHVAG6JEHW8957CND36XNP1",
+          "01KVHVFQJBHM6CJDY43KR672ME",
+          "01KVHVESTC9KMTJN4RT65BZK6H",
+          "01KVHVCP9JF4XN5VCF0HAQ0ANF",
+          "01KVHVGZC1FB3X8CZBDEXWEQF0",
+          "01KVHVDW2Z241W7VMD53AE0HDB",
+          "01KVHVEGQRTBB9ZNM04TFST0BE",
+          "01KVHVFPRJK3HJNPANNJ47FG55"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 72,
+        "edges": 73,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVHVAFBT4Q7NJ1NJ6RN2098P",
+    "01KVHVCQG19MMR0HZR7AP9FJ0M",
+    "01KVHVAG6JEHW8957CND36XNP1",
+    "01KVHVFQJBHM6CJDY43KR672ME",
+    "01KVHVESTC9KMTJN4RT65BZK6H",
+    "01KVHVCP9JF4XN5VCF0HAQ0ANF",
+    "01KVHVGZC1FB3X8CZBDEXWEQF0",
+    "01KVHVDW2Z241W7VMD53AE0HDB",
+    "01KVHVEGQRTBB9ZNM04TFST0BE",
+    "01KVHVFPRJK3HJNPANNJ47FG55"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 34492,
+  "retrieved_chunks": [
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 77,
+      "score": 0.6918020857013796
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 260,
+      "score": 0.6565591011974773
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 262,
+      "score": 0.6523559584500498
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 137,
+      "score": 0.6435379906285029
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 76,
+      "score": 0.6385096535579131
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 49,
+      "score": 0.6313878219644504
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 0,
+      "score": 0.6204753236594697
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 136,
+      "score": 0.6192599629887121
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 16281,
+    "output_tokens": 198,
+    "latency_ms": 3772,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"d\",\"reasoning\":\"(A) 검색된 문서 발췌에서 AMERICANEXPRESS_2022_10K.md:0 청크를 보면, 'Securities registered pursuant to Section 12(b) of the Act' 아래에 'Common Shares (par value $0.20 per Share) AXP New York Stock Exchange'만 명시되어 있고, 부채(채권) 관련 증권은 언급되어 있지 않습니다. 즉, 2022년 기준으로 American Express 명의로 국립 증권거래소(NYSE 등)에 상장된 것은 보통주뿐입니다. (B) 도메인 그래프에서도 American Express와 관련된 상장 채권(부채성 증권)에 대한 엔티티나 관계가 없습니다. 따라서 두 출처 모두에서 부채성 증권이 상장되어 있다는 근거가 없으므로, 정답은 d)입니다.\"}",
+    "parsed": {
+      "choice": "d",
+      "reasoning": "(A) 검색된 문서 발췌에서 AMERICANEXPRESS_2022_10K.md:0 청크를 보면, 'Securities registered pursuant to Section 12(b) of the Act' 아래에 'Common Shares (par value $0.20 per Share) AXP New York Stock Exchange'만 명시되어 있고, 부채(채권) 관련 증권은 언급되어 있지 않습니다. 즉, 2022년 기준으로 American Express 명의로 국립 증권거래소(NYSE 등)에 상장된 것은 보통주뿐입니다. (B) 도메인 그래프에서도 American Express와 관련된 상장 채권(부채성 증권)에 대한 엔티티나 관계가 없습니다. 따라서 두 출처 모두에서 부채성 증권이 상장되어 있다는 근거가 없으므로, 정답은 d)입니다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 20378,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 23,
+    "chunk_setup_amortized": 20331,
+    "chunk_setup_total": 426971,
+    "graph_keyword_estimated": 24,
+    "questions_count_for_amortization": 21
+  },
+  "total_input_tokens": 16775,
+  "total_output_tokens": 240,
+  "total_tokens": 37393,
+  "total_latency_ms": 5854
+}

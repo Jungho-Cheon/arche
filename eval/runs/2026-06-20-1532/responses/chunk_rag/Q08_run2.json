@@ -1,0 +1,65 @@
+{
+  "column": "chunk_rag",
+  "question_id": "Q08",
+  "run_index": 2,
+  "input_tokens": 6116,
+  "output_tokens": 125,
+  "embedding_tokens": 20354,
+  "embedding_tokens_breakdown": {
+    "question_embedding": 23,
+    "setup_amortized": 20331,
+    "setup_total": 426971,
+    "questions_count_for_amortization": 21
+  },
+  "total_tokens": 26595,
+  "latency_ms": 2175,
+  "model": "gpt-4.1",
+  "retrieved_chunks": [
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 77,
+      "score": 0.6917995398022228
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 260,
+      "score": 0.656477060444306
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 262,
+      "score": 0.6523900270858309
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 137,
+      "score": 0.6435564288327854
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 76,
+      "score": 0.6385158430920869
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 49,
+      "score": 0.6314253582016033
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 0,
+      "score": 0.6203828421590969
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 136,
+      "score": 0.619287254981228
+    }
+  ],
+  "raw_response": "{\"choice\":\"e\",\"reasoning\":\"Provided excerpts mention that American Express common shares are registered and traded on the New York Stock Exchange (see 청크 7), but there is no explicit mention in the excerpts about any debt securities (such as bonds or notes) being registered to trade on a national securities exchange under American Express' name as of 2022. The excerpts discuss the types and amounts of debt outstanding, their maturities, and interest rates, but do not specify the registration or listing status of these debt securities on any exchange. Therefore, the correct answer is '정보 부족 / 알 수 없음'.\"}",
+  "parsed": {
+    "choice": "e",
+    "reasoning": "Provided excerpts mention that American Express common shares are registered and traded on the New York Stock Exchange (see 청크 7), but there is no explicit mention in the excerpts about any debt securities (such as bonds or notes) being registered to trade on a national securities exchange under American Express' name as of 2022. The excerpts discuss the types and amounts of debt outstanding, their maturities, and interest rates, but do not specify the registration or listing status of these debt securities on any exchange. Therefore, the correct answer is '정보 부족 / 알 수 없음'."
+  },
+  "parse_error": null
+}

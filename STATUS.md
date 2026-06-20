@@ -2,9 +2,11 @@
 
 > 이 파일의 위치: 본 저장소에 기여하는 모두를 위한 **단일 진입점**. 마일스톤 진행도 / 다음 액션 / 알려진 stub 표가 한 페이지에 모인다.
 
-## 현재 상태 — M6.5 종료, M6.5b (EntityConsolidator) 신설 gating
+## 현재 상태 — M6.5 종료, M6.5b (EntityConsolidator) 신설 gating + smoke 로 Combined 유의미성 1 차 확인
 
 M1-M6 모든 마일스톤 완료. 2026-06-19 본 측정 (Pareto 우월 가설 미달) → 2026-06-20 95K 후속 검증 (**Combined RAG 100%** , ADR-0007 채택) → 2026-06-20 1M FinanceBench 재검증 (M6.5) 에서 **graph catastrophic over-merge** 발견. ADR-0008 로 EntityConsolidator 를 M7 gating (M6.5b) 으로 격상.
+
+**2026-06-20 smoke 검증** (`eval/reports/2026-06-20-smoke-stoplist-fix/`): 임시 patch (`NON_IDENTIFYING_ALIAS_STOPLIST`) 만으로 graph 33.3% / combined 81.0% / chunk 71.4% — **Combined +9.5pp chunk 우위**. ADR-0007 D2 의 "≥ chunk + 3pp" 기준 충족. **Combined RAG 의 유의미성 1 차 입증** + EntityConsolidator 본 구현 가치 입증.
 
 | 컬럼 | Accuracy | 오답 | 토큰(중앙값) | 지연(중앙값) | 비용 (90 호출) |
 |---|---|---|---|---|---|

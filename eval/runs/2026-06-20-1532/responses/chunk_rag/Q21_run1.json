@@ -1,0 +1,65 @@
+{
+  "column": "chunk_rag",
+  "question_id": "Q21",
+  "run_index": 1,
+  "input_tokens": 6469,
+  "output_tokens": 198,
+  "embedding_tokens": 20348,
+  "embedding_tokens_breakdown": {
+    "question_embedding": 17,
+    "setup_amortized": 20331,
+    "setup_total": 426971,
+    "questions_count_for_amortization": 21
+  },
+  "total_tokens": 27015,
+  "latency_ms": 3423,
+  "model": "gpt-4.1",
+  "retrieved_chunks": [
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 59,
+      "score": 0.6106279328841301
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 55,
+      "score": 0.6088133707972482
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 26,
+      "score": 0.5971466327345664
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 27,
+      "score": 0.5969732963451736
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 24,
+      "score": 0.5920169626239471
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 54,
+      "score": 0.5811962157422487
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 56,
+      "score": 0.5811313339397806
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 43,
+      "score": 0.5767675785379341
+    }
+  ],
+  "raw_response": "{\n  \"choice\": \"d\",\n  \"reasoning\": \"청크 5에서 'Effective income tax rate (0.6)% 14.8 % 17.5 %'라는 표기가 있습니다. 여기서 2022년의 유효세율은 (0.6)% 즉, -0.6%이고, 2021년은 14.8%입니다. 보기의 숫자와 부호가 다르지만, 가장 근접한 보기는 d)입니다. d)에서 FY2022의 세율이 0.62%로 표기되어 있으나, 실제 보고서 수치는 (0.6)%로 음수입니다. 그러나 다른 보기들은 수치가 더 맞지 않으므로, d)가 가장 적합합니다. 실제 수치는 -0.6% (2022), 14.8% (2021)임을 청크 5에 근거해 선택합니다.\"\n}",
+  "parsed": {
+    "choice": "d",
+    "reasoning": "청크 5에서 'Effective income tax rate (0.6)% 14.8 % 17.5 %'라는 표기가 있습니다. 여기서 2022년의 유효세율은 (0.6)% 즉, -0.6%이고, 2021년은 14.8%입니다. 보기의 숫자와 부호가 다르지만, 가장 근접한 보기는 d)입니다. d)에서 FY2022의 세율이 0.62%로 표기되어 있으나, 실제 보고서 수치는 (0.6)%로 음수입니다. 그러나 다른 보기들은 수치가 더 맞지 않으므로, d)가 가장 적합합니다. 실제 수치는 -0.6% (2022), 14.8% (2021)임을 청크 5에 근거해 선택합니다."
+  },
+  "parse_error": null
+}

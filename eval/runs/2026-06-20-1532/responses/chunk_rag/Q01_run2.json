@@ -1,0 +1,65 @@
+{
+  "column": "chunk_rag",
+  "question_id": "Q01",
+  "run_index": 2,
+  "input_tokens": 6854,
+  "output_tokens": 212,
+  "embedding_tokens": 20366,
+  "embedding_tokens_breakdown": {
+    "question_embedding": 35,
+    "setup_amortized": 20331,
+    "setup_total": 426971,
+    "questions_count_for_amortization": 21
+  },
+  "total_tokens": 27432,
+  "latency_ms": 2380,
+  "model": "gpt-4.1",
+  "retrieved_chunks": [
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 113,
+      "score": 0.5475266238366149
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 47,
+      "score": 0.544336564784259
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 45,
+      "score": 0.5372316342365769
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 46,
+      "score": 0.535076417121566
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 64,
+      "score": 0.531475343652093
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 78,
+      "score": 0.5234554945486118
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 0,
+      "score": 0.5176177138559108
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 106,
+      "score": 0.5010971990986399
+    }
+  ],
+  "raw_response": "{\"choice\":\"e\",\"reasoning\":\"제공된 발췌들(청크 1, 2, 3, 4, 5, 7, 8)에서는 AMD의 FY22(2022 회계연도) 기준 현금, 현금성 자산, 단기투자, 매출채권, 유동부채 등 개별 항목의 구체적인 수치가 일부 언급되지만, 이들로부터 직접적으로 quick ratio(당좌비율)를 계산할 수 있는 모든 정보(특히 유동부채의 정확한 수치)가 명확히 제공되지 않습니다. 또한, AMD의 quick ratio가 1.57이라는 수치나, quick ratio가 1 미만이라는 언급, 혹은 quick ratio가 아닌 다른 지표가 더 적합하다는 명시적 설명도 발췌 내에 없습니다. 따라서 보기 중 정답은 'e) Insufficient information / cannot determine from the corpus.'입니다.\"}",
+  "parsed": {
+    "choice": "e",
+    "reasoning": "제공된 발췌들(청크 1, 2, 3, 4, 5, 7, 8)에서는 AMD의 FY22(2022 회계연도) 기준 현금, 현금성 자산, 단기투자, 매출채권, 유동부채 등 개별 항목의 구체적인 수치가 일부 언급되지만, 이들로부터 직접적으로 quick ratio(당좌비율)를 계산할 수 있는 모든 정보(특히 유동부채의 정확한 수치)가 명확히 제공되지 않습니다. 또한, AMD의 quick ratio가 1.57이라는 수치나, quick ratio가 1 미만이라는 언급, 혹은 quick ratio가 아닌 다른 지표가 더 적합하다는 명시적 설명도 발췌 내에 없습니다. 따라서 보기 중 정답은 'e) Insufficient information / cannot determine from the corpus.'입니다."
+  },
+  "parse_error": null
+}

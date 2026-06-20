@@ -1,0 +1,167 @@
+{
+  "column": "combined",
+  "question_id": "Q16",
+  "run_index": 2,
+  "anchor_extraction": {
+    "input_tokens": 485,
+    "output_tokens": 58,
+    "latency_ms": 1160,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"Boeing\",\"aliases\":[\"Boeing\"]},{\"canonical\":\"FY2022\",\"aliases\":[\"FY2022\",\"Fiscal Year 2022\"]},{\"canonical\":\"ongoing legal battles\",\"aliases\":[\"ongoing legal battles\",\"legal battles\",\"lawsuits\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "Boeing",
+          "aliases": [
+            "Boeing"
+          ]
+        },
+        {
+          "canonical": "FY2022",
+          "aliases": [
+            "FY2022",
+            "Fiscal Year 2022"
+          ]
+        },
+        {
+          "canonical": "ongoing legal battles",
+          "aliases": [
+            "ongoing legal battles",
+            "legal battles",
+            "lawsuits"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 996,
+      "input": {
+        "keywords": [
+          "Boeing",
+          "FY2022",
+          "Fiscal Year 2022",
+          "ongoing legal battles",
+          "legal battles",
+          "lawsuits"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 54,
+      "input": {
+        "entry_ids": [
+          "01KVHVJAC0HJ24RDC9RT5V52EP",
+          "01KVHVJB12EN4X3PKS7Z835PEE",
+          "01KVHVAG6JEHW8957CND36XNP1",
+          "01KVHVFRZ8XBW6BQJBF8XDTXMS",
+          "01KVHVEPF8H0HSM6NSPNHFFZ17",
+          "01KVHVDDJEQA4MWHFWM69YX2S5",
+          "01KVHVJ4JDRDFRSAG0RCN8BDG4",
+          "01KVHVDKZRA4EPKH4HEND45E10",
+          "01KVHVHZ8QWR88ATP164QS0RJP",
+          "01KVHVDS2Y4RWB9SRG0CXKWX2A"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 18,
+        "edges": 14,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVHVJAC0HJ24RDC9RT5V52EP",
+    "01KVHVJB12EN4X3PKS7Z835PEE",
+    "01KVHVAG6JEHW8957CND36XNP1",
+    "01KVHVFRZ8XBW6BQJBF8XDTXMS",
+    "01KVHVEPF8H0HSM6NSPNHFFZ17",
+    "01KVHVDDJEQA4MWHFWM69YX2S5",
+    "01KVHVJ4JDRDFRSAG0RCN8BDG4",
+    "01KVHVDKZRA4EPKH4HEND45E10",
+    "01KVHVHZ8QWR88ATP164QS0RJP",
+    "01KVHVDS2Y4RWB9SRG0CXKWX2A"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 8756,
+  "retrieved_chunks": [
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 19,
+      "score": 0.6312766021019975
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 29,
+      "score": 0.6250963626249864
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 108,
+      "score": 0.6231658993792882
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 22,
+      "score": 0.6230341300688546
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 6,
+      "score": 0.6222869103022793
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 10,
+      "score": 0.6221011542556975
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 43,
+      "score": 0.6158837962295217
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 4,
+      "score": 0.6092953893917971
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 9671,
+    "output_tokens": 189,
+    "latency_ms": 2632,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"a\",\"reasoning\":\"(A) 검색된 문서 발췌에서 BOEING_2022_10K.md:108 청크는 'Multiple legal actions have been filed against us as a result of the October 29, 2018 accident of Lion Air Flight 610 and the March 10, 2019 accident of Ethiopian Airlines Flight 302.'라고 명시적으로 언급하고 있습니다. 이는 2018년과 2019년 항공기 사고와 관련된 소송이 FY2022에도 계속되고 있음을 보여줍니다. (B) 도메인 그래프에서도 Boeing과 Deferred Prosecution Agreement의 관계가 있지만, 구체적으로 'ongoing legal battles'의 성격을 명확히 보여주는 것은 (A)입니다. 따라서 보기 a)가 정답이며, 결정적 근거는 (A) 발췌입니다.\"}",
+    "parsed": {
+      "choice": "a",
+      "reasoning": "(A) 검색된 문서 발췌에서 BOEING_2022_10K.md:108 청크는 'Multiple legal actions have been filed against us as a result of the October 29, 2018 accident of Lion Air Flight 610 and the March 10, 2019 accident of Ethiopian Airlines Flight 302.'라고 명시적으로 언급하고 있습니다. 이는 2018년과 2019년 항공기 사고와 관련된 소송이 FY2022에도 계속되고 있음을 보여줍니다. (B) 도메인 그래프에서도 Boeing과 Deferred Prosecution Agreement의 관계가 있지만, 구체적으로 'ongoing legal battles'의 성격을 명확히 보여주는 것은 (A)입니다. 따라서 보기 a)가 정답이며, 결정적 근거는 (A) 발췌입니다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 20393,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 14,
+    "chunk_setup_amortized": 20331,
+    "chunk_setup_total": 426971,
+    "graph_keyword_estimated": 48,
+    "questions_count_for_amortization": 21
+  },
+  "total_input_tokens": 10156,
+  "total_output_tokens": 247,
+  "total_tokens": 30796,
+  "total_latency_ms": 4842
+}

@@ -1,0 +1,65 @@
+{
+  "column": "chunk_rag",
+  "question_id": "Q13",
+  "run_index": 0,
+  "input_tokens": 6449,
+  "output_tokens": 152,
+  "embedding_tokens": 20347,
+  "embedding_tokens_breakdown": {
+    "question_embedding": 16,
+    "setup_amortized": 20331,
+    "setup_total": 426971,
+    "questions_count_for_amortization": 21
+  },
+  "total_tokens": 26948,
+  "latency_ms": 1950,
+  "model": "gpt-4.1",
+  "retrieved_chunks": [
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 77,
+      "score": 0.6824459113751863
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 137,
+      "score": 0.6694014806918115
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 151,
+      "score": 0.6660343963677496
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 72,
+      "score": 0.6534701892175202
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 164,
+      "score": 0.6421725353600571
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 136,
+      "score": 0.6361374650397575
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 177,
+      "score": 0.6173713191547353
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 6,
+      "score": 0.6114198436986567
+    }
+  ],
+  "raw_response": "{\"choice\":\"e\",\"reasoning\":\"제공된 발췌들에는 American Express의 2022년 대차대조표(Balance Sheet)에서 각 부채 항목의 금액이 명확하게 비교되어 있지 않습니다. 예를 들어, 청크 3에서는 장기부채(Long-term debt)가 430억 달러(43 billion)임을 알 수 있지만, 다른 주요 부채 항목(예: Accounts payable, Accrued expenses, Customer deposits 등)의 2022년 말 잔액이 명시되어 있지 않습니다. 따라서, 제공된 정보만으로 2022년 대차대조표상 가장 큰 부채가 무엇인지 확정할 수 없습니다.\"}",
+  "parsed": {
+    "choice": "e",
+    "reasoning": "제공된 발췌들에는 American Express의 2022년 대차대조표(Balance Sheet)에서 각 부채 항목의 금액이 명확하게 비교되어 있지 않습니다. 예를 들어, 청크 3에서는 장기부채(Long-term debt)가 430억 달러(43 billion)임을 알 수 있지만, 다른 주요 부채 항목(예: Accounts payable, Accrued expenses, Customer deposits 등)의 2022년 말 잔액이 명시되어 있지 않습니다. 따라서, 제공된 정보만으로 2022년 대차대조표상 가장 큰 부채가 무엇인지 확정할 수 없습니다."
+  },
+  "parse_error": null
+}

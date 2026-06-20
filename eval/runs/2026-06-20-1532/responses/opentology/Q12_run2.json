@@ -1,0 +1,125 @@
+{
+  "column": "opentology",
+  "question_id": "Q12",
+  "run_index": 2,
+  "anchor_extraction": {
+    "input_tokens": 491,
+    "output_tokens": 70,
+    "latency_ms": 1227,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"effective tax rate\",\"aliases\":[\"effective tax rate\"]},{\"canonical\":\"American Express\",\"aliases\":[\"American Express\",\"Amex\"]},{\"canonical\":\"FY2021\",\"aliases\":[\"FY2021\",\"Fiscal Year 2021\"]},{\"canonical\":\"FY2022\",\"aliases\":[\"FY2022\",\"Fiscal Year 2022\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "effective tax rate",
+          "aliases": [
+            "effective tax rate"
+          ]
+        },
+        {
+          "canonical": "American Express",
+          "aliases": [
+            "American Express",
+            "Amex"
+          ]
+        },
+        {
+          "canonical": "FY2021",
+          "aliases": [
+            "FY2021",
+            "Fiscal Year 2021"
+          ]
+        },
+        {
+          "canonical": "FY2022",
+          "aliases": [
+            "FY2022",
+            "Fiscal Year 2022"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 637,
+      "input": {
+        "keywords": [
+          "effective tax rate",
+          "American Express",
+          "Amex",
+          "FY2021",
+          "Fiscal Year 2021",
+          "FY2022",
+          "Fiscal Year 2022"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 125,
+      "input": {
+        "entry_ids": [
+          "01KVHVEPF8H0HSM6NSPNHFFZ17",
+          "01KVHVFRZ8XBW6BQJBF8XDTXMS",
+          "01KVHVKCFYHWZAQF8E21NKKBEB",
+          "01KVHVHGM15GM1MGSYPCXT9Z2S",
+          "01KVHVCP9JF4XN5VCF0HAQ0ANF",
+          "01KVHVDXCW8KVVQYQDFHD0MRP5",
+          "01KVHVHJ5QKFB2A19QG1TVPWVZ",
+          "01KVHVJAC0HJ24RDC9RT5V52EP",
+          "01KVHVBNC3VCCP6WQD2GBP9JE9",
+          "01KVHVHK6CXQGFX8QPGJT5RADF"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 72,
+        "edges": 68,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVHVEPF8H0HSM6NSPNHFFZ17",
+    "01KVHVFRZ8XBW6BQJBF8XDTXMS",
+    "01KVHVKCFYHWZAQF8E21NKKBEB",
+    "01KVHVHGM15GM1MGSYPCXT9Z2S",
+    "01KVHVCP9JF4XN5VCF0HAQ0ANF",
+    "01KVHVDXCW8KVVQYQDFHD0MRP5",
+    "01KVHVHJ5QKFB2A19QG1TVPWVZ",
+    "01KVHVJAC0HJ24RDC9RT5V52EP",
+    "01KVHVBNC3VCCP6WQD2GBP9JE9",
+    "01KVHVHK6CXQGFX8QPGJT5RADF"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 33244,
+  "answer_generation": {
+    "input_tokens": 10052,
+    "output_tokens": 76,
+    "latency_ms": 1440,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"e\",\"reasoning\":\"제공된 도메인 그래프에는 American Express의 FY2021 및 FY2022 유효세율(Effective Tax Rate)에 대한 정보가 포함되어 있지 않습니다. 엔티티 및 관계 중 세율 수치나 변화에 대한 언급이 없으므로, 정답을 도출할 수 없습니다.\"}",
+    "parsed": {
+      "choice": "e",
+      "reasoning": "제공된 도메인 그래프에는 American Express의 FY2021 및 FY2022 유효세율(Effective Tax Rate)에 대한 정보가 포함되어 있지 않습니다. 엔티티 및 관계 중 세율 수치나 변화에 대한 언급이 없으므로, 정답을 도출할 수 없습니다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 56,
+  "total_input_tokens": 10543,
+  "total_output_tokens": 146,
+  "total_tokens": 10745,
+  "total_latency_ms": 3429
+}

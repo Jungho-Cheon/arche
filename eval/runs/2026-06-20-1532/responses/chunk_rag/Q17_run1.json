@@ -1,0 +1,65 @@
+{
+  "column": "chunk_rag",
+  "question_id": "Q17",
+  "run_index": 1,
+  "input_tokens": 7231,
+  "output_tokens": 160,
+  "embedding_tokens": 20366,
+  "embedding_tokens_breakdown": {
+    "question_embedding": 35,
+    "setup_amortized": 20331,
+    "setup_total": 426971,
+    "questions_count_for_amortization": 21
+  },
+  "total_tokens": 27757,
+  "latency_ms": 2194,
+  "model": "gpt-4.1",
+  "retrieved_chunks": [
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 22,
+      "score": 0.591216358687371
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 60,
+      "score": 0.5871429545079161
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 10,
+      "score": 0.5787216671604144
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 24,
+      "score": 0.5778952784327755
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 27,
+      "score": 0.5752266908669927
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 26,
+      "score": 0.5748229981165867
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 54,
+      "score": 0.5741591014404079
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 4,
+      "score": 0.5726992950132752
+    }
+  ],
+  "raw_response": "{\"choice\": \"e\", \"reasoning\": \"The provided excerpts from Boeing's 2022 10-K do not explicitly report a 'gross margin' figure or a 'gross profit' line item. The financial statements (청크 7) provide 'total revenues' and 'total costs and expenses,' but the costs are not broken down into 'cost of goods sold' versus other operating expenses in a way that allows for a standard gross margin calculation. Boeing's reporting focuses on operating margin and loss from operations, and the notes discuss the use of program accounting and long-term contract accounting, which further complicates the direct calculation of gross margin as typically defined. Therefore, based on the information in the excerpts, there is insufficient information to determine Boeing's gross margin profile or its trend.\"}",
+  "parsed": {
+    "choice": "e",
+    "reasoning": "The provided excerpts from Boeing's 2022 10-K do not explicitly report a 'gross margin' figure or a 'gross profit' line item. The financial statements (청크 7) provide 'total revenues' and 'total costs and expenses,' but the costs are not broken down into 'cost of goods sold' versus other operating expenses in a way that allows for a standard gross margin calculation. Boeing's reporting focuses on operating margin and loss from operations, and the notes discuss the use of program accounting and long-term contract accounting, which further complicates the direct calculation of gross margin as typically defined. Therefore, based on the information in the excerpts, there is insufficient information to determine Boeing's gross margin profile or its trend."
+  },
+  "parse_error": null
+}

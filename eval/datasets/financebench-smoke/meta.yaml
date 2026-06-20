@@ -1,0 +1,44 @@
+dataset_id: financebench-smoke-2026-06-20
+domain: SEC 10-K (FinanceBench smoke subset — AMD / American Express / Boeing 2022 10-K)
+language: en
+author: opentology-eval
+created_at: "2026-06-20"
+description: |
+  ADR-0008 의 EntityConsolidator stoplist fix (identity.py 의
+  NON_IDENTIFYING_ALIAS_STOPLIST) 가 1M smoke 시점에 catastrophic over-merge 를
+  차단하는지 확인하기 위한 *smoke 데이터셋*.
+
+  financebench-2026-06-20 (33 MCQ / 6 사) 에서 AMD / AXP / BA 3 사 관련 21 MCQ 만
+  추출. corpus 도 3 사 (~435K tokens) 만 사용. 정답 위치 셔플은 원본 dataset 의
+  결정론적 셔플 (qid hash 기반) 결과를 그대로 이어받음.
+
+  목적은 *전체 1M 재측정 전* 에 graph 가 의미 있게 응답하는지, Combined 가 chunk
+  대비 우위 신호를 내는지 *빠르게* 확인 (smoke). 본 결과로 Combined RAG 의 유의
+  미/무의미 의사결정 1 차 evidence 확보.
+
+corpus:
+  file_count: 3
+  total_tokens_estimate: 435000
+  formats: [md]
+  notes: |
+    AMD_2022_10K           : ~103K
+    AMERICANEXPRESS_2022_10K: ~205K
+    BOEING_2022_10K        : ~127K
+    TOTAL                  : ~435K
+
+questions:
+  count: 21
+  by_domain_pattern:
+    single_doc: 7
+    cross_source: 7
+    multi_hop: 7
+  by_hops_required:
+    "1": 7
+    "2": 7
+    "3": 7
+
+source:
+  upstream_dataset: financebench-2026-06-20 (이 저장소)
+  filter_criterion: |
+    expected_sources 가 corpus/AMD_2022_10K.md, corpus/AMERICANEXPRESS_2022_10K.md,
+    corpus/BOEING_2022_10K.md 중 하나라도 포함하는 MCQ.

@@ -1,0 +1,65 @@
+{
+  "column": "chunk_rag",
+  "question_id": "Q06",
+  "run_index": 1,
+  "input_tokens": 7145,
+  "output_tokens": 195,
+  "embedding_tokens": 20354,
+  "embedding_tokens_breakdown": {
+    "question_embedding": 23,
+    "setup_amortized": 20331,
+    "setup_total": 426971,
+    "questions_count_for_amortization": 21
+  },
+  "total_tokens": 27694,
+  "latency_ms": 2214,
+  "model": "gpt-4.1",
+  "retrieved_chunks": [
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 72,
+      "score": 0.6307091927179599
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 4,
+      "score": 0.6300717589531374
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 54,
+      "score": 0.6132433210307124
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 46,
+      "score": 0.6116610813065511
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 47,
+      "score": 0.6081147772248272
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 55,
+      "score": 0.6015386448574617
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 8,
+      "score": 0.5740504000315195
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 48,
+      "score": 0.5715713770935587
+    }
+  ],
+  "raw_response": "{\"choice\":\"c\",\"reasoning\":\"청크 3과 5에서 FY21(2021)과 FY22(2022) 각 사업부문의 매출 증가율이 명확히 제시되어 있습니다. Data Center 부문은 2021년 $3.7B에서 2022년 $6.0B로 64% 증가, Client 부문은 2021년 $6.9B에서 2022년 $6.2B로 10% 감소, Gaming 부문은 2021년 $5.6B에서 2022년 $6.8B로 21% 증가, Embedded 부문은 2021년 $246M에서 2022년 $4.6B로 대폭 증가(이 부문은 제외 조건). 따라서 Embedded를 제외하면 Data Center 부문의 매출이 비율상 가장 크게 증가했습니다. 보기 c)가 정답입니다.\"}",
+  "parsed": {
+    "choice": "c",
+    "reasoning": "청크 3과 5에서 FY21(2021)과 FY22(2022) 각 사업부문의 매출 증가율이 명확히 제시되어 있습니다. Data Center 부문은 2021년 $3.7B에서 2022년 $6.0B로 64% 증가, Client 부문은 2021년 $6.9B에서 2022년 $6.2B로 10% 감소, Gaming 부문은 2021년 $5.6B에서 2022년 $6.8B로 21% 증가, Embedded 부문은 2021년 $246M에서 2022년 $4.6B로 대폭 증가(이 부문은 제외 조건). 따라서 Embedded를 제외하면 Data Center 부문의 매출이 비율상 가장 크게 증가했습니다. 보기 c)가 정답입니다."
+  },
+  "parse_error": null
+}

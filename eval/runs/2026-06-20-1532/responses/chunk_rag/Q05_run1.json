@@ -1,0 +1,65 @@
+{
+  "column": "chunk_rag",
+  "question_id": "Q05",
+  "run_index": 1,
+  "input_tokens": 7004,
+  "output_tokens": 145,
+  "embedding_tokens": 20359,
+  "embedding_tokens_breakdown": {
+    "question_embedding": 28,
+    "setup_amortized": 20331,
+    "setup_total": 426971,
+    "questions_count_for_amortization": 21
+  },
+  "total_tokens": 27508,
+  "latency_ms": 1757,
+  "model": "gpt-4.1",
+  "retrieved_chunks": [
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 58,
+      "score": 0.6722934075133102
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 46,
+      "score": 0.6614154792157921
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 47,
+      "score": 0.6592208280166644
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 64,
+      "score": 0.6265872029007181
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 63,
+      "score": 0.6246293563669106
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 55,
+      "score": 0.6201360973278414
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 45,
+      "score": 0.6054674910994541
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 44,
+      "score": 0.6017723358505763
+    }
+  ],
+  "raw_response": "{\n  \"choice\": \"a\",\n  \"reasoning\": \"청크 5와 청크 4에서 AMD의 2022년 현금흐름표가 명확히 제시되어 있다. 2022년 영업활동으로 인한 순현금 유입은 $3,565 million, 투자활동으로 인한 순현금 유입은 $1,999 million, 재무활동으로 인한 순현금 유출은 $(3,264) million이다. 즉, 영업활동이 가장 많은 현금 유입을 가져왔다. 따라서 정답은 a) Operations brought in the most cash flow for AMD in FY22이다.\"\n}",
+  "parsed": {
+    "choice": "a",
+    "reasoning": "청크 5와 청크 4에서 AMD의 2022년 현금흐름표가 명확히 제시되어 있다. 2022년 영업활동으로 인한 순현금 유입은 $3,565 million, 투자활동으로 인한 순현금 유입은 $1,999 million, 재무활동으로 인한 순현금 유출은 $(3,264) million이다. 즉, 영업활동이 가장 많은 현금 유입을 가져왔다. 따라서 정답은 a) Operations brought in the most cash flow for AMD in FY22이다."
+  },
+  "parse_error": null
+}

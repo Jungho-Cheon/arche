@@ -1,0 +1,165 @@
+{
+  "column": "combined",
+  "question_id": "Q18",
+  "run_index": 1,
+  "anchor_extraction": {
+    "input_tokens": 484,
+    "output_tokens": 51,
+    "latency_ms": 1067,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"Boeing\",\"aliases\":[\"Boeing\"]},{\"canonical\":\"primary customers\",\"aliases\":[\"primary customers\",\"main customers\"]},{\"canonical\":\"FY2022\",\"aliases\":[\"FY2022\",\"Fiscal Year 2022\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "Boeing",
+          "aliases": [
+            "Boeing"
+          ]
+        },
+        {
+          "canonical": "primary customers",
+          "aliases": [
+            "primary customers",
+            "main customers"
+          ]
+        },
+        {
+          "canonical": "FY2022",
+          "aliases": [
+            "FY2022",
+            "Fiscal Year 2022"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 1025,
+      "input": {
+        "keywords": [
+          "Boeing",
+          "primary customers",
+          "main customers",
+          "FY2022",
+          "Fiscal Year 2022"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 169,
+      "input": {
+        "entry_ids": [
+          "01KVHVJAC0HJ24RDC9RT5V52EP",
+          "01KVHVJB12EN4X3PKS7Z835PEE",
+          "01KVHVFRZ8XBW6BQJBF8XDTXMS",
+          "01KVHVEPF8H0HSM6NSPNHFFZ17",
+          "01KVHVJ8EA0SQZ67W4GA85RCP3",
+          "01KVHVJZ8XZ0NTDF22581S4VGX",
+          "01KVHVHGM15GM1MGSYPCXT9Z2S",
+          "01KVHV949NZP17TXM80K6G34R2",
+          "01KVHVGTZATSJA08Y3MYCK8ZMY",
+          "01KVHVGY5W8J69ASESMFEDW7WW"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 72,
+        "edges": 67,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVHVJAC0HJ24RDC9RT5V52EP",
+    "01KVHVJB12EN4X3PKS7Z835PEE",
+    "01KVHVFRZ8XBW6BQJBF8XDTXMS",
+    "01KVHVEPF8H0HSM6NSPNHFFZ17",
+    "01KVHVJ8EA0SQZ67W4GA85RCP3",
+    "01KVHVJZ8XZ0NTDF22581S4VGX",
+    "01KVHVHGM15GM1MGSYPCXT9Z2S",
+    "01KVHV949NZP17TXM80K6G34R2",
+    "01KVHVGTZATSJA08Y3MYCK8ZMY",
+    "01KVHVGY5W8J69ASESMFEDW7WW"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 32135,
+  "retrieved_chunks": [
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 4,
+      "score": 0.6370373412356566
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 22,
+      "score": 0.6169680836021711
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 10,
+      "score": 0.6110058174738793
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 29,
+      "score": 0.6077232356352533
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 3,
+      "score": 0.603742685492148
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 59,
+      "score": 0.6002854441223968
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 8,
+      "score": 0.5974983284748054
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 6,
+      "score": 0.5973302925022951
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 16940,
+    "output_tokens": 411,
+    "latency_ms": 4117,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"c\",\"reasoning\":\"(A) 검색된 문서 발췌에서 Boeing의 주요 고객에 대한 직접적인 언급이 있습니다. 청크 2와 7에서 Boeing은 전 세계 상업용 항공사(Commercial Airlines)와 미국 정부(특히 국방 관련 프로그램)로부터 상당한 매출을 올리고 있음을 명확히 밝히고 있습니다. 특히 청크 2에서는 'We are one of the two major manufacturers of 100+ seat airplanes for the worldwide commercial airline industry and one of the largest defense contractors in the U.S.'라고 하여 두 축(상업용 항공사와 미국 정부/국방)이 모두 주요 고객임을 명시합니다. 또한 청크 7에서는 'Our Commercial Airplanes business depends on our ability to maintain a healthy production system...' 등 상업용 항공사에 대한 의존성을 언급하고, 동시에 'We derive a substantial portion of our revenue from the U.S. government, primarily from defense related programs with the United States Department of Defense (U.S. DoD).'라고 하여 미국 정부가 상당한 매출 비중을 차지함을 밝힙니다. 실제로 FY2022 기준 Boeing의 사업부별 매출(청크 6)에서 Defense, Space & Security 부문이 약 23,162백만 달러로 전체 매출의 약 35%를 차지하며, 이 부문 매출의 대부분이 미국 정부로부터 발생함을 감안하면, 보기 c의 '정부가 전체 매출의 40%를 차지'한다는 설명이 가장 근접합니다. (B) 도메인 그래프에서도 Boeing이 Commercial Airplanes, Defense, Space & Security, Global Services 등 다양한 사업부를 통해 상업용 항공사와 미국 정부 모두를 주요 고객으로 하고 있음을 구조적으로 보여줍니다. 따라서 두 출처 모두 보기 c를 지지합니다.\"}",
+    "parsed": {
+      "choice": "c",
+      "reasoning": "(A) 검색된 문서 발췌에서 Boeing의 주요 고객에 대한 직접적인 언급이 있습니다. 청크 2와 7에서 Boeing은 전 세계 상업용 항공사(Commercial Airlines)와 미국 정부(특히 국방 관련 프로그램)로부터 상당한 매출을 올리고 있음을 명확히 밝히고 있습니다. 특히 청크 2에서는 'We are one of the two major manufacturers of 100+ seat airplanes for the worldwide commercial airline industry and one of the largest defense contractors in the U.S.'라고 하여 두 축(상업용 항공사와 미국 정부/국방)이 모두 주요 고객임을 명시합니다. 또한 청크 7에서는 'Our Commercial Airplanes business depends on our ability to maintain a healthy production system...' 등 상업용 항공사에 대한 의존성을 언급하고, 동시에 'We derive a substantial portion of our revenue from the U.S. government, primarily from defense related programs with the United States Department of Defense (U.S. DoD).'라고 하여 미국 정부가 상당한 매출 비중을 차지함을 밝힙니다. 실제로 FY2022 기준 Boeing의 사업부별 매출(청크 6)에서 Defense, Space & Security 부문이 약 23,162백만 달러로 전체 매출의 약 35%를 차지하며, 이 부문 매출의 대부분이 미국 정부로부터 발생함을 감안하면, 보기 c의 '정부가 전체 매출의 40%를 차지'한다는 설명이 가장 근접합니다. (B) 도메인 그래프에서도 Boeing이 Commercial Airplanes, Defense, Space & Security, Global Services 등 다양한 사업부를 통해 상업용 항공사와 미국 정부 모두를 주요 고객으로 하고 있음을 구조적으로 보여줍니다. 따라서 두 출처 모두 보기 c를 지지합니다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 20384,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 13,
+    "chunk_setup_amortized": 20331,
+    "chunk_setup_total": 426971,
+    "graph_keyword_estimated": 40,
+    "questions_count_for_amortization": 21
+  },
+  "total_input_tokens": 17424,
+  "total_output_tokens": 462,
+  "total_tokens": 38270,
+  "total_latency_ms": 6378
+}

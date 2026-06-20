@@ -1,0 +1,165 @@
+{
+  "column": "combined",
+  "question_id": "Q18",
+  "run_index": 2,
+  "anchor_extraction": {
+    "input_tokens": 484,
+    "output_tokens": 51,
+    "latency_ms": 1383,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"Boeing\",\"aliases\":[\"Boeing\"]},{\"canonical\":\"primary customers\",\"aliases\":[\"primary customers\",\"main customers\"]},{\"canonical\":\"FY2022\",\"aliases\":[\"FY2022\",\"Fiscal Year 2022\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "Boeing",
+          "aliases": [
+            "Boeing"
+          ]
+        },
+        {
+          "canonical": "primary customers",
+          "aliases": [
+            "primary customers",
+            "main customers"
+          ]
+        },
+        {
+          "canonical": "FY2022",
+          "aliases": [
+            "FY2022",
+            "Fiscal Year 2022"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 951,
+      "input": {
+        "keywords": [
+          "Boeing",
+          "primary customers",
+          "main customers",
+          "FY2022",
+          "Fiscal Year 2022"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 167,
+      "input": {
+        "entry_ids": [
+          "01KVHVJAC0HJ24RDC9RT5V52EP",
+          "01KVHVJB12EN4X3PKS7Z835PEE",
+          "01KVHVFRZ8XBW6BQJBF8XDTXMS",
+          "01KVHVEPF8H0HSM6NSPNHFFZ17",
+          "01KVHVJ8EA0SQZ67W4GA85RCP3",
+          "01KVHVJZ8XZ0NTDF22581S4VGX",
+          "01KVHVHGM15GM1MGSYPCXT9Z2S",
+          "01KVHV949NZP17TXM80K6G34R2",
+          "01KVHVGTZATSJA08Y3MYCK8ZMY",
+          "01KVHVGY5W8J69ASESMFEDW7WW"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 72,
+        "edges": 67,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVHVJAC0HJ24RDC9RT5V52EP",
+    "01KVHVJB12EN4X3PKS7Z835PEE",
+    "01KVHVFRZ8XBW6BQJBF8XDTXMS",
+    "01KVHVEPF8H0HSM6NSPNHFFZ17",
+    "01KVHVJ8EA0SQZ67W4GA85RCP3",
+    "01KVHVJZ8XZ0NTDF22581S4VGX",
+    "01KVHVHGM15GM1MGSYPCXT9Z2S",
+    "01KVHV949NZP17TXM80K6G34R2",
+    "01KVHVGTZATSJA08Y3MYCK8ZMY",
+    "01KVHVGY5W8J69ASESMFEDW7WW"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 32135,
+  "retrieved_chunks": [
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 4,
+      "score": 0.6370600113013074
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 22,
+      "score": 0.6170254769513455
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 10,
+      "score": 0.6110731828086124
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 29,
+      "score": 0.6078034017778384
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 3,
+      "score": 0.6037893934043891
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 59,
+      "score": 0.6003331965093308
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 8,
+      "score": 0.5975667562816219
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 6,
+      "score": 0.5973675059301187
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 16940,
+    "output_tokens": 452,
+    "latency_ms": 5330,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"c\",\"reasoning\":\"(A) 검색된 문서 발췌에서 Boeing의 사업 구조와 주요 고객에 대한 설명이 명확히 제시되어 있습니다. 청크 2와 7에서 Boeing은 상업용 항공기(Commercial Airplanes) 부문과 방위, 우주 및 보안(Defense, Space & Security) 부문을 모두 운영하며, 상업용 항공사와 미국 정부(특히 국방부)가 주요 고객임을 반복적으로 언급합니다. 특히 청크 2에서는 'We are one of the two major manufacturers of 100+ seat airplanes for the worldwide commercial airline industry and one of the largest defense contractors in the U.S.'라고 하여 두 고객군이 모두 핵심임을 명시합니다. 또한 청크 7에서는 'Our Commercial Airplanes business depends on our ability to maintain a healthy production system...' 등 상업용 항공사에 대한 의존과 함께, 'We derive a substantial portion of our revenue from the U.S. government, primarily from defense related programs with the United States Department of Defense (U.S. DoD).'라고 하여 미국 정부가 상당한 매출 비중을 차지함을 명확히 밝힙니다. 실제로 FY2022 세그먼트별 매출(청크 6)에서 Commercial Airplanes와 Defense, Space & Security가 각각 25,867백만 달러, 23,162백만 달러로 전체 매출의 약 40%가 정부(방위) 부문임을 수치로도 뒷받침합니다. (B) 도메인 그래프에서도 Boeing이 Commercial Airplanes와 Defense, Space & Security 두 부문을 모두 포함하고 있음을 명확히 보여주며, 미국 정부와의 계약 관계도 명시되어 있습니다. 따라서 보기 c) 'Boeing's primary customers in FY2022 were a limited number of commercial airlines and the US government, with the government accounting for 40% of total revenues.'가 (A)와 (B) 모두에서 구체적으로 뒷받침되므로 정답입니다.\"}",
+    "parsed": {
+      "choice": "c",
+      "reasoning": "(A) 검색된 문서 발췌에서 Boeing의 사업 구조와 주요 고객에 대한 설명이 명확히 제시되어 있습니다. 청크 2와 7에서 Boeing은 상업용 항공기(Commercial Airplanes) 부문과 방위, 우주 및 보안(Defense, Space & Security) 부문을 모두 운영하며, 상업용 항공사와 미국 정부(특히 국방부)가 주요 고객임을 반복적으로 언급합니다. 특히 청크 2에서는 'We are one of the two major manufacturers of 100+ seat airplanes for the worldwide commercial airline industry and one of the largest defense contractors in the U.S.'라고 하여 두 고객군이 모두 핵심임을 명시합니다. 또한 청크 7에서는 'Our Commercial Airplanes business depends on our ability to maintain a healthy production system...' 등 상업용 항공사에 대한 의존과 함께, 'We derive a substantial portion of our revenue from the U.S. government, primarily from defense related programs with the United States Department of Defense (U.S. DoD).'라고 하여 미국 정부가 상당한 매출 비중을 차지함을 명확히 밝힙니다. 실제로 FY2022 세그먼트별 매출(청크 6)에서 Commercial Airplanes와 Defense, Space & Security가 각각 25,867백만 달러, 23,162백만 달러로 전체 매출의 약 40%가 정부(방위) 부문임을 수치로도 뒷받침합니다. (B) 도메인 그래프에서도 Boeing이 Commercial Airplanes와 Defense, Space & Security 두 부문을 모두 포함하고 있음을 명확히 보여주며, 미국 정부와의 계약 관계도 명시되어 있습니다. 따라서 보기 c) 'Boeing's primary customers in FY2022 were a limited number of commercial airlines and the US government, with the government accounting for 40% of total revenues.'가 (A)와 (B) 모두에서 구체적으로 뒷받침되므로 정답입니다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 20384,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 13,
+    "chunk_setup_amortized": 20331,
+    "chunk_setup_total": 426971,
+    "graph_keyword_estimated": 40,
+    "questions_count_for_amortization": 21
+  },
+  "total_input_tokens": 17424,
+  "total_output_tokens": 503,
+  "total_tokens": 38311,
+  "total_latency_ms": 7831
+}

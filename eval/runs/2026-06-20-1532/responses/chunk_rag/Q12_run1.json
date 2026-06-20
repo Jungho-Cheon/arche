@@ -1,0 +1,65 @@
+{
+  "column": "chunk_rag",
+  "question_id": "Q12",
+  "run_index": 1,
+  "input_tokens": 6692,
+  "output_tokens": 129,
+  "embedding_tokens": 20351,
+  "embedding_tokens_breakdown": {
+    "question_embedding": 20,
+    "setup_amortized": 20331,
+    "setup_total": 426971,
+    "questions_count_for_amortization": 21
+  },
+  "total_tokens": 27172,
+  "latency_ms": 2026,
+  "model": "gpt-4.1",
+  "retrieved_chunks": [
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 57,
+      "score": 0.6534519437248264
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 72,
+      "score": 0.6446450600017729
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 58,
+      "score": 0.6158583181802316
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 137,
+      "score": 0.6083653003800943
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 54,
+      "score": 0.6057468849270722
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 53,
+      "score": 0.6037296155335066
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 49,
+      "score": 0.5923265707644039
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 173,
+      "score": 0.5917531285491718
+    }
+  ],
+  "raw_response": "{\"choice\":\"c\",\"reasoning\":\"청크 3와 청크 1에서 'The effective tax rate was 21.6 percent and 24.6 percent for 2022 and 2021, respectively.'라는 문장이 명확하게 FY2021의 유효세율이 24.6%, FY2022의 유효세율이 21.6%임을 보여줍니다. 따라서 FY2021에서 FY2022로 유효세율이 24.6%에서 21.6%로 하락했습니다. 보기 c가 정확히 이 내용을 반영합니다.\"}",
+  "parsed": {
+    "choice": "c",
+    "reasoning": "청크 3와 청크 1에서 'The effective tax rate was 21.6 percent and 24.6 percent for 2022 and 2021, respectively.'라는 문장이 명확하게 FY2021의 유효세율이 24.6%, FY2022의 유효세율이 21.6%임을 보여줍니다. 따라서 FY2021에서 FY2022로 유효세율이 24.6%에서 21.6%로 하락했습니다. 보기 c가 정확히 이 내용을 반영합니다."
+  },
+  "parse_error": null
+}

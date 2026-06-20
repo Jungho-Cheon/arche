@@ -1,0 +1,65 @@
+{
+  "column": "chunk_rag",
+  "question_id": "Q10",
+  "run_index": 1,
+  "input_tokens": 6945,
+  "output_tokens": 139,
+  "embedding_tokens": 20367,
+  "embedding_tokens_breakdown": {
+    "question_embedding": 36,
+    "setup_amortized": 20331,
+    "setup_total": 426971,
+    "questions_count_for_amortization": 21
+  },
+  "total_tokens": 27451,
+  "latency_ms": 2300,
+  "model": "gpt-4.1",
+  "retrieved_chunks": [
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 54,
+      "score": 0.6195677861883138
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 72,
+      "score": 0.6085186661930683
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 53,
+      "score": 0.60251912948752
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 51,
+      "score": 0.6013205093674131
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 49,
+      "score": 0.5901983221466283
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 4,
+      "score": 0.5890157240264708
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 6,
+      "score": 0.5844777957826974
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 3,
+      "score": 0.5805269911287801
+    }
+  ],
+  "raw_response": "{\"choice\":\"b\",\"reasoning\":\"The provided excerpts from the AMEX 2022 10-K repeatedly emphasize metrics such as billed business, network volumes, net income, return on equity (ROE), and revenue growth as the primary ways to evaluate performance (see 청크 3 and 청크 1). There is no mention of operating margin as a key metric, and the business model is described as 'spend-centric,' focusing on driving card spending and related revenues. Additionally, the financial discussion centers on net income, revenue lines, and capital ratios, not operating margin. Therefore, for AMEX, operating margin is not the primary or most useful metric for performance evaluation.\"}",
+  "parsed": {
+    "choice": "b",
+    "reasoning": "The provided excerpts from the AMEX 2022 10-K repeatedly emphasize metrics such as billed business, network volumes, net income, return on equity (ROE), and revenue growth as the primary ways to evaluate performance (see 청크 3 and 청크 1). There is no mention of operating margin as a key metric, and the business model is described as 'spend-centric,' focusing on driving card spending and related revenues. Additionally, the financial discussion centers on net income, revenue lines, and capital ratios, not operating margin. Therefore, for AMEX, operating margin is not the primary or most useful metric for performance evaluation."
+  },
+  "parse_error": null
+}

@@ -1,0 +1,65 @@
+{
+  "column": "chunk_rag",
+  "question_id": "Q21",
+  "run_index": 2,
+  "input_tokens": 6469,
+  "output_tokens": 163,
+  "embedding_tokens": 20348,
+  "embedding_tokens_breakdown": {
+    "question_embedding": 17,
+    "setup_amortized": 20331,
+    "setup_total": 426971,
+    "questions_count_for_amortization": 21
+  },
+  "total_tokens": 26980,
+  "latency_ms": 2042,
+  "model": "gpt-4.1",
+  "retrieved_chunks": [
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 59,
+      "score": 0.6106279328841301
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 55,
+      "score": 0.6088133707972482
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 26,
+      "score": 0.5971466327345664
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 27,
+      "score": 0.5969732963451736
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 24,
+      "score": 0.5920169626239471
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 54,
+      "score": 0.5811962157422487
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 56,
+      "score": 0.5811313339397806
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 43,
+      "score": 0.5767675785379341
+    }
+  ],
+  "raw_response": "{\n  \"choice\": \"d\",\n  \"reasoning\": \"청크 5에서 'Effective income tax rate (0.6)% 14.8 % 17.5 %'라는 표기가 있습니다. 여기서 2022년의 유효세율은 (0.6)% 즉 -0.6%이고, 2021년은 14.8%입니다. 보기의 숫자와 부호가 다르지만, 가장 근접한 보기는 d)로, 2022년 0.62%, 2021년 -14.76%로 되어 있습니다. 실제 수치는 -0.6%와 14.8%이지만, 제공된 보기 중 가장 가까운 값이 d)입니다. 따라서 d)를 선택합니다.\"\n}",
+  "parsed": {
+    "choice": "d",
+    "reasoning": "청크 5에서 'Effective income tax rate (0.6)% 14.8 % 17.5 %'라는 표기가 있습니다. 여기서 2022년의 유효세율은 (0.6)% 즉 -0.6%이고, 2021년은 14.8%입니다. 보기의 숫자와 부호가 다르지만, 가장 근접한 보기는 d)로, 2022년 0.62%, 2021년 -14.76%로 되어 있습니다. 실제 수치는 -0.6%와 14.8%이지만, 제공된 보기 중 가장 가까운 값이 d)입니다. 따라서 d)를 선택합니다."
+  },
+  "parse_error": null
+}

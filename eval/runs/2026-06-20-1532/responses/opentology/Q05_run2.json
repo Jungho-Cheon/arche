@@ -1,0 +1,141 @@
+{
+  "column": "opentology",
+  "question_id": "Q05",
+  "run_index": 2,
+  "anchor_extraction": {
+    "input_tokens": 499,
+    "output_tokens": 88,
+    "latency_ms": 922,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"operations\",\"aliases\":[\"operations\",\"operating activities\"]},{\"canonical\":\"investing activities\",\"aliases\":[\"investing activities\",\"investing\"]},{\"canonical\":\"financing activities\",\"aliases\":[\"financing activities\",\"financing\"]},{\"canonical\":\"AMD\",\"aliases\":[\"AMD\"]},{\"canonical\":\"FY22\",\"aliases\":[\"FY22\",\"fiscal year 2022\"]},{\"canonical\":\"cash flow\",\"aliases\":[\"cash flow\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "operations",
+          "aliases": [
+            "operations",
+            "operating activities"
+          ]
+        },
+        {
+          "canonical": "investing activities",
+          "aliases": [
+            "investing activities",
+            "investing"
+          ]
+        },
+        {
+          "canonical": "financing activities",
+          "aliases": [
+            "financing activities",
+            "financing"
+          ]
+        },
+        {
+          "canonical": "AMD",
+          "aliases": [
+            "AMD"
+          ]
+        },
+        {
+          "canonical": "FY22",
+          "aliases": [
+            "FY22",
+            "fiscal year 2022"
+          ]
+        },
+        {
+          "canonical": "cash flow",
+          "aliases": [
+            "cash flow"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 1501,
+      "input": {
+        "keywords": [
+          "operations",
+          "operating activities",
+          "investing activities",
+          "investing",
+          "financing activities",
+          "financing",
+          "AMD",
+          "FY22",
+          "fiscal year 2022",
+          "cash flow"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 52,
+      "input": {
+        "entry_ids": [
+          "01KVHVK4BTE3KQ2EN98KBAJ6J4",
+          "01KVHVDKZRA4EPKH4HEND45E10",
+          "01KVHVDRG96SH2C3FA8E3YPWW7",
+          "01KVHVEQ32DH6GRTFM7NRCYR8X",
+          "01KVHVBBH3DFCXNZERZR3T1WVK",
+          "01KVHVBC175A369PF2MBT3W8PG",
+          "01KVHVEVXAHE26FCCZE0RH5RQ2",
+          "01KVHVDC5P1CQDHHC02T1AFKHN",
+          "01KVHVKBF117QSXG97CF5PYXW0",
+          "01KVHVKCFYHWZAQF8E21NKKBEB"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 24,
+        "edges": 19,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVHVK4BTE3KQ2EN98KBAJ6J4",
+    "01KVHVDKZRA4EPKH4HEND45E10",
+    "01KVHVDRG96SH2C3FA8E3YPWW7",
+    "01KVHVEQ32DH6GRTFM7NRCYR8X",
+    "01KVHVBBH3DFCXNZERZR3T1WVK",
+    "01KVHVBC175A369PF2MBT3W8PG",
+    "01KVHVEVXAHE26FCCZE0RH5RQ2",
+    "01KVHVDC5P1CQDHHC02T1AFKHN",
+    "01KVHVKBF117QSXG97CF5PYXW0",
+    "01KVHVKCFYHWZAQF8E21NKKBEB"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 11394,
+  "answer_generation": {
+    "input_tokens": 3666,
+    "output_tokens": 128,
+    "latency_ms": 1494,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"e\",\"reasoning\":\"그래프에는 AMD의 FY22(2022 회계연도)에서 영업활동, 투자활동, 재무활동 각각의 현금흐름 규모에 대한 정보가 전혀 포함되어 있지 않습니다. AMD가 commercial paper program을 운영하고, Revolving Credit Agreement를 보유하고 있다는 사실만 나와 있을 뿐, 실제 현금흐름표 수치나 각 활동별 현금흐름의 상대적 크기에 대한 언급이 없습니다. 따라서 제공된 그래프 정보만으로는 질문에 답할 수 없습니다.\"}",
+    "parsed": {
+      "choice": "e",
+      "reasoning": "그래프에는 AMD의 FY22(2022 회계연도)에서 영업활동, 투자활동, 재무활동 각각의 현금흐름 규모에 대한 정보가 전혀 포함되어 있지 않습니다. AMD가 commercial paper program을 운영하고, Revolving Credit Agreement를 보유하고 있다는 사실만 나와 있을 뿐, 실제 현금흐름표 수치나 각 활동별 현금흐름의 상대적 크기에 대한 언급이 없습니다. 따라서 제공된 그래프 정보만으로는 질문에 답할 수 없습니다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 80,
+  "total_input_tokens": 4165,
+  "total_output_tokens": 216,
+  "total_tokens": 4461,
+  "total_latency_ms": 3969
+}

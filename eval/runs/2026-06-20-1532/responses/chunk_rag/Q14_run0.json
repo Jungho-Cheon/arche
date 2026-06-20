@@ -1,0 +1,65 @@
+{
+  "column": "chunk_rag",
+  "question_id": "Q14",
+  "run_index": 0,
+  "input_tokens": 6724,
+  "output_tokens": 139,
+  "embedding_tokens": 20344,
+  "embedding_tokens_breakdown": {
+    "question_embedding": 13,
+    "setup_amortized": 20331,
+    "setup_total": 426971,
+    "questions_count_for_amortization": 21
+  },
+  "total_tokens": 27207,
+  "latency_ms": 2374,
+  "model": "gpt-4.1",
+  "retrieved_chunks": [
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 54,
+      "score": 0.6252656826147409
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 6,
+      "score": 0.6180776472949111
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 53,
+      "score": 0.6108641587209981
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 99,
+      "score": 0.588305620212638
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 72,
+      "score": 0.5791058967179893
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 4,
+      "score": 0.5788888115049232
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 32,
+      "score": 0.5728432497239485
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 57,
+      "score": 0.5693332951855451
+    }
+  ],
+  "raw_response": "{\"choice\":\"b\",\"reasoning\":\"청크 1과 청크 3에서 2022년 동안 American Express의 카드 회원 유지율이 높았다는 명확한 언급이 있다. 청크 1에서는 'Net card fees increased 17 percent year over-year, as new card acquisitions reached record levels in 2022 and Card Member retention remained high, demonstrating the impact of investments we have made in our premium value propositions.'라고 명시되어 있다. 이는 2022년에 카드 회원 유지가 성공적으로 이루어졌음을 보여준다. 따라서 정답은 b) Yes, American Express was able to retain card members during 2022.이다.\"}",
+  "parsed": {
+    "choice": "b",
+    "reasoning": "청크 1과 청크 3에서 2022년 동안 American Express의 카드 회원 유지율이 높았다는 명확한 언급이 있다. 청크 1에서는 'Net card fees increased 17 percent year over-year, as new card acquisitions reached record levels in 2022 and Card Member retention remained high, demonstrating the impact of investments we have made in our premium value propositions.'라고 명시되어 있다. 이는 2022년에 카드 회원 유지가 성공적으로 이루어졌음을 보여준다. 따라서 정답은 b) Yes, American Express was able to retain card members during 2022.이다."
+  },
+  "parse_error": null
+}

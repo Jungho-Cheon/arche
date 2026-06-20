@@ -1,0 +1,112 @@
+{
+  "column": "opentology",
+  "question_id": "Q02",
+  "run_index": 1,
+  "anchor_extraction": {
+    "input_tokens": 486,
+    "output_tokens": 32,
+    "latency_ms": 1024,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"AMD\",\"aliases\":[\"AMD\"]},{\"canonical\":\"products\",\"aliases\":[\"products\"]},{\"canonical\":\"services\",\"aliases\":[\"services\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "AMD",
+          "aliases": [
+            "AMD"
+          ]
+        },
+        {
+          "canonical": "products",
+          "aliases": [
+            "products"
+          ]
+        },
+        {
+          "canonical": "services",
+          "aliases": [
+            "services"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 946,
+      "input": {
+        "keywords": [
+          "AMD",
+          "products",
+          "services"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 167,
+      "input": {
+        "entry_ids": [
+          "01KVHVDH3619W87GXP9H13YJH9",
+          "01KVHVGX1D2SSPE30JBTW7YVN9",
+          "01KVHV8TWX6BRMKWKKK5N8EF0W",
+          "01KVHVDG2HH8NASWVJND7R7030",
+          "01KVHV99K0MJYZQXRKN8KSA80E",
+          "01KVHVETT52D58KMX4B4TBDPE0",
+          "01KVHVAWCP5E2D5CKYF2DXSZS9",
+          "01KVHVK3S5VKXBF4QYATTK53RM",
+          "01KVHVEVA4GM91VE8TCHY58H5V",
+          "01KVHVFXGCSD0ZZC4EKKE392V4"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 80,
+        "edges": 71,
+        "truncated": true
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVHVDH3619W87GXP9H13YJH9",
+    "01KVHVGX1D2SSPE30JBTW7YVN9",
+    "01KVHV8TWX6BRMKWKKK5N8EF0W",
+    "01KVHVDG2HH8NASWVJND7R7030",
+    "01KVHV99K0MJYZQXRKN8KSA80E",
+    "01KVHVETT52D58KMX4B4TBDPE0",
+    "01KVHVAWCP5E2D5CKYF2DXSZS9",
+    "01KVHVK3S5VKXBF4QYATTK53RM",
+    "01KVHVEVA4GM91VE8TCHY58H5V",
+    "01KVHVFXGCSD0ZZC4EKKE392V4"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 31374,
+  "answer_generation": {
+    "input_tokens": 9867,
+    "output_tokens": 194,
+    "latency_ms": 2367,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"a\",\"reasoning\":\"그래프에서 Advanced Micro Devices, Inc.가 보유한 business segment로 Data Center segment(서버 CPU, GPU, DPU, FPGA, Adaptive SoC), Client segment(PC용 CPU, APU, 칩셋), Gaming segment(디스크리트 GPU, 세미커스텀 SoC, 개발 서비스), Embedded segment(임베디드 CPU, GPU, APU, FPGA, Adaptive SoC)가 명시되어 있다. 각 세그먼트별로 판매하는 주요 제품군이 명확히 기술되어 있으며, 보기 a)는 이 네 가지 세그먼트의 제품 및 서비스 범위를 정확히 반영한다. 반면 b), c), d)는 일부 제품군(예: FPGAs, Adaptive SoCs, semi-custom SoCs, development services 등)을 누락하거나 잘못 기술하고 있다. 따라서 a)가 정답이다.\"}",
+    "parsed": {
+      "choice": "a",
+      "reasoning": "그래프에서 Advanced Micro Devices, Inc.가 보유한 business segment로 Data Center segment(서버 CPU, GPU, DPU, FPGA, Adaptive SoC), Client segment(PC용 CPU, APU, 칩셋), Gaming segment(디스크리트 GPU, 세미커스텀 SoC, 개발 서비스), Embedded segment(임베디드 CPU, GPU, APU, FPGA, Adaptive SoC)가 명시되어 있다. 각 세그먼트별로 판매하는 주요 제품군이 명확히 기술되어 있으며, 보기 a)는 이 네 가지 세그먼트의 제품 및 서비스 범위를 정확히 반영한다. 반면 b), c), d)는 일부 제품군(예: FPGAs, Adaptive SoCs, semi-custom SoCs, development services 등)을 누락하거나 잘못 기술하고 있다. 따라서 a)가 정답이다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 24,
+  "total_input_tokens": 10353,
+  "total_output_tokens": 226,
+  "total_tokens": 10603,
+  "total_latency_ms": 4504
+}

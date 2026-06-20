@@ -1,0 +1,65 @@
+{
+  "column": "chunk_rag",
+  "question_id": "Q01",
+  "run_index": 1,
+  "input_tokens": 6854,
+  "output_tokens": 178,
+  "embedding_tokens": 20366,
+  "embedding_tokens_breakdown": {
+    "question_embedding": 35,
+    "setup_amortized": 20331,
+    "setup_total": 426971,
+    "questions_count_for_amortization": 21
+  },
+  "total_tokens": 27398,
+  "latency_ms": 2451,
+  "model": "gpt-4.1",
+  "retrieved_chunks": [
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 113,
+      "score": 0.5475545163732211
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 47,
+      "score": 0.5444109427321803
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 45,
+      "score": 0.5372574252817048
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 46,
+      "score": 0.5351198776353131
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 64,
+      "score": 0.531528000613971
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 78,
+      "score": 0.5234563679864848
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 0,
+      "score": 0.5176451449674785
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 106,
+      "score": 0.5011395984461898
+    }
+  ],
+  "raw_response": "{\"choice\":\"e\",\"reasoning\":\"제공된 발췌들(청크 2, 5 등)에서는 AMD의 FY22 말 현금, 현금성 자산, 단기투자, 총부채, 그리고 기타 재무상태표 항목에 대한 일부 정보가 있으나, 빠른 비율(quick ratio)을 직접 계산할 수 있는 모든 수치(특히 유동부채, 매출채권 등)가 명확히 제시되어 있지 않습니다. 또한, AMD의 FY22 quick ratio가 1.57이라는 수치나, 그에 대한 직접적 언급도 발췌 내에 없습니다. 따라서 보기 b, c, d, a 중 어느 것도 발췌에 근거해 확정할 수 없으며, 정답은 정보 부족(e)입니다.\"}",
+  "parsed": {
+    "choice": "e",
+    "reasoning": "제공된 발췌들(청크 2, 5 등)에서는 AMD의 FY22 말 현금, 현금성 자산, 단기투자, 총부채, 그리고 기타 재무상태표 항목에 대한 일부 정보가 있으나, 빠른 비율(quick ratio)을 직접 계산할 수 있는 모든 수치(특히 유동부채, 매출채권 등)가 명확히 제시되어 있지 않습니다. 또한, AMD의 FY22 quick ratio가 1.57이라는 수치나, 그에 대한 직접적 언급도 발췌 내에 없습니다. 따라서 보기 b, c, d, a 중 어느 것도 발췌에 근거해 확정할 수 없으며, 정답은 정보 부족(e)입니다."
+  },
+  "parse_error": null
+}

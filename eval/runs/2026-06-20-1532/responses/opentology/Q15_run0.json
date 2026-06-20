@@ -1,0 +1,126 @@
+{
+  "column": "opentology",
+  "question_id": "Q15",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 495,
+    "output_tokens": 64,
+    "latency_ms": 881,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"product categories\",\"aliases\":[\"product categories\"]},{\"canonical\":\"service categories\",\"aliases\":[\"service categories\"]},{\"canonical\":\"Boeing\",\"aliases\":[\"Boeing\"]},{\"canonical\":\"revenue\",\"aliases\":[\"revenue\"]},{\"canonical\":\"FY2022\",\"aliases\":[\"FY2022\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "product categories",
+          "aliases": [
+            "product categories"
+          ]
+        },
+        {
+          "canonical": "service categories",
+          "aliases": [
+            "service categories"
+          ]
+        },
+        {
+          "canonical": "Boeing",
+          "aliases": [
+            "Boeing"
+          ]
+        },
+        {
+          "canonical": "revenue",
+          "aliases": [
+            "revenue"
+          ]
+        },
+        {
+          "canonical": "FY2022",
+          "aliases": [
+            "FY2022"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 698,
+      "input": {
+        "keywords": [
+          "product categories",
+          "service categories",
+          "Boeing",
+          "revenue",
+          "FY2022"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 126,
+      "input": {
+        "entry_ids": [
+          "01KVHVJAC0HJ24RDC9RT5V52EP",
+          "01KVHVDKZRA4EPKH4HEND45E10",
+          "01KVHVJ12EWBA2E6F4BFQ41FJD",
+          "01KVHVJB12EN4X3PKS7Z835PEE",
+          "01KVHV94VGG7VDVVCDH5KCATB3",
+          "01KVHVJ8EA0SQZ67W4GA85RCP3",
+          "01KVHVJZ8XZ0NTDF22581S4VGX",
+          "01KVHVHPQJY8S2CYRQPQZVCQYE",
+          "01KVHVDH3619W87GXP9H13YJH9",
+          "01KVHVGTZATSJA08Y3MYCK8ZMY"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 68,
+        "edges": 64,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVHVJAC0HJ24RDC9RT5V52EP",
+    "01KVHVDKZRA4EPKH4HEND45E10",
+    "01KVHVJ12EWBA2E6F4BFQ41FJD",
+    "01KVHVJB12EN4X3PKS7Z835PEE",
+    "01KVHV94VGG7VDVVCDH5KCATB3",
+    "01KVHVJ8EA0SQZ67W4GA85RCP3",
+    "01KVHVJZ8XZ0NTDF22581S4VGX",
+    "01KVHVHPQJY8S2CYRQPQZVCQYE",
+    "01KVHVDH3619W87GXP9H13YJH9",
+    "01KVHVGTZATSJA08Y3MYCK8ZMY"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 30131,
+  "answer_generation": {
+    "input_tokens": 9790,
+    "output_tokens": 118,
+    "latency_ms": 1630,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\": \"e\", \"reasoning\": \"제공된 그래프에는 Boeing의 각 사업 부문(Commercial Airplanes, Defense, Space & Security, Global Services, Boeing Capital 등)이 존재한다는 정보와, 이들이 Boeing의 일부임을 나타내는 관계는 있으나, 각 부문이 FY2022년 매출에서 차지하는 비율(%)에 대한 수치 정보는 포함되어 있지 않다. 따라서 20% 이상을 차지하는지 여부를 판단할 수 있는 근거가 그래프에 없다.\"}",
+    "parsed": {
+      "choice": "e",
+      "reasoning": "제공된 그래프에는 Boeing의 각 사업 부문(Commercial Airplanes, Defense, Space & Security, Global Services, Boeing Capital 등)이 존재한다는 정보와, 이들이 Boeing의 일부임을 나타내는 관계는 있으나, 각 부문이 FY2022년 매출에서 차지하는 비율(%)에 대한 수치 정보는 포함되어 있지 않다. 따라서 20% 이상을 차지하는지 여부를 판단할 수 있는 근거가 그래프에 없다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 40,
+  "total_input_tokens": 10285,
+  "total_output_tokens": 182,
+  "total_tokens": 10507,
+  "total_latency_ms": 3335
+}
