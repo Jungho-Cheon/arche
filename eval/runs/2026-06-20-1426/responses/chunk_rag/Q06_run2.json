@@ -1,0 +1,65 @@
+{
+  "column": "chunk_rag",
+  "question_id": "Q06",
+  "run_index": 2,
+  "input_tokens": 7606,
+  "output_tokens": 191,
+  "embedding_tokens": 29787,
+  "embedding_tokens_breakdown": {
+    "question_embedding": 15,
+    "setup_amortized": 29772,
+    "setup_total": 982504,
+    "questions_count_for_amortization": 33
+  },
+  "total_tokens": 37584,
+  "latency_ms": 2486,
+  "model": "gpt-4.1",
+  "retrieved_chunks": [
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 3,
+      "score": 0.6949071551202403
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 13,
+      "score": 0.693449802145358
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 10,
+      "score": 0.6856974893309582
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 4,
+      "score": 0.6735775429631151
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 2,
+      "score": 0.6703390978121893
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 48,
+      "score": 0.6649822182742322
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 47,
+      "score": 0.6639077045578893
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 46,
+      "score": 0.649953616908637
+    }
+  ],
+  "raw_response": "{\"choice\":\"a\",\"reasoning\":\"청크 1, 4, 5에서 AMD가 FY22 기준으로 판매하는 주요 제품과 서비스가 명확히 기술되어 있다. 청크 1과 5는 AMD가 서버용 CPU, GPU, DPU, FPGA, Adaptive SoC(데이터센터용), 데스크탑/노트북용 CPU, APU, 칩셋, 디스크리트 GPU, 세미커스텀 SoC, 개발 서비스, 임베디드 CPU, GPU, APU, FPGA, Adaptive SoC를 제공한다고 명시한다. 청크 4에서도 동일한 제품군이 반복적으로 언급된다. 따라서 보기 a)가 발췌 내용과 정확히 일치한다. b), c), d)는 제품군의 범위가 실제보다 좁거나 일부 제품을 누락하고 있어 부적절하다.\"}",
+  "parsed": {
+    "choice": "a",
+    "reasoning": "청크 1, 4, 5에서 AMD가 FY22 기준으로 판매하는 주요 제품과 서비스가 명확히 기술되어 있다. 청크 1과 5는 AMD가 서버용 CPU, GPU, DPU, FPGA, Adaptive SoC(데이터센터용), 데스크탑/노트북용 CPU, APU, 칩셋, 디스크리트 GPU, 세미커스텀 SoC, 개발 서비스, 임베디드 CPU, GPU, APU, FPGA, Adaptive SoC를 제공한다고 명시한다. 청크 4에서도 동일한 제품군이 반복적으로 언급된다. 따라서 보기 a)가 발췌 내용과 정확히 일치한다. b), c), d)는 제품군의 범위가 실제보다 좁거나 일부 제품을 누락하고 있어 부적절하다."
+  },
+  "parse_error": null
+}

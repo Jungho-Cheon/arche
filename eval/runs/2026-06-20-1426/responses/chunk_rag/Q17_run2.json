@@ -1,0 +1,65 @@
+{
+  "column": "chunk_rag",
+  "question_id": "Q17",
+  "run_index": 2,
+  "input_tokens": 6449,
+  "output_tokens": 135,
+  "embedding_tokens": 29788,
+  "embedding_tokens_breakdown": {
+    "question_embedding": 16,
+    "setup_amortized": 29772,
+    "setup_total": 982504,
+    "questions_count_for_amortization": 33
+  },
+  "total_tokens": 36372,
+  "latency_ms": 1488,
+  "model": "gpt-4.1",
+  "retrieved_chunks": [
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 77,
+      "score": 0.6824459113751863
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 137,
+      "score": 0.6694014806918115
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 151,
+      "score": 0.6660343963677496
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 72,
+      "score": 0.6535545052022463
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 164,
+      "score": 0.6421725353600571
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 136,
+      "score": 0.6361374650397575
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 177,
+      "score": 0.6173713191547353
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 6,
+      "score": 0.6113648788609296
+    }
+  ],
+  "raw_response": "{\"choice\":\"d\",\"reasoning\":\"청크 3에서 2022년 말 기준 American Express의 주요 부채 항목들의 장부가와 공정가치가 요약되어 있습니다. 'Financial liabilities for which carrying values equal or approximate fair value'가 1230억 달러(123 billion)로 가장 크고, 이 항목은 주로 'Customer deposits'를 의미합니다. 반면, 'Long-term debt'는 430억 달러(43 billion)로 그보다 작습니다. 따라서 2022년 American Express의 대차대조표상 가장 큰 부채는 'Customer deposits'입니다.\"}",
+  "parsed": {
+    "choice": "d",
+    "reasoning": "청크 3에서 2022년 말 기준 American Express의 주요 부채 항목들의 장부가와 공정가치가 요약되어 있습니다. 'Financial liabilities for which carrying values equal or approximate fair value'가 1230억 달러(123 billion)로 가장 크고, 이 항목은 주로 'Customer deposits'를 의미합니다. 반면, 'Long-term debt'는 430억 달러(43 billion)로 그보다 작습니다. 따라서 2022년 American Express의 대차대조표상 가장 큰 부채는 'Customer deposits'입니다."
+  },
+  "parse_error": null
+}

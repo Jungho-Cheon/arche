@@ -1,0 +1,112 @@
+{
+  "column": "opentology",
+  "question_id": "Q22",
+  "run_index": 2,
+  "anchor_extraction": {
+    "input_tokens": 484,
+    "output_tokens": 42,
+    "latency_ms": 734,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"Boeing\",\"aliases\":[\"Boeing\"]},{\"canonical\":\"primary customers\",\"aliases\":[\"primary customers\"]},{\"canonical\":\"FY2022\",\"aliases\":[\"FY2022\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "Boeing",
+          "aliases": [
+            "Boeing"
+          ]
+        },
+        {
+          "canonical": "primary customers",
+          "aliases": [
+            "primary customers"
+          ]
+        },
+        {
+          "canonical": "FY2022",
+          "aliases": [
+            "FY2022"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 699,
+      "input": {
+        "keywords": [
+          "Boeing",
+          "primary customers",
+          "FY2022"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 81,
+      "input": {
+        "entry_ids": [
+          "01KVHQ9H129ZF86BHQCT8P88CB",
+          "01KVHQ9ZQGWJP3D1VYHVARS0R6",
+          "01KVHQ88T4JV63PKEJKH4ZAXCA",
+          "01KVHQ9GBC13RS0J18RZWG7CTP",
+          "01KVHQA2RE8SA27A3Q1HJS9FX6",
+          "01KVHQ9FJHJSY18P3Q75NHSCHK",
+          "01KVHQA20YH7KP2S8C4C534Z47",
+          "01KVHQ9Z8NSRSYXJ1DEKTXYXPW",
+          "01KVHQA3H30M1E6938JW59KFVW",
+          "01KVHQA0KWG7EMDAJ5YN319GFS"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 25,
+        "edges": 23,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVHQ9H129ZF86BHQCT8P88CB",
+    "01KVHQ9ZQGWJP3D1VYHVARS0R6",
+    "01KVHQ88T4JV63PKEJKH4ZAXCA",
+    "01KVHQ9GBC13RS0J18RZWG7CTP",
+    "01KVHQA2RE8SA27A3Q1HJS9FX6",
+    "01KVHQ9FJHJSY18P3Q75NHSCHK",
+    "01KVHQA20YH7KP2S8C4C534Z47",
+    "01KVHQ9Z8NSRSYXJ1DEKTXYXPW",
+    "01KVHQA3H30M1E6938JW59KFVW",
+    "01KVHQA0KWG7EMDAJ5YN319GFS"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 12772,
+  "answer_generation": {
+    "input_tokens": 4356,
+    "output_tokens": 103,
+    "latency_ms": 1360,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"e\",\"reasoning\":\"제공된 그래프에는 Boeing의 주요 고객에 대한 직접적인 정보(예: 고객 유형별 매출 비중, 주요 고객 리스트 등)가 포함되어 있지 않습니다. Boeing Capital, Boeing Code of Conduct, Boeing values 등은 언급되어 있으나, 이들 엔티티와 고객 구성에 대한 관계는 나타나 있지 않습니다. 따라서 FY2022 기준 Boeing의 주요 고객이 누구인지 그래프만으로는 알 수 없습니다.\"}",
+    "parsed": {
+      "choice": "e",
+      "reasoning": "제공된 그래프에는 Boeing의 주요 고객에 대한 직접적인 정보(예: 고객 유형별 매출 비중, 주요 고객 리스트 등)가 포함되어 있지 않습니다. Boeing Capital, Boeing Code of Conduct, Boeing values 등은 언급되어 있으나, 이들 엔티티와 고객 구성에 대한 관계는 나타나 있지 않습니다. 따라서 FY2022 기준 Boeing의 주요 고객이 누구인지 그래프만으로는 알 수 없습니다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 24,
+  "total_input_tokens": 4840,
+  "total_output_tokens": 145,
+  "total_tokens": 5009,
+  "total_latency_ms": 2874
+}

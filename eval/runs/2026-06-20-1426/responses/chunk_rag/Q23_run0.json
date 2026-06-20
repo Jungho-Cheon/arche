@@ -1,0 +1,65 @@
+{
+  "column": "chunk_rag",
+  "question_id": "Q23",
+  "run_index": 0,
+  "input_tokens": 7192,
+  "output_tokens": 191,
+  "embedding_tokens": 29781,
+  "embedding_tokens_breakdown": {
+    "question_embedding": 9,
+    "setup_amortized": 29772,
+    "setup_total": 982504,
+    "questions_count_for_amortization": 33
+  },
+  "total_tokens": 37164,
+  "latency_ms": 1973,
+  "model": "gpt-4.1",
+  "retrieved_chunks": [
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 10,
+      "score": 0.6043412877620806
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 8,
+      "score": 0.6013588134316513
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 12,
+      "score": 0.5877800009724703
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 22,
+      "score": 0.5785350198939018
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 19,
+      "score": 0.560278444835389
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 60,
+      "score": 0.5579374211016418
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 4,
+      "score": 0.5577521175856426
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 29,
+      "score": 0.5571868525921554
+    }
+  ],
+  "raw_response": "{\"choice\":\"c\",\"reasoning\":\"청크 2와 청크 4에서 Boeing의 상업용 항공기 사업이 항공사들의 재무 성과와 항공 여행 수요에 크게 의존한다는 점이 명확히 언급되어 있습니다. 예를 들어, 청크 4에서는 'Airline financial performance, which influences demand for new capacity, has been adversely impacted by the COVID-19 pandemic.'라고 하며, 항공사 산업의 경기 변동성이 Boeing의 사업에 영향을 미친다고 설명합니다. 또한, 'the commercial jet aircraft market and the airline industry remain extremely competitive'라는 언급(청크 7)도 항공기 시장이 경기 변동에 민감함을 시사합니다. 따라서 Boeing의 사업은 항공사 산업의 경기 변동성(사이클)에 노출되어 있으므로, 정답은 c)입니다.\"}",
+  "parsed": {
+    "choice": "c",
+    "reasoning": "청크 2와 청크 4에서 Boeing의 상업용 항공기 사업이 항공사들의 재무 성과와 항공 여행 수요에 크게 의존한다는 점이 명확히 언급되어 있습니다. 예를 들어, 청크 4에서는 'Airline financial performance, which influences demand for new capacity, has been adversely impacted by the COVID-19 pandemic.'라고 하며, 항공사 산업의 경기 변동성이 Boeing의 사업에 영향을 미친다고 설명합니다. 또한, 'the commercial jet aircraft market and the airline industry remain extremely competitive'라는 언급(청크 7)도 항공기 시장이 경기 변동에 민감함을 시사합니다. 따라서 Boeing의 사업은 항공사 산업의 경기 변동성(사이클)에 노출되어 있으므로, 정답은 c)입니다."
+  },
+  "parse_error": null
+}

@@ -1,0 +1,65 @@
+{
+  "column": "chunk_rag",
+  "question_id": "Q25",
+  "run_index": 2,
+  "input_tokens": 6417,
+  "output_tokens": 217,
+  "embedding_tokens": 29789,
+  "embedding_tokens_breakdown": {
+    "question_embedding": 17,
+    "setup_amortized": 29772,
+    "setup_total": 982504,
+    "questions_count_for_amortization": 33
+  },
+  "total_tokens": 36423,
+  "latency_ms": 2338,
+  "model": "gpt-4.1",
+  "retrieved_chunks": [
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 59,
+      "score": 0.6106279328841301
+    },
+    {
+      "source_path": "JOHNSON_JOHNSON_2022_10K.md",
+      "chunk_index": 76,
+      "score": 0.6092131689358034
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 55,
+      "score": 0.6088133707972482
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 26,
+      "score": 0.5972130042891924
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 27,
+      "score": 0.5971158354332934
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 24,
+      "score": 0.5920169626239471
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 54,
+      "score": 0.5811962157422487
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 56,
+      "score": 0.5811313339397806
+    }
+  ],
+  "raw_response": "{\"choice\":\"d\",\"reasoning\":\"청크 6(BOEING_2022_10K.md:24)에 따르면, Boeing의 FY2022 유효 세율은 (0.6)%이고, FY2021 유효 세율은 14.8%로 명시되어 있다. 보기에서 소수점 표기 차이가 있지만, 0.6%는 0.62%로, 14.8%는 14.76%로 근사치로 볼 수 있다. 따라서 FY2022의 유효 세율이 0.62%이고 FY2021은 -14.76%라는 보기가 가장 근접하다. 실제로 FY2021은 양수(14.8%)이므로, 보기 d)에서 FY2021이 -14.76%로 표기된 것은 오타로 보이나, 다른 보기들과 비교했을 때 수치가 가장 근접하다. 제공된 발췌에 근거하여 가장 적합한 답은 d)이다.\"}",
+  "parsed": {
+    "choice": "d",
+    "reasoning": "청크 6(BOEING_2022_10K.md:24)에 따르면, Boeing의 FY2022 유효 세율은 (0.6)%이고, FY2021 유효 세율은 14.8%로 명시되어 있다. 보기에서 소수점 표기 차이가 있지만, 0.6%는 0.62%로, 14.8%는 14.76%로 근사치로 볼 수 있다. 따라서 FY2022의 유효 세율이 0.62%이고 FY2021은 -14.76%라는 보기가 가장 근접하다. 실제로 FY2021은 양수(14.8%)이므로, 보기 d)에서 FY2021이 -14.76%로 표기된 것은 오타로 보이나, 다른 보기들과 비교했을 때 수치가 가장 근접하다. 제공된 발췌에 근거하여 가장 적합한 답은 d)이다."
+  },
+  "parse_error": null
+}

@@ -1,0 +1,65 @@
+{
+  "column": "chunk_rag",
+  "question_id": "Q05",
+  "run_index": 0,
+  "input_tokens": 6834,
+  "output_tokens": 112,
+  "embedding_tokens": 29807,
+  "embedding_tokens_breakdown": {
+    "question_embedding": 35,
+    "setup_amortized": 29772,
+    "setup_total": 982504,
+    "questions_count_for_amortization": 33
+  },
+  "total_tokens": 36753,
+  "latency_ms": 1968,
+  "model": "gpt-4.1",
+  "retrieved_chunks": [
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 113,
+      "score": 0.5475798954376654
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 47,
+      "score": 0.544336564784259
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 45,
+      "score": 0.5372316342365769
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 46,
+      "score": 0.535076417121566
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 64,
+      "score": 0.531475343652093
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 78,
+      "score": 0.5234554945486118
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 0,
+      "score": 0.5176177138559108
+    },
+    {
+      "source_path": "AMCOR_2023_10K.md",
+      "chunk_index": 42,
+      "score": 0.5094785886353139
+    }
+  ],
+  "raw_response": "{\"choice\":\"e\",\"reasoning\":\"The provided excerpts from AMD's 2022 10-K do not include the specific values for current assets (excluding inventory) and current liabilities required to calculate the quick ratio, nor do they state the quick ratio directly. While there is information about cash, cash equivalents, and some discussion of liquidity, the actual quick ratio or its components are not presented in the excerpts. Therefore, based on the provided corpus, there is insufficient information to determine AMD's quick ratio or to assess its liquidity profile specifically using that metric.\"}",
+  "parsed": {
+    "choice": "e",
+    "reasoning": "The provided excerpts from AMD's 2022 10-K do not include the specific values for current assets (excluding inventory) and current liabilities required to calculate the quick ratio, nor do they state the quick ratio directly. While there is information about cash, cash equivalents, and some discussion of liquidity, the actual quick ratio or its components are not presented in the excerpts. Therefore, based on the provided corpus, there is insufficient information to determine AMD's quick ratio or to assess its liquidity profile specifically using that metric."
+  },
+  "parse_error": null
+}

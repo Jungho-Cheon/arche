@@ -1,0 +1,128 @@
+{
+  "column": "opentology",
+  "question_id": "Q02",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 493,
+    "output_tokens": 71,
+    "latency_ms": 1078,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"AMCOR\",\"aliases\":[\"AMCOR\"]},{\"canonical\":\"acquisitions\",\"aliases\":[\"acquisitions\",\"major acquisitions\"]},{\"canonical\":\"FY2023\",\"aliases\":[\"FY2023\"]},{\"canonical\":\"FY2022\",\"aliases\":[\"FY2022\"]},{\"canonical\":\"FY2021\",\"aliases\":[\"FY2021\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "AMCOR",
+          "aliases": [
+            "AMCOR"
+          ]
+        },
+        {
+          "canonical": "acquisitions",
+          "aliases": [
+            "acquisitions",
+            "major acquisitions"
+          ]
+        },
+        {
+          "canonical": "FY2023",
+          "aliases": [
+            "FY2023"
+          ]
+        },
+        {
+          "canonical": "FY2022",
+          "aliases": [
+            "FY2022"
+          ]
+        },
+        {
+          "canonical": "FY2021",
+          "aliases": [
+            "FY2021"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 865,
+      "input": {
+        "keywords": [
+          "AMCOR",
+          "acquisitions",
+          "major acquisitions",
+          "FY2023",
+          "FY2022",
+          "FY2021"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 755,
+      "input": {
+        "entry_ids": [
+          "01KVHPWVNDMDS4DXWW5ZTR7NS5",
+          "01KVHPXB8R3M8QB5SWGWFDRBBZ",
+          "01KVHPWWS3TW493GJSKJ4S0RFW",
+          "01KVHQ91WW3YB87J3R2APKYXTG",
+          "01KVHQHWC03C4WR43X1VXVCSN9",
+          "01KVHQG0KZ68Z7GY7CZXSGE84V",
+          "01KVHQ4FF2NPAV69HYV00ACSDA",
+          "01KVHPWE2BT376J2H5SP31CR2H",
+          "01KVHPX7RM4R0XJAYXMJPP5C7T",
+          "01KVHQ936F1QMTEQNR0R3CX1G1"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 80,
+        "edges": 71,
+        "truncated": true
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVHPWVNDMDS4DXWW5ZTR7NS5",
+    "01KVHPXB8R3M8QB5SWGWFDRBBZ",
+    "01KVHPWWS3TW493GJSKJ4S0RFW",
+    "01KVHQ91WW3YB87J3R2APKYXTG",
+    "01KVHQHWC03C4WR43X1VXVCSN9",
+    "01KVHQG0KZ68Z7GY7CZXSGE84V",
+    "01KVHQ4FF2NPAV69HYV00ACSDA",
+    "01KVHPWE2BT376J2H5SP31CR2H",
+    "01KVHPX7RM4R0XJAYXMJPP5C7T",
+    "01KVHQ936F1QMTEQNR0R3CX1G1"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 34079,
+  "answer_generation": {
+    "input_tokens": 12287,
+    "output_tokens": 131,
+    "latency_ms": 2131,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\": \"e\", \"reasoning\": \"제공된 도메인 그래프에는 Amcor의 FY2023, FY2022, FY2021 기간 동안의 인수 내역에 대한 구체적인 정보(어떤 회사를 언제 인수했는지 등)가 포함되어 있지 않습니다. 'Note 5, Acquisitions and Divestitures'라는 엔티티가 있으나, 해당 노트의 상세 내용이나 인수 대상, 연도별 내역 등은 그래프에 나타나 있지 않습니다. 따라서 보기 중에서 정답을 고를 수 있는 근거가 없습니다.\"}",
+    "parsed": {
+      "choice": "e",
+      "reasoning": "제공된 도메인 그래프에는 Amcor의 FY2023, FY2022, FY2021 기간 동안의 인수 내역에 대한 구체적인 정보(어떤 회사를 언제 인수했는지 등)가 포함되어 있지 않습니다. 'Note 5, Acquisitions and Divestitures'라는 엔티티가 있으나, 해당 노트의 상세 내용이나 인수 대상, 연도별 내역 등은 그래프에 나타나 있지 않습니다. 따라서 보기 중에서 정답을 고를 수 있는 근거가 없습니다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 48,
+  "total_input_tokens": 12780,
+  "total_output_tokens": 202,
+  "total_tokens": 13030,
+  "total_latency_ms": 4829
+}

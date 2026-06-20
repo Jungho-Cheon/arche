@@ -1,0 +1,65 @@
+{
+  "column": "chunk_rag",
+  "question_id": "Q06",
+  "run_index": 1,
+  "input_tokens": 7606,
+  "output_tokens": 213,
+  "embedding_tokens": 29787,
+  "embedding_tokens_breakdown": {
+    "question_embedding": 15,
+    "setup_amortized": 29772,
+    "setup_total": 982504,
+    "questions_count_for_amortization": 33
+  },
+  "total_tokens": 37606,
+  "latency_ms": 2563,
+  "model": "gpt-4.1",
+  "retrieved_chunks": [
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 3,
+      "score": 0.6949059445551105
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 13,
+      "score": 0.6934358303960223
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 10,
+      "score": 0.6857035665424713
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 4,
+      "score": 0.6735801871679588
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 2,
+      "score": 0.6703228577792844
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 48,
+      "score": 0.6650018671113759
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 47,
+      "score": 0.6638816612383478
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 46,
+      "score": 0.649914229753475
+    }
+  ],
+  "raw_response": "{\"choice\":\"a\",\"reasoning\":\"청크 1, 4, 5에서 AMD가 FY22 기준으로 판매하는 주요 제품과 서비스가 명확히 기술되어 있다. 청크 1과 5는 AMD가 'server microprocessors (CPUs) and graphics processing units (GPUs), data processing units (DPUs), Field Programmable Gate Arrays (FPGAs), and Adaptive System-on-Chip (SoC) products for data centers; CPUs, accelerated processing units (APUs) that integrate CPUs and GPUs, and chipsets for desktop and notebook personal computers; discrete GPUs, and semi-custom SoC products and development services; and embedded CPUs, GPUs, APUs, FPGAs, and Adaptive SoC products'를 제공한다고 명시한다. 또한 청크 4에서도 동일한 제품군이 반복적으로 언급된다. 따라서 보기 a)가 발췌 내용과 정확히 일치하며, 다른 보기는 제품군의 일부만 포함하거나 잘못된 정보를 포함하고 있다.\"}",
+  "parsed": {
+    "choice": "a",
+    "reasoning": "청크 1, 4, 5에서 AMD가 FY22 기준으로 판매하는 주요 제품과 서비스가 명확히 기술되어 있다. 청크 1과 5는 AMD가 'server microprocessors (CPUs) and graphics processing units (GPUs), data processing units (DPUs), Field Programmable Gate Arrays (FPGAs), and Adaptive System-on-Chip (SoC) products for data centers; CPUs, accelerated processing units (APUs) that integrate CPUs and GPUs, and chipsets for desktop and notebook personal computers; discrete GPUs, and semi-custom SoC products and development services; and embedded CPUs, GPUs, APUs, FPGAs, and Adaptive SoC products'를 제공한다고 명시한다. 또한 청크 4에서도 동일한 제품군이 반복적으로 언급된다. 따라서 보기 a)가 발췌 내용과 정확히 일치하며, 다른 보기는 제품군의 일부만 포함하거나 잘못된 정보를 포함하고 있다."
+  },
+  "parse_error": null
+}

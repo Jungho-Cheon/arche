@@ -1,0 +1,65 @@
+{
+  "column": "chunk_rag",
+  "question_id": "Q14",
+  "run_index": 0,
+  "input_tokens": 6945,
+  "output_tokens": 140,
+  "embedding_tokens": 29808,
+  "embedding_tokens_breakdown": {
+    "question_embedding": 36,
+    "setup_amortized": 29772,
+    "setup_total": 982504,
+    "questions_count_for_amortization": 33
+  },
+  "total_tokens": 36893,
+  "latency_ms": 1843,
+  "model": "gpt-4.1",
+  "retrieved_chunks": [
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 54,
+      "score": 0.619629530950266
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 72,
+      "score": 0.6086180487361017
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 53,
+      "score": 0.6025468134545976
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 51,
+      "score": 0.6014015840631338
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 49,
+      "score": 0.5902590666273634
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 4,
+      "score": 0.5891314304669097
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 6,
+      "score": 0.5846181347355626
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 3,
+      "score": 0.580663696267684
+    }
+  ],
+  "raw_response": "{\"choice\":\"b\",\"reasoning\":\"The provided excerpts (especially 청크 4 and 청크 3) explain that AMEX's business model and financial performance are primarily evaluated using metrics such as billed business, network volumes, discount revenue, net card fees, and net interest income. The company emphasizes its 'spend-centric' model and the importance of metrics like billed business and network volumes as the most significant drivers of financial results. There is no mention of operating margin as a key metric, and the financial discussion focuses on revenue growth, credit metrics, and capital ratios rather than operating margin. Therefore, operating margin is not the primary or most useful metric for evaluating AMEX's performance.\"}",
+  "parsed": {
+    "choice": "b",
+    "reasoning": "The provided excerpts (especially 청크 4 and 청크 3) explain that AMEX's business model and financial performance are primarily evaluated using metrics such as billed business, network volumes, discount revenue, net card fees, and net interest income. The company emphasizes its 'spend-centric' model and the importance of metrics like billed business and network volumes as the most significant drivers of financial results. There is no mention of operating margin as a key metric, and the financial discussion focuses on revenue growth, credit metrics, and capital ratios rather than operating margin. Therefore, operating margin is not the primary or most useful metric for evaluating AMEX's performance."
+  },
+  "parse_error": null
+}

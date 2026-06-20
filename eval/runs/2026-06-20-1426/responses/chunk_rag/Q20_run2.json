@@ -1,0 +1,65 @@
+{
+  "column": "chunk_rag",
+  "question_id": "Q20",
+  "run_index": 2,
+  "input_tokens": 7083,
+  "output_tokens": 105,
+  "embedding_tokens": 29786,
+  "embedding_tokens_breakdown": {
+    "question_embedding": 14,
+    "setup_amortized": 29772,
+    "setup_total": 982504,
+    "questions_count_for_amortization": 33
+  },
+  "total_tokens": 36974,
+  "latency_ms": 1542,
+  "model": "gpt-4.1",
+  "retrieved_chunks": [
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 19,
+      "score": 0.6312766021019975
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 29,
+      "score": 0.6250963626249864
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 108,
+      "score": 0.6231658993792882
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 22,
+      "score": 0.6230341300688546
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 6,
+      "score": 0.6222869103022793
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 10,
+      "score": 0.6221011542556975
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 43,
+      "score": 0.6158837962295217
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 4,
+      "score": 0.6092854797469128
+    }
+  ],
+  "raw_response": "{\"choice\":\"a\",\"reasoning\":\"청크 3에서 'Multiple legal actions have been filed against us as a result of the October 29, 2018 accident of Lion Air Flight 610 and the March 10, 2019 accident of Ethiopian Airlines Flight 302.'라는 명확한 언급이 있다. 이는 2018년 Lion Air와 2019년 Ethiopian Airlines 사고와 관련된 소송이 현재 진행 중임을 의미한다. 따라서 보기 a)가 정답이다.\"}",
+  "parsed": {
+    "choice": "a",
+    "reasoning": "청크 3에서 'Multiple legal actions have been filed against us as a result of the October 29, 2018 accident of Lion Air Flight 610 and the March 10, 2019 accident of Ethiopian Airlines Flight 302.'라는 명확한 언급이 있다. 이는 2018년 Lion Air와 2019년 Ethiopian Airlines 사고와 관련된 소송이 현재 진행 중임을 의미한다. 따라서 보기 a)가 정답이다."
+  },
+  "parse_error": null
+}

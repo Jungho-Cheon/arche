@@ -1,0 +1,65 @@
+{
+  "column": "chunk_rag",
+  "question_id": "Q01",
+  "run_index": 0,
+  "input_tokens": 7211,
+  "output_tokens": 125,
+  "embedding_tokens": 29816,
+  "embedding_tokens_breakdown": {
+    "question_embedding": 44,
+    "setup_amortized": 29772,
+    "setup_total": 982504,
+    "questions_count_for_amortization": 33
+  },
+  "total_tokens": 37152,
+  "latency_ms": 2179,
+  "model": "gpt-4.1",
+  "retrieved_chunks": [
+    {
+      "source_path": "AMCOR_2023_10K.md",
+      "chunk_index": 0,
+      "score": 0.584320947437647
+    },
+    {
+      "source_path": "AMCOR_2023_10K.md",
+      "chunk_index": 28,
+      "score": 0.5822130728697867
+    },
+    {
+      "source_path": "AMCOR_2023_10K.md",
+      "chunk_index": 46,
+      "score": 0.5694003148135014
+    },
+    {
+      "source_path": "AMCOR_2023_10K.md",
+      "chunk_index": 99,
+      "score": 0.5620062215538599
+    },
+    {
+      "source_path": "AMCOR_2023_10K.md",
+      "chunk_index": 1,
+      "score": 0.5575666424118091
+    },
+    {
+      "source_path": "AMCOR_2023_10K.md",
+      "chunk_index": 49,
+      "score": 0.5511860354860583
+    },
+    {
+      "source_path": "AMCOR_2023_10K.md",
+      "chunk_index": 26,
+      "score": 0.546803839678303
+    },
+    {
+      "source_path": "AMCOR_2023_10K.md",
+      "chunk_index": 41,
+      "score": 0.5456052818341898
+    }
+  ],
+  "raw_response": "{\"choice\":\"e\",\"reasoning\":\"The provided excerpts from the AMCOR 2023 10-K do not include the company's quick ratio figures for FY2022 or FY2023, nor do they provide the specific current asset and current liability breakdowns necessary to calculate the quick ratio. While there is some balance sheet information (such as total liabilities and shareholders' equity), the details required to compute the quick ratio (cash, marketable securities, accounts receivable, and current liabilities) are not present in the excerpts. Therefore, the correct answer is (e) Insufficient information / cannot determine from the corpus.\"}",
+  "parsed": {
+    "choice": "e",
+    "reasoning": "The provided excerpts from the AMCOR 2023 10-K do not include the company's quick ratio figures for FY2022 or FY2023, nor do they provide the specific current asset and current liability breakdowns necessary to calculate the quick ratio. While there is some balance sheet information (such as total liabilities and shareholders' equity), the details required to compute the quick ratio (cash, marketable securities, accounts receivable, and current liabilities) are not present in the excerpts. Therefore, the correct answer is (e) Insufficient information / cannot determine from the corpus."
+  },
+  "parse_error": null
+}

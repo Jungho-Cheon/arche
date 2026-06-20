@@ -1,0 +1,98 @@
+{
+  "column": "opentology",
+  "question_id": "Q13",
+  "run_index": 2,
+  "anchor_extraction": {
+    "input_tokens": 488,
+    "output_tokens": 16,
+    "latency_ms": 594,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"American Express\",\"aliases\":[\"American Express\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "American Express",
+          "aliases": [
+            "American Express"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 393,
+      "input": {
+        "keywords": [
+          "American Express"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 90,
+      "input": {
+        "entry_ids": [
+          "01KVHQ35FHXZAN8YTHCW401SGJ",
+          "01KVHQ6DQPAJW348FTN1QJYKSS",
+          "01KVHQ4YF143PN4051T9DB6BEA",
+          "01KVHQ34S1RVGEVVV811BATHF9",
+          "01KVHQ6N8MJCASDRC21RJKT9GA",
+          "01KVHQ4XHWTMV1A77164WH2QAD",
+          "01KVHQ38JKAVQRM9G07EXFK9KR",
+          "01KVHQ3XBGB3RYEV57PWPXAR71",
+          "01KVHQ5626WP5D8TC8BXHAYCBJ",
+          "01KVHQ3ZB23NX8AF84CKQETR0V"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 29,
+        "edges": 28,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVHQ35FHXZAN8YTHCW401SGJ",
+    "01KVHQ6DQPAJW348FTN1QJYKSS",
+    "01KVHQ4YF143PN4051T9DB6BEA",
+    "01KVHQ34S1RVGEVVV811BATHF9",
+    "01KVHQ6N8MJCASDRC21RJKT9GA",
+    "01KVHQ4XHWTMV1A77164WH2QAD",
+    "01KVHQ38JKAVQRM9G07EXFK9KR",
+    "01KVHQ3XBGB3RYEV57PWPXAR71",
+    "01KVHQ5626WP5D8TC8BXHAYCBJ",
+    "01KVHQ3ZB23NX8AF84CKQETR0V"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 17199,
+  "answer_generation": {
+    "input_tokens": 5465,
+    "output_tokens": 107,
+    "latency_ms": 1407,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\": \"e\", \"reasoning\": \"The provided domain graph contains detailed information about entities, relationships, and plans related to American Express and its subsidiaries, but it does not specify the geographies or regions in which American Express primarily operates as of 2022. There are no entities or relationships in the graph that mention specific geographic regions such as United States, EMEA, APAC, LACC, Europe, Asia, or Latin America. Therefore, the correct answer is '정보 부족 / 알 수 없음'.\"}",
+    "parsed": {
+      "choice": "e",
+      "reasoning": "The provided domain graph contains detailed information about entities, relationships, and plans related to American Express and its subsidiaries, but it does not specify the geographies or regions in which American Express primarily operates as of 2022. There are no entities or relationships in the graph that mention specific geographic regions such as United States, EMEA, APAC, LACC, Europe, Asia, or Latin America. Therefore, the correct answer is '정보 부족 / 알 수 없음'."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 8,
+  "total_input_tokens": 5953,
+  "total_output_tokens": 123,
+  "total_tokens": 6084,
+  "total_latency_ms": 2484
+}

@@ -1,0 +1,116 @@
+{
+  "column": "opentology",
+  "question_id": "Q07",
+  "run_index": 1,
+  "anchor_extraction": {
+    "input_tokens": 483,
+    "output_tokens": 47,
+    "latency_ms": 772,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"revenue\",\"aliases\":[\"revenue\"]},{\"canonical\":\"FY22\",\"aliases\":[\"FY22\",\"fiscal year 2022\"]},{\"canonical\":\"AMD\",\"aliases\":[\"AMD\",\"Advanced Micro Devices\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "revenue",
+          "aliases": [
+            "revenue"
+          ]
+        },
+        {
+          "canonical": "FY22",
+          "aliases": [
+            "FY22",
+            "fiscal year 2022"
+          ]
+        },
+        {
+          "canonical": "AMD",
+          "aliases": [
+            "AMD",
+            "Advanced Micro Devices"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 820,
+      "input": {
+        "keywords": [
+          "revenue",
+          "FY22",
+          "fiscal year 2022",
+          "AMD",
+          "Advanced Micro Devices"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 56,
+      "input": {
+        "entry_ids": [
+          "01KVHQHWC03C4WR43X1VXVCSN9",
+          "01KVHQ11QY301M0VTEFN0KD95D",
+          "01KVHQ118G8MBJ14CEZXKBVTD7",
+          "01KVHQG0KZ68Z7GY7CZXSGE84V",
+          "01KVHQ127QHKQ13QPGAM6XWYRC",
+          "01KVHQ1W2ADVF9J2Y5Q3ARPECE",
+          "01KVHQ6EZ1AKSG0V7ST2KCY531",
+          "01KVHQ56RSSXB4VP7WW59H919J",
+          "01KVHQ6KF2CCDP9GDCEPFB9XW8",
+          "01KVHQ1A5RHRGR20N2R5VQ1CYD"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 19,
+        "edges": 12,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVHQHWC03C4WR43X1VXVCSN9",
+    "01KVHQ11QY301M0VTEFN0KD95D",
+    "01KVHQ118G8MBJ14CEZXKBVTD7",
+    "01KVHQG0KZ68Z7GY7CZXSGE84V",
+    "01KVHQ127QHKQ13QPGAM6XWYRC",
+    "01KVHQ1W2ADVF9J2Y5Q3ARPECE",
+    "01KVHQ6EZ1AKSG0V7ST2KCY531",
+    "01KVHQ56RSSXB4VP7WW59H919J",
+    "01KVHQ6KF2CCDP9GDCEPFB9XW8",
+    "01KVHQ1A5RHRGR20N2R5VQ1CYD"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 8820,
+  "answer_generation": {
+    "input_tokens": 3202,
+    "output_tokens": 149,
+    "latency_ms": 2039,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"e\",\"reasoning\":\"그래프에는 AMD의 FY22(2022 회계연도) 매출 변화의 원인에 대한 직접적인 정보가 포함되어 있지 않습니다. 각 비즈니스 세그먼트(예: Client segment, Gaming segment, Data Center segment)가 어떤 제품을 포함하는지는 나와 있지만, FY22 매출 변화의 구체적 원인(예: EPYC 서버 프로세서, 세미커스텀 제품, Xilinx 임베디드 제품 등)이 매출에 어떤 영향을 미쳤는지에 대한 설명이나 데이터는 제공되지 않았습니다. 따라서 제공된 그래프 정보만으로는 정답을 도출할 수 없습니다.\"}",
+    "parsed": {
+      "choice": "e",
+      "reasoning": "그래프에는 AMD의 FY22(2022 회계연도) 매출 변화의 원인에 대한 직접적인 정보가 포함되어 있지 않습니다. 각 비즈니스 세그먼트(예: Client segment, Gaming segment, Data Center segment)가 어떤 제품을 포함하는지는 나와 있지만, FY22 매출 변화의 구체적 원인(예: EPYC 서버 프로세서, 세미커스텀 제품, Xilinx 임베디드 제품 등)이 매출에 어떤 영향을 미쳤는지에 대한 설명이나 데이터는 제공되지 않았습니다. 따라서 제공된 그래프 정보만으로는 정답을 도출할 수 없습니다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 40,
+  "total_input_tokens": 3685,
+  "total_output_tokens": 196,
+  "total_tokens": 3921,
+  "total_latency_ms": 3687
+}

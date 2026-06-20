@@ -1,0 +1,65 @@
+{
+  "column": "chunk_rag",
+  "question_id": "Q32",
+  "run_index": 2,
+  "input_tokens": 6633,
+  "output_tokens": 213,
+  "embedding_tokens": 29847,
+  "embedding_tokens_breakdown": {
+    "question_embedding": 75,
+    "setup_amortized": 29772,
+    "setup_total": 982504,
+    "questions_count_for_amortization": 33
+  },
+  "total_tokens": 36693,
+  "latency_ms": 2087,
+  "model": "gpt-4.1",
+  "retrieved_chunks": [
+    {
+      "source_path": "PEPSICO_2022_10K.md",
+      "chunk_index": 52,
+      "score": 0.6305710314573827
+    },
+    {
+      "source_path": "PEPSICO_2022_10K.md",
+      "chunk_index": 76,
+      "score": 0.5966458144739115
+    },
+    {
+      "source_path": "PEPSICO_2022_10K.md",
+      "chunk_index": 112,
+      "score": 0.59333410572744
+    },
+    {
+      "source_path": "PEPSICO_2022_10K.md",
+      "chunk_index": 51,
+      "score": 0.5871878735538015
+    },
+    {
+      "source_path": "PEPSICO_2022_10K.md",
+      "chunk_index": 67,
+      "score": 0.5824029600805529
+    },
+    {
+      "source_path": "PEPSICO_2022_10K.md",
+      "chunk_index": 57,
+      "score": 0.5819808542942496
+    },
+    {
+      "source_path": "PEPSICO_2022_10K.md",
+      "chunk_index": 74,
+      "score": 0.5775283013811983
+    },
+    {
+      "source_path": "PEPSICO_2022_10K.md",
+      "chunk_index": 69,
+      "score": 0.5735646126179553
+    }
+  ],
+  "raw_response": "{\"choice\":\"d\",\"reasoning\":\"To calculate unadjusted EBITDA less capex for FY2022, we need: (1) unadjusted operating income, (2) depreciation and amortization, and (3) capital expenditures (capex). From 청크 5, the cash flow statement for 2022 provides: Depreciation and amortization = $2,763 million; Capital spending (capex) = $5,207 million. For unadjusted operating income, we refer to 청크 1, which lists 'Operating profit' (which is equivalent to operating income) as $11,512 million (GAAP/Reported). Thus: EBITDA = Operating income + Depreciation and amortization = $11,512M + $2,763M = $14,275M. EBITDA less capex = $14,275M - $5,207M = $9,068M. Therefore, the correct answer is d) $9,068 million, based on the provided financial statement data.\"}",
+  "parsed": {
+    "choice": "d",
+    "reasoning": "To calculate unadjusted EBITDA less capex for FY2022, we need: (1) unadjusted operating income, (2) depreciation and amortization, and (3) capital expenditures (capex). From 청크 5, the cash flow statement for 2022 provides: Depreciation and amortization = $2,763 million; Capital spending (capex) = $5,207 million. For unadjusted operating income, we refer to 청크 1, which lists 'Operating profit' (which is equivalent to operating income) as $11,512 million (GAAP/Reported). Thus: EBITDA = Operating income + Depreciation and amortization = $11,512M + $2,763M = $14,275M. EBITDA less capex = $14,275M - $5,207M = $9,068M. Therefore, the correct answer is d) $9,068 million, based on the provided financial statement data."
+  },
+  "parse_error": null
+}

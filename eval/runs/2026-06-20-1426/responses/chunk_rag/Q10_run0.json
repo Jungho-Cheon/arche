@@ -1,0 +1,65 @@
+{
+  "column": "chunk_rag",
+  "question_id": "Q10",
+  "run_index": 0,
+  "input_tokens": 7145,
+  "output_tokens": 164,
+  "embedding_tokens": 29795,
+  "embedding_tokens_breakdown": {
+    "question_embedding": 23,
+    "setup_amortized": 29772,
+    "setup_total": 982504,
+    "questions_count_for_amortization": 33
+  },
+  "total_tokens": 37104,
+  "latency_ms": 2672,
+  "model": "gpt-4.1",
+  "retrieved_chunks": [
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 72,
+      "score": 0.630698123626926
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 4,
+      "score": 0.630184519256372
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 54,
+      "score": 0.6132235656669685
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 46,
+      "score": 0.6116621490783285
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 47,
+      "score": 0.6081017122697446
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 55,
+      "score": 0.6015958415092779
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 8,
+      "score": 0.5741387229668781
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 48,
+      "score": 0.5716421837035075
+    }
+  ],
+  "raw_response": "{\"choice\":\"c\",\"reasoning\":\"청크 3과 6에서 FY21(2021)과 FY22(2022) 각 사업부문의 매출 증가율이 명확히 제시되어 있습니다. Data Center 부문은 2021년 $3,694M에서 2022년 $6,043M으로 64% 증가했고, Client 부문은 오히려 10% 감소, Gaming 부문은 21% 증가, Embedded 부문은 $246M에서 $4,552M으로 대폭 증가했으나, 질문에서 Embedded는 제외하라고 했으므로 고려하지 않습니다. 따라서 Embedded를 제외하면 Data Center 부문이 가장 큰 비율로 매출이 증가했습니다. 이는 보기 c)와 일치합니다.\"}",
+  "parsed": {
+    "choice": "c",
+    "reasoning": "청크 3과 6에서 FY21(2021)과 FY22(2022) 각 사업부문의 매출 증가율이 명확히 제시되어 있습니다. Data Center 부문은 2021년 $3,694M에서 2022년 $6,043M으로 64% 증가했고, Client 부문은 오히려 10% 감소, Gaming 부문은 21% 증가, Embedded 부문은 $246M에서 $4,552M으로 대폭 증가했으나, 질문에서 Embedded는 제외하라고 했으므로 고려하지 않습니다. 따라서 Embedded를 제외하면 Data Center 부문이 가장 큰 비율로 매출이 증가했습니다. 이는 보기 c)와 일치합니다."
+  },
+  "parse_error": null
+}

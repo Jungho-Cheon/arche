@@ -1,0 +1,65 @@
+{
+  "column": "chunk_rag",
+  "question_id": "Q04",
+  "run_index": 0,
+  "input_tokens": 6881,
+  "output_tokens": 144,
+  "embedding_tokens": 29808,
+  "embedding_tokens_breakdown": {
+    "question_embedding": 36,
+    "setup_amortized": 29772,
+    "setup_total": 982504,
+    "questions_count_for_amortization": 33
+  },
+  "total_tokens": 36833,
+  "latency_ms": 2137,
+  "model": "gpt-4.1",
+  "retrieved_chunks": [
+    {
+      "source_path": "AMCOR_2023_10K.md",
+      "chunk_index": 28,
+      "score": 0.6058477925558237
+    },
+    {
+      "source_path": "AMCOR_2023_10K.md",
+      "chunk_index": 49,
+      "score": 0.5934875109609027
+    },
+    {
+      "source_path": "AMCOR_2023_10K.md",
+      "chunk_index": 35,
+      "score": 0.5863607120227847
+    },
+    {
+      "source_path": "AMCOR_2023_10K.md",
+      "chunk_index": 6,
+      "score": 0.5771524943181939
+    },
+    {
+      "source_path": "AMCOR_2023_10K.md",
+      "chunk_index": 99,
+      "score": 0.5769619699904261
+    },
+    {
+      "source_path": "AMCOR_2023_10K.md",
+      "chunk_index": 3,
+      "score": 0.5745497481676084
+    },
+    {
+      "source_path": "AMCOR_2023_10K.md",
+      "chunk_index": 8,
+      "score": 0.5712926537182305
+    },
+    {
+      "source_path": "AMCOR_2023_10K.md",
+      "chunk_index": 0,
+      "score": 0.570051533508665
+    }
+  ],
+  "raw_response": "{\"choice\":\"c\",\"reasoning\":\"Gross margin is calculated as gross profit divided by net sales. According to 청크 1 and 청크 2, in FY2022, gross profit was $2,820 million on net sales of $14,544 million (19.4%), and in FY2023, gross profit was $2,725 million on net sales of $14,694 million (18.5%). This represents a decline of 0.9 percentage points (rounded to 0.8% in the answer choices). Therefore, AMCOR's gross margin declined slightly in FY2023. This is directly supported by the data in 청크 1 and 청크 2.\"}",
+  "parsed": {
+    "choice": "c",
+    "reasoning": "Gross margin is calculated as gross profit divided by net sales. According to 청크 1 and 청크 2, in FY2022, gross profit was $2,820 million on net sales of $14,544 million (19.4%), and in FY2023, gross profit was $2,725 million on net sales of $14,694 million (18.5%). This represents a decline of 0.9 percentage points (rounded to 0.8% in the answer choices). Therefore, AMCOR's gross margin declined slightly in FY2023. This is directly supported by the data in 청크 1 and 청크 2."
+  },
+  "parse_error": null
+}

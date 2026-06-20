@@ -1,0 +1,65 @@
+{
+  "column": "chunk_rag",
+  "question_id": "Q28",
+  "run_index": 2,
+  "input_tokens": 7144,
+  "output_tokens": 83,
+  "embedding_tokens": 29816,
+  "embedding_tokens_breakdown": {
+    "question_embedding": 44,
+    "setup_amortized": 29772,
+    "setup_total": 982504,
+    "questions_count_for_amortization": 33
+  },
+  "total_tokens": 37043,
+  "latency_ms": 1299,
+  "model": "gpt-4.1",
+  "retrieved_chunks": [
+    {
+      "source_path": "JOHNSON_JOHNSON_2022_10K.md",
+      "chunk_index": 90,
+      "score": 0.57294909462432
+    },
+    {
+      "source_path": "JOHNSON_JOHNSON_2022_10K.md",
+      "chunk_index": 132,
+      "score": 0.5666518404645714
+    },
+    {
+      "source_path": "JOHNSON_JOHNSON_2022_10K.md",
+      "chunk_index": 58,
+      "score": 0.5651047612568162
+    },
+    {
+      "source_path": "JOHNSON_JOHNSON_2022_10K.md",
+      "chunk_index": 30,
+      "score": 0.5615692968665145
+    },
+    {
+      "source_path": "JOHNSON_JOHNSON_2022_10K.md",
+      "chunk_index": 29,
+      "score": 0.5548613533976271
+    },
+    {
+      "source_path": "JOHNSON_JOHNSON_2022_10K.md",
+      "chunk_index": 52,
+      "score": 0.5457301712913328
+    },
+    {
+      "source_path": "JOHNSON_JOHNSON_2022_10K.md",
+      "chunk_index": 138,
+      "score": 0.5438902922497703
+    },
+    {
+      "source_path": "JOHNSON_JOHNSON_2022_10K.md",
+      "chunk_index": 91,
+      "score": 0.5438334216463875
+    }
+  ],
+  "raw_response": "{\"choice\":\"e\",\"reasoning\":\"The provided excerpts do not contain the necessary financial data (specifically, cost of goods sold and average inventory for FY2022) required to calculate the inventory turnover ratio for Johnson & Johnson. Without these figures, it is not possible to compute or estimate the inventory turnover ratio. Therefore, the correct answer is (e) Insufficient information / cannot determine from the corpus.\"}",
+  "parsed": {
+    "choice": "e",
+    "reasoning": "The provided excerpts do not contain the necessary financial data (specifically, cost of goods sold and average inventory for FY2022) required to calculate the inventory turnover ratio for Johnson & Johnson. Without these figures, it is not possible to compute or estimate the inventory turnover ratio. Therefore, the correct answer is (e) Insufficient information / cannot determine from the corpus."
+  },
+  "parse_error": null
+}

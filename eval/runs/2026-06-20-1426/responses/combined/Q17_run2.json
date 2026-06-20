@@ -1,0 +1,161 @@
+{
+  "column": "combined",
+  "question_id": "Q17",
+  "run_index": 2,
+  "anchor_extraction": {
+    "input_tokens": 487,
+    "output_tokens": 38,
+    "latency_ms": 1100,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"American Express\",\"aliases\":[\"American Express\"]},{\"canonical\":\"Balance Sheet\",\"aliases\":[\"Balance Sheet\"]},{\"canonical\":\"liability\",\"aliases\":[\"liability\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "American Express",
+          "aliases": [
+            "American Express"
+          ]
+        },
+        {
+          "canonical": "Balance Sheet",
+          "aliases": [
+            "Balance Sheet"
+          ]
+        },
+        {
+          "canonical": "liability",
+          "aliases": [
+            "liability"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 823,
+      "input": {
+        "keywords": [
+          "American Express",
+          "Balance Sheet",
+          "liability"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 94,
+      "input": {
+        "entry_ids": [
+          "01KVHQ35FHXZAN8YTHCW401SGJ",
+          "01KVHQ6DQPAJW348FTN1QJYKSS",
+          "01KVHQ4YF143PN4051T9DB6BEA",
+          "01KVHQHR2H6KAHN4NVN15QJSHB",
+          "01KVHQ34S1RVGEVVV811BATHF9",
+          "01KVHQ6N8MJCASDRC21RJKT9GA",
+          "01KVHQ4XHWTMV1A77164WH2QAD",
+          "01KVHQE9ZJPMT9RVKWWSGM1M7Y",
+          "01KVHQAD505D18HJSNW1RVDY10",
+          "01KVHQH40RY6PS8BVH1HGMABNG"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 33,
+        "edges": 29,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVHQ35FHXZAN8YTHCW401SGJ",
+    "01KVHQ6DQPAJW348FTN1QJYKSS",
+    "01KVHQ4YF143PN4051T9DB6BEA",
+    "01KVHQHR2H6KAHN4NVN15QJSHB",
+    "01KVHQ34S1RVGEVVV811BATHF9",
+    "01KVHQ6N8MJCASDRC21RJKT9GA",
+    "01KVHQ4XHWTMV1A77164WH2QAD",
+    "01KVHQE9ZJPMT9RVKWWSGM1M7Y",
+    "01KVHQAD505D18HJSNW1RVDY10",
+    "01KVHQH40RY6PS8BVH1HGMABNG"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 18408,
+  "retrieved_chunks": [
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 77,
+      "score": 0.6821281384540033
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 137,
+      "score": 0.6694022556656873
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 151,
+      "score": 0.6660445899178413
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 72,
+      "score": 0.6536017910004933
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 164,
+      "score": 0.6422793245274577
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 136,
+      "score": 0.6361380868793285
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 177,
+      "score": 0.6173977815440552
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 6,
+      "score": 0.6114213640505282
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 12141,
+    "output_tokens": 233,
+    "latency_ms": 2708,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"d\",\"reasoning\":\"(A) 검색된 문서 발췌에서 2022년 American Express의 재무상태표 항목별 금액이 명시적으로 나와 있지는 않으나, 청크 3에서 'Financial liabilities for which carrying values equal or approximate fair value'가 123 billion 달러(2022년)로, 'Long-term debt' 43 billion 달러, 'Certificates of deposit' 16 billion 달러 등과 비교해 가장 크다는 점을 알 수 있습니다. 이때, 'Financial liabilities for which carrying values equal or approximate fair value'는 주로 'Customer deposits'를 의미합니다(은행업의 표준 용어). 또한, 청크 3의 주석(d)에서 'Presented as a component of Customer deposits on the Consolidated Balance Sheets.'라고 명확히 언급되어 있습니다. 따라서 2022년 American Express의 가장 큰 부채는 'Customer deposits'입니다. (B) 그래프에는 각 부채 항목의 금액 정보가 없으므로 (A)가 결정적 근거입니다.\"}",
+    "parsed": {
+      "choice": "d",
+      "reasoning": "(A) 검색된 문서 발췌에서 2022년 American Express의 재무상태표 항목별 금액이 명시적으로 나와 있지는 않으나, 청크 3에서 'Financial liabilities for which carrying values equal or approximate fair value'가 123 billion 달러(2022년)로, 'Long-term debt' 43 billion 달러, 'Certificates of deposit' 16 billion 달러 등과 비교해 가장 크다는 점을 알 수 있습니다. 이때, 'Financial liabilities for which carrying values equal or approximate fair value'는 주로 'Customer deposits'를 의미합니다(은행업의 표준 용어). 또한, 청크 3의 주석(d)에서 'Presented as a component of Customer deposits on the Consolidated Balance Sheets.'라고 명확히 언급되어 있습니다. 따라서 2022년 American Express의 가장 큰 부채는 'Customer deposits'입니다. (B) 그래프에는 각 부채 항목의 금액 정보가 없으므로 (A)가 결정적 근거입니다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 29812,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 16,
+    "chunk_setup_amortized": 29772,
+    "chunk_setup_total": 982504,
+    "graph_keyword_estimated": 24,
+    "questions_count_for_amortization": 33
+  },
+  "total_input_tokens": 12628,
+  "total_output_tokens": 271,
+  "total_tokens": 42711,
+  "total_latency_ms": 4725
+}

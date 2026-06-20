@@ -1,0 +1,120 @@
+{
+  "column": "opentology",
+  "question_id": "Q26",
+  "run_index": 1,
+  "anchor_extraction": {
+    "input_tokens": 488,
+    "output_tokens": 68,
+    "latency_ms": 1387,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"JnJ\",\"aliases\":[\"JnJ\",\"Johnson & Johnson\"]},{\"canonical\":\"FY2022 financials\",\"aliases\":[\"FY2022 financials\",\"2022년 재무제표\",\"2022 financials\"]},{\"canonical\":\"high growth company\",\"aliases\":[\"high growth company\",\"고성장 기업\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "JnJ",
+          "aliases": [
+            "JnJ",
+            "Johnson & Johnson"
+          ]
+        },
+        {
+          "canonical": "FY2022 financials",
+          "aliases": [
+            "FY2022 financials",
+            "2022년 재무제표",
+            "2022 financials"
+          ]
+        },
+        {
+          "canonical": "high growth company",
+          "aliases": [
+            "high growth company",
+            "고성장 기업"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 1123,
+      "input": {
+        "keywords": [
+          "JnJ",
+          "Johnson & Johnson",
+          "FY2022 financials",
+          "2022년 재무제표",
+          "2022 financials",
+          "high growth company",
+          "고성장 기업"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 84,
+      "input": {
+        "entry_ids": [
+          "01KVHQA8B7D2A1ES3TYJD6291Q",
+          "01KVHQDDDQKMZNTGA8C8V0T1VH",
+          "01KVHQE28QG3SNZGBGWX0PEFN3",
+          "01KVHQBJ5MWNRA3D3P7DMDCNBX",
+          "01KVHQ91WW3YB87J3R2APKYXTG",
+          "01KVHPX5NF0Y985QKEG5SRHY53",
+          "01KVHQE48RPVPGS9ATVAHC64YR",
+          "01KVHQE1GJX20PT55JRX5VMTTC",
+          "01KVHPX1EWGSD9E8SE7PGYWYTK",
+          "01KVHPWMNZFYB5J2TZD3MQNHS8"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 27,
+        "edges": 26,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVHQA8B7D2A1ES3TYJD6291Q",
+    "01KVHQDDDQKMZNTGA8C8V0T1VH",
+    "01KVHQE28QG3SNZGBGWX0PEFN3",
+    "01KVHQBJ5MWNRA3D3P7DMDCNBX",
+    "01KVHQ91WW3YB87J3R2APKYXTG",
+    "01KVHPX5NF0Y985QKEG5SRHY53",
+    "01KVHQE48RPVPGS9ATVAHC64YR",
+    "01KVHQE1GJX20PT55JRX5VMTTC",
+    "01KVHPX1EWGSD9E8SE7PGYWYTK",
+    "01KVHPWMNZFYB5J2TZD3MQNHS8"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 14933,
+  "answer_generation": {
+    "input_tokens": 5217,
+    "output_tokens": 94,
+    "latency_ms": 988,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"e\",\"reasoning\":\"제공된 도메인 그래프에는 Johnson & Johnson(JnJ)의 FY2022 재무정보(매출 증가율, 순이익 증가율 등)나 성장률에 대한 구체적인 수치 또는 설명이 포함되어 있지 않습니다. 따라서 JnJ의 FY2022 재무가 고성장 기업의 것인지 여부를 판단할 수 있는 정보가 그래프에 없습니다.\"}",
+    "parsed": {
+      "choice": "e",
+      "reasoning": "제공된 도메인 그래프에는 Johnson & Johnson(JnJ)의 FY2022 재무정보(매출 증가율, 순이익 증가율 등)나 성장률에 대한 구체적인 수치 또는 설명이 포함되어 있지 않습니다. 따라서 JnJ의 FY2022 재무가 고성장 기업의 것인지 여부를 판단할 수 있는 정보가 그래프에 없습니다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 56,
+  "total_input_tokens": 5705,
+  "total_output_tokens": 162,
+  "total_tokens": 5923,
+  "total_latency_ms": 3582
+}

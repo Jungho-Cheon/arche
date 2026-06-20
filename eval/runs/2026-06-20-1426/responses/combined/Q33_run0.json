@@ -1,0 +1,197 @@
+{
+  "column": "combined",
+  "question_id": "Q33",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 532,
+    "output_tokens": 142,
+    "latency_ms": 1351,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"PepsiCo\",\"aliases\":[\"PepsiCo\"]},{\"canonical\":\"FY2022 unadjusted EBITDA % margin\",\"aliases\":[\"FY2022 unadjusted EBITDA % margin\",\"unadjusted EBITDA margin for FY2022\"]},{\"canonical\":\"unadjusted EBITDA\",\"aliases\":[\"unadjusted EBITDA\"]},{\"canonical\":\"unadjusted operating income\",\"aliases\":[\"unadjusted operating income\"]},{\"canonical\":\"D&A\",\"aliases\":[\"D&A\",\"depreciation and amortization\"]},{\"canonical\":\"statement of cash flows\",\"aliases\":[\"statement of cash flows\",\"cash flow statement\"]},{\"canonical\":\"P&L statement\",\"aliases\":[\"P&L statement\",\"profit and loss statement\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "PepsiCo",
+          "aliases": [
+            "PepsiCo"
+          ]
+        },
+        {
+          "canonical": "FY2022 unadjusted EBITDA % margin",
+          "aliases": [
+            "FY2022 unadjusted EBITDA % margin",
+            "unadjusted EBITDA margin for FY2022"
+          ]
+        },
+        {
+          "canonical": "unadjusted EBITDA",
+          "aliases": [
+            "unadjusted EBITDA"
+          ]
+        },
+        {
+          "canonical": "unadjusted operating income",
+          "aliases": [
+            "unadjusted operating income"
+          ]
+        },
+        {
+          "canonical": "D&A",
+          "aliases": [
+            "D&A",
+            "depreciation and amortization"
+          ]
+        },
+        {
+          "canonical": "statement of cash flows",
+          "aliases": [
+            "statement of cash flows",
+            "cash flow statement"
+          ]
+        },
+        {
+          "canonical": "P&L statement",
+          "aliases": [
+            "P&L statement",
+            "profit and loss statement"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 1724,
+      "input": {
+        "keywords": [
+          "PepsiCo",
+          "FY2022 unadjusted EBITDA % margin",
+          "unadjusted EBITDA margin for FY2022",
+          "unadjusted EBITDA",
+          "unadjusted operating income",
+          "D&A",
+          "depreciation and amortization",
+          "statement of cash flows",
+          "cash flow statement",
+          "P&L statement",
+          "profit and loss statement"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 68,
+      "input": {
+        "entry_ids": [
+          "01KVHPXPDEDWBDG5RAMC0AX6SY",
+          "01KVHPXA5JS100MY71CWNJP9CF",
+          "01KVHQFVCGN6TCBX7KSSK8XKNP",
+          "01KVHPX78JMM95P1CEFA8ZZSBR",
+          "01KVHPX5NF0Y985QKEG5SRHY53",
+          "01KVHPXG8SJ7MAECEC2VQR0XW5",
+          "01KVHQ48F1E74RSHN7PQRS131N",
+          "01KVHQ6D15MA29XKWZQR2WVJYJ",
+          "01KVHQ6RF2R6SWGB17PDR2KFQR",
+          "01KVHQHR2H6KAHN4NVN15QJSHB"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 23,
+        "edges": 20,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVHPXPDEDWBDG5RAMC0AX6SY",
+    "01KVHPXA5JS100MY71CWNJP9CF",
+    "01KVHQFVCGN6TCBX7KSSK8XKNP",
+    "01KVHPX78JMM95P1CEFA8ZZSBR",
+    "01KVHPX5NF0Y985QKEG5SRHY53",
+    "01KVHPXG8SJ7MAECEC2VQR0XW5",
+    "01KVHQ48F1E74RSHN7PQRS131N",
+    "01KVHQ6D15MA29XKWZQR2WVJYJ",
+    "01KVHQ6RF2R6SWGB17PDR2KFQR",
+    "01KVHQHR2H6KAHN4NVN15QJSHB"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 12694,
+  "retrieved_chunks": [
+    {
+      "source_path": "PEPSICO_2022_10K.md",
+      "chunk_index": 52,
+      "score": 0.6094539033785522
+    },
+    {
+      "source_path": "PEPSICO_2022_10K.md",
+      "chunk_index": 112,
+      "score": 0.6034477337123184
+    },
+    {
+      "source_path": "PEPSICO_2022_10K.md",
+      "chunk_index": 76,
+      "score": 0.5839679620602395
+    },
+    {
+      "source_path": "PEPSICO_2022_10K.md",
+      "chunk_index": 51,
+      "score": 0.5826622377906072
+    },
+    {
+      "source_path": "PEPSICO_2022_10K.md",
+      "chunk_index": 53,
+      "score": 0.5714120254175578
+    },
+    {
+      "source_path": "PEPSICO_2022_10K.md",
+      "chunk_index": 67,
+      "score": 0.5708709504342009
+    },
+    {
+      "source_path": "PEPSICO_2022_10K.md",
+      "chunk_index": 57,
+      "score": 0.5704950329512977
+    },
+    {
+      "source_path": "PEPSICO_2022_10K.md",
+      "chunk_index": 74,
+      "score": 0.5688300306735873
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 10863,
+    "output_tokens": 278,
+    "latency_ms": 3350,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"c\",\"reasoning\":\"To answer the question, we need to calculate the unadjusted EBITDA margin for PepsiCo for FY2022 using unadjusted operating income and D&A from the cash flow statement. (A) 검색된 문서 발췌 provides the necessary data: \\n- Operating profit (unadjusted operating income) for 2022: $11,512 million (from 청크 1 and 5, 'Reported, GAAP Measure').\\n- Depreciation and amortization (D&A) for 2022: $2,763 million (from 청크 6, 'Consolidated Statement of Cash Flows').\\n- Net revenue for 2022: $86,392 million (from 청크 5, 'Reported, GAAP Measure').\\n\\nUnadjusted EBITDA = Operating profit + D&A = $11,512M + $2,763M = $14,275M\\nEBITDA margin = EBITDA / Net revenue = $14,275M / $86,392M ≈ 16.5%\\n\\nThis matches option (c). The other options are either based on adjusted numbers, the wrong year, or calculation errors. The domain graph (B) does not provide relevant financial values, so (A) is the decisive source.\"}",
+    "parsed": {
+      "choice": "c",
+      "reasoning": "To answer the question, we need to calculate the unadjusted EBITDA margin for PepsiCo for FY2022 using unadjusted operating income and D&A from the cash flow statement. (A) 검색된 문서 발췌 provides the necessary data: \n- Operating profit (unadjusted operating income) for 2022: $11,512 million (from 청크 1 and 5, 'Reported, GAAP Measure').\n- Depreciation and amortization (D&A) for 2022: $2,763 million (from 청크 6, 'Consolidated Statement of Cash Flows').\n- Net revenue for 2022: $86,392 million (from 청크 5, 'Reported, GAAP Measure').\n\nUnadjusted EBITDA = Operating profit + D&A = $11,512M + $2,763M = $14,275M\nEBITDA margin = EBITDA / Net revenue = $14,275M / $86,392M ≈ 16.5%\n\nThis matches option (c). The other options are either based on adjusted numbers, the wrong year, or calculation errors. The domain graph (B) does not provide relevant financial values, so (A) is the decisive source."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 29922,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 62,
+    "chunk_setup_amortized": 29772,
+    "chunk_setup_total": 982504,
+    "graph_keyword_estimated": 88,
+    "questions_count_for_amortization": 33
+  },
+  "total_input_tokens": 11395,
+  "total_output_tokens": 420,
+  "total_tokens": 41737,
+  "total_latency_ms": 6493
+}

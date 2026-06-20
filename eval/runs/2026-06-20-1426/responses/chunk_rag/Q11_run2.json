@@ -1,0 +1,65 @@
+{
+  "column": "chunk_rag",
+  "question_id": "Q11",
+  "run_index": 2,
+  "input_tokens": 7450,
+  "output_tokens": 159,
+  "embedding_tokens": 29781,
+  "embedding_tokens_breakdown": {
+    "question_embedding": 9,
+    "setup_amortized": 29772,
+    "setup_total": 982504,
+    "questions_count_for_amortization": 33
+  },
+  "total_tokens": 37390,
+  "latency_ms": 1708,
+  "model": "gpt-4.1",
+  "retrieved_chunks": [
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 46,
+      "score": 0.6231920299154547
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 47,
+      "score": 0.6212902682587397
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 14,
+      "score": 0.6137327522684403
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 13,
+      "score": 0.6106508809999924
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 3,
+      "score": 0.6044962720883229
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 4,
+      "score": 0.59713197237792
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 2,
+      "score": 0.5959317817888855
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 0,
+      "score": 0.5905995883597538
+    }
+  ],
+  "raw_response": "{\"choice\":\"e\",\"reasoning\":\"제공된 발췌들(청크 1~8)에서는 AMD의 FY22(2022 회계연도) 고객 집중도(customer concentration)에 대한 구체적인 언급이나, 특정 고객이 전체 매출의 몇 퍼센트를 차지했는지에 대한 정보가 나오지 않습니다. 일부 발췌(예: 청크 7)에서는 'a small number of customers will continue to account for a substantial part of AMD’s revenue in the future'와 같은 일반적인 진술이 있으나, FY22에 대한 구체적인 수치나 고객 수, 비율 등은 제공되지 않습니다. 따라서 보기 중에서 정답을 고르기에는 정보가 부족합니다.\"}",
+  "parsed": {
+    "choice": "e",
+    "reasoning": "제공된 발췌들(청크 1~8)에서는 AMD의 FY22(2022 회계연도) 고객 집중도(customer concentration)에 대한 구체적인 언급이나, 특정 고객이 전체 매출의 몇 퍼센트를 차지했는지에 대한 정보가 나오지 않습니다. 일부 발췌(예: 청크 7)에서는 'a small number of customers will continue to account for a substantial part of AMD’s revenue in the future'와 같은 일반적인 진술이 있으나, FY22에 대한 구체적인 수치나 고객 수, 비율 등은 제공되지 않습니다. 따라서 보기 중에서 정답을 고르기에는 정보가 부족합니다."
+  },
+  "parse_error": null
+}

@@ -1,0 +1,116 @@
+{
+  "column": "opentology",
+  "question_id": "Q29",
+  "run_index": 2,
+  "anchor_extraction": {
+    "input_tokens": 489,
+    "output_tokens": 50,
+    "latency_ms": 1022,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"Pepsico\",\"aliases\":[\"Pepsico\"]},{\"canonical\":\"geographies\",\"aliases\":[\"geographies\",\"regions\"]},{\"canonical\":\"FY2022\",\"aliases\":[\"FY2022\",\"Fiscal Year 2022\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "Pepsico",
+          "aliases": [
+            "Pepsico"
+          ]
+        },
+        {
+          "canonical": "geographies",
+          "aliases": [
+            "geographies",
+            "regions"
+          ]
+        },
+        {
+          "canonical": "FY2022",
+          "aliases": [
+            "FY2022",
+            "Fiscal Year 2022"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 733,
+      "input": {
+        "keywords": [
+          "Pepsico",
+          "geographies",
+          "regions",
+          "FY2022",
+          "Fiscal Year 2022"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 52,
+      "input": {
+        "entry_ids": [
+          "01KVHQHWC03C4WR43X1VXVCSN9",
+          "01KVHQG0KZ68Z7GY7CZXSGE84V",
+          "01KVHQ6EZ1AKSG0V7ST2KCY531",
+          "01KVHQ53GYXW040QQJS0NXZVBA",
+          "01KVHQ6EF00W1Q3G5D06410H48",
+          "01KVHQ56RSSXB4VP7WW59H919J",
+          "01KVHQHM2BB5VWGV1CM1M0HA4K",
+          "01KVHQ91WW3YB87J3R2APKYXTG",
+          "01KVHQGQQPXVVX7JC8F5C34WSY",
+          "01KVHQFA6KT2JJFP3271XQT0TE"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 17,
+        "edges": 12,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVHQHWC03C4WR43X1VXVCSN9",
+    "01KVHQG0KZ68Z7GY7CZXSGE84V",
+    "01KVHQ6EZ1AKSG0V7ST2KCY531",
+    "01KVHQ53GYXW040QQJS0NXZVBA",
+    "01KVHQ6EF00W1Q3G5D06410H48",
+    "01KVHQ56RSSXB4VP7WW59H919J",
+    "01KVHQHM2BB5VWGV1CM1M0HA4K",
+    "01KVHQ91WW3YB87J3R2APKYXTG",
+    "01KVHQGQQPXVVX7JC8F5C34WSY",
+    "01KVHQFA6KT2JJFP3271XQT0TE"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 8719,
+  "answer_generation": {
+    "input_tokens": 3220,
+    "output_tokens": 134,
+    "latency_ms": 1522,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"e\",\"reasoning\":\"그래프에서 Pepsico(또는 PepsiCo, Inc.)가 운영하는 지역(geographies)에 대한 정보는 'Europe'만 Amcor plc의 일부로 포함되어 있다는 관계만 있을 뿐, North America, Latin America, Asia Pacific, Africa, Middle East, South Asia, Australia, New Zealand, China 등 다른 지역에 대한 언급이나 관계가 전혀 없습니다. 따라서 Pepsico가 FY2022 기준으로 주로 운영하는 지역 전체를 알 수 있는 충분한 정보가 그래프에 없습니다. 제공된 그래프 정보만으로는 정답을 특정할 수 없습니다.\"}",
+    "parsed": {
+      "choice": "e",
+      "reasoning": "그래프에서 Pepsico(또는 PepsiCo, Inc.)가 운영하는 지역(geographies)에 대한 정보는 'Europe'만 Amcor plc의 일부로 포함되어 있다는 관계만 있을 뿐, North America, Latin America, Asia Pacific, Africa, Middle East, South Asia, Australia, New Zealand, China 등 다른 지역에 대한 언급이나 관계가 전혀 없습니다. 따라서 Pepsico가 FY2022 기준으로 주로 운영하는 지역 전체를 알 수 있는 충분한 정보가 그래프에 없습니다. 제공된 그래프 정보만으로는 정답을 특정할 수 없습니다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 40,
+  "total_input_tokens": 3709,
+  "total_output_tokens": 184,
+  "total_tokens": 3933,
+  "total_latency_ms": 3329
+}

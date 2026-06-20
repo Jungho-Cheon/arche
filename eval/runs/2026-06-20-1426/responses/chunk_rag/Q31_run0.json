@@ -1,0 +1,65 @@
+{
+  "column": "chunk_rag",
+  "question_id": "Q31",
+  "run_index": 0,
+  "input_tokens": 6310,
+  "output_tokens": 131,
+  "embedding_tokens": 29805,
+  "embedding_tokens_breakdown": {
+    "question_embedding": 33,
+    "setup_amortized": 29772,
+    "setup_total": 982504,
+    "questions_count_for_amortization": 33
+  },
+  "total_tokens": 36246,
+  "latency_ms": 1732,
+  "model": "gpt-4.1",
+  "retrieved_chunks": [
+    {
+      "source_path": "PEPSICO_2022_10K.md",
+      "chunk_index": 83,
+      "score": 0.6809815394926568
+    },
+    {
+      "source_path": "PEPSICO_2022_10K.md",
+      "chunk_index": 82,
+      "score": 0.6254712001908725
+    },
+    {
+      "source_path": "PEPSICO_2022_10K.md",
+      "chunk_index": 53,
+      "score": 0.6085355868633526
+    },
+    {
+      "source_path": "PEPSICO_2022_10K.md",
+      "chunk_index": 52,
+      "score": 0.5963956207920458
+    },
+    {
+      "source_path": "PEPSICO_2022_10K.md",
+      "chunk_index": 75,
+      "score": 0.5884719972020884
+    },
+    {
+      "source_path": "PEPSICO_2022_10K.md",
+      "chunk_index": 74,
+      "score": 0.5865487141062316
+    },
+    {
+      "source_path": "PEPSICO_2022_10K.md",
+      "chunk_index": 112,
+      "score": 0.5755559799261037
+    },
+    {
+      "source_path": "PEPSICO_2022_10K.md",
+      "chunk_index": 76,
+      "score": 0.5749605439751085
+    }
+  ],
+  "raw_response": "{\"choice\":\"a\",\"reasoning\":\"청크 1과 청크 2에서 2022년 Pepsico의 restructuring and impairment charges(구조조정 및 손상차손)가 $411 million임이 명확히 표기되어 있습니다. 'Total restructuring and impairment charges $ 411'이라는 문구가 2022년 수치로 직접적으로 제시되어 있으므로, 보기 a)가 정답입니다. 다른 보기들은 연도나 금액이 일치하지 않거나, 총 운영비용에 포함된 구조조정 비용을 묻는 등 질문의 초점과 다릅니다.\"}",
+  "parsed": {
+    "choice": "a",
+    "reasoning": "청크 1과 청크 2에서 2022년 Pepsico의 restructuring and impairment charges(구조조정 및 손상차손)가 $411 million임이 명확히 표기되어 있습니다. 'Total restructuring and impairment charges $ 411'이라는 문구가 2022년 수치로 직접적으로 제시되어 있으므로, 보기 a)가 정답입니다. 다른 보기들은 연도나 금액이 일치하지 않거나, 총 운영비용에 포함된 구조조정 비용을 묻는 등 질문의 초점과 다릅니다."
+  },
+  "parse_error": null
+}

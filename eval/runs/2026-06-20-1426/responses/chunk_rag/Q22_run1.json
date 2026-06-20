@@ -1,0 +1,65 @@
+{
+  "column": "chunk_rag",
+  "question_id": "Q22",
+  "run_index": 1,
+  "input_tokens": 6881,
+  "output_tokens": 321,
+  "embedding_tokens": 29785,
+  "embedding_tokens_breakdown": {
+    "question_embedding": 13,
+    "setup_amortized": 29772,
+    "setup_total": 982504,
+    "questions_count_for_amortization": 33
+  },
+  "total_tokens": 36987,
+  "latency_ms": 3463,
+  "model": "gpt-4.1",
+  "retrieved_chunks": [
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 4,
+      "score": 0.6370781509243166
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 22,
+      "score": 0.6170254769513455
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 10,
+      "score": 0.6110731828086124
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 29,
+      "score": 0.6078034017778384
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 3,
+      "score": 0.6038096799187167
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 59,
+      "score": 0.6003331965093308
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 8,
+      "score": 0.597854380304075
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 6,
+      "score": 0.5973675059301187
+    }
+  ],
+  "raw_response": "{\n  \"choice\": \"c\",\n  \"reasoning\": \"청크 2와 청크 6에서 Boeing의 사업 부문별 매출 구성이 명확히 제시되어 있다. 청크 2는 Boeing이 '상업용 제트기, 군용 항공기, 위성, 미사일 방어, 우주 비행 및 발사 시스템 및 서비스'의 글로벌 시장 리더이며, '100석 이상 항공기'의 두 주요 제조업체 중 하나이자 미국 최대 방산업체 중 하나임을 밝힌다. 청크 6의 FY2022 매출 데이터를 보면 Commercial Airplanes(상업용 항공기) 부문이 $25,867M, Defense, Space & Security(방위, 우주 및 보안) 부문이 $23,162M, Global Services(상업 및 방위 지원) 부문이 $17,611M임을 알 수 있다. 방위 부문과 Global Services의 상당 부분이 미국 정부(특히 국방부)와 관련된다는 점을 감안하면, 미국 정부가 전체 매출의 약 40%를 차지하는 주요 고객임을 알 수 있다. 또한 청크 7에서 '상업용 항공기 사업은 소수의 상업 항공사로부터의 매출에 크게 의존한다'고 명시되어 있어, 주요 고객이 상업 항공사와 미국 정부임을 확인할 수 있다. 따라서 보기 c)가 정확하다.\"\n}",
+  "parsed": {
+    "choice": "c",
+    "reasoning": "청크 2와 청크 6에서 Boeing의 사업 부문별 매출 구성이 명확히 제시되어 있다. 청크 2는 Boeing이 '상업용 제트기, 군용 항공기, 위성, 미사일 방어, 우주 비행 및 발사 시스템 및 서비스'의 글로벌 시장 리더이며, '100석 이상 항공기'의 두 주요 제조업체 중 하나이자 미국 최대 방산업체 중 하나임을 밝힌다. 청크 6의 FY2022 매출 데이터를 보면 Commercial Airplanes(상업용 항공기) 부문이 $25,867M, Defense, Space & Security(방위, 우주 및 보안) 부문이 $23,162M, Global Services(상업 및 방위 지원) 부문이 $17,611M임을 알 수 있다. 방위 부문과 Global Services의 상당 부분이 미국 정부(특히 국방부)와 관련된다는 점을 감안하면, 미국 정부가 전체 매출의 약 40%를 차지하는 주요 고객임을 알 수 있다. 또한 청크 7에서 '상업용 항공기 사업은 소수의 상업 항공사로부터의 매출에 크게 의존한다'고 명시되어 있어, 주요 고객이 상업 항공사와 미국 정부임을 확인할 수 있다. 따라서 보기 c)가 정확하다."
+  },
+  "parse_error": null
+}

@@ -1,0 +1,105 @@
+{
+  "column": "opentology",
+  "question_id": "Q29",
+  "run_index": 1,
+  "anchor_extraction": {
+    "input_tokens": 489,
+    "output_tokens": 31,
+    "latency_ms": 940,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"Pepsico\",\"aliases\":[\"Pepsico\"]},{\"canonical\":\"FY2022\",\"aliases\":[\"FY2022\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "Pepsico",
+          "aliases": [
+            "Pepsico"
+          ]
+        },
+        {
+          "canonical": "FY2022",
+          "aliases": [
+            "FY2022"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 946,
+      "input": {
+        "keywords": [
+          "Pepsico",
+          "FY2022"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 77,
+      "input": {
+        "entry_ids": [
+          "01KVHQHM2BB5VWGV1CM1M0HA4K",
+          "01KVHQGQQPXVVX7JC8F5C34WSY",
+          "01KVHQGZDYSYYP3WN4EA517B4Z",
+          "01KVHQG1EFFCMNPWZPVEPY2JE0",
+          "01KVHQF8YERTVXB8X5E1TBNXD7",
+          "01KVHQGNNE6M2DC5GQM7X9T13K",
+          "01KVHQGQ5ENSPSXZP18X1Z543V",
+          "01KVHQGRVSH5E6M4KQR34YHMQM",
+          "01KVHQHYEZKGT0RBWAQVGW8AKT",
+          "01KVHQFVCGN6TCBX7KSSK8XKNP"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 26,
+        "edges": 21,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVHQHM2BB5VWGV1CM1M0HA4K",
+    "01KVHQGQQPXVVX7JC8F5C34WSY",
+    "01KVHQGZDYSYYP3WN4EA517B4Z",
+    "01KVHQG1EFFCMNPWZPVEPY2JE0",
+    "01KVHQF8YERTVXB8X5E1TBNXD7",
+    "01KVHQGNNE6M2DC5GQM7X9T13K",
+    "01KVHQGQ5ENSPSXZP18X1Z543V",
+    "01KVHQGRVSH5E6M4KQR34YHMQM",
+    "01KVHQHYEZKGT0RBWAQVGW8AKT",
+    "01KVHQFVCGN6TCBX7KSSK8XKNP"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 13128,
+  "answer_generation": {
+    "input_tokens": 4531,
+    "output_tokens": 114,
+    "latency_ms": 1846,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"e\",\"reasoning\":\"제공된 도메인 그래프에는 PepsiCo가 FY2022 기준으로 주로 운영하는 지역(geographies)에 대한 직접적인 정보가 포함되어 있지 않습니다. 엔티티 및 관계들은 주로 PepsiCo의 조직 구조, 연금제도, 특정 부서(예: PBNA), 그리고 일부 라이선스 관계에 초점을 맞추고 있습니다. 따라서 보기 중 어느 것도 그래프 정보만으로 확정할 수 없으므로 '정보 부족'이 정답입니다.\"}",
+    "parsed": {
+      "choice": "e",
+      "reasoning": "제공된 도메인 그래프에는 PepsiCo가 FY2022 기준으로 주로 운영하는 지역(geographies)에 대한 직접적인 정보가 포함되어 있지 않습니다. 엔티티 및 관계들은 주로 PepsiCo의 조직 구조, 연금제도, 특정 부서(예: PBNA), 그리고 일부 라이선스 관계에 초점을 맞추고 있습니다. 따라서 보기 중 어느 것도 그래프 정보만으로 확정할 수 없으므로 '정보 부족'이 정답입니다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 16,
+  "total_input_tokens": 5020,
+  "total_output_tokens": 145,
+  "total_tokens": 5181,
+  "total_latency_ms": 3809
+}

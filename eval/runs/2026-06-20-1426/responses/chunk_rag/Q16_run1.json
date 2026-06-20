@@ -1,0 +1,65 @@
+{
+  "column": "chunk_rag",
+  "question_id": "Q16",
+  "run_index": 1,
+  "input_tokens": 6692,
+  "output_tokens": 127,
+  "embedding_tokens": 29792,
+  "embedding_tokens_breakdown": {
+    "question_embedding": 20,
+    "setup_amortized": 29772,
+    "setup_total": 982504,
+    "questions_count_for_amortization": 33
+  },
+  "total_tokens": 36611,
+  "latency_ms": 1593,
+  "model": "gpt-4.1",
+  "retrieved_chunks": [
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 57,
+      "score": 0.6533953213498825
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 72,
+      "score": 0.6447935768373175
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 58,
+      "score": 0.6159300525906621
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 137,
+      "score": 0.6083653003800943
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 54,
+      "score": 0.6057468849270722
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 53,
+      "score": 0.6037296155335066
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 49,
+      "score": 0.5923265707644039
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 173,
+      "score": 0.5917531285491718
+    }
+  ],
+  "raw_response": "{\"choice\":\"c\",\"reasoning\":\"청크 3와 청크 1에서 'The effective tax rate was 21.6 percent and 24.6 percent for 2022 and 2021, respectively.'라는 문장이 명확하게 FY2021의 유효세율이 24.6%이고 FY2022의 유효세율이 21.6%로 감소했음을 보여줍니다. 따라서 보기 c) 'The effective tax rate dropped from 24.6% in FY2021 to 21.6% in FY2022.'가 정답입니다.\"}",
+  "parsed": {
+    "choice": "c",
+    "reasoning": "청크 3와 청크 1에서 'The effective tax rate was 21.6 percent and 24.6 percent for 2022 and 2021, respectively.'라는 문장이 명확하게 FY2021의 유효세율이 24.6%이고 FY2022의 유효세율이 21.6%로 감소했음을 보여줍니다. 따라서 보기 c) 'The effective tax rate dropped from 24.6% in FY2021 to 21.6% in FY2022.'가 정답입니다."
+  },
+  "parse_error": null
+}

@@ -1,0 +1,163 @@
+{
+  "column": "combined",
+  "question_id": "Q27",
+  "run_index": 2,
+  "anchor_extraction": {
+    "input_tokens": 508,
+    "output_tokens": 44,
+    "latency_ms": 944,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"gross margin\",\"aliases\":[\"gross margin\"]},{\"canonical\":\"FY2022\",\"aliases\":[\"FY2022\"]},{\"canonical\":\"JnJ\",\"aliases\":[\"JnJ\",\"Johnson & Johnson\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "gross margin",
+          "aliases": [
+            "gross margin"
+          ]
+        },
+        {
+          "canonical": "FY2022",
+          "aliases": [
+            "FY2022"
+          ]
+        },
+        {
+          "canonical": "JnJ",
+          "aliases": [
+            "JnJ",
+            "Johnson & Johnson"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 1498,
+      "input": {
+        "keywords": [
+          "gross margin",
+          "FY2022",
+          "JnJ",
+          "Johnson & Johnson"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 81,
+      "input": {
+        "entry_ids": [
+          "01KVHQDDDQKMZNTGA8C8V0T1VH",
+          "01KVHQE28QG3SNZGBGWX0PEFN3",
+          "01KVHQBJ5MWNRA3D3P7DMDCNBX",
+          "01KVHQE48RPVPGS9ATVAHC64YR",
+          "01KVHQE1GJX20PT55JRX5VMTTC",
+          "01KVHQCE27WWXW3F6QNF5FM8V3",
+          "01KVHQEAKX4KZT5KKSS903J2QP",
+          "01KVHQBK29D71D81WK0HTSXR32",
+          "01KVHQEB532TDKAYHFTJSDW7N5",
+          "01KVHQ3Y27CYCHE3X1K8ADXKG6"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 23,
+        "edges": 23,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVHQDDDQKMZNTGA8C8V0T1VH",
+    "01KVHQE28QG3SNZGBGWX0PEFN3",
+    "01KVHQBJ5MWNRA3D3P7DMDCNBX",
+    "01KVHQE48RPVPGS9ATVAHC64YR",
+    "01KVHQE1GJX20PT55JRX5VMTTC",
+    "01KVHQCE27WWXW3F6QNF5FM8V3",
+    "01KVHQEAKX4KZT5KKSS903J2QP",
+    "01KVHQBK29D71D81WK0HTSXR32",
+    "01KVHQEB532TDKAYHFTJSDW7N5",
+    "01KVHQ3Y27CYCHE3X1K8ADXKG6"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 12421,
+  "retrieved_chunks": [
+    {
+      "source_path": "JOHNSON_JOHNSON_2022_10K.md",
+      "chunk_index": 4,
+      "score": 0.6047563949915404
+    },
+    {
+      "source_path": "JOHNSON_JOHNSON_2022_10K.md",
+      "chunk_index": 30,
+      "score": 0.589253522816796
+    },
+    {
+      "source_path": "JOHNSON_JOHNSON_2022_10K.md",
+      "chunk_index": 132,
+      "score": 0.5751153387873134
+    },
+    {
+      "source_path": "JOHNSON_JOHNSON_2022_10K.md",
+      "chunk_index": 52,
+      "score": 0.5736240254983355
+    },
+    {
+      "source_path": "JOHNSON_JOHNSON_2022_10K.md",
+      "chunk_index": 58,
+      "score": 0.5623961550998757
+    },
+    {
+      "source_path": "JOHNSON_JOHNSON_2022_10K.md",
+      "chunk_index": 138,
+      "score": 0.5594818465138561
+    },
+    {
+      "source_path": "JOHNSON_JOHNSON_2022_10K.md",
+      "chunk_index": 40,
+      "score": 0.5459631657347145
+    },
+    {
+      "source_path": "JOHNSON_JOHNSON_2022_10K.md",
+      "chunk_index": 8,
+      "score": 0.5435846831917671
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 11475,
+    "output_tokens": 214,
+    "latency_ms": 2380,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"d\",\"reasoning\":\"(A) 검색된 문서 발췌에서 FY22의 손익 및 기타 비용 변동에 대한 상세 설명이 포함되어 있습니다. 특히 청크 7에서 'Other (income) expense, net for the fiscal year 2022 was unfavorable by $1.4 billion as compared to the prior year primarily due to the following: ... One-time COVID-19 vaccine manufacturing exit related costs 0.7 ... Changes in the fair value of securities 0.7 ...' 등 다양한 요인들이 언급되고 있습니다. 또한, 환율 영향(currency impacts), 원자재 인플레이션(commodity inflation), 공급망 이점(supply chain benefits) 등이 언급되어 있어 보기 d의 내용과 일치합니다. (B) 도메인 그래프에는 gross margin의 변동 원인에 대한 구체적 정보가 없습니다. 따라서 (A)의 구체적이고 명시적인 근거가 결정적이었으며, 보기 d가 정답입니다.\"}",
+    "parsed": {
+      "choice": "d",
+      "reasoning": "(A) 검색된 문서 발췌에서 FY22의 손익 및 기타 비용 변동에 대한 상세 설명이 포함되어 있습니다. 특히 청크 7에서 'Other (income) expense, net for the fiscal year 2022 was unfavorable by $1.4 billion as compared to the prior year primarily due to the following: ... One-time COVID-19 vaccine manufacturing exit related costs 0.7 ... Changes in the fair value of securities 0.7 ...' 등 다양한 요인들이 언급되고 있습니다. 또한, 환율 영향(currency impacts), 원자재 인플레이션(commodity inflation), 공급망 이점(supply chain benefits) 등이 언급되어 있어 보기 d의 내용과 일치합니다. (B) 도메인 그래프에는 gross margin의 변동 원인에 대한 구체적 정보가 없습니다. 따라서 (A)의 구체적이고 명시적인 근거가 결정적이었으며, 보기 d가 정답입니다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 29841,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 37,
+    "chunk_setup_amortized": 29772,
+    "chunk_setup_total": 982504,
+    "graph_keyword_estimated": 32,
+    "questions_count_for_amortization": 33
+  },
+  "total_input_tokens": 11983,
+  "total_output_tokens": 258,
+  "total_tokens": 42082,
+  "total_latency_ms": 4903
+}

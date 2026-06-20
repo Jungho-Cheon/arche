@@ -1,0 +1,114 @@
+{
+  "column": "opentology",
+  "question_id": "Q27",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 508,
+    "output_tokens": 44,
+    "latency_ms": 726,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"gross margin\",\"aliases\":[\"gross margin\"]},{\"canonical\":\"FY2022\",\"aliases\":[\"FY2022\"]},{\"canonical\":\"JnJ\",\"aliases\":[\"JnJ\",\"Johnson & Johnson\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "gross margin",
+          "aliases": [
+            "gross margin"
+          ]
+        },
+        {
+          "canonical": "FY2022",
+          "aliases": [
+            "FY2022"
+          ]
+        },
+        {
+          "canonical": "JnJ",
+          "aliases": [
+            "JnJ",
+            "Johnson & Johnson"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 966,
+      "input": {
+        "keywords": [
+          "gross margin",
+          "FY2022",
+          "JnJ",
+          "Johnson & Johnson"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 83,
+      "input": {
+        "entry_ids": [
+          "01KVHQDDDQKMZNTGA8C8V0T1VH",
+          "01KVHQE28QG3SNZGBGWX0PEFN3",
+          "01KVHQBJ5MWNRA3D3P7DMDCNBX",
+          "01KVHQE48RPVPGS9ATVAHC64YR",
+          "01KVHQE1GJX20PT55JRX5VMTTC",
+          "01KVHQCE27WWXW3F6QNF5FM8V3",
+          "01KVHQEAKX4KZT5KKSS903J2QP",
+          "01KVHQBK29D71D81WK0HTSXR32",
+          "01KVHQEB532TDKAYHFTJSDW7N5",
+          "01KVHQ3Y27CYCHE3X1K8ADXKG6"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 23,
+        "edges": 23,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVHQDDDQKMZNTGA8C8V0T1VH",
+    "01KVHQE28QG3SNZGBGWX0PEFN3",
+    "01KVHQBJ5MWNRA3D3P7DMDCNBX",
+    "01KVHQE48RPVPGS9ATVAHC64YR",
+    "01KVHQE1GJX20PT55JRX5VMTTC",
+    "01KVHQCE27WWXW3F6QNF5FM8V3",
+    "01KVHQEAKX4KZT5KKSS903J2QP",
+    "01KVHQBK29D71D81WK0HTSXR32",
+    "01KVHQEB532TDKAYHFTJSDW7N5",
+    "01KVHQ3Y27CYCHE3X1K8ADXKG6"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 12421,
+  "answer_generation": {
+    "input_tokens": 4438,
+    "output_tokens": 141,
+    "latency_ms": 1614,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"e\",\"reasoning\":\"제공된 도메인 그래프에는 Johnson & Johnson(JnJ)의 FY2022 gross margin 변화의 구체적인 원인(예: COVID-19 백신 관련 비용, 환율 영향, 원자재 인플레이션, 공급망 효과 등)에 대한 정보가 포함되어 있지 않습니다. 그래프는 JnJ의 사업 부문, 브랜드, 자회사, 연금 및 복리후생 플랜, 그리고 일부 규제 준수 사항에 대한 관계만을 보여주고 있습니다. 따라서 gross margin 변화의 구체적 원인을 판단할 수 있는 데이터가 없습니다. 정보 부족에 해당합니다.\"}",
+    "parsed": {
+      "choice": "e",
+      "reasoning": "제공된 도메인 그래프에는 Johnson & Johnson(JnJ)의 FY2022 gross margin 변화의 구체적인 원인(예: COVID-19 백신 관련 비용, 환율 영향, 원자재 인플레이션, 공급망 효과 등)에 대한 정보가 포함되어 있지 않습니다. 그래프는 JnJ의 사업 부문, 브랜드, 자회사, 연금 및 복리후생 플랜, 그리고 일부 규제 준수 사항에 대한 관계만을 보여주고 있습니다. 따라서 gross margin 변화의 구체적 원인을 판단할 수 있는 데이터가 없습니다. 정보 부족에 해당합니다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 32,
+  "total_input_tokens": 4946,
+  "total_output_tokens": 185,
+  "total_tokens": 5163,
+  "total_latency_ms": 3389
+}

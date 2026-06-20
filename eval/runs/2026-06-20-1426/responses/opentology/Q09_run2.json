@@ -1,0 +1,141 @@
+{
+  "column": "opentology",
+  "question_id": "Q09",
+  "run_index": 2,
+  "anchor_extraction": {
+    "input_tokens": 499,
+    "output_tokens": 88,
+    "latency_ms": 1062,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"operations\",\"aliases\":[\"operations\",\"operating activities\"]},{\"canonical\":\"investing activities\",\"aliases\":[\"investing activities\",\"investing\"]},{\"canonical\":\"financing activities\",\"aliases\":[\"financing activities\",\"financing\"]},{\"canonical\":\"AMD\",\"aliases\":[\"AMD\"]},{\"canonical\":\"FY22\",\"aliases\":[\"FY22\",\"fiscal year 2022\"]},{\"canonical\":\"cash flow\",\"aliases\":[\"cash flow\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "operations",
+          "aliases": [
+            "operations",
+            "operating activities"
+          ]
+        },
+        {
+          "canonical": "investing activities",
+          "aliases": [
+            "investing activities",
+            "investing"
+          ]
+        },
+        {
+          "canonical": "financing activities",
+          "aliases": [
+            "financing activities",
+            "financing"
+          ]
+        },
+        {
+          "canonical": "AMD",
+          "aliases": [
+            "AMD"
+          ]
+        },
+        {
+          "canonical": "FY22",
+          "aliases": [
+            "FY22",
+            "fiscal year 2022"
+          ]
+        },
+        {
+          "canonical": "cash flow",
+          "aliases": [
+            "cash flow"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 1265,
+      "input": {
+        "keywords": [
+          "operations",
+          "operating activities",
+          "investing activities",
+          "investing",
+          "financing activities",
+          "financing",
+          "AMD",
+          "FY22",
+          "fiscal year 2022",
+          "cash flow"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 60,
+      "input": {
+        "entry_ids": [
+          "01KVHPXPDEDWBDG5RAMC0AX6SY",
+          "01KVHPXA5JS100MY71CWNJP9CF",
+          "01KVHQAC049WQ9H60C408EK6ZT",
+          "01KVHQE9ZJPMT9RVKWWSGM1M7Y",
+          "01KVHQHR2H6KAHN4NVN15QJSHB",
+          "01KVHQAD505D18HJSNW1RVDY10",
+          "01KVHQ543Q7H8KCQ9JNFQ4TDPM",
+          "01KVHQ722AENGVJ3ZMC9FH9EF6",
+          "01KVHPXB8R3M8QB5SWGWFDRBBZ",
+          "01KVHQH52B00J46PTYM5GM9XKP"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 24,
+        "edges": 16,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVHPXPDEDWBDG5RAMC0AX6SY",
+    "01KVHPXA5JS100MY71CWNJP9CF",
+    "01KVHQAC049WQ9H60C408EK6ZT",
+    "01KVHQE9ZJPMT9RVKWWSGM1M7Y",
+    "01KVHQHR2H6KAHN4NVN15QJSHB",
+    "01KVHQAD505D18HJSNW1RVDY10",
+    "01KVHQ543Q7H8KCQ9JNFQ4TDPM",
+    "01KVHQ722AENGVJ3ZMC9FH9EF6",
+    "01KVHPXB8R3M8QB5SWGWFDRBBZ",
+    "01KVHQH52B00J46PTYM5GM9XKP"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 11310,
+  "answer_generation": {
+    "input_tokens": 3944,
+    "output_tokens": 141,
+    "latency_ms": 1795,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"e\",\"reasoning\":\"그래프 내에는 AMD의 FY22(2022 회계연도) 현금흐름표 또는 각 활동(영업, 투자, 재무)별 현금흐름 수치에 대한 정보가 전혀 존재하지 않습니다. Amcor plc의 현금흐름 관련 노트(예: Note 23, Supplemental Cash Flow Information)는 있지만, AMD에 대한 현금흐름 정보는 제공되지 않았으므로, 어떤 활동이 가장 많은(또는 가장 적은 손실의) 현금흐름을 가져왔는지 판단할 수 없습니다. 따라서 정보 부족이 정답입니다.\"}",
+    "parsed": {
+      "choice": "e",
+      "reasoning": "그래프 내에는 AMD의 FY22(2022 회계연도) 현금흐름표 또는 각 활동(영업, 투자, 재무)별 현금흐름 수치에 대한 정보가 전혀 존재하지 않습니다. Amcor plc의 현금흐름 관련 노트(예: Note 23, Supplemental Cash Flow Information)는 있지만, AMD에 대한 현금흐름 정보는 제공되지 않았으므로, 어떤 활동이 가장 많은(또는 가장 적은 손실의) 현금흐름을 가져왔는지 판단할 수 없습니다. 따라서 정보 부족이 정답입니다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 80,
+  "total_input_tokens": 4443,
+  "total_output_tokens": 229,
+  "total_tokens": 4752,
+  "total_latency_ms": 4182
+}

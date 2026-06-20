@@ -1,0 +1,147 @@
+{
+  "column": "combined",
+  "question_id": "Q03",
+  "run_index": 2,
+  "anchor_extraction": {
+    "input_tokens": 480,
+    "output_tokens": 16,
+    "latency_ms": 1204,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"AMCOR\",\"aliases\":[\"AMCOR\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "AMCOR",
+          "aliases": [
+            "AMCOR"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 430,
+      "input": {
+        "keywords": [
+          "AMCOR"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 775,
+      "input": {
+        "entry_ids": [
+          "01KVHPWE2BT376J2H5SP31CR2H",
+          "01KVHPWR8PGX2HNPVKRSEBE989",
+          "01KVHPWQ8QHRHX65DQJFJ23Y21",
+          "01KVHPWNGYK6KBMZDBKZJPFJVR",
+          "01KVHPWS6E9PJGQ8Q5S6FCMA0A",
+          "01KVHPWP8N9XWP71P03AZDR3V2",
+          "01KVHPX1EWGSD9E8SE7PGYWYTK",
+          "01KVHQ1PDRZMTB7JX9EB8H98D4",
+          "01KVHQDCMX3G8Q5B07XVF5K782",
+          "01KVHQ17B93K4PZRCNR2Q5P9HD"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 80,
+        "edges": 71,
+        "truncated": true
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVHPWE2BT376J2H5SP31CR2H",
+    "01KVHPWR8PGX2HNPVKRSEBE989",
+    "01KVHPWQ8QHRHX65DQJFJ23Y21",
+    "01KVHPWNGYK6KBMZDBKZJPFJVR",
+    "01KVHPWS6E9PJGQ8Q5S6FCMA0A",
+    "01KVHPWP8N9XWP71P03AZDR3V2",
+    "01KVHPX1EWGSD9E8SE7PGYWYTK",
+    "01KVHQ1PDRZMTB7JX9EB8H98D4",
+    "01KVHQDCMX3G8Q5B07XVF5K782",
+    "01KVHQ17B93K4PZRCNR2Q5P9HD"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 34468,
+  "retrieved_chunks": [
+    {
+      "source_path": "AMCOR_2023_10K.md",
+      "chunk_index": 7,
+      "score": 0.6408131877637238
+    },
+    {
+      "source_path": "AMCOR_2023_10K.md",
+      "chunk_index": 8,
+      "score": 0.6298948232120337
+    },
+    {
+      "source_path": "AMCOR_2023_10K.md",
+      "chunk_index": 4,
+      "score": 0.6235397179987057
+    },
+    {
+      "source_path": "AMCOR_2023_10K.md",
+      "chunk_index": 6,
+      "score": 0.6230378006805364
+    },
+    {
+      "source_path": "AMCOR_2023_10K.md",
+      "chunk_index": 28,
+      "score": 0.6166285350514159
+    },
+    {
+      "source_path": "AMCOR_2023_10K.md",
+      "chunk_index": 5,
+      "score": 0.611105425545182
+    },
+    {
+      "source_path": "AMCOR_2023_10K.md",
+      "chunk_index": 10,
+      "score": 0.5977085724438008
+    },
+    {
+      "source_path": "AMCOR_2023_10K.md",
+      "chunk_index": 11,
+      "score": 0.5958839708805329
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 19005,
+    "output_tokens": 186,
+    "latency_ms": 2317,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"c\",\"reasoning\":\"(A) 검색된 문서 발췌에서 Amcor가 'a global leader in developing and producing responsible packaging for food, beverage, pharmaceutical, medical, home and personal-care, and other products'라고 명확히 언급되어 있습니다. 또한, Amcor의 사업 전략, 제품 포트폴리오, 경쟁사, 그리고 산업 내 위치에 대한 설명이 모두 포장재(패키징) 생산에 집중되어 있음을 보여줍니다. (B) 도메인 그래프에서도 Amcor plc의 설명에 'packaging'이 반복적으로 등장하며, 관련 자회사와 사업 구조 역시 포장재 산업에 속함을 뒷받침합니다. 두 출처 모두 일치하며, 가장 구체적이고 명확한 근거는 (A) 발췌에서 확인할 수 있습니다.\"}",
+    "parsed": {
+      "choice": "c",
+      "reasoning": "(A) 검색된 문서 발췌에서 Amcor가 'a global leader in developing and producing responsible packaging for food, beverage, pharmaceutical, medical, home and personal-care, and other products'라고 명확히 언급되어 있습니다. 또한, Amcor의 사업 전략, 제품 포트폴리오, 경쟁사, 그리고 산업 내 위치에 대한 설명이 모두 포장재(패키징) 생산에 집중되어 있음을 보여줍니다. (B) 도메인 그래프에서도 Amcor plc의 설명에 'packaging'이 반복적으로 등장하며, 관련 자회사와 사업 구조 역시 포장재 산업에 속함을 뒷받침합니다. 두 출처 모두 일치하며, 가장 구체적이고 명확한 근거는 (A) 발췌에서 확인할 수 있습니다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 29789,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 9,
+    "chunk_setup_amortized": 29772,
+    "chunk_setup_total": 982504,
+    "graph_keyword_estimated": 8,
+    "questions_count_for_amortization": 33
+  },
+  "total_input_tokens": 19485,
+  "total_output_tokens": 202,
+  "total_tokens": 49476,
+  "total_latency_ms": 4726
+}

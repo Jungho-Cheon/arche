@@ -220,10 +220,41 @@ class OpenAIEmbeddingProvider:
         self.model_id = model_id
         self._client = OpenAI(api_key=api_key, max_retries=8)
 
+    # OpenAI embeddings API 의 단일 요청 한도. text-embedding-3-small/large 공통:
+    # 한 요청에 max_tokens_per_request=300_000, max_inputs=2048.
+    # 1M+ corpus 의 setup 단계 (chunk_rag) 에서 전 청크를 한 번에 보내면 초과 → 400.
+    _MAX_TOKENS_PER_REQUEST: int = 250_000  # 300K 한도 대비 여유
+    _MAX_INPUTS_PER_REQUEST: int = 2048
+    # 입력 길이 추정 (정확한 tokenizer 없이 보수적으로 4 chars ≈ 1 token).
+    _CHARS_PER_TOKEN_ESTIMATE: int = 4
+
     def embed(self, texts: list[str]) -> EmbeddingResult:
         if not texts:
             return EmbeddingResult(vectors=[], token_count=0, model=self.model_id)
-        resp = self._client.embeddings.create(model=self.model_id, input=texts)
-        vectors = [list(d.embedding) for d in resp.data]
-        token_count = int(resp.usage.total_tokens) if resp.usage else 0
-        return EmbeddingResult(vectors=vectors, token_count=token_count, model=self.model_id)
+
+        # 단일 요청 한도 (300K tokens / 2048 inputs) 를 넘으면 배치 분할.
+        batches: list[list[str]] = []
+        cur: list[str] = []
+        cur_tokens = 0
+        for t in texts:
+            est = max(1, len(t) // self._CHARS_PER_TOKEN_ESTIMATE)
+            if cur and (
+                cur_tokens + est > self._MAX_TOKENS_PER_REQUEST
+                or len(cur) >= self._MAX_INPUTS_PER_REQUEST
+            ):
+                batches.append(cur)
+                cur = []
+                cur_tokens = 0
+            cur.append(t)
+            cur_tokens += est
+        if cur:
+            batches.append(cur)
+
+        all_vectors: list[list[float]] = []
+        total_tokens = 0
+        for batch in batches:
+            resp = self._client.embeddings.create(model=self.model_id, input=batch)
+            all_vectors.extend(list(d.embedding) for d in resp.data)
+            if resp.usage:
+                total_tokens += int(resp.usage.total_tokens)
+        return EmbeddingResult(vectors=all_vectors, token_count=total_tokens, model=self.model_id)

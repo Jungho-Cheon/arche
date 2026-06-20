@@ -1,0 +1,175 @@
+{
+  "column": "combined",
+  "question_id": "Q19",
+  "run_index": 1,
+  "anchor_extraction": {
+    "input_tokens": 495,
+    "output_tokens": 64,
+    "latency_ms": 904,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"product categories\",\"aliases\":[\"product categories\"]},{\"canonical\":\"service categories\",\"aliases\":[\"service categories\"]},{\"canonical\":\"Boeing\",\"aliases\":[\"Boeing\"]},{\"canonical\":\"revenue\",\"aliases\":[\"revenue\"]},{\"canonical\":\"FY2022\",\"aliases\":[\"FY2022\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "product categories",
+          "aliases": [
+            "product categories"
+          ]
+        },
+        {
+          "canonical": "service categories",
+          "aliases": [
+            "service categories"
+          ]
+        },
+        {
+          "canonical": "Boeing",
+          "aliases": [
+            "Boeing"
+          ]
+        },
+        {
+          "canonical": "revenue",
+          "aliases": [
+            "revenue"
+          ]
+        },
+        {
+          "canonical": "FY2022",
+          "aliases": [
+            "FY2022"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 1178,
+      "input": {
+        "keywords": [
+          "product categories",
+          "service categories",
+          "Boeing",
+          "revenue",
+          "FY2022"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 48,
+      "input": {
+        "entry_ids": [
+          "01KVHQH0FYTP2F6G3P57X8BFTD",
+          "01KVHQ9E9FN6GB2DSB2TE5NPGR",
+          "01KVHQ3NBEZAJS1JEVTR30106T",
+          "01KVHQ6KF2CCDP9GDCEPFB9XW8",
+          "01KVHQ9H129ZF86BHQCT8P88CB",
+          "01KVHQ9ZQGWJP3D1VYHVARS0R6",
+          "01KVHQ88T4JV63PKEJKH4ZAXCA",
+          "01KVHQ0ZQHVJHQTMG1GH9HH52A",
+          "01KVHQ9GBC13RS0J18RZWG7CTP",
+          "01KVHQA2RE8SA27A3Q1HJS9FX6"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 14,
+        "edges": 10,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVHQH0FYTP2F6G3P57X8BFTD",
+    "01KVHQ9E9FN6GB2DSB2TE5NPGR",
+    "01KVHQ3NBEZAJS1JEVTR30106T",
+    "01KVHQ6KF2CCDP9GDCEPFB9XW8",
+    "01KVHQ9H129ZF86BHQCT8P88CB",
+    "01KVHQ9ZQGWJP3D1VYHVARS0R6",
+    "01KVHQ88T4JV63PKEJKH4ZAXCA",
+    "01KVHQ0ZQHVJHQTMG1GH9HH52A",
+    "01KVHQ9GBC13RS0J18RZWG7CTP",
+    "01KVHQA2RE8SA27A3Q1HJS9FX6"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 6926,
+  "retrieved_chunks": [
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 4,
+      "score": 0.6451734295632845
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 24,
+      "score": 0.6426046615839863
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 27,
+      "score": 0.638843029573503
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 22,
+      "score": 0.6367432250378765
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 3,
+      "score": 0.6359552841545434
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 29,
+      "score": 0.6357097700868013
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 112,
+      "score": 0.6298998253238607
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 60,
+      "score": 0.6275622817729357
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 9167,
+    "output_tokens": 167,
+    "latency_ms": 2103,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"a\",\"reasoning\":\"(A) 검색된 문서 발췌에서 2022년 Boeing의 각 사업부문별 매출이 명확하게 제시되어 있습니다. 청크 2에 따르면, 2022년 매출은 Commercial Airplanes $25,867M, Defense, Space & Security $23,162M, Global Services $17,611M, 전체 매출 $66,608M입니다. 각각의 비율을 계산하면 Commercial Airplanes 약 39%, Defense 약 35%, Services(BGS) 약 26%로 모두 20%를 초과합니다. (B) 도메인 그래프에는 각 부문별 매출 비중에 대한 수치 정보가 없으므로 (A)가 결정적 근거입니다.\"}",
+    "parsed": {
+      "choice": "a",
+      "reasoning": "(A) 검색된 문서 발췌에서 2022년 Boeing의 각 사업부문별 매출이 명확하게 제시되어 있습니다. 청크 2에 따르면, 2022년 매출은 Commercial Airplanes $25,867M, Defense, Space & Security $23,162M, Global Services $17,611M, 전체 매출 $66,608M입니다. 각각의 비율을 계산하면 Commercial Airplanes 약 39%, Defense 약 35%, Services(BGS) 약 26%로 모두 20%를 초과합니다. (B) 도메인 그래프에는 각 부문별 매출 비중에 대한 수치 정보가 없으므로 (A)가 결정적 근거입니다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 29836,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 24,
+    "chunk_setup_amortized": 29772,
+    "chunk_setup_total": 982504,
+    "graph_keyword_estimated": 40,
+    "questions_count_for_amortization": 33
+  },
+  "total_input_tokens": 9662,
+  "total_output_tokens": 231,
+  "total_tokens": 39729,
+  "total_latency_ms": 4233
+}

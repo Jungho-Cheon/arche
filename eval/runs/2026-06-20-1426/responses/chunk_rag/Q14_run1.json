@@ -1,0 +1,65 @@
+{
+  "column": "chunk_rag",
+  "question_id": "Q14",
+  "run_index": 1,
+  "input_tokens": 6945,
+  "output_tokens": 166,
+  "embedding_tokens": 29808,
+  "embedding_tokens_breakdown": {
+    "question_embedding": 36,
+    "setup_amortized": 29772,
+    "setup_total": 982504,
+    "questions_count_for_amortization": 33
+  },
+  "total_tokens": 36919,
+  "latency_ms": 1669,
+  "model": "gpt-4.1",
+  "retrieved_chunks": [
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 54,
+      "score": 0.619629530950266
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 72,
+      "score": 0.6086180487361017
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 53,
+      "score": 0.6025468134545976
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 51,
+      "score": 0.6014015840631338
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 49,
+      "score": 0.5902590666273634
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 4,
+      "score": 0.5891314304669097
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 6,
+      "score": 0.5846181347355626
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 3,
+      "score": 0.580663696267684
+    }
+  ],
+  "raw_response": "{\"choice\":\"b\",\"reasoning\":\"The provided excerpts (especially 청크 4 and 청크 3) explain that American Express is a globally integrated payments company with a business model that is not directly comparable to traditional companies where operating margin is the primary metric. Instead, AMEX focuses on metrics such as billed business, network volumes, net interest income, discount revenue, and risk-adjusted returns. The company discusses its performance in terms of these metrics and not in terms of operating margin. For example, 청크 4 details the various revenue streams and emphasizes the importance of network volumes and card member spending, while 청크 3 discusses net income and revenue growth but does not mention operating margin as a key performance indicator. Therefore, operating margin is not the primary or most useful metric for evaluating AMEX's performance.\"}",
+  "parsed": {
+    "choice": "b",
+    "reasoning": "The provided excerpts (especially 청크 4 and 청크 3) explain that American Express is a globally integrated payments company with a business model that is not directly comparable to traditional companies where operating margin is the primary metric. Instead, AMEX focuses on metrics such as billed business, network volumes, net interest income, discount revenue, and risk-adjusted returns. The company discusses its performance in terms of these metrics and not in terms of operating margin. For example, 청크 4 details the various revenue streams and emphasizes the importance of network volumes and card member spending, while 청크 3 discusses net income and revenue growth but does not mention operating margin as a key performance indicator. Therefore, operating margin is not the primary or most useful metric for evaluating AMEX's performance."
+  },
+  "parse_error": null
+}
