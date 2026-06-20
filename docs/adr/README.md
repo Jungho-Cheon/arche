@@ -31,6 +31,7 @@ ADR 은 *불변에 가깝게* 다룬다. 결정이 바뀌면 *기존 ADR 을 수
 | 4 | [ADR-0004 — 벡터 인프라 결정](./0004-vector-infra-graph-db-internal-index.md) | 별도 벡터 DB 서비스 미도입, 그래프 DB 내장 인덱스 |
 | 5 | [ADR-0005 — 측정 방법론](./0005-measurement-methodology-accuracy-tokens-latency.md) | MCQ + 이유 서술, 정확도/토큰/지연 3 메트릭, 하이브리드 judge |
 | 6 | [ADR-0006 — MCP/REST 표면](./0006-mcp-rest-primitives-surface.md) | graph primitives 만 노출, 자연어 미수용, Neo4j MCP 와 공존 |
+| 7 | [ADR-0007 — Combined RAG 채택 (정체성 피벗)](./0007-combined-rag-pivot.md) | MVP 가설 미달 후 chunk + graph 결합으로 100% 달성, 정체성을 retrieval orchestrator 로 |
 
 ---
 
@@ -40,6 +41,7 @@ ADR 은 *불변에 가깝게* 다룬다. 결정이 바뀌면 *기존 ADR 을 수
 
 - [ADR-0001 — 프로젝트 정체성과 MVP 검증 가설](./0001-project-identity-and-mvp-validation-hypothesis.md)
 - [ADR-0002 — MVP 범위 경계](./0002-mvp-scope-boundaries.md)
+- [ADR-0007 — Combined RAG 채택 (정체성 피벗)](./0007-combined-rag-pivot.md) — ADR-0001 의 가설 미달 후 정체성 갱신
 
 ### Retrieval / 인덱싱
 
