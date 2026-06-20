@@ -1,0 +1,165 @@
+{
+  "column": "opentology_aug",
+  "question_id": "Q01",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 506,
+    "output_tokens": 40,
+    "latency_ms": 1197,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"AMD\",\"aliases\":[\"AMD\"]},{\"canonical\":\"quick ratio\",\"aliases\":[\"quick ratio\"]},{\"canonical\":\"liquidity profile\",\"aliases\":[\"liquidity profile\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "AMD",
+          "aliases": [
+            "AMD"
+          ]
+        },
+        {
+          "canonical": "quick ratio",
+          "aliases": [
+            "quick ratio"
+          ]
+        },
+        {
+          "canonical": "liquidity profile",
+          "aliases": [
+            "liquidity profile"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 962,
+      "input": {
+        "keywords": [
+          "AMD",
+          "quick ratio",
+          "liquidity profile"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 53,
+      "input": {
+        "entry_ids": [
+          "01KVJKZYM6CW49F7YQP8QNRJXH",
+          "01KVJKXHJFZXHBSYFY4Z3472MM",
+          "01KVJKY1T4SAW03MV255EKXRWC",
+          "01KVJMGB0ME7ATWN5S9V9TGQJR",
+          "01KVJKY16XZH1KYVQMSAGEJD00",
+          "01KVJKY0GSRCGB0RH6DEQZMNVM",
+          "01KVJKY4T2FV5485SQ6QS3J8RQ",
+          "01KVJMGADD4YRW8ANATCJ3EEP9",
+          "01KVJMFXA58CB3T5C7AH3Z1PVY",
+          "01KVJMJS3SN40567S553SEXP5V"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 30,
+        "edges": 23,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVJKZYM6CW49F7YQP8QNRJXH",
+    "01KVJKXHJFZXHBSYFY4Z3472MM",
+    "01KVJKY1T4SAW03MV255EKXRWC",
+    "01KVJMGB0ME7ATWN5S9V9TGQJR",
+    "01KVJKY16XZH1KYVQMSAGEJD00",
+    "01KVJKY0GSRCGB0RH6DEQZMNVM",
+    "01KVJKY4T2FV5485SQ6QS3J8RQ",
+    "01KVJMGADD4YRW8ANATCJ3EEP9",
+    "01KVJMFXA58CB3T5C7AH3Z1PVY",
+    "01KVJMJS3SN40567S553SEXP5V"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 16704,
+  "graph_selected_sources": [
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMERICANEXPRESS_2022_10K.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMD_2022_10K.md"
+  ],
+  "retrieved_chunks": [
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 113,
+      "score": 0.5475266238366149
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 47,
+      "score": 0.5443080543337698
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 45,
+      "score": 0.5373772284372642
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 46,
+      "score": 0.5350914611671097
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 64,
+      "score": 0.5315680492248203
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 78,
+      "score": 0.5234554945486118
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 0,
+      "score": 0.5176177138559108
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 106,
+      "score": 0.5012617681905872
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 12144,
+    "output_tokens": 102,
+    "latency_ms": 1693,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"e\",\"reasoning\":\"Neither (A) nor (B) provides the actual quick ratio for AMD for FY22, nor do they provide the specific components (current assets minus inventory, current liabilities) needed to calculate it. (A) contains some cash and cash equivalents data, but not enough detail to compute the quick ratio, and (B) does not mention the quick ratio or its relevance. Therefore, the only correct answer is '정보 부족 / 알 수 없음' (e).\"}",
+    "parsed": {
+      "choice": "e",
+      "reasoning": "Neither (A) nor (B) provides the actual quick ratio for AMD for FY22, nor do they provide the specific components (current assets minus inventory, current liabilities) needed to calculate it. (A) contains some cash and cash equivalents data, but not enough detail to compute the quick ratio, and (B) does not mention the quick ratio or its relevance. Therefore, the only correct answer is '정보 부족 / 알 수 없음' (e)."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 20390,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 35,
+    "chunk_setup_amortized": 20331,
+    "chunk_setup_total": 426971,
+    "graph_keyword_estimated": 24,
+    "questions_count_for_amortization": 21
+  },
+  "total_input_tokens": 12650,
+  "total_output_tokens": 142,
+  "total_tokens": 33182,
+  "total_latency_ms": 3905
+}

@@ -1,0 +1,194 @@
+{
+  "column": "opentology_aug",
+  "question_id": "Q05",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 499,
+    "output_tokens": 88,
+    "latency_ms": 1104,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"operations\",\"aliases\":[\"operations\",\"operating activities\"]},{\"canonical\":\"investing activities\",\"aliases\":[\"investing activities\",\"investing\"]},{\"canonical\":\"financing activities\",\"aliases\":[\"financing activities\",\"financing\"]},{\"canonical\":\"AMD\",\"aliases\":[\"AMD\"]},{\"canonical\":\"FY22\",\"aliases\":[\"FY22\",\"fiscal year 2022\"]},{\"canonical\":\"cash flow\",\"aliases\":[\"cash flow\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "operations",
+          "aliases": [
+            "operations",
+            "operating activities"
+          ]
+        },
+        {
+          "canonical": "investing activities",
+          "aliases": [
+            "investing activities",
+            "investing"
+          ]
+        },
+        {
+          "canonical": "financing activities",
+          "aliases": [
+            "financing activities",
+            "financing"
+          ]
+        },
+        {
+          "canonical": "AMD",
+          "aliases": [
+            "AMD"
+          ]
+        },
+        {
+          "canonical": "FY22",
+          "aliases": [
+            "FY22",
+            "fiscal year 2022"
+          ]
+        },
+        {
+          "canonical": "cash flow",
+          "aliases": [
+            "cash flow"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 1116,
+      "input": {
+        "keywords": [
+          "operations",
+          "operating activities",
+          "investing activities",
+          "investing",
+          "financing activities",
+          "financing",
+          "AMD",
+          "FY22",
+          "fiscal year 2022",
+          "cash flow"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 34,
+      "input": {
+        "entry_ids": [
+          "01KVJMG9T6B6WY2E3W7FQ678N3",
+          "01KVJMMNQ9HF0JZVAP27Q35SVQ",
+          "01KVJMG7A4JJK4RNG9GQWMW1XY",
+          "01KVJMFYPY5SCBBMNT7G9FH8KE",
+          "01KVJMFW21BZ43A1YXH6ABSDSH",
+          "01KVJMFXA58CB3T5C7AH3Z1PVY",
+          "01KVJMFVA7KEN9603CSKQ65N7S",
+          "01KVJMFZDEQZ2PWFHQD033K5CT",
+          "01KVJMG86YMDGJM0GNKETTN7AS",
+          "01KVJMFWNWHEJ5CYRPCKZ18P0Q"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 12,
+        "edges": 10,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVJMG9T6B6WY2E3W7FQ678N3",
+    "01KVJMMNQ9HF0JZVAP27Q35SVQ",
+    "01KVJMG7A4JJK4RNG9GQWMW1XY",
+    "01KVJMFYPY5SCBBMNT7G9FH8KE",
+    "01KVJMFW21BZ43A1YXH6ABSDSH",
+    "01KVJMFXA58CB3T5C7AH3Z1PVY",
+    "01KVJMFVA7KEN9603CSKQ65N7S",
+    "01KVJMFZDEQZ2PWFHQD033K5CT",
+    "01KVJMG86YMDGJM0GNKETTN7AS",
+    "01KVJMFWNWHEJ5CYRPCKZ18P0Q"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 5966,
+  "graph_selected_sources": [
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/BOEING_2022_10K.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMERICANEXPRESS_2022_10K.md"
+  ],
+  "retrieved_chunks": [
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 44,
+      "score": 0.6018518852691025
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 111,
+      "score": 0.5967174224894185
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 43,
+      "score": 0.5388088313704222
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 157,
+      "score": 0.5262186718357311
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 169,
+      "score": 0.525159302612984
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 42,
+      "score": 0.5158717701445927
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 52,
+      "score": 0.515486534190343
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 54,
+      "score": 0.5141292307613943
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 8338,
+    "output_tokens": 115,
+    "latency_ms": 1720,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"e\",\"reasoning\":\"(A)와 (B) 모두 AMD(Advanced Micro Devices)에 대한 현금흐름 정보가 전혀 없습니다. (A)의 모든 발췌는 American Express와 Boeing에 관한 현금흐름, 손익, 재무제표 데이터이며, (B) 도메인 그래프 역시 AMD와 관련된 엔티티나 관계가 존재하지 않습니다. 따라서 질문에 대한 답을 도출할 수 있는 정보가 없습니다. 정보 부족이므로 (e)가 정답입니다.\"}",
+    "parsed": {
+      "choice": "e",
+      "reasoning": "(A)와 (B) 모두 AMD(Advanced Micro Devices)에 대한 현금흐름 정보가 전혀 없습니다. (A)의 모든 발췌는 American Express와 Boeing에 관한 현금흐름, 손익, 재무제표 데이터이며, (B) 도메인 그래프 역시 AMD와 관련된 엔티티나 관계가 존재하지 않습니다. 따라서 질문에 대한 답을 도출할 수 있는 정보가 없습니다. 정보 부족이므로 (e)가 정답입니다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 20439,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 28,
+    "chunk_setup_amortized": 20331,
+    "chunk_setup_total": 426971,
+    "graph_keyword_estimated": 80,
+    "questions_count_for_amortization": 21
+  },
+  "total_input_tokens": 8837,
+  "total_output_tokens": 203,
+  "total_tokens": 29479,
+  "total_latency_ms": 3974
+}

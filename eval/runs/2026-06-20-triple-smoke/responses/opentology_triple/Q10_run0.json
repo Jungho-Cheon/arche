@@ -1,0 +1,198 @@
+{
+  "column": "opentology_triple",
+  "question_id": "Q10",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 507,
+    "output_tokens": 37,
+    "latency_ms": 881,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"AMEX\",\"aliases\":[\"AMEX\",\"American Express\"]},{\"canonical\":\"operating margin\",\"aliases\":[\"operating margin\",\"operating margin profile\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "AMEX",
+          "aliases": [
+            "AMEX",
+            "American Express"
+          ]
+        },
+        {
+          "canonical": "operating margin",
+          "aliases": [
+            "operating margin",
+            "operating margin profile"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 740,
+      "input": {
+        "keywords": [
+          "AMEX",
+          "American Express",
+          "operating margin",
+          "operating margin profile"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 176,
+      "input": {
+        "entry_ids": [
+          "01KVHVCP9JF4XN5VCF0HAQ0ANF",
+          "01KVHVBC175A369PF2MBT3W8PG",
+          "01KVHVDZPRQR3K1QJF0YN81VYN",
+          "01KVHVE080XFJH6AXRDM08FE1F",
+          "01KVHVFQJBHM6CJDY43KR672ME",
+          "01KVHVCQG19MMR0HZR7AP9FJ0M",
+          "01KVHVEGQRTBB9ZNM04TFST0BE",
+          "01KVHVFPRJK3HJNPANNJ47FG55",
+          "01KVHVCPZJW2SENJEEKSYQQ4HB",
+          "01KVHVESTC9KMTJN4RT65BZK6H"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 71,
+        "edges": 72,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVHVCP9JF4XN5VCF0HAQ0ANF",
+    "01KVHVBC175A369PF2MBT3W8PG",
+    "01KVHVDZPRQR3K1QJF0YN81VYN",
+    "01KVHVE080XFJH6AXRDM08FE1F",
+    "01KVHVFQJBHM6CJDY43KR672ME",
+    "01KVHVCQG19MMR0HZR7AP9FJ0M",
+    "01KVHVEGQRTBB9ZNM04TFST0BE",
+    "01KVHVFPRJK3HJNPANNJ47FG55",
+    "01KVHVCPZJW2SENJEEKSYQQ4HB",
+    "01KVHVESTC9KMTJN4RT65BZK6H"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 34114,
+  "graph_selected_sources": [
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMD_2022_10K.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMERICANEXPRESS_2022_10K.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/BOEING_2022_10K.md"
+  ],
+  "focused_chunks": [
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 54,
+      "score": 0.619629530950266
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 72,
+      "score": 0.6085399515981298
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 53,
+      "score": 0.6025468134545976
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 51,
+      "score": 0.6014015840631338
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 49,
+      "score": 0.5902590666273634
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 4,
+      "score": 0.5891912156631752
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 6,
+      "score": 0.5845906270916499
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 3,
+      "score": 0.580663696267684
+    }
+  ],
+  "global_chunks": [
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 54,
+      "score": 0.619629530950266
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 72,
+      "score": 0.6085399515981298
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 53,
+      "score": 0.6025468134545976
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 51,
+      "score": 0.6014015840631338
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 49,
+      "score": 0.5902590666273634
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 4,
+      "score": 0.5891912156631752
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 6,
+      "score": 0.5845906270916499
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 3,
+      "score": 0.580663696267684
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 23693,
+    "output_tokens": 362,
+    "latency_ms": 4879,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"b\",\"reasoning\":\"(A) 도메인 그래프와 (B), (C) 발췌 모두 American Express(AMEX)의 실적 평가에 있어 'operating margin'이 핵심 지표가 아님을 명확히 보여준다. (B4, C4)에서 AMEX의 주요 수익원은 discount revenue(가맹점 수수료), net card fees, service fees, interest income 등이며, 사업 특성상 네트워크 볼륨, 카드 회원 지출, 신용 손실 충당금, 파트너십, 리워드 비용, 마케팅/운영비 등이 실적에 더 큰 영향을 미친다. (B1, C1, B3, C3)에서도 실적 논의는 네트워크 볼륨, 카드 회원 지출, 신용 손실, 리워드 비용, 마케팅비, 자본비율(CET1) 등 중심으로 이루어진다. 실제로 'operating margin'이라는 용어 자체가 AMEX의 공식 실적 요약이나 경영진 논평에서 언급되지 않으며, (A) 그래프의 엔티티/관계 구조도 이를 뒷받침한다. 즉, 은행/카드사와 같은 금융기관은 전통적 제조/유통기업과 달리 'operating margin'이 실질적 의미가 크지 않으며, 자본비율, 네트워크 볼륨, 신용손실, 리워드/마케팅비 등으로 평가한다는 점이 명확하다. (B)와 (C) 모두 이 점에서 일치하므로 정답은 b)이다.\"}",
+    "parsed": {
+      "choice": "b",
+      "reasoning": "(A) 도메인 그래프와 (B), (C) 발췌 모두 American Express(AMEX)의 실적 평가에 있어 'operating margin'이 핵심 지표가 아님을 명확히 보여준다. (B4, C4)에서 AMEX의 주요 수익원은 discount revenue(가맹점 수수료), net card fees, service fees, interest income 등이며, 사업 특성상 네트워크 볼륨, 카드 회원 지출, 신용 손실 충당금, 파트너십, 리워드 비용, 마케팅/운영비 등이 실적에 더 큰 영향을 미친다. (B1, C1, B3, C3)에서도 실적 논의는 네트워크 볼륨, 카드 회원 지출, 신용 손실, 리워드 비용, 마케팅비, 자본비율(CET1) 등 중심으로 이루어진다. 실제로 'operating margin'이라는 용어 자체가 AMEX의 공식 실적 요약이나 경영진 논평에서 언급되지 않으며, (A) 그래프의 엔티티/관계 구조도 이를 뒷받침한다. 즉, 은행/카드사와 같은 금융기관은 전통적 제조/유통기업과 달리 'operating margin'이 실질적 의미가 크지 않으며, 자본비율, 네트워크 볼륨, 신용손실, 리워드/마케팅비 등으로 평가한다는 점이 명확하다. (B)와 (C) 모두 이 점에서 일치하므로 정답은 b)이다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 20399,
+  "total_input_tokens": 24200,
+  "total_output_tokens": 399,
+  "total_tokens": 44998,
+  "total_latency_ms": 6676
+}

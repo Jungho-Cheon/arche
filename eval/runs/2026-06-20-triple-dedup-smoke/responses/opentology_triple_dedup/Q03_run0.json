@@ -1,0 +1,163 @@
+{
+  "column": "opentology_triple",
+  "question_id": "Q03",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 483,
+    "output_tokens": 47,
+    "latency_ms": 920,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"revenue\",\"aliases\":[\"revenue\"]},{\"canonical\":\"FY22\",\"aliases\":[\"FY22\",\"fiscal year 2022\"]},{\"canonical\":\"AMD\",\"aliases\":[\"AMD\",\"Advanced Micro Devices\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "revenue",
+          "aliases": [
+            "revenue"
+          ]
+        },
+        {
+          "canonical": "FY22",
+          "aliases": [
+            "FY22",
+            "fiscal year 2022"
+          ]
+        },
+        {
+          "canonical": "AMD",
+          "aliases": [
+            "AMD",
+            "Advanced Micro Devices"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 781,
+      "input": {
+        "keywords": [
+          "revenue",
+          "FY22",
+          "fiscal year 2022",
+          "AMD",
+          "Advanced Micro Devices"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 213,
+      "input": {
+        "entry_ids": [
+          "01KVHV8TWX6BRMKWKKK5N8EF0W",
+          "01KVHVFRZ8XBW6BQJBF8XDTXMS",
+          "01KVHV99K0MJYZQXRKN8KSA80E",
+          "01KVHVEPF8H0HSM6NSPNHFFZ17",
+          "01KVHVEHZ6YVWK3CR3ZP77WQ3H",
+          "01KVHVFTY7K05YK0B7NHW20QPN",
+          "01KVHVB0PXPED74SEFYRGSRDV4",
+          "01KVHV9EJJ9X60SHPAYR83K8X5",
+          "01KVHVB18NCVQ3WKHP2AJP5J72",
+          "01KVHVAVRZ0QCYRS3C2E15M0VK"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 80,
+        "edges": 72,
+        "truncated": true
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVHV8TWX6BRMKWKKK5N8EF0W",
+    "01KVHVFRZ8XBW6BQJBF8XDTXMS",
+    "01KVHV99K0MJYZQXRKN8KSA80E",
+    "01KVHVEPF8H0HSM6NSPNHFFZ17",
+    "01KVHVEHZ6YVWK3CR3ZP77WQ3H",
+    "01KVHVFTY7K05YK0B7NHW20QPN",
+    "01KVHVB0PXPED74SEFYRGSRDV4",
+    "01KVHV9EJJ9X60SHPAYR83K8X5",
+    "01KVHVB18NCVQ3WKHP2AJP5J72",
+    "01KVHVAVRZ0QCYRS3C2E15M0VK"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 31787,
+  "graph_selected_sources": [
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMD_2022_10K.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMERICANEXPRESS_2022_10K.md"
+  ],
+  "focused_chunks": [
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 47,
+      "score": 0.6829650203916264
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 46,
+      "score": 0.6661280892735956
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 14,
+      "score": 0.6291907312394861
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 13,
+      "score": 0.6285062534867079
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 48,
+      "score": 0.6252878155288898
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 2,
+      "score": 0.6208920477718939
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 4,
+      "score": 0.6190694298308678
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 3,
+      "score": 0.6168456211600265
+    }
+  ],
+  "global_chunks": [],
+  "answer_generation": {
+    "input_tokens": 17434,
+    "output_tokens": 255,
+    "latency_ms": 2992,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"a\",\"reasoning\":\"(A) 도메인 그래프에는 FY22의 revenue change에 대한 직접적인 설명은 없으나, Embedded segment가 Xilinx 인수로 확장되었음을 보여준다. (B) 발췌(청크 1)에서 FY22 revenue 증가의 주요 원인으로 '64% increase in Data Center segment revenue primarily due to higher sales of our EPYC™ server processors, a 21% increase in Gaming segment revenue primarily due to higher semi-custom product sales, and a significant increase in Embedded segment revenue from the prior year period driven by the inclusion of Xilinx embedded product sales.'라고 명확히 언급한다. (C) 전체 코퍼스 발췌에서도 이와 일치하는 내용이 있다. 따라서 보기 a)가 (B), (C) 모두와 일치하며, (A) 그래프의 구조적 정보도 이를 뒷받침한다. 다른 보기는 Xilinx 언급이 없거나(보기 b), 소비자 전자/소프트웨어(보기 c), Ryzen/그래픽카드(보기 d)로 부적합하다. 결정적 근거는 (B) 발췌이다.\"}",
+    "parsed": {
+      "choice": "a",
+      "reasoning": "(A) 도메인 그래프에는 FY22의 revenue change에 대한 직접적인 설명은 없으나, Embedded segment가 Xilinx 인수로 확장되었음을 보여준다. (B) 발췌(청크 1)에서 FY22 revenue 증가의 주요 원인으로 '64% increase in Data Center segment revenue primarily due to higher sales of our EPYC™ server processors, a 21% increase in Gaming segment revenue primarily due to higher semi-custom product sales, and a significant increase in Embedded segment revenue from the prior year period driven by the inclusion of Xilinx embedded product sales.'라고 명확히 언급한다. (C) 전체 코퍼스 발췌에서도 이와 일치하는 내용이 있다. 따라서 보기 a)가 (B), (C) 모두와 일치하며, (A) 그래프의 구조적 정보도 이를 뒷받침한다. 다른 보기는 Xilinx 언급이 없거나(보기 b), 소비자 전자/소프트웨어(보기 c), Ryzen/그래픽카드(보기 d)로 부적합하다. 결정적 근거는 (B) 발췌이다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 20383,
+  "total_input_tokens": 17917,
+  "total_output_tokens": 302,
+  "total_tokens": 38602,
+  "total_latency_ms": 4906
+}

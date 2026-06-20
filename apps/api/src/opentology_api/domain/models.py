@@ -39,7 +39,11 @@ class Node(BaseModel):
     name: str = Field(max_length=200)
     type: str = Field(max_length=64)
     aliases: list[str] = Field(default_factory=list)
-    description: str | None = Field(default=None, max_length=500)
+    # WHY 2000: F (description 강화) 측정에서 정량 수치 / 시계열 보존 시 500 자를
+    # 넘는 케이스 다수. F 자체는 aug 모드 (default) 에서 후퇴라 rollback 했지만,
+    # max_length 한도는 강화된 상태 그대로 유지 — 향후 graph-only profile 또는
+    # 도메인 (긴 description 이 자연스러운) 에서 재사용 가능.
+    description: str | None = Field(default=None, max_length=2000)
     properties: dict[str, str | int | float | bool] = Field(default_factory=dict)
     source_refs: list[SourceRef] = Field(default_factory=list)
     created_at: str  # RFC 3339

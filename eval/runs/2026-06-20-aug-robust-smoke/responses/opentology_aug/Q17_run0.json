@@ -1,0 +1,169 @@
+{
+  "column": "opentology_aug",
+  "question_id": "Q17",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 506,
+    "output_tokens": 46,
+    "latency_ms": 1023,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"Boeing\",\"aliases\":[\"Boeing\"]},{\"canonical\":\"gross margin\",\"aliases\":[\"gross margin\",\"gross margin profile\"]},{\"canonical\":\"FY2022\",\"aliases\":[\"FY2022\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "Boeing",
+          "aliases": [
+            "Boeing"
+          ]
+        },
+        {
+          "canonical": "gross margin",
+          "aliases": [
+            "gross margin",
+            "gross margin profile"
+          ]
+        },
+        {
+          "canonical": "FY2022",
+          "aliases": [
+            "FY2022"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 673,
+      "input": {
+        "keywords": [
+          "Boeing",
+          "gross margin",
+          "gross margin profile",
+          "FY2022"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 128,
+      "input": {
+        "entry_ids": [
+          "01KVJNAHA5VHXRQREAA50X9Y9A",
+          "01KVJNFYD7S040598QPH1T0S0V",
+          "01KVJNF93T4V8DP8NGGKDNRY10",
+          "01KVJNAGKP2WQCRBAYJW9TKPB8",
+          "01KVJNFYYV8JNG6MQM7E3ZKZDG",
+          "01KVJNECHMYXBQAYAJK66KYKCE",
+          "01KVJNEA3RPPR3V5S4PN4QDCAR",
+          "01KVJN8FGEZ3EZ9D9XJVRSZSRP",
+          "01KVJNCVC5N8FF0ZVH3Q3BZ063",
+          "01KVJNG1ABR7F138R7AHRENYCR"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 75,
+        "edges": 70,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVJNAHA5VHXRQREAA50X9Y9A",
+    "01KVJNFYD7S040598QPH1T0S0V",
+    "01KVJNF93T4V8DP8NGGKDNRY10",
+    "01KVJNAGKP2WQCRBAYJW9TKPB8",
+    "01KVJNFYYV8JNG6MQM7E3ZKZDG",
+    "01KVJNECHMYXBQAYAJK66KYKCE",
+    "01KVJNEA3RPPR3V5S4PN4QDCAR",
+    "01KVJN8FGEZ3EZ9D9XJVRSZSRP",
+    "01KVJNCVC5N8FF0ZVH3Q3BZ063",
+    "01KVJNG1ABR7F138R7AHRENYCR"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 34096,
+  "graph_selected_sources": [
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/BOEING_2022_10K.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMD_2022_10K.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMERICANEXPRESS_2022_10K.md"
+  ],
+  "used_fallback": null,
+  "retrieved_chunks": [
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 22,
+      "score": 0.591216358687371
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 60,
+      "score": 0.5872210971543989
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 10,
+      "score": 0.5787216671604144
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 24,
+      "score": 0.577932792687177
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 27,
+      "score": 0.5752487570852722
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 26,
+      "score": 0.5747959876621171
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 54,
+      "score": 0.5738823253500929
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 4,
+      "score": 0.5726992950132752
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 17766,
+    "output_tokens": 186,
+    "latency_ms": 2436,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"b\",\"reasoning\":\"(A) provides detailed financials, including revenue, cost of products/services, and operating margin. However, Boeing's reporting and management discussion focus on operating margin and loss from operations, not gross margin. The income statement (청크 7) does not present a 'gross profit' or 'gross margin' subtotal; instead, it aggregates cost of products, cost of services, and other expenses before arriving at operating income/loss. The management discussion (청크 1, 4, 5) also centers on operating margin and segment results, not gross margin. This is typical for aerospace/defense companies with complex cost structures, long-term contracts, and program accounting, making gross margin less meaningful. (B) does not directly address margin metrics, but the structure of Boeing's reporting in (A) makes (b) the most accurate and best-supported answer.\"}",
+    "parsed": {
+      "choice": "b",
+      "reasoning": "(A) provides detailed financials, including revenue, cost of products/services, and operating margin. However, Boeing's reporting and management discussion focus on operating margin and loss from operations, not gross margin. The income statement (청크 7) does not present a 'gross profit' or 'gross margin' subtotal; instead, it aggregates cost of products, cost of services, and other expenses before arriving at operating income/loss. The management discussion (청크 1, 4, 5) also centers on operating margin and segment results, not gross margin. This is typical for aerospace/defense companies with complex cost structures, long-term contracts, and program accounting, making gross margin less meaningful. (B) does not directly address margin metrics, but the structure of Boeing's reporting in (A) makes (b) the most accurate and best-supported answer."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 20398,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 35,
+    "chunk_setup_amortized": 20331,
+    "chunk_setup_total": 426971,
+    "graph_keyword_estimated": 32,
+    "questions_count_for_amortization": 21
+  },
+  "total_input_tokens": 18272,
+  "total_output_tokens": 232,
+  "total_tokens": 38902,
+  "total_latency_ms": 4260
+}

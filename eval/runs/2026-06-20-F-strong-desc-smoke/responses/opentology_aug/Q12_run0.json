@@ -1,0 +1,172 @@
+{
+  "column": "opentology_aug",
+  "question_id": "Q12",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 491,
+    "output_tokens": 55,
+    "latency_ms": 1124,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"effective tax rate\",\"aliases\":[\"effective tax rate\"]},{\"canonical\":\"American Express\",\"aliases\":[\"American Express\"]},{\"canonical\":\"FY2021\",\"aliases\":[\"FY2021\"]},{\"canonical\":\"FY2022\",\"aliases\":[\"FY2022\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "effective tax rate",
+          "aliases": [
+            "effective tax rate"
+          ]
+        },
+        {
+          "canonical": "American Express",
+          "aliases": [
+            "American Express"
+          ]
+        },
+        {
+          "canonical": "FY2021",
+          "aliases": [
+            "FY2021"
+          ]
+        },
+        {
+          "canonical": "FY2022",
+          "aliases": [
+            "FY2022"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 687,
+      "input": {
+        "keywords": [
+          "effective tax rate",
+          "American Express",
+          "FY2021",
+          "FY2022"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 130,
+      "input": {
+        "entry_ids": [
+          "01KVJMJPETXANTPQ0YVPX0YTPG",
+          "01KVJMJJ0MS5XPGXKS4X5DSJ4R",
+          "01KVJMKR8DH4QTTF2JYXE0J53W",
+          "01KVJMKNA61SAZDCJ849R8JVCQ",
+          "01KVJMGCJ5QV1J6SRJ7V4KZXNW",
+          "01KVJKZJJ7T3J85J23THVA7NM2",
+          "01KVJMJD8G7DT3PX17WMWE1WD2",
+          "01KVJMJCJH3CH0143T5PS6GVTY",
+          "01KVJMG53ACYJ4K0GQYXF4PGN0",
+          "01KVJMH8HY3CVYCGC64KHNZYZF"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 77,
+        "edges": 72,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVJMJPETXANTPQ0YVPX0YTPG",
+    "01KVJMJJ0MS5XPGXKS4X5DSJ4R",
+    "01KVJMKR8DH4QTTF2JYXE0J53W",
+    "01KVJMKNA61SAZDCJ849R8JVCQ",
+    "01KVJMGCJ5QV1J6SRJ7V4KZXNW",
+    "01KVJKZJJ7T3J85J23THVA7NM2",
+    "01KVJMJD8G7DT3PX17WMWE1WD2",
+    "01KVJMJCJH3CH0143T5PS6GVTY",
+    "01KVJMG53ACYJ4K0GQYXF4PGN0",
+    "01KVJMH8HY3CVYCGC64KHNZYZF"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 38553,
+  "graph_selected_sources": [
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/BOEING_2022_10K.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMERICANEXPRESS_2022_10K.md"
+  ],
+  "retrieved_chunks": [
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 57,
+      "score": 0.6534149090312743
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 72,
+      "score": 0.6447240578036436
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 58,
+      "score": 0.6159339394293643
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 137,
+      "score": 0.6084209112892892
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 54,
+      "score": 0.6059855447501422
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 53,
+      "score": 0.6037978209692694
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 49,
+      "score": 0.5924097755858633
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 173,
+      "score": 0.5918331381354537
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 18967,
+    "output_tokens": 177,
+    "latency_ms": 2061,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"c\",\"reasoning\":\"(A) 발췌에서 'The effective tax rate was 21.6 percent and 24.6 percent for 2022 and 2021, respectively.'라는 명확한 수치가 제시되어 있습니다. 즉, 2021년 24.6%에서 2022년 21.6%로 감소하였음을 알 수 있습니다. (B) 그래프에서도 'Effective tax rate (type: Financial Metric, aliases: []) 설명: 21.6% (2022); 24.6% (2021); 27.0% (2020).'로 동일한 정보를 제공합니다. 두 정보 모두 일치하며, 정량적 수치가 명확히 제시된 (A)가 결정적 근거입니다. 따라서 정답은 c)입니다.\"}",
+    "parsed": {
+      "choice": "c",
+      "reasoning": "(A) 발췌에서 'The effective tax rate was 21.6 percent and 24.6 percent for 2022 and 2021, respectively.'라는 명확한 수치가 제시되어 있습니다. 즉, 2021년 24.6%에서 2022년 21.6%로 감소하였음을 알 수 있습니다. (B) 그래프에서도 'Effective tax rate (type: Financial Metric, aliases: []) 설명: 21.6% (2022); 24.6% (2021); 27.0% (2020).'로 동일한 정보를 제공합니다. 두 정보 모두 일치하며, 정량적 수치가 명확히 제시된 (A)가 결정적 근거입니다. 따라서 정답은 c)입니다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 20383,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 20,
+    "chunk_setup_amortized": 20331,
+    "chunk_setup_total": 426971,
+    "graph_keyword_estimated": 32,
+    "questions_count_for_amortization": 21
+  },
+  "total_input_tokens": 19458,
+  "total_output_tokens": 232,
+  "total_tokens": 40073,
+  "total_latency_ms": 4002
+}

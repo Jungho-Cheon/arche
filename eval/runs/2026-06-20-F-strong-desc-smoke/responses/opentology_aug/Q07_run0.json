@@ -1,0 +1,167 @@
+{
+  "column": "opentology_aug",
+  "question_id": "Q07",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 480,
+    "output_tokens": 43,
+    "latency_ms": 935,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"AMD\",\"aliases\":[\"AMD\"]},{\"canonical\":\"customer concentration\",\"aliases\":[\"customer concentration\"]},{\"canonical\":\"FY22\",\"aliases\":[\"FY22\",\"fiscal year 2022\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "AMD",
+          "aliases": [
+            "AMD"
+          ]
+        },
+        {
+          "canonical": "customer concentration",
+          "aliases": [
+            "customer concentration"
+          ]
+        },
+        {
+          "canonical": "FY22",
+          "aliases": [
+            "FY22",
+            "fiscal year 2022"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 854,
+      "input": {
+        "keywords": [
+          "AMD",
+          "customer concentration",
+          "FY22",
+          "fiscal year 2022"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 57,
+      "input": {
+        "entry_ids": [
+          "01KVJMJD8G7DT3PX17WMWE1WD2",
+          "01KVJMJCJH3CH0143T5PS6GVTY",
+          "01KVJKXHJFZXHBSYFY4Z3472MM",
+          "01KVJKXZM1TB22T721Y6WV9901",
+          "01KVJKY04WQN8ZXTG6QZQ9W44T",
+          "01KVJM009N5C45GAK3Z30DBCRZ",
+          "01KVJKY1T4SAW03MV255EKXRWC",
+          "01KVJKY16XZH1KYVQMSAGEJD00",
+          "01KVJKY0GSRCGB0RH6DEQZMNVM",
+          "01KVJMJPETXANTPQ0YVPX0YTPG"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 30,
+        "edges": 24,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVJMJD8G7DT3PX17WMWE1WD2",
+    "01KVJMJCJH3CH0143T5PS6GVTY",
+    "01KVJKXHJFZXHBSYFY4Z3472MM",
+    "01KVJKXZM1TB22T721Y6WV9901",
+    "01KVJKY04WQN8ZXTG6QZQ9W44T",
+    "01KVJM009N5C45GAK3Z30DBCRZ",
+    "01KVJKY1T4SAW03MV255EKXRWC",
+    "01KVJKY16XZH1KYVQMSAGEJD00",
+    "01KVJKY0GSRCGB0RH6DEQZMNVM",
+    "01KVJMJPETXANTPQ0YVPX0YTPG"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 17079,
+  "graph_selected_sources": [
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMD_2022_10K.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMERICANEXPRESS_2022_10K.md"
+  ],
+  "retrieved_chunks": [
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 46,
+      "score": 0.6231622117188311
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 47,
+      "score": 0.621253331732331
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 14,
+      "score": 0.6137276733423674
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 13,
+      "score": 0.6105826268829025
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 3,
+      "score": 0.6044983105692893
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 4,
+      "score": 0.5970989937426717
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 2,
+      "score": 0.5959235010771397
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 0,
+      "score": 0.5906101183241694
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 12711,
+    "output_tokens": 159,
+    "latency_ms": 2097,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"c\",\"reasoning\":\"(B) 도메인 그래프에서 'Customer A'가 2022년 AMD의 연결 순매출의 16%를 차지했다고 명시되어 있습니다. 또한, (A) 발췌에는 FY22의 고객 집중도에 대한 직접적인 언급은 없으나, (B) 그래프의 엔티티 설명이 명확하게 수치와 함께 고객 집중도를 제공합니다. 다른 보기는 26% 또는 두 고객 각각 16% 등으로 되어 있으나, (B)에는 한 고객이 16%를 차지했다고만 나와 있으므로 'c'가 정답입니다. 결정적 근거는 (B) 그래프의 엔티티 설명입니다.\"}",
+    "parsed": {
+      "choice": "c",
+      "reasoning": "(B) 도메인 그래프에서 'Customer A'가 2022년 AMD의 연결 순매출의 16%를 차지했다고 명시되어 있습니다. 또한, (A) 발췌에는 FY22의 고객 집중도에 대한 직접적인 언급은 없으나, (B) 그래프의 엔티티 설명이 명확하게 수치와 함께 고객 집중도를 제공합니다. 다른 보기는 26% 또는 두 고객 각각 16% 등으로 되어 있으나, (B)에는 한 고객이 16%를 차지했다고만 나와 있으므로 'c'가 정답입니다. 결정적 근거는 (B) 그래프의 엔티티 설명입니다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 20372,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 9,
+    "chunk_setup_amortized": 20331,
+    "chunk_setup_total": 426971,
+    "graph_keyword_estimated": 32,
+    "questions_count_for_amortization": 21
+  },
+  "total_input_tokens": 13191,
+  "total_output_tokens": 202,
+  "total_tokens": 33765,
+  "total_latency_ms": 3943
+}

@@ -411,6 +411,25 @@ class Neo4jGraphRepository(GraphRepository):
         """
         dim = self._settings.embedding_dimension
         with self._driver.session() as s:
+            # UNIQUE constraint — DB-level id 가드 + 자동 인덱스 생성.
+            # WHY: walking skeleton 까지 application-level 만 보장이었음 (ULID
+            # 충돌 확률 사실상 0). 단 동시 ingest / 버그 / migration 시 graph
+            # 부패의 두 번째 가드. 2026-06-20 catastrophic over-merge 같은 *부패
+            # 카테고리* 의 DB-level 방어. 자동 인덱스 덕에 id IN $ids 핫패스
+            # (expand_subgraph, get_entity, mark_emitted) 도 같이 빨라진다.
+            s.run(
+                f"CREATE CONSTRAINT entity_id_unique IF NOT EXISTS "
+                f"FOR (e:{ENTITY_LABEL}) REQUIRE e.id IS UNIQUE"
+            ).consume()
+            s.run(
+                f"CREATE CONSTRAINT ingestion_run_id_unique IF NOT EXISTS "
+                f"FOR (r:{INGESTION_RUN_LABEL}) REQUIRE r.id IS UNIQUE"
+            ).consume()
+            # 관계 id UNIQUE — Neo4j 5.7+ 의 relationship property constraint.
+            s.run(
+                f"CREATE CONSTRAINT relation_id_unique IF NOT EXISTS "
+                f"FOR ()-[r:{RELATION_TYPE_LABEL_DEFAULT}]-() REQUIRE r.id IS UNIQUE"
+            ).consume()
             s.run(
                 f"CREATE FULLTEXT INDEX {FULLTEXT_INDEX} IF NOT EXISTS "
                 f"FOR (e:{ENTITY_LABEL}) ON EACH [e.name, e.aliases]"

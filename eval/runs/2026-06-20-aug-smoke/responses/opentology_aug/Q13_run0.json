@@ -1,0 +1,166 @@
+{
+  "column": "opentology_aug",
+  "question_id": "Q13",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 487,
+    "output_tokens": 38,
+    "latency_ms": 884,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"American Express\",\"aliases\":[\"American Express\"]},{\"canonical\":\"Balance Sheet\",\"aliases\":[\"Balance Sheet\"]},{\"canonical\":\"liability\",\"aliases\":[\"liability\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "American Express",
+          "aliases": [
+            "American Express"
+          ]
+        },
+        {
+          "canonical": "Balance Sheet",
+          "aliases": [
+            "Balance Sheet"
+          ]
+        },
+        {
+          "canonical": "liability",
+          "aliases": [
+            "liability"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 696,
+      "input": {
+        "keywords": [
+          "American Express",
+          "Balance Sheet",
+          "liability"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 191,
+      "input": {
+        "entry_ids": [
+          "01KVHVBC175A369PF2MBT3W8PG",
+          "01KVHVCP9JF4XN5VCF0HAQ0ANF",
+          "01KVHVK4BTE3KQ2EN98KBAJ6J4",
+          "01KVHVFQJBHM6CJDY43KR672ME",
+          "01KVHVCQG19MMR0HZR7AP9FJ0M",
+          "01KVHVEGQRTBB9ZNM04TFST0BE",
+          "01KVHVFPRJK3HJNPANNJ47FG55",
+          "01KVHVCPZJW2SENJEEKSYQQ4HB",
+          "01KVHVESTC9KMTJN4RT65BZK6H",
+          "01KVHVEWGSRCZCP4BBGND5RH2P"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 79,
+        "edges": 80,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVHVBC175A369PF2MBT3W8PG",
+    "01KVHVCP9JF4XN5VCF0HAQ0ANF",
+    "01KVHVK4BTE3KQ2EN98KBAJ6J4",
+    "01KVHVFQJBHM6CJDY43KR672ME",
+    "01KVHVCQG19MMR0HZR7AP9FJ0M",
+    "01KVHVEGQRTBB9ZNM04TFST0BE",
+    "01KVHVFPRJK3HJNPANNJ47FG55",
+    "01KVHVCPZJW2SENJEEKSYQQ4HB",
+    "01KVHVESTC9KMTJN4RT65BZK6H",
+    "01KVHVEWGSRCZCP4BBGND5RH2P"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 37945,
+  "graph_selected_sources": [
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMD_2022_10K.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMERICANEXPRESS_2022_10K.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/BOEING_2022_10K.md"
+  ],
+  "retrieved_chunks": [
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 77,
+      "score": 0.6824459113751863
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 137,
+      "score": 0.6694014806918115
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 151,
+      "score": 0.6660343963677496
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 72,
+      "score": 0.6534701892175202
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 164,
+      "score": 0.6421725353600571
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 136,
+      "score": 0.6361374650397575
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 177,
+      "score": 0.6174211160418346
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 6,
+      "score": 0.6114198436986567
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 17754,
+    "output_tokens": 236,
+    "latency_ms": 3307,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"d\",\"reasoning\":\"(A) contains a table in 청크 3 (AMERICANEXPRESS_2022_10K.md:151) that summarizes the carrying values of major financial liabilities as of December 31, 2022. It shows: 'Financial liabilities for which carrying values equal or approximate fair value' at $123 billion, 'Certificates of deposit' at $16 billion, and 'Long-term debt' at $43 billion. The $123 billion line is not labeled as 'accounts payable' or 'accrued expenses' but is a catch-all for liabilities that are not otherwise specified. However, in the context of American Express's business model (청크 8), the largest liability is typically 'customer deposits' (which are a major funding source for a bank holding company like Amex). The $123 billion figure is most consistent with 'customer deposits' (as 'long-term debt' is only $43 billion). (B) does not provide a cross-document relationship that would override this. Therefore, the answer is d) Customer deposits, with (A) being decisive due to the explicit balance sheet figures.\"}",
+    "parsed": {
+      "choice": "d",
+      "reasoning": "(A) contains a table in 청크 3 (AMERICANEXPRESS_2022_10K.md:151) that summarizes the carrying values of major financial liabilities as of December 31, 2022. It shows: 'Financial liabilities for which carrying values equal or approximate fair value' at $123 billion, 'Certificates of deposit' at $16 billion, and 'Long-term debt' at $43 billion. The $123 billion line is not labeled as 'accounts payable' or 'accrued expenses' but is a catch-all for liabilities that are not otherwise specified. However, in the context of American Express's business model (청크 8), the largest liability is typically 'customer deposits' (which are a major funding source for a bank holding company like Amex). The $123 billion figure is most consistent with 'customer deposits' (as 'long-term debt' is only $43 billion). (B) does not provide a cross-document relationship that would override this. Therefore, the answer is d) Customer deposits, with (A) being decisive due to the explicit balance sheet figures."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 20371,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 16,
+    "chunk_setup_amortized": 20331,
+    "chunk_setup_total": 426971,
+    "graph_keyword_estimated": 24,
+    "questions_count_for_amortization": 21
+  },
+  "total_input_tokens": 18241,
+  "total_output_tokens": 274,
+  "total_tokens": 38886,
+  "total_latency_ms": 5078
+}

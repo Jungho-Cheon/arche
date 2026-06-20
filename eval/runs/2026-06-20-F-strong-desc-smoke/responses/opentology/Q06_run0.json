@@ -1,0 +1,130 @@
+{
+  "column": "opentology",
+  "question_id": "Q06",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 494,
+    "output_tokens": 68,
+    "latency_ms": 977,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"FY21\",\"aliases\":[\"FY21\"]},{\"canonical\":\"FY22\",\"aliases\":[\"FY22\"]},{\"canonical\":\"Embedded\",\"aliases\":[\"Embedded\"]},{\"canonical\":\"AMD reporting segment\",\"aliases\":[\"AMD reporting segment\",\"reporting segment\"]},{\"canonical\":\"sales proportion\",\"aliases\":[\"sales proportion\",\"sales proportionally\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "FY21",
+          "aliases": [
+            "FY21"
+          ]
+        },
+        {
+          "canonical": "FY22",
+          "aliases": [
+            "FY22"
+          ]
+        },
+        {
+          "canonical": "Embedded",
+          "aliases": [
+            "Embedded"
+          ]
+        },
+        {
+          "canonical": "AMD reporting segment",
+          "aliases": [
+            "AMD reporting segment",
+            "reporting segment"
+          ]
+        },
+        {
+          "canonical": "sales proportion",
+          "aliases": [
+            "sales proportion",
+            "sales proportionally"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 728,
+      "input": {
+        "keywords": [
+          "FY21",
+          "FY22",
+          "Embedded",
+          "AMD reporting segment",
+          "reporting segment",
+          "sales proportion",
+          "sales proportionally"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 56,
+      "input": {
+        "entry_ids": [
+          "01KVJKXNGF8M04V0BH40AVCXCX",
+          "01KVJKXM6KZFMQCAF0F4BSR7X1",
+          "01KVJKXMXDVNPVT27M5N5C50HQ",
+          "01KVJKXKJVKEN7HGDM84DVB9BQ",
+          "01KVJKYDPHQ8CPXMW35XSJ604V",
+          "01KVJMFVA7KEN9603CSKQ65N7S",
+          "01KVJKXHJFZXHBSYFY4Z3472MM",
+          "01KVJMJPETXANTPQ0YVPX0YTPG",
+          "01KVJKY6PWPR6MH191V8VP90XW",
+          "01KVJMJFVR7SS3SVH3D6588V26"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 26,
+        "edges": 22,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVJKXNGF8M04V0BH40AVCXCX",
+    "01KVJKXM6KZFMQCAF0F4BSR7X1",
+    "01KVJKXMXDVNPVT27M5N5C50HQ",
+    "01KVJKXKJVKEN7HGDM84DVB9BQ",
+    "01KVJKYDPHQ8CPXMW35XSJ604V",
+    "01KVJMFVA7KEN9603CSKQ65N7S",
+    "01KVJKXHJFZXHBSYFY4Z3472MM",
+    "01KVJMJPETXANTPQ0YVPX0YTPG",
+    "01KVJKY6PWPR6MH191V8VP90XW",
+    "01KVJMJFVR7SS3SVH3D6588V26"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 15077,
+  "answer_generation": {
+    "input_tokens": 4796,
+    "output_tokens": 187,
+    "latency_ms": 2262,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\": \"c\", \"reasoning\": \"그래프에 따르면 AMD의 2022년 보고 세그먼트별 매출 증가율(Embedded 제외)은 다음과 같다: Data Center segment는 2021년 $3,694M에서 2022년 $6,043M으로 약 64% 증가, Client segment는 2021년 $6,887M에서 2022년 $6,201M으로 약 -10% 감소, Gaming segment는 2021년 $5,607M에서 2022년 $6,805M으로 약 21% 증가. Embedded segment는 제외 조건이 있으므로, Data Center segment가 Embedded를 제외한 세그먼트 중 비율상 가장 큰 매출 증가를 기록했다. 따라서 정답은 c) Data Center segment had the largest proportional sales increase from FY21 to FY22, excluding Embedded.\"}",
+    "parsed": {
+      "choice": "c",
+      "reasoning": "그래프에 따르면 AMD의 2022년 보고 세그먼트별 매출 증가율(Embedded 제외)은 다음과 같다: Data Center segment는 2021년 $3,694M에서 2022년 $6,043M으로 약 64% 증가, Client segment는 2021년 $6,887M에서 2022년 $6,201M으로 약 -10% 감소, Gaming segment는 2021년 $5,607M에서 2022년 $6,805M으로 약 21% 증가. Embedded segment는 제외 조건이 있으므로, Data Center segment가 Embedded를 제외한 세그먼트 중 비율상 가장 큰 매출 증가를 기록했다. 따라서 정답은 c) Data Center segment had the largest proportional sales increase from FY21 to FY22, excluding Embedded."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 56,
+  "total_input_tokens": 5290,
+  "total_output_tokens": 255,
+  "total_tokens": 5601,
+  "total_latency_ms": 4023
+}

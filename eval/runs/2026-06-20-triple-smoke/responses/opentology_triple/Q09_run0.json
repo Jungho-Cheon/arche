@@ -1,0 +1,187 @@
+{
+  "column": "opentology_triple",
+  "question_id": "Q09",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 488,
+    "output_tokens": 16,
+    "latency_ms": 667,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"American Express\",\"aliases\":[\"American Express\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "American Express",
+          "aliases": [
+            "American Express"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 429,
+      "input": {
+        "keywords": [
+          "American Express"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 180,
+      "input": {
+        "entry_ids": [
+          "01KVHVCP9JF4XN5VCF0HAQ0ANF",
+          "01KVHVFQJBHM6CJDY43KR672ME",
+          "01KVHVCQG19MMR0HZR7AP9FJ0M",
+          "01KVHVEGQRTBB9ZNM04TFST0BE",
+          "01KVHVFPRJK3HJNPANNJ47FG55",
+          "01KVHVCPZJW2SENJEEKSYQQ4HB",
+          "01KVHVESTC9KMTJN4RT65BZK6H",
+          "01KVHVDZPRQR3K1QJF0YN81VYN",
+          "01KVHVE080XFJH6AXRDM08FE1F",
+          "01KVHVCTAQJG7W5EWB30M9SV7Z"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 69,
+        "edges": 71,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVHVCP9JF4XN5VCF0HAQ0ANF",
+    "01KVHVFQJBHM6CJDY43KR672ME",
+    "01KVHVCQG19MMR0HZR7AP9FJ0M",
+    "01KVHVEGQRTBB9ZNM04TFST0BE",
+    "01KVHVFPRJK3HJNPANNJ47FG55",
+    "01KVHVCPZJW2SENJEEKSYQQ4HB",
+    "01KVHVESTC9KMTJN4RT65BZK6H",
+    "01KVHVDZPRQR3K1QJF0YN81VYN",
+    "01KVHVE080XFJH6AXRDM08FE1F",
+    "01KVHVCTAQJG7W5EWB30M9SV7Z"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 33390,
+  "graph_selected_sources": [
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMERICANEXPRESS_2022_10K.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMD_2022_10K.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/BOEING_2022_10K.md"
+  ],
+  "focused_chunks": [
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 6,
+      "score": 0.6907898692008256
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 4,
+      "score": 0.6839097042251624
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 5,
+      "score": 0.6783560610398487
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 165,
+      "score": 0.6561015521598221
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 3,
+      "score": 0.6476672110386512
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 260,
+      "score": 0.6227594642017279
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 7,
+      "score": 0.6085093085237565
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 48,
+      "score": 0.6074790206415079
+    }
+  ],
+  "global_chunks": [
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 6,
+      "score": 0.6907898692008256
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 4,
+      "score": 0.6839097042251624
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 5,
+      "score": 0.6783560610398487
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 165,
+      "score": 0.6561015521598221
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 3,
+      "score": 0.6476672110386512
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 260,
+      "score": 0.6227594642017279
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 7,
+      "score": 0.6085093085237565
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 48,
+      "score": 0.6074790206415079
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 20185,
+    "output_tokens": 236,
+    "latency_ms": 3044,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"a\",\"reasoning\":\"(A) 도메인 그래프의 엔티티 설명과 관계에서는 American Express가 글로벌 기업임을 명확히 보여주지만, 구체적인 지역 구분은 제공하지 않습니다. (B)와 (C) 발췌에서는 'Jurisdictions that represent a significant portion of our billed business outside of the United States include the United Kingdom (UK), the European Union (EU), Australia, Japan, Canada and Mexico.'라는 문구가 있습니다. 이로 미루어 볼 때, 미국(United States), 유럽(Europe: UK, EU), 아시아(Asia: Japan), 그리고 라틴 아메리카(멕시코 포함)에서 주로 사업을 영위함을 알 수 있습니다. APAC, EMEA, LACC와 같은 용어는 본문에 직접적으로 등장하지 않으므로 b)와 c), d)는 부적합합니다. a) 보기가 실제 발췌 내용과 가장 부합합니다. 결정적 근거는 (B)와 (C)에서의 명시적 지역 언급입니다.\"}",
+    "parsed": {
+      "choice": "a",
+      "reasoning": "(A) 도메인 그래프의 엔티티 설명과 관계에서는 American Express가 글로벌 기업임을 명확히 보여주지만, 구체적인 지역 구분은 제공하지 않습니다. (B)와 (C) 발췌에서는 'Jurisdictions that represent a significant portion of our billed business outside of the United States include the United Kingdom (UK), the European Union (EU), Australia, Japan, Canada and Mexico.'라는 문구가 있습니다. 이로 미루어 볼 때, 미국(United States), 유럽(Europe: UK, EU), 아시아(Asia: Japan), 그리고 라틴 아메리카(멕시코 포함)에서 주로 사업을 영위함을 알 수 있습니다. APAC, EMEA, LACC와 같은 용어는 본문에 직접적으로 등장하지 않으므로 b)와 c), d)는 부적합합니다. a) 보기가 실제 발췌 내용과 가장 부합합니다. 결정적 근거는 (B)와 (C)에서의 명시적 지역 언급입니다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 20356,
+  "total_input_tokens": 20673,
+  "total_output_tokens": 252,
+  "total_tokens": 41281,
+  "total_latency_ms": 4320
+}

@@ -46,6 +46,16 @@ SYSTEM_PROMPT = """당신은 도메인 문서에서 엔티티와 관계를 추�
 결과는 반드시 지정된 JSON 스키마로 응답하세요.
 """
 
+# WHY 한 시점의 본 SYSTEM_PROMPT 강화 시도 (수치 / 시계열 보존 강제) 를 보류:
+# 2026-06-20 smoke 측정에서 graph-only 모드는 +14.3pp (33.3% → 47.6%) 효과,
+# 단 aug 모드 (graph-guided chunk retrieval) 에서는 -4.8pp 후퇴 (Q05/Q08).
+# 원인: description 이 정량 수치 위주가 되면 "cash flow" 같은 *generic anchor*
+# 가 description 이 풍부한 *다른 회사* entity 와 lexical/dense 양쪽에서 강하게
+# 매칭 → 진입점이 cross-company 로 contamination. aug 가 default 컬럼이라
+# 본 강화는 별도 ingest profile 로 옵션화 검토 (ADR 거리).
+#
+# 참조: eval/reports/2026-06-20-F-strong-desc-smoke/ (측정), ADR-0007 amend 후보.
+
 # PRD 2 §4.3 의 JSON Schema. additionalProperties=false + required 강제.
 EXTRACTION_RESPONSE_FORMAT: dict[str, Any] = {
     "type": "json_schema",

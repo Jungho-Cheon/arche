@@ -1,0 +1,196 @@
+{
+  "column": "opentology_triple",
+  "question_id": "Q19",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 480,
+    "output_tokens": 34,
+    "latency_ms": 750,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"Boeing\",\"aliases\":[\"Boeing\"]},{\"canonical\":\"cyclicality\",\"aliases\":[\"cyclicality\",\"business cycle\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "Boeing",
+          "aliases": [
+            "Boeing"
+          ]
+        },
+        {
+          "canonical": "cyclicality",
+          "aliases": [
+            "cyclicality",
+            "business cycle"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 736,
+      "input": {
+        "keywords": [
+          "Boeing",
+          "cyclicality",
+          "business cycle"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 140,
+      "input": {
+        "entry_ids": [
+          "01KVHVGY5W8J69ASESMFEDW7WW",
+          "01KVHVGTZATSJA08Y3MYCK8ZMY",
+          "01KVHVJ12EWBA2E6F4BFQ41FJD",
+          "01KVHVCTAQJG7W5EWB30M9SV7Z",
+          "01KVHVK01S8MD3KQXYVHTHFTJ5",
+          "01KVHVJ2RATVW2DWJ726TTH4WS",
+          "01KVHVJ95CG2CG4G5SV133ZA99",
+          "01KVHVK0RTQSYFZRSYDZAV1DWC",
+          "01KVHVJAC0HJ24RDC9RT5V52EP",
+          "01KVHVJC9JY0ZH02BCFT2AVPBJ"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 58,
+        "edges": 56,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVHVGY5W8J69ASESMFEDW7WW",
+    "01KVHVGTZATSJA08Y3MYCK8ZMY",
+    "01KVHVJ12EWBA2E6F4BFQ41FJD",
+    "01KVHVCTAQJG7W5EWB30M9SV7Z",
+    "01KVHVK01S8MD3KQXYVHTHFTJ5",
+    "01KVHVJ2RATVW2DWJ726TTH4WS",
+    "01KVHVJ95CG2CG4G5SV133ZA99",
+    "01KVHVK0RTQSYFZRSYDZAV1DWC",
+    "01KVHVJAC0HJ24RDC9RT5V52EP",
+    "01KVHVJC9JY0ZH02BCFT2AVPBJ"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 25537,
+  "graph_selected_sources": [
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMERICANEXPRESS_2022_10K.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/BOEING_2022_10K.md",
+    "/Users/jungho1000/workspace/private/opentology/eval/datasets/financebench-smoke/corpus/AMD_2022_10K.md"
+  ],
+  "focused_chunks": [
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 10,
+      "score": 0.6042995974646638
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 8,
+      "score": 0.6011372895129947
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 12,
+      "score": 0.5877920947826669
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 22,
+      "score": 0.5785636012092696
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 19,
+      "score": 0.5602683557870084
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 60,
+      "score": 0.5579593813051397
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 4,
+      "score": 0.5577678464052328
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 29,
+      "score": 0.5571816920242191
+    }
+  ],
+  "global_chunks": [
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 10,
+      "score": 0.6042995974646638
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 8,
+      "score": 0.6011372895129947
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 12,
+      "score": 0.5877920947826669
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 22,
+      "score": 0.5785636012092696
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 19,
+      "score": 0.5602683557870084
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 60,
+      "score": 0.5579593813051397
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 4,
+      "score": 0.5577678464052328
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 29,
+      "score": 0.5571816920242191
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 22327,
+    "output_tokens": 265,
+    "latency_ms": 4093,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"c\",\"reasoning\":\"(A) 도메인 그래프에는 Boeing이 상업용 항공기(Commercial Airplanes)와 방위산업(Defense, Space & Security) 모두에 관여함이 명확히 드러나며, 경쟁사와 시장 환경에 대한 언급이 있다. (B)와 (C) 발췌에서는 Boeing의 상업용 항공기 사업이 항공사들의 수요, 항공사 재정상태, 글로벌 경제 상황, 연료비, 인플레이션 등 외부 요인에 의해 영향을 받는다는 점이 반복적으로 언급된다(B4/C4, B2/C2 등). 특히 'airline financial performance, which influences demand for new capacity, has been adversely impacted by the COVID-19 pandemic'와 같은 문구, 그리고 'the commercial jet aircraft market and the airline industry remain extremely competitive' 등은 Boeing이 항공산업의 경기 변동(cyclicality)에 노출되어 있음을 명확히 한다. 방위산업 부문이 일부 완충 역할을 할 수 있으나, 전체적으로 cyclicality에 노출되어 있다는 점이 (B), (C)에서 일치한다. 따라서 보기 c)가 정답이다.\"}",
+    "parsed": {
+      "choice": "c",
+      "reasoning": "(A) 도메인 그래프에는 Boeing이 상업용 항공기(Commercial Airplanes)와 방위산업(Defense, Space & Security) 모두에 관여함이 명확히 드러나며, 경쟁사와 시장 환경에 대한 언급이 있다. (B)와 (C) 발췌에서는 Boeing의 상업용 항공기 사업이 항공사들의 수요, 항공사 재정상태, 글로벌 경제 상황, 연료비, 인플레이션 등 외부 요인에 의해 영향을 받는다는 점이 반복적으로 언급된다(B4/C4, B2/C2 등). 특히 'airline financial performance, which influences demand for new capacity, has been adversely impacted by the COVID-19 pandemic'와 같은 문구, 그리고 'the commercial jet aircraft market and the airline industry remain extremely competitive' 등은 Boeing이 항공산업의 경기 변동(cyclicality)에 노출되어 있음을 명확히 한다. 방위산업 부문이 일부 완충 역할을 할 수 있으나, 전체적으로 cyclicality에 노출되어 있다는 점이 (B), (C)에서 일치한다. 따라서 보기 c)가 정답이다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 20364,
+  "total_input_tokens": 22807,
+  "total_output_tokens": 299,
+  "total_tokens": 43470,
+  "total_latency_ms": 5719
+}
