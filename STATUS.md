@@ -51,6 +51,10 @@ Opentology = LLM·AI 에이전트가 *도메인 지식의 관계* 를 *최소한
 | M4 | 베이스라인 하니스 (full-context + 청크 RAG) | 완료 (#10, #15) |
 | M5 | 평가 데이터 (상거래 검증 도메인 소스 + 30 MCQ) | 완료 — commerce-verbose-20260618 (33 파일 95K 토큰, 30 MCQ, lint green) |
 | M6 | 3-way 측정 + 보고서 1 회 | 완료 — 2026-06-19-2126 (gpt-4.1 N=3) + 후속 Combined 검증 2026-06-20-0923 (Combined RAG 100% 달성, 피벗 확정) |
+| **M6.5** | **1M corpus 3-way 재검증 (gating)** | **pending** — ADR-0007 의 1M 시점 검증. M7 productization 의 직접 gate |
+| M7 | Combined RAG productization | pending (M6.5 종료 후) |
+| M8 | Combined 품질·비용 최적화 | pending (M7 종료 후) |
+| M9 | Scale·다도메인·외부 비교 | pending (M8 종료 후) |
 
 위 골격은 *구현 계획서* 가 확정되면 그 결정에 맞춰 갱신된다.
 
@@ -60,19 +64,18 @@ Opentology = LLM·AI 에이전트가 *도메인 지식의 관계* 를 *최소한
 |---|---|---|
 | (없음 — M1 완료) | | |
 
-## 다음 액션 (Combined RAG 피벗 이후)
+## 다음 액션 (Combined RAG 피벗 이후) — 마일스톤 M6.5 → M7 → M8 → M9
 
-| 우선순위 | 항목 | 비고 |
+| 마일스톤 | 종료 조건 | 핵심 이슈 |
 |---|---|---|
-| **P0** | ADR-0007: Combined RAG 채택 + ADR-0001 Pareto 정의 갱신 (full-context 는 *비교 기준* 이 아닌 *상한*) | 본 회차 직접 후속. 2026-06-20 결정 기록 |
-| **P0** | API 컬럼 정리 — `/answer` 엔드포인트가 combined 흐름을 기본 (chunk + subgraph 단일 호출), 단독 모드는 baseline 측정용으로 보존 | 제품 정체성 변경 반영 (그래프 KB → retrieval orchestrator) |
-| P1 | 코드베이스 적재 ADR (AST + LLM) | 메모리 `project_post_mvp_code_ingest_adr`. MVP 피벗 다음 큰 방향 |
-| P1 | 큰 corpus (300K-1M) 재검증 | combined 우월성이 corpus 크기에서 유지되는지 확인. 95K 한정 결론 |
-| P1 | EntityMatcher 강화 | Q05/Q20 alias 미통합 — graph 단독 정확도가 회차마다 흔들리는 신호. matcher 가 강해지면 combined 의 안정성도 추가 향상 |
-| P2 | Combined 비용 최적화 — subgraph reranking | 입력 토큰 15.7K → 8-10K 로 줄이면 chunk 단독 비용에 근접 |
-| P2 | anchor 추출 정확도 개선 | anchor LLM 이 옳은 ULID 진입점을 못 잡는 경우 (이전 회차 기준) |
-| P2 | ingest 품질 — cross-chunk identity / multi-hop 관계 추출 (#28) | graph 보완재 가치를 키우기 위함 |
-| P2 | invalid_input envelope 정규화 (#26) | Pydantic 422 → PRD 3 §0.3 envelope |
+| **M6.5 — 1M corpus 3-way 검증 (gating)** | FinanceBench 1M 에서 chunk vs opentology vs combined 측정 보고서. 결과로 ADR-0007 유지/수정/피벗 결정 | #44 dataset, #45 ingest 안정화, #46 측정 |
+| M7 — Combined RAG productization | docker-compose up + ingest + `curl /answer` 만으로 외부 사용자가 답 받기 | #33 /answer, #34 /retrieve, #35 provenance, #36 노브, #37 Getting Started, #38 identity refresh, #39 service mode |
+| M8 — Combined 품질·비용 최적화 | 95K 재측정: 토큰 ≤ 10K, latency ≤ 3.5s, 정확도 100% 유지 | #40 EntityConsolidator (post-ingest), #41 retrieval anchor, #42 subgraph reranking, #43 budget allocator |
+| M9 — Scale·다도메인·외부 비교 | 1M 자체 한국어 corpus 측정 + 외부 도구 (LangChain Hybrid / Microsoft GraphRAG) 비교 evidence | TBD (M8 종료 후 도출) |
+
+상세 — `docs/prd/6_post_mvp_combined.md` §4. ADR-0007 (정체성 피벗) 이 본 마일스톤 트리의 결정 기반.
+
+**M6.5 가 gating** — M7-M9 작업은 M6.5 결과에 따라 *형태/우선순위가 분기*. 본 마일스톤 종료 전에 M7-M9 의 *코드 작업* 은 착수하지 않음 (설계 문서/이슈 다듬기는 병행 가능).
 
 ## 갱신 정책
 
