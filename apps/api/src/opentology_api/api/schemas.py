@@ -170,6 +170,81 @@ class AdminIngestStatusResponse(BaseModel):
     error: AdminIngestError | None = None
 
 
+# ---------- admin/consolidate (ADR-0008 D2) ----------
+
+
+class AdminConsolidateRequest(BaseModel):
+    """후처리 cross-doc cleanup 시작 — body 는 선택적 dry_run 만."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    dry_run: bool = Field(
+        default=False,
+        description="True 면 후보/판정만 수행하고 그래프에 쓰지 않음.",
+    )
+
+
+class AdminConsolidateResponse(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    task_id: str
+    status_url: str
+
+
+class AdminConsolidateProgress(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    entities_scanned: int
+    candidates_total: int
+    candidates_self_reference_skipped: int
+    llm_calls: int
+
+
+class AdminConsolidateMetrics(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    merged: int
+    rejected: int
+    duration_seconds: float
+
+
+class AdminConsolidateMergedPair(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    survivor_id: str
+    loser_id: str
+    similarity: float
+    confidence: float
+
+
+class AdminConsolidateRejectedPair(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    a_id: str
+    b_id: str
+    similarity: float
+    reason: str
+
+
+class AdminConsolidateSample(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    merged_pairs: list[AdminConsolidateMergedPair]
+    rejected_pairs: list[AdminConsolidateRejectedPair]
+
+
+class AdminConsolidateStatusResponse(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    task_id: str
+    state: str
+    dry_run: bool
+    progress: AdminConsolidateProgress
+    metrics: AdminConsolidateMetrics
+    sample: AdminConsolidateSample
+    error: AdminIngestError | None = None
+
+
 # ---------- healthz ----------
 
 

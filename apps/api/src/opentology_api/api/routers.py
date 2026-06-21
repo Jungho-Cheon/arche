@@ -26,12 +26,20 @@ from ..adapters.graph import GraphRepository
 from ..domain.errors import InvalidInputError
 from ..domain.ingest import IngestService
 from . import services
+from ..domain.consolidate import EntityConsolidator
+from .admin_consolidate import (
+    ConsolidateTaskRegistry,
+    spawn_consolidate_task,
+)
+from .admin_consolidate import state_to_status_dict as consolidate_state_to_status_dict
 from .admin_tasks import (
     IngestTaskRegistry,
     spawn_ingest_task,
     state_to_status_dict,
 )
 from .deps import (
+    consolidate_task_registry_dep,
+    consolidator_dep,
     embedding_provider_dep,
     graph_repo_dep,
     ingest_service_dep,
@@ -49,6 +57,14 @@ from .responses import (
     GetSubgraphResponse,
 )
 from .schemas import (
+    AdminConsolidateMergedPair,
+    AdminConsolidateMetrics,
+    AdminConsolidateProgress,
+    AdminConsolidateRejectedPair,
+    AdminConsolidateRequest,
+    AdminConsolidateResponse,
+    AdminConsolidateSample,
+    AdminConsolidateStatusResponse,
     AdminIngestError,
     AdminIngestMetrics,
     AdminIngestProgress,
@@ -245,6 +261,86 @@ def admin_ingest(
         data=AdminIngestResponse(
             task_id=state.task_id,
             status_url=f"/admin/ingest/{state.task_id}/status",
+        )
+    )
+
+
+# ---------- admin/consolidate (ADR-0008 D2) ----------
+
+
+@admin_router.post(
+    "/consolidate",
+    status_code=202,
+    response_model=DataEnvelope[AdminConsolidateResponse],
+)
+def admin_consolidate(
+    body: AdminConsolidateRequest,
+    response: Response,
+    consolidator: EntityConsolidator = Depends(consolidator_dep),
+    registry: ConsolidateTaskRegistry = Depends(consolidate_task_registry_dep),
+) -> DataEnvelope[AdminConsolidateResponse]:
+    """ADR-0008 D2 — post-ingest cross-doc cleanup 시작.
+
+    *모든 entity 가 적재된 뒤* 한 번 호출한다. ANN top_k 후보 → cosine
+    0.85-0.92 회색지대 필터 → generic 자기지칭 separation 게이트 → LLM 동일성
+    검증 → idempotent merge. 결과는 task status 폴링으로 받는다.
+    """
+    state = spawn_consolidate_task(
+        registry=registry, consolidator=consolidator, dry_run=body.dry_run
+    )
+    response.status_code = 202
+    return DataEnvelope(
+        data=AdminConsolidateResponse(
+            task_id=state.task_id,
+            status_url=f"/admin/consolidate/{state.task_id}/status",
+        )
+    )
+
+
+@admin_router.get(
+    "/consolidate/{task_id}/status",
+    response_model=DataEnvelope[AdminConsolidateStatusResponse],
+    response_model_exclude_none=True,
+)
+def admin_consolidate_status(
+    task_id: str,
+    registry: ConsolidateTaskRegistry = Depends(consolidate_task_registry_dep),
+) -> DataEnvelope[AdminConsolidateStatusResponse]:
+    state = registry.get(task_id)
+    if state is None:
+        raise HTTPException(
+            status_code=404,
+            detail=ErrorEnvelope(
+                error=ErrorBody(
+                    code="task_not_found",
+                    message=f"task not found: {task_id}",
+                )
+            ).model_dump(),
+        )
+    body = consolidate_state_to_status_dict(state)
+    sample = body["sample"]
+    return DataEnvelope(
+        data=AdminConsolidateStatusResponse(
+            task_id=body["task_id"],
+            state=body["state"],
+            dry_run=body["dry_run"],
+            progress=AdminConsolidateProgress(**body["progress"]),
+            metrics=AdminConsolidateMetrics(**body["metrics"]),
+            sample=AdminConsolidateSample(
+                merged_pairs=[
+                    AdminConsolidateMergedPair(**p)
+                    for p in sample["merged_pairs"]
+                ],
+                rejected_pairs=[
+                    AdminConsolidateRejectedPair(**p)
+                    for p in sample["rejected_pairs"]
+                ],
+            ),
+            error=(
+                AdminIngestError(**body["error"])
+                if body["error"] is not None
+                else None
+            ),
         )
     )
 

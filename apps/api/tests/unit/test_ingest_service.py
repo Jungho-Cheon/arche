@@ -339,6 +339,24 @@ class FakeGraph(GraphRepository):
         self.__init_chunk_store__()
         return len(self._chunks)
 
+    def iterate_entities(self, *, batch_size=200):
+        return iter(())
+
+    def neighbor_names(self, *, entity_id, limit):
+        return []
+
+    def transfer_relations_to_survivor(self, *, survivor_id, loser_id, now):
+        return None
+
+    def delete_entity(self, *, entity_id):
+        return None
+
+    def count_entities(self) -> int:
+        return 0
+
+    def count_entities_with_alias_count_gte(self, *, n) -> int:
+        return 0
+
     def close(self) -> None:
         pass
 

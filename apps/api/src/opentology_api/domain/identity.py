@@ -291,6 +291,57 @@ class EntityMerger:
             normalized_aliases=merged_normalized_aliases,
         )
 
+    @staticmethod
+    def merge_loser_entity(
+        *, survivor: StoredEntity, loser: StoredEntity, now: str
+    ) -> MergeMutation:
+        """*두 기존 노드* 의 병합 — EntityConsolidator (ADR-0008) 가 사용.
+
+        `merge()` 는 *새 추출 결과 (ExtractedEntity) 와 기존 노드* 의 병합용.
+        본 메서드는 *둘 다 이미 그래프에 있는 두 StoredEntity* 를 합칠 때 쓴다.
+        규칙:
+          - aliases: survivor 의 aliases + loser 의 (name + aliases) union dedupe.
+            loser.name 자체도 alias 로 흡수해야 표면형이 보존된다.
+          - description: 더 긴 쪽 유지 (동률이면 survivor 보존).
+          - properties: survivor 우선 + loser 의 누락 key 만 채워 넣기.
+          - source_refs: 두 쪽 union (path + chunk_index 키 dedupe).
+          - normalized_aliases: stoplist 제외 정책 재적용.
+        """
+        merged_aliases = _union_dedupe_preserve_order(
+            survivor.aliases or [],
+            [loser.name, *(loser.aliases or [])],
+        )
+        merged_normalized_aliases = [
+            normalize(a)
+            for a in merged_aliases
+            if normalize(a)
+            and normalize(a) not in NON_IDENTIFYING_ALIAS_STOPLIST
+        ]
+
+        survivor_desc = survivor.description or ""
+        loser_desc = loser.description or ""
+        if len(loser_desc) > len(survivor_desc):
+            merged_desc = loser_desc
+        else:
+            merged_desc = survivor_desc
+
+        merged_props: dict[str, Any] = dict(loser.properties or {})
+        merged_props.update(survivor.properties or {})
+
+        merged_refs = _union_source_refs(
+            survivor.source_refs or [], loser.source_refs or []
+        )
+
+        return MergeMutation(
+            id=survivor.id,
+            aliases=merged_aliases,
+            description=merged_desc,
+            properties=merged_props,
+            source_refs=merged_refs,
+            updated_at=now,
+            normalized_aliases=merged_normalized_aliases,
+        )
+
 
 def _union_dedupe_preserve_order(a: list[str], b: list[str]) -> list[str]:
     """정규화 결과를 dedupe 키로 사용. 원본 표기는 *먼저 등장한* 쪽을 보존.

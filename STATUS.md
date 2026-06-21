@@ -2,7 +2,22 @@
 
 > 이 파일의 위치: 본 저장소에 기여하는 모두를 위한 **단일 진입점**. 마일스톤 진행도 / 다음 액션 / 알려진 stub 표가 한 페이지에 모인다.
 
-## 현재 상태 — 시제품 backbone 도달 (2026-06-21)
+## 현재 상태 — M6.5b EntityConsolidator 구현 완료, 1M 재측정 대기 (2026-06-21)
+
+ADR-0008 D2 의 EntityConsolidator (post-ingest cross-doc cleanup) 가 구현되어 시제품 backbone 위에 stack 됐다.
+
+| 산출물 | 위치 | 상태 |
+|---|---|---|
+| `EntityConsolidator` 도메인 | `apps/api/src/opentology_api/domain/consolidate.py` | 완료 |
+| `LLMBackedConsolidationLLM` 어댑터 | `apps/api/src/opentology_api/adapters/consolidation_llm.py` | 완료 |
+| Neo4j 6 신규 메서드 (iterate / neighbor_names / transfer / delete / count×2) | `apps/api/src/opentology_api/adapters/graph.py` | 완료 |
+| `POST /admin/consolidate` + status | `apps/api/src/opentology_api/api/admin_consolidate.py` + routers | 완료 |
+| 단위 테스트 14 신규 (도메인 9 + 라우터 5) | `apps/api/tests/unit/test_consolidate_service.py` + `test_admin_consolidate_router.py` | 완료. 202 passed |
+| 1M 재측정 runbook | `eval/scripts/m65b_consolidate_and_remeasure.py` + `eval/reports/2026-06-21-m65b-consolidator/PROTOCOL.md` | 완료 |
+| 1M 실측정 evidence (b)(c) | (실행 대기) | OPENAI_API_KEY + Docker daemon 필요 |
+| ADR-0007 D2 진짜 분기 결정 | (실측정 후) | 대기 |
+
+## 이전 상태 — 시제품 backbone 도달 (2026-06-21)
 
 variance 분석으로 default = combined 확정 후 시제품 backbone 3 단계 모두 통과. 외부 사용자가 `docker compose up` → ingest → `POST /answer` 한 호출로 답 + provenance 를 회수할 수 있다 (Getting Started 5 분 가이드: [`docs/getting-started.md`](./docs/getting-started.md)).
 

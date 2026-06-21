@@ -385,3 +385,47 @@ class OpentologyClient:
             f"ingest task {task_id} did not complete within {max_wait_seconds}s "
             f"(last state={last.get('state')!r})"
         )
+
+    # ---------- admin consolidate (ADR-0008 D2) ----------
+
+    def admin_consolidate(self, *, dry_run: bool = False) -> dict[str, Any]:
+        data, _ = self._request(
+            "POST", "/admin/consolidate", json={"dry_run": dry_run}
+        )
+        return data
+
+    def admin_consolidate_status(self, *, task_id: str) -> dict[str, Any]:
+        data, _ = self._request(
+            "GET", f"/admin/consolidate/{task_id}/status"
+        )
+        return data
+
+    def wait_for_consolidate(
+        self,
+        *,
+        task_id: str,
+        poll_interval_seconds: float = 2.0,
+        # 1M entity 까지 ANN top-k sweep + LLM 호출 (수십 ~ 수백 쌍) 의 상한.
+        # 측정 시나리오의 현실적 상한 = 1 시간.
+        max_wait_seconds: float = 3600.0,
+    ) -> dict[str, Any]:
+        deadline = time.monotonic() + max_wait_seconds
+        last: dict[str, Any] = {}
+        while time.monotonic() < deadline:
+            last = self.admin_consolidate_status(task_id=task_id)
+            state = last.get("state")
+            if state == "succeeded":
+                return last
+            if state == "failed":
+                err = last.get("error") or {}
+                raise OpentologyClientError(
+                    status_code=500,
+                    code=str(err.get("code", "consolidate_failed")),
+                    message=str(err.get("message", "consolidate task failed")),
+                    details={"task_id": task_id, "last_status": last},
+                )
+            time.sleep(poll_interval_seconds)
+        raise OpentologyUnavailableError(
+            f"consolidate task {task_id} did not complete within "
+            f"{max_wait_seconds}s (last state={last.get('state')!r})"
+        )

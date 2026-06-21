@@ -8,13 +8,16 @@ from __future__ import annotations
 
 from fastapi import Depends, Request
 
+from ..adapters.consolidation_llm import LLMBackedConsolidationLLM
 from ..adapters.embedding import EmbeddingProvider, OpenAIEmbeddingProvider
 from ..adapters.graph import GraphRepository, Neo4jGraphRepository
 from ..adapters.llm import LLMProvider, OpenAILLMProvider
 from ..answer.llm import AnswerLLM, OpenAIAnswerLLM
 from ..answer.service import AnswerService
 from ..config import Settings, get_settings
+from ..domain.consolidate import ConsolidationLLM, EntityConsolidator
 from ..domain.ingest import IngestService
+from .admin_consolidate import ConsolidateTaskRegistry
 from .admin_tasks import IngestTaskRegistry
 
 
@@ -63,6 +66,23 @@ def answer_service_dep(
     return AnswerService(graph=graph, embedder=embedder, answer_llm=answer_llm)
 
 
+def consolidation_llm_dep(request: Request) -> ConsolidationLLM:
+    return request.app.state.consolidation_llm
+
+
+def consolidator_dep(
+    request: Request,
+    graph: GraphRepository = Depends(graph_repo_dep),
+    llm: ConsolidationLLM = Depends(consolidation_llm_dep),
+) -> EntityConsolidator:
+    """ADR-0008 EntityConsolidator — graph + ConsolidationLLM 주입."""
+    return EntityConsolidator(repo=graph, llm=llm)
+
+
+def consolidate_task_registry_dep(request: Request) -> ConsolidateTaskRegistry:
+    return request.app.state.consolidate_task_registry
+
+
 def task_registry_dep(request: Request) -> IngestTaskRegistry:
     """Admin ingest 의 in-process 작업 registry.
 
@@ -87,9 +107,13 @@ def build_default_components(settings: Settings) -> dict:
     answer_llm = OpenAIAnswerLLM(
         model_id=settings.llm_model_id, api_key=settings.openai_api_key
     )
+    # ConsolidationLLM (ADR-0008) — answer_llm 한 인스턴스를 재사용. 모델 id 도
+    # 시제품 단계는 같음 — 동일 strict JSON schema 경로.
+    consolidation_llm = LLMBackedConsolidationLLM(answer_llm=answer_llm)
     return {
         "graph_repo": graph,
         "llm_provider": llm,
         "embedding_provider": embedder,
         "answer_llm": answer_llm,
+        "consolidation_llm": consolidation_llm,
     }

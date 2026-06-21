@@ -9,6 +9,7 @@ from dotenv import load_dotenv
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 
+from .api.admin_consolidate import ConsolidateTaskRegistry
 from .api.admin_tasks import IngestTaskRegistry
 from .api.answer_router import answer_router, retrieve_router
 from .api.deps import build_default_components
@@ -39,9 +40,11 @@ async def lifespan(app: FastAPI):
     app.state.llm_provider = components["llm_provider"]
     app.state.embedding_provider = components["embedding_provider"]
     app.state.answer_llm = components["answer_llm"]
+    app.state.consolidation_llm = components["consolidation_llm"]
     # WHY 단일 registry 인스턴스: POST /admin/ingest 가 생성한 task_id 를 GET
     # /status 가 같은 dict 에서 조회해야 한다. lifespan 에서 한 번 만들어 둠.
     app.state.ingest_task_registry = IngestTaskRegistry()
+    app.state.consolidate_task_registry = ConsolidateTaskRegistry()
 
     # 인덱스 마이그레이션 — idempotent. ADR-0004 D1 의 *DB 내장 인덱스* 보장.
     try:

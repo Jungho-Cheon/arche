@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import logging
 from abc import ABC, abstractmethod
+from collections.abc import Iterable, Iterator
 from dataclasses import dataclass
 from typing import Any
 
@@ -391,6 +392,55 @@ class GraphRepository(ABC):
     @abstractmethod
     def entity_exists(self, *, entity_id: str) -> bool:
         """단일 ID 가 그래프에 존재하는지 — find_path / get_neighbors 의 사전 검증."""
+
+    # ----- EntityConsolidator (ADR-0008 D2 — post-ingest cleanup) -----
+
+    @abstractmethod
+    def iterate_entities(
+        self, *, batch_size: int = 200
+    ) -> "Iterable[StoredEntity]":
+        """전체 entity sweep — EntityConsolidator 의 1 단계 (ANN 후보 풀 생성).
+
+        embedding 포함. 페이지 크기는 Neo4j 메모리 / Python 메모리 균형. 호출자
+        는 generator 로 받아 *읽으면서 처리* 하는 패턴이 권장된다 (전체 적재
+        방지).
+        """
+
+    @abstractmethod
+    def neighbor_names(self, *, entity_id: str, limit: int) -> list[str]:
+        """단일 entity 의 인접 노드 이름 최대 `limit` 개 — LLM 검증의 context.
+
+        WHY 이름만: ConsolidationLLM 의 프롬프트 토큰 통제. 이름 8 개 면 회사
+        식별성 (예: 양쪽 다 자동차 회사 이름이 떠 있으면 "the Company" 도 같은
+        회사) 판단에 충분.
+        """
+
+    @abstractmethod
+    def transfer_relations_to_survivor(
+        self, *, survivor_id: str, loser_id: str, now: str
+    ) -> None:
+        """loser 의 in/out 관계를 survivor 로 이전 — (other, type, survivor)
+        가 이미 있으면 source_paths union, 없으면 새 관계 생성.
+
+        loser <-> survivor 사이 직접 관계는 자기지칭이 되므로 delete.
+        """
+
+    @abstractmethod
+    def delete_entity(self, *, entity_id: str) -> None:
+        """단일 entity 노드 + 잔여 인접 엣지 DETACH DELETE — Consolidator 의
+        마지막 단계 (loser 청소). `transfer_relations_to_survivor` 후 호출.
+        """
+
+    @abstractmethod
+    def count_entities(self) -> int:
+        """전체 entity 수 — Consolidator progress 분모 + evidence 기록용."""
+
+    @abstractmethod
+    def count_entities_with_alias_count_gte(self, *, n: int) -> int:
+        """aliases 개수가 n 이상인 entity 수 — over-merge 감소 evidence.
+
+        ADR-0008 D2 종료 조건의 "aliases≥5 entity 수 감소" 측정 직접 지원.
+        """
 
     # ----- Chunk store (PRD 6 §1.1 — /retrieve, /answer 의 의존성) -----
 
@@ -1143,6 +1193,140 @@ class Neo4jGraphRepository(GraphRepository):
                 id=entity_id,
             ).single()
         return rec is not None
+
+    # ---------- EntityConsolidator (ADR-0008) ----------
+
+    def iterate_entities(
+        self, *, batch_size: int = 200
+    ) -> Iterator[StoredEntity]:
+        """`id` 사전순 페이지네이션 — 안정적인 순회 보장.
+
+        WHY 단일 column ORDER BY id: 페이지 사이 같은 노드가 두 번 surface 되지
+        않도록 (Neo4j 의 default order 는 불안정).
+        """
+        last_id = ""
+        while True:
+            with self._driver.session() as s:
+                rows = s.run(
+                    f"MATCH (e:{ENTITY_LABEL}) "
+                    "WHERE e.id > $cursor "
+                    "RETURN e ORDER BY e.id ASC LIMIT $limit",
+                    cursor=last_id,
+                    limit=batch_size,
+                ).data()
+            if not rows:
+                return
+            for r in rows:
+                stored = _node_to_stored(r["e"])
+                last_id = stored.id
+                yield stored
+
+    def neighbor_names(self, *, entity_id: str, limit: int) -> list[str]:
+        with self._driver.session() as s:
+            rows = s.run(
+                f"MATCH (e:{ENTITY_LABEL} {{id: $id}})-[]-(n:{ENTITY_LABEL}) "
+                "WHERE n.id <> $id "
+                "RETURN DISTINCT n.name AS name LIMIT $limit",
+                id=entity_id,
+                limit=limit,
+            ).data()
+        return [r["name"] for r in rows if r.get("name")]
+
+    def transfer_relations_to_survivor(
+        self, *, survivor_id: str, loser_id: str, now: str
+    ) -> None:
+        """loser 의 in/out 관계를 survivor 로 옮김 — 한 세션 내 다단계.
+
+        직접 loser <-> survivor 관계는 self-loop 가 되므로 먼저 삭제. 그 다음
+        inbound 와 outbound 를 각각 옮긴다. 이미 (other, type, survivor) 가 있는
+        경우 source_paths 를 union (Cypher reduce 로 dedup) 하고 원 관계는 삭제.
+        """
+        params = {
+            "survivor_id": survivor_id,
+            "loser_id": loser_id,
+            "now": now,
+        }
+        with self._driver.session() as s:
+            # 1. loser <-> survivor 사이 직접 관계 삭제 (양방향).
+            s.run(
+                f"""
+                MATCH (l:{ENTITY_LABEL} {{id: $loser_id}})
+                      -[r:{RELATION_TYPE_LABEL_DEFAULT}]-
+                      (s:{ENTITY_LABEL} {{id: $survivor_id}})
+                DELETE r
+                """,
+                parameters=params,
+            ).consume()
+
+            # 2. inbound: other -> loser → other -> survivor.
+            s.run(
+                f"""
+                MATCH (other:{ENTITY_LABEL})
+                      -[r_old:{RELATION_TYPE_LABEL_DEFAULT}]->
+                      (l:{ENTITY_LABEL} {{id: $loser_id}})
+                WHERE other.id <> $survivor_id
+                MATCH (s:{ENTITY_LABEL} {{id: $survivor_id}})
+                MERGE (other)-[r_new:{RELATION_TYPE_LABEL_DEFAULT} {{type: r_old.type}}]->(s)
+                ON CREATE SET r_new.id = r_old.id,
+                              r_new.source_paths = coalesce(r_old.source_paths, []),
+                              r_new.created_at = r_old.created_at,
+                              r_new.updated_at = $now
+                ON MATCH SET  r_new.source_paths = reduce(
+                                acc = [], x IN coalesce(r_new.source_paths, []) + coalesce(r_old.source_paths, []) |
+                                CASE WHEN x IN acc THEN acc ELSE acc + x END
+                              ),
+                              r_new.updated_at = $now
+                DELETE r_old
+                """,
+                parameters=params,
+            ).consume()
+
+            # 3. outbound: loser -> other → survivor -> other.
+            s.run(
+                f"""
+                MATCH (l:{ENTITY_LABEL} {{id: $loser_id}})
+                      -[r_old:{RELATION_TYPE_LABEL_DEFAULT}]->
+                      (other:{ENTITY_LABEL})
+                WHERE other.id <> $survivor_id
+                MATCH (s:{ENTITY_LABEL} {{id: $survivor_id}})
+                MERGE (s)-[r_new:{RELATION_TYPE_LABEL_DEFAULT} {{type: r_old.type}}]->(other)
+                ON CREATE SET r_new.id = r_old.id,
+                              r_new.source_paths = coalesce(r_old.source_paths, []),
+                              r_new.created_at = r_old.created_at,
+                              r_new.updated_at = $now
+                ON MATCH SET  r_new.source_paths = reduce(
+                                acc = [], x IN coalesce(r_new.source_paths, []) + coalesce(r_old.source_paths, []) |
+                                CASE WHEN x IN acc THEN acc ELSE acc + x END
+                              ),
+                              r_new.updated_at = $now
+                DELETE r_old
+                """,
+                parameters=params,
+            ).consume()
+
+    def delete_entity(self, *, entity_id: str) -> None:
+        with self._driver.session() as s:
+            s.run(
+                f"MATCH (e:{ENTITY_LABEL} {{id: $id}}) DETACH DELETE e",
+                id=entity_id,
+            ).consume()
+
+    def count_entities(self) -> int:
+        with self._driver.session() as s:
+            rec = s.run(
+                f"MATCH (e:{ENTITY_LABEL}) RETURN count(e) AS c"
+            ).single()
+        return int(rec["c"]) if rec else 0
+
+    def count_entities_with_alias_count_gte(self, *, n: int) -> int:
+        with self._driver.session() as s:
+            rec = s.run(
+                f"MATCH (e:{ENTITY_LABEL}) "
+                "WHERE size(coalesce(e.aliases, [])) >= $n "
+                "RETURN count(e) AS c",
+                n=n,
+            ).single()
+        return int(rec["c"]) if rec else 0
 
     # ---------- Chunk store ----------
 
