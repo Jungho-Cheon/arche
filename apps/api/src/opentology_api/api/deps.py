@@ -11,6 +11,8 @@ from fastapi import Depends, Request
 from ..adapters.embedding import EmbeddingProvider, OpenAIEmbeddingProvider
 from ..adapters.graph import GraphRepository, Neo4jGraphRepository
 from ..adapters.llm import LLMProvider, OpenAILLMProvider
+from ..answer.llm import AnswerLLM, OpenAIAnswerLLM
+from ..answer.service import AnswerService
 from ..config import Settings, get_settings
 from ..domain.ingest import IngestService
 from .admin_tasks import IngestTaskRegistry
@@ -48,6 +50,19 @@ def ingest_service_dep(
     )
 
 
+def answer_llm_dep(request: Request) -> AnswerLLM:
+    return request.app.state.answer_llm
+
+
+def answer_service_dep(
+    request: Request,
+    graph: GraphRepository = Depends(graph_repo_dep),
+    embedder: EmbeddingProvider = Depends(embedding_provider_dep),
+    answer_llm: AnswerLLM = Depends(answer_llm_dep),
+) -> AnswerService:
+    return AnswerService(graph=graph, embedder=embedder, answer_llm=answer_llm)
+
+
 def task_registry_dep(request: Request) -> IngestTaskRegistry:
     """Admin ingest 의 in-process 작업 registry.
 
@@ -67,4 +82,14 @@ def build_default_components(settings: Settings) -> dict:
     embedder = OpenAIEmbeddingProvider(
         model_id=settings.embedding_model_id, api_key=settings.openai_api_key
     )
-    return {"graph_repo": graph, "llm_provider": llm, "embedding_provider": embedder}
+    # answer LLM 은 같은 모델 ID 재사용 (시제품 단계). 향후 별도 model_id
+    # config 추가 시 분리.
+    answer_llm = OpenAIAnswerLLM(
+        model_id=settings.llm_model_id, api_key=settings.openai_api_key
+    )
+    return {
+        "graph_repo": graph,
+        "llm_provider": llm,
+        "embedding_provider": embedder,
+        "answer_llm": answer_llm,
+    }

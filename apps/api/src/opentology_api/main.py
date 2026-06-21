@@ -10,6 +10,7 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 
 from .api.admin_tasks import IngestTaskRegistry
+from .api.answer_router import answer_router, retrieve_router
 from .api.deps import build_default_components
 from .api.routers import (
     admin_router,
@@ -37,6 +38,7 @@ async def lifespan(app: FastAPI):
     app.state.graph_repo = components["graph_repo"]
     app.state.llm_provider = components["llm_provider"]
     app.state.embedding_provider = components["embedding_provider"]
+    app.state.answer_llm = components["answer_llm"]
     # WHY 단일 registry 인스턴스: POST /admin/ingest 가 생성한 task_id 를 GET
     # /status 가 같은 dict 에서 조회해야 한다. lifespan 에서 한 번 만들어 둠.
     app.state.ingest_task_registry = IngestTaskRegistry()
@@ -71,6 +73,8 @@ def create_app() -> FastAPI:
     app.include_router(paths_router)
     app.include_router(subgraph_router)
     app.include_router(admin_router)
+    app.include_router(answer_router)
+    app.include_router(retrieve_router)
 
     @app.exception_handler(OpentologyError)
     async def _opentology_exc_handler(  # type: ignore[unused-ignore]
