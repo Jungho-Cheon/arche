@@ -48,6 +48,21 @@ async def lifespan(app: FastAPI):
     except Exception as e:  # noqa: BLE001
         logger.warning("ensure_indexes failed (will retry on first request): %s", e)
 
+    # ADR-0014 D1/D2 — MCP HTTP transports 마운트 (lifespan 안에서 lazy import
+    # 로 stdio-only 환경에서 SDK 호환성 부담 없도록).
+    try:
+        from .mcp_http import mount_mcp_routes
+
+        mount_mcp_routes(
+            app,
+            graph=components["graph_repo"],
+            embedder=components["embedding_provider"],
+            settings=settings,
+        )
+        logger.info("MCP HTTP routes mounted at /mcp/v1")
+    except Exception as e:  # noqa: BLE001
+        logger.warning("MCP HTTP mount failed (stdio still available): %s", e)
+
     yield
 
     components["graph_repo"].close()
