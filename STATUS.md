@@ -14,9 +14,9 @@ PR #54 의 EntityConsolidator 1M 적용 결과 (Combined 78.8% > chunk 72.7%) �
 
 | Phase | 목표 | 산출물 | 상태 |
 |---|---|---|---|
-| Phase 1 — graphify parity 회복 | 추출 단계 컨텍스트 동봉 + parallel + 캐싱 + Step 3 옵션화 | ADR-0009/0010/0011 + spec | **RFC** (본 PR) |
-| Phase 2 — Agent API + MCP HTTP | Agent 친화 contract + MCP HTTP transport | ADR-0013/0014 (예정) | pending |
-| Phase 3 — 공유 KB 운영 모델 | 사내 인프라 활용 + multi-tenant + namespace | ADR-0015/0016 (예정) | pending |
+| Phase 1 — graphify parity 회복 | 추출 단계 컨텍스트 동봉 + parallel + 캐싱 + Step 3 옵션화 | ADR-0009/0010/0011 + spec | **RFC + 구현 시작** |
+| Phase 2 — Agent API + MCP HTTP | Agent 친화 contract + MCP HTTP transport | ADR-0013/0014 | **RFC** |
+| Phase 3 — 공유 KB 운영 모델 | 사내 인프라 활용 + namespace 부분 공유 | ADR-0015 | **RFC** |
 
 상세:
 - [ADR-0009 — Context-aware extraction](./docs/adr/0009-context-aware-extraction.md)
