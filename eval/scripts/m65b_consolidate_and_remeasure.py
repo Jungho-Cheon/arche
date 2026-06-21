@@ -148,25 +148,29 @@ def step_remeasure(args: argparse.Namespace) -> None:
     cmd = [
         "uv",
         "run",
-        "python",
-        "eval/scripts/run_triple_poc.py",
+        "--package",
+        "opentology-eval",
+        "opentology-eval",
+        "run",
         "--corpus",
         str(args.corpus),
         "--questions",
         str(args.questions),
         "--output",
-        str(args.output / "opentology"),
-        "--api-url",
-        args.api_url,
+        str(args.output.parent.parent),
+        "--columns",
+        "opentology,combined",
         "--runs",
         str(args.runs),
+        "--api-url",
+        args.api_url,
+        "--skip-setup",
+        "--run-id",
+        args.output.parent.name,
     ]
     print(f"[step 4] $ {' '.join(cmd)}", flush=True)
     subprocess.run(cmd, check=True)
-    # combined 는 별도 runner — 기존 score_combined.py 가 raw → metric 변환만
-    # 한다면 raw 측정 단계는 다른 스크립트가 필요. 본 runbook 은 *opentology*
-    # 만 우선 측정 후 combined 는 사용자가 수동 trigger.
-    print("[step 4] opentology N=3 done. combined 는 별도 트리거.", flush=True)
+    print("[step 4] opentology + combined N=3 done.", flush=True)
 
 
 def _run_cypher(query: str, args: argparse.Namespace) -> str:

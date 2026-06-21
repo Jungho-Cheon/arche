@@ -59,6 +59,10 @@ logger = logging.getLogger(__name__)
 
 TEXT_EXTS: frozenset[str] = frozenset({".txt", ".md"})
 PDF_EXTS: frozenset[str] = frozenset({".pdf"})
+# OpenAI text-embedding-3-small 의 단일 입력 한도. chunk_text 분할기는 *LLM
+# 컨텍스트* 기준 (128K 등) 으로 잘라 한 청크가 임베딩 한도를 초과할 수 있어
+# chunk store 저장 시 본 cap 으로 추가 truncate.
+EMBEDDING_MAX_INPUT_TOKENS: int = 8192
 # 이미지 확장자는 image_loader 의 단일 source 와 동기화 — 한 곳에서만 정의.
 SUPPORTED_EXTS: frozenset[str] = frozenset(TEXT_EXTS | PDF_EXTS | IMAGE_EXTS)
 # WHY 빈 집합 보존: 호출자 (crawl) 가 import 하던 심볼. 이후 follow-up 이 새로
@@ -583,7 +587,18 @@ class IngestService:
         self._graph.delete_chunks_by_source(source_path=source_path)
 
         # 청크 텍스트 embed.
-        texts = [c.text for c in chunks]
+        # WHY 8192 토큰 cap: text-embedding-3-small 의 단일 입력 한도.
+        # `chunk_text` 분할기는 *LLM 컨텍스트* 기준 (128K 등) 으로 잘라 한 청크가
+        # 임베딩 한도를 초과할 수 있다. 보수 측: 토큰 카운트 비율로 문자 자르기.
+        texts: list[str] = []
+        for c in chunks:
+            t = c.text
+            tok = count_tokens(t)
+            if tok > EMBEDDING_MAX_INPUT_TOKENS:
+                # 비율 기반 문자 자르기. 90% safety margin.
+                ratio = (EMBEDDING_MAX_INPUT_TOKENS * 0.9) / tok
+                t = t[: int(len(t) * ratio)]
+            texts.append(t)
         embeddings = self._embedder.embed(texts)
         if len(embeddings) != len(chunks):
             raise ValueError(
