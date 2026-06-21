@@ -182,6 +182,25 @@ LLM 응답 JSON 의 entity schema 에 다음 필드를 추가:
 
 본 ADR 은 *증상 가림 가드를 즉시 제거하지 않는다* — root-cause 해법이 *충분히 견고함을 측정으로 확인하기 전* 까지는 보조 가드 유지.
 
+### D5.1. Semantic chunking 강화 — retrieval 용 별 분할 함수 (2026-06-21 amend)
+
+사용자 요청 (2026-06-21) — *의미론적 바운더리 + 문장 단위 overlap* 적용 검토.
+검토 결과 기존 chunk_text 는 부분 적용 (heading→paragraph→sentence 폴백 + 토큰
+leading overlap). 강화 적용 — `chunk_for_retrieval` 신규.
+
+핵심 차이:
+
+| 측면 | chunk_text (LLM 추출용) | chunk_for_retrieval (RAG 용) |
+|---|---|---|
+| target | LLM 컨텍스트 × 70% (~90K) | 1500 토큰 (embed 한도 8192 안쪽) |
+| overlap | 직전 토큰 N (leading 20%) | 직전 *문장 N 개* (default 2) — 문장 경계 보존 |
+| sentence terminator | 영문/한자 종결부호만 | 한국어 종결 어미 ("다/요/까") + abbreviation false-split 감소 |
+
+retrieval 청크와 LLM 추출 청크의 *분리* 가 가져오는 이득:
+- embed 한도 (8192) 초과 위험 사라짐 (PR #54 의 임시 cap 자동 해소).
+- RAG /answer 의 chunk_top_k 정확도 향상 — 작은 청크 + 의미 보존 overlap.
+- LLM 추출 호출의 큰 컨텍스트 (90K) 도 그대로 유지 — 토큰 비용 절감.
+
 ### D6. measurement 통제 변수 변경 *명시*
 
 본 ADR 은 ADR-0001 §5 의 *측정 통제 변수* (추출 프롬프트 + 4 단계 매처) 를 변경한다. 변경 영향:

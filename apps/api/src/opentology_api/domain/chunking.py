@@ -36,6 +36,13 @@ TOKEN_BUDGET_RATIO: float = 0.70
 OVERLAP_RATIO: float = 0.20
 
 
+# Retrieval 친화적 청크 크기 — ADR-0009 D5 의 측정 통제 변수.
+# *LLM 추출* 의 청크 (위 70% 컷) 와는 별도. embed 한도 (8192) 안에서 RAG 정확도
+# 가 좋은 *작은 청크* 가 목표. 1500 토큰 = ~6000 자 한국어 = 단락 3-5 개.
+RETRIEVAL_CHUNK_TOKENS: int = 1500
+RETRIEVAL_OVERLAP_SENTENCES: int = 2
+
+
 @dataclass(frozen=True)
 class Chunk:
     """분할 결과 단위.
@@ -127,6 +134,15 @@ _HEADING_RE = re.compile(r"^(?P<level>#{1,6})\s+", re.MULTILINE)
 _PARAGRAPH_SPLIT_RE = re.compile(r"\n\s*\n+")
 # 매우 단순한 sentence terminator — 마침표/물음표/느낌표/한국어 종결부호 뒤 공백.
 _SENTENCE_SPLIT_RE = re.compile(r"(?<=[\.!?。!?])\s+")
+
+# Retrieval 용 강화 sentence terminator — 한국어 종결 어미 ("다/요/까") + 다음
+# 공백 또는 줄바꿈. "Mr. Smith" 같은 abbreviation 은 *공백 2 자 이상* 또는
+# 줄바꿈을 요구해 false split 감소.
+_RETRIEVAL_SENTENCE_SPLIT_RE = re.compile(
+    r"(?<=[\.!?。!?])(?=\s)"  # 영문/한자 종결부호 후 (lookahead)
+    r"|"
+    r"(?<=[다요까])(?=[\s\n])"  # 한국어 종결 어미 후
+)
 
 
 def _split_by_heading_then_paragraph_then_sentence(
@@ -233,6 +249,97 @@ def _force_split_by_tokens(text: str, *, budget: int) -> list[str]:
     out: list[str] = []
     for i in range(0, len(tokens), budget):
         out.append(enc.decode(tokens[i : i + budget]))
+    return out
+
+
+def chunk_for_retrieval(
+    text: str,
+    *,
+    target_tokens: int = RETRIEVAL_CHUNK_TOKENS,
+    overlap_sentences: int = RETRIEVAL_OVERLAP_SENTENCES,
+) -> list[Chunk]:
+    """RAG / retrieval 용 청크 — *작은 의미 단위 + 문장 단위 overlap*.
+
+    `chunk_text` 와의 차이:
+      - target_tokens default = 1500 (LLM 추출용 90K 와 분리). embed 한도 (8192)
+        한참 안쪽.
+      - overlap 이 *문장 N 개* 단위 — 토큰 중간 절단 없음. semantic 보존.
+      - sentence terminator 가 다국어 강화 (한국어 종결 어미 + 영문 abbreviation
+        false-split 감소).
+
+    흐름:
+      1. heading → paragraph 까지 폴백 (sentence 까지는 안 감 — paragraph 가
+         의미 단위로 충분).
+      2. paragraph 한 개가 target 초과 → sentence 단위로 분할 후 pack.
+      3. 인접 청크 사이에 *마지막 N 문장* 을 다음 청크의 앞에 prepend.
+
+    ADR-0009 D5 의 측정 통제 변수 — 변경 시 CACHE_VERSION bump.
+    """
+    total = count_tokens(text)
+    if total <= target_tokens:
+        return [Chunk(text=text, chunk_index=0, total_chunks=1)]
+
+    # paragraph 단위까지만 분할 — sentence 는 paragraph 가 budget 초과일 때만.
+    sections = _split_by_heading(text)
+    paragraphs: list[str] = []
+    for section in sections:
+        if count_tokens(section) <= target_tokens:
+            paragraphs.append(section)
+            continue
+        for para in _split_by_paragraph(section):
+            if count_tokens(para) <= target_tokens:
+                paragraphs.append(para)
+                continue
+            # paragraph 도 초과 — sentence 단위 강화 split 후 pack.
+            sents = _split_by_sentence_multilingual(para)
+            for packed in _pack_into_budget(sents, budget=target_tokens):
+                if count_tokens(packed) <= target_tokens:
+                    paragraphs.append(packed)
+                else:
+                    paragraphs.extend(
+                        _force_split_by_tokens(packed, budget=target_tokens)
+                    )
+
+    raw_pieces = list(_pack_into_budget(paragraphs, budget=target_tokens))
+    pieces_with_overlap = _apply_sentence_overlap(
+        pieces=raw_pieces, overlap_sentences=overlap_sentences
+    )
+    n = len(pieces_with_overlap)
+    return [
+        Chunk(text=p, chunk_index=i, total_chunks=n)
+        for i, p in enumerate(pieces_with_overlap)
+    ]
+
+
+def _split_by_sentence_multilingual(paragraph: str) -> list[str]:
+    """다국어 강화 sentence split — 영문 abbreviation false-split 감소 +
+    한국어 종결 어미 지원.
+    """
+    sents = [
+        s.strip()
+        for s in _RETRIEVAL_SENTENCE_SPLIT_RE.split(paragraph)
+        if s.strip()
+    ]
+    return sents or [paragraph]
+
+
+def _apply_sentence_overlap(
+    *, pieces: list[str], overlap_sentences: int
+) -> list[str]:
+    """이전 청크의 *마지막 N 문장* 을 다음 청크의 앞에 prepend.
+
+    `_apply_overlap` 의 토큰 leading 과 달리 *문장 경계 보존* — semantic
+    chunking 의 모범 패턴 (LlamaIndex / LangChain 의 SemanticChunker 와 정합).
+    """
+    if overlap_sentences <= 0 or len(pieces) <= 1:
+        return list(pieces)
+    out: list[str] = [pieces[0]]
+    for i in range(1, len(pieces)):
+        prev = pieces[i - 1]
+        prev_sents = _split_by_sentence_multilingual(prev)
+        tail_sents = prev_sents[-overlap_sentences:] if prev_sents else []
+        tail = " ".join(tail_sents)
+        out.append(f"{tail}\n\n{pieces[i]}" if tail else pieces[i])
     return out
 
 
