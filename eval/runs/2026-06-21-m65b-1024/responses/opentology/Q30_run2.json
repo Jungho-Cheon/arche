@@ -1,0 +1,125 @@
+{
+  "column": "opentology",
+  "question_id": "Q30",
+  "run_index": 2,
+  "anchor_extraction": {
+    "input_tokens": 491,
+    "output_tokens": 74,
+    "latency_ms": 1065,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"Pepsico\",\"aliases\":[\"Pepsico\"]},{\"canonical\":\"ongoing legal battles\",\"aliases\":[\"ongoing legal battles\",\"legal battles\"]},{\"canonical\":\"FY2022\",\"aliases\":[\"FY2022\",\"Fiscal Year 2022\"]},{\"canonical\":\"FY2021\",\"aliases\":[\"FY2021\",\"Fiscal Year 2021\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "Pepsico",
+          "aliases": [
+            "Pepsico"
+          ]
+        },
+        {
+          "canonical": "ongoing legal battles",
+          "aliases": [
+            "ongoing legal battles",
+            "legal battles"
+          ]
+        },
+        {
+          "canonical": "FY2022",
+          "aliases": [
+            "FY2022",
+            "Fiscal Year 2022"
+          ]
+        },
+        {
+          "canonical": "FY2021",
+          "aliases": [
+            "FY2021",
+            "Fiscal Year 2021"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 1184,
+      "input": {
+        "keywords": [
+          "Pepsico",
+          "ongoing legal battles",
+          "legal battles",
+          "FY2022",
+          "Fiscal Year 2022",
+          "FY2021",
+          "Fiscal Year 2021"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 46,
+      "input": {
+        "entry_ids": [
+          "01KVKXT3SCDC0VGPVJ3CNNA1YA",
+          "01KVKXT4SBWC94P3HZ0WEPEFQ2",
+          "01KVKXJ3EADC5NHH8FH6S4BZBP",
+          "01KVKXKDZP1ZHEQWH45Q80CGJC",
+          "01KVKXKR64JXNW5MH1E8AT330K",
+          "01KVKXJ2WHXTTD2TB446EJFYBE",
+          "01KVKXVH0KN3J6H16ZEN6WH1DC",
+          "01KVKXKTH2EJ1W3TT4D6JQQ3SW",
+          "01KVKYF4FY9WS2GME92J8K243H",
+          "01KVKXW6ABBVCXNB643JN021HM"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 17,
+        "edges": 14,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVKXT3SCDC0VGPVJ3CNNA1YA",
+    "01KVKXT4SBWC94P3HZ0WEPEFQ2",
+    "01KVKXJ3EADC5NHH8FH6S4BZBP",
+    "01KVKXKDZP1ZHEQWH45Q80CGJC",
+    "01KVKXKR64JXNW5MH1E8AT330K",
+    "01KVKXJ2WHXTTD2TB446EJFYBE",
+    "01KVKXVH0KN3J6H16ZEN6WH1DC",
+    "01KVKXKTH2EJ1W3TT4D6JQQ3SW",
+    "01KVKYF4FY9WS2GME92J8K243H",
+    "01KVKXW6ABBVCXNB643JN021HM"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 7719,
+  "answer_generation": {
+    "input_tokens": 2795,
+    "output_tokens": 115,
+    "latency_ms": 1697,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"e\",\"reasoning\":\"제공된 도메인 그래프에는 Pepsico의 FY2022 및 FY2021 법적 분쟁(legal battles)에 대한 언급이나 관련 엔티티, 관계가 전혀 존재하지 않습니다. Pepsico와 관련된 엔티티는 'Plan', 'Pre-409A Program' 등 보상/연금 관련 내용뿐이며, 법적 분쟁이나 소송에 관한 정보는 없습니다. 따라서 보기 중에서 정답은 '정보 부족 / 알 수 없음'입니다.\"}",
+    "parsed": {
+      "choice": "e",
+      "reasoning": "제공된 도메인 그래프에는 Pepsico의 FY2022 및 FY2021 법적 분쟁(legal battles)에 대한 언급이나 관련 엔티티, 관계가 전혀 존재하지 않습니다. Pepsico와 관련된 엔티티는 'Plan', 'Pre-409A Program' 등 보상/연금 관련 내용뿐이며, 법적 분쟁이나 소송에 관한 정보는 없습니다. 따라서 보기 중에서 정답은 '정보 부족 / 알 수 없음'입니다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 56,
+  "total_input_tokens": 3286,
+  "total_output_tokens": 189,
+  "total_tokens": 3531,
+  "total_latency_ms": 3992
+}

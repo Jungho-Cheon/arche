@@ -1,0 +1,107 @@
+{
+  "column": "opentology",
+  "question_id": "Q18",
+  "run_index": 1,
+  "anchor_extraction": {
+    "input_tokens": 484,
+    "output_tokens": 29,
+    "latency_ms": 861,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"American Express\",\"aliases\":[\"American Express\"]},{\"canonical\":\"card members\",\"aliases\":[\"card members\",\"members\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "American Express",
+          "aliases": [
+            "American Express"
+          ]
+        },
+        {
+          "canonical": "card members",
+          "aliases": [
+            "card members",
+            "members"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 942,
+      "input": {
+        "keywords": [
+          "American Express",
+          "card members",
+          "members"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 183,
+      "input": {
+        "entry_ids": [
+          "01KVKXQGQ60MKRGHXKW6VP5WS7",
+          "01KVKXR7P8GV0PKW8GN8MQCQY1",
+          "01KVKXSYB7N1W3EC9FSHFFM4A5",
+          "01KVKXSYX6355ENMDF79XZ8SHD",
+          "01KVKXQHZJ8BD06KZ8ADR0B9JB",
+          "01KVKXSXR7SF9BBD7VMH3GYCYN",
+          "01KVKXT6YD4GBR7D1XJNKKRAJP",
+          "01KVKXT663PHYJHGTRT6RK7KB0",
+          "01KVKXQRBEKVHRCRZPZDRXNW7H",
+          "01KVKXQH98KQ2K0N6RFMFECE35"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 67,
+        "edges": 73,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVKXQGQ60MKRGHXKW6VP5WS7",
+    "01KVKXR7P8GV0PKW8GN8MQCQY1",
+    "01KVKXSYB7N1W3EC9FSHFFM4A5",
+    "01KVKXSYX6355ENMDF79XZ8SHD",
+    "01KVKXQHZJ8BD06KZ8ADR0B9JB",
+    "01KVKXSXR7SF9BBD7VMH3GYCYN",
+    "01KVKXT6YD4GBR7D1XJNKKRAJP",
+    "01KVKXT663PHYJHGTRT6RK7KB0",
+    "01KVKXQRBEKVHRCRZPZDRXNW7H",
+    "01KVKXQH98KQ2K0N6RFMFECE35"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 34843,
+  "answer_generation": {
+    "input_tokens": 10924,
+    "output_tokens": 92,
+    "latency_ms": 1475,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"e\",\"reasoning\":\"The provided domain graph contains detailed information about American Express's subsidiaries, business segments, partnerships, competitors, regulatory environment, and various plans and programs. However, there is no information or relationship in the graph that addresses card member retention rates or trends for the year 2022. Therefore, based solely on the graph, it is not possible to determine whether American Express was able to retain card members during 2022.\"}",
+    "parsed": {
+      "choice": "e",
+      "reasoning": "The provided domain graph contains detailed information about American Express's subsidiaries, business segments, partnerships, competitors, regulatory environment, and various plans and programs. However, there is no information or relationship in the graph that addresses card member retention rates or trends for the year 2022. Therefore, based solely on the graph, it is not possible to determine whether American Express was able to retain card members during 2022."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 24,
+  "total_input_tokens": 11408,
+  "total_output_tokens": 121,
+  "total_tokens": 11553,
+  "total_latency_ms": 3461
+}

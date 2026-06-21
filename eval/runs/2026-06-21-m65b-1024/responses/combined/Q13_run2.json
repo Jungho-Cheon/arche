@@ -1,0 +1,147 @@
+{
+  "column": "combined",
+  "question_id": "Q13",
+  "run_index": 2,
+  "anchor_extraction": {
+    "input_tokens": 488,
+    "output_tokens": 16,
+    "latency_ms": 754,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"American Express\",\"aliases\":[\"American Express\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "American Express",
+          "aliases": [
+            "American Express"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 438,
+      "input": {
+        "keywords": [
+          "American Express"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 166,
+      "input": {
+        "entry_ids": [
+          "01KVKXQGQ60MKRGHXKW6VP5WS7",
+          "01KVKXSYX6355ENMDF79XZ8SHD",
+          "01KVKXSXR7SF9BBD7VMH3GYCYN",
+          "01KVKXQHZJ8BD06KZ8ADR0B9JB",
+          "01KVKXT663PHYJHGTRT6RK7KB0",
+          "01KVKXT6YD4GBR7D1XJNKKRAJP",
+          "01KVKXSYB7N1W3EC9FSHFFM4A5",
+          "01KVKXQH98KQ2K0N6RFMFECE35",
+          "01KVKXT375RC2JVVBP91WWNEWZ",
+          "01KVKXTN2W0MXDR4EVFKPD8J0A"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 69,
+        "edges": 75,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVKXQGQ60MKRGHXKW6VP5WS7",
+    "01KVKXSYX6355ENMDF79XZ8SHD",
+    "01KVKXSXR7SF9BBD7VMH3GYCYN",
+    "01KVKXQHZJ8BD06KZ8ADR0B9JB",
+    "01KVKXT663PHYJHGTRT6RK7KB0",
+    "01KVKXT6YD4GBR7D1XJNKKRAJP",
+    "01KVKXSYB7N1W3EC9FSHFFM4A5",
+    "01KVKXQH98KQ2K0N6RFMFECE35",
+    "01KVKXT375RC2JVVBP91WWNEWZ",
+    "01KVKXTN2W0MXDR4EVFKPD8J0A"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 35934,
+  "retrieved_chunks": [
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 6,
+      "score": 0.6906732304308199
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 4,
+      "score": 0.6838434649872712
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 5,
+      "score": 0.6784436467328375
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 165,
+      "score": 0.6561015521598221
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 3,
+      "score": 0.6476672110386512
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 260,
+      "score": 0.6227594642017279
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 7,
+      "score": 0.6085093085237565
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 48,
+      "score": 0.6077538231173956
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 16294,
+    "output_tokens": 225,
+    "latency_ms": 2799,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"a\",\"reasoning\":\"(A) 검색된 문서 발췌에서 'Jurisdictions that represent a significant portion of our billed business outside of the United States include the United Kingdom (UK), the European Union (EU), Australia, Japan, Canada and Mexico.' 이라는 구체적 언급이 있습니다. 이로부터 미국(United States), 유럽(Europe: UK, EU), 아시아(Asia: Japan, Australia), 그리고 라틴 아메리카(멕시코 포함, Latin America)에서 주로 사업을 영위함을 알 수 있습니다. (B) 도메인 그래프에는 지역 구분이 명확히 나와 있지 않으므로, (A)의 구체적 지리적 언급이 결정적 근거입니다. 보기 b, c, d는 EMEA, APAC, LACC 등 American Express의 공식 세그먼트 명칭이지만, 본문에서는 실제로 'Europe', 'Asia', 'Latin America' 등으로 언급되어 있으므로 a가 가장 정확합니다.\"}",
+    "parsed": {
+      "choice": "a",
+      "reasoning": "(A) 검색된 문서 발췌에서 'Jurisdictions that represent a significant portion of our billed business outside of the United States include the United Kingdom (UK), the European Union (EU), Australia, Japan, Canada and Mexico.' 이라는 구체적 언급이 있습니다. 이로부터 미국(United States), 유럽(Europe: UK, EU), 아시아(Asia: Japan, Australia), 그리고 라틴 아메리카(멕시코 포함, Latin America)에서 주로 사업을 영위함을 알 수 있습니다. (B) 도메인 그래프에는 지역 구분이 명확히 나와 있지 않으므로, (A)의 구체적 지리적 언급이 결정적 근거입니다. 보기 b, c, d는 EMEA, APAC, LACC 등 American Express의 공식 세그먼트 명칭이지만, 본문에서는 실제로 'Europe', 'Asia', 'Latin America' 등으로 언급되어 있으므로 a가 가장 정확합니다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 29797,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 17,
+    "chunk_setup_amortized": 29772,
+    "chunk_setup_total": 982504,
+    "graph_keyword_estimated": 8,
+    "questions_count_for_amortization": 33
+  },
+  "total_input_tokens": 16782,
+  "total_output_tokens": 241,
+  "total_tokens": 46820,
+  "total_latency_ms": 4157
+}

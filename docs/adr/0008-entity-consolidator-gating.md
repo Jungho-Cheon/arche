@@ -1,8 +1,27 @@
 # ADR-0008: M6.5 1M 측정 결과 + EntityConsolidator 를 M7 gating 으로 격상
 
-Status: accepted
-Date: 2026-06-20
+Status: accepted, M6.5b applied 2026-06-21
+Date: 2026-06-20 (decision), 2026-06-21 (M6.5b applied)
 Amends: [ADR-0007](./0007-combined-rag-pivot.md)
+
+## 2026-06-21 amendment — M6.5b 종료 + ADR-0007 D2 분기 결정
+
+본 ADR 의 D2 에 명시된 M6.5b (EntityConsolidator) 가 PR #54 로 구현 + 같은 corpus 에 적용 + N=3 재측정 완료. 결과 표 (PROTOCOL.md + CONCLUSION.md 의 요약):
+
+| 컬럼 | M6.5 (2026-06-20-1426) | M6.5b (2026-06-21-m65b-1024) | Δ |
+|---|---|---|---|
+| chunk_rag | 72.7% | 72.7% (재사용) | 0 |
+| opentology (graph 단독) | 6.1% | 27.3% (N=3 majority) | **+21.2pp** |
+| combined | 72.7% | **78.8% (N=3 majority, variance 0pp)** | **+6.1pp** |
+| aliases ≥ 5 entity 수 | 13 alias 단일 노드 (Amcor plc) 외 다수 부패 | 4 (정상 자기지칭만) | over-merge 해소 |
+
+본 결과로 ADR-0007 D2 의 *진짜 분기* (M6.5b 종료 후 재결정) 가 종료된다.
+
+- **Combined 78.8% > chunk 72.7% (+6.1pp)** — ADR-0007 D2 의 "Combined ≥ chunk + 3pp" 충족.
+- **ADR-0007 D1 (Combined 정체성) 유지**.
+- **M7 (productization 코드 작업) unblock** — 본 ADR 의 D4 ("M6.5b 종료 전 M7 코드 착수 보류") 도 해제.
+
+상세는 [eval/reports/2026-06-21-m65b-consolidator/CONCLUSION.md](../../eval/reports/2026-06-21-m65b-consolidator/CONCLUSION.md).
 
 ## TL;DR
 

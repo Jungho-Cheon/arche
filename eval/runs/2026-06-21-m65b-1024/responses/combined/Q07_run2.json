@@ -1,0 +1,165 @@
+{
+  "column": "combined",
+  "question_id": "Q07",
+  "run_index": 2,
+  "anchor_extraction": {
+    "input_tokens": 483,
+    "output_tokens": 49,
+    "latency_ms": 941,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"revenue change\",\"aliases\":[\"revenue change\"]},{\"canonical\":\"FY22\",\"aliases\":[\"FY22\",\"fiscal year 2022\"]},{\"canonical\":\"AMD\",\"aliases\":[\"AMD\",\"Advanced Micro Devices\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "revenue change",
+          "aliases": [
+            "revenue change"
+          ]
+        },
+        {
+          "canonical": "FY22",
+          "aliases": [
+            "FY22",
+            "fiscal year 2022"
+          ]
+        },
+        {
+          "canonical": "AMD",
+          "aliases": [
+            "AMD",
+            "Advanced Micro Devices"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 1207,
+      "input": {
+        "keywords": [
+          "revenue change",
+          "FY22",
+          "fiscal year 2022",
+          "AMD",
+          "Advanced Micro Devices"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 123,
+      "input": {
+        "entry_ids": [
+          "01KVKXN3H5KF7GPN8YBN0AHMX5",
+          "01KVKXT4SBWC94P3HZ0WEPEFQ2",
+          "01KVKXJ3EADC5NHH8FH6S4BZBP",
+          "01KVKXT3SCDC0VGPVJ3CNNA1YA",
+          "01KVKXS2ZGN87V5S4DAZN5W9S3",
+          "01KVKXNPCDXHMM3JV3RZ0M1RVR",
+          "01KVKXNQNR3S0Y08JCJ30F2R6W",
+          "01KVKXNAJXDA21K4PKZW1RR45A",
+          "01KVKXNN2YRXM89Z47Q5V9HG8Y",
+          "01KVKXN9SBQH2EB9M8BC71AB7K"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 57,
+        "edges": 54,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVKXN3H5KF7GPN8YBN0AHMX5",
+    "01KVKXT4SBWC94P3HZ0WEPEFQ2",
+    "01KVKXJ3EADC5NHH8FH6S4BZBP",
+    "01KVKXT3SCDC0VGPVJ3CNNA1YA",
+    "01KVKXS2ZGN87V5S4DAZN5W9S3",
+    "01KVKXNPCDXHMM3JV3RZ0M1RVR",
+    "01KVKXNQNR3S0Y08JCJ30F2R6W",
+    "01KVKXNAJXDA21K4PKZW1RR45A",
+    "01KVKXNN2YRXM89Z47Q5V9HG8Y",
+    "01KVKXN9SBQH2EB9M8BC71AB7K"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 26311,
+  "retrieved_chunks": [
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 47,
+      "score": 0.6829650203916264
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 46,
+      "score": 0.6661280892735956
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 14,
+      "score": 0.6291907312394861
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 13,
+      "score": 0.6285062534867079
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 48,
+      "score": 0.6252878155288898
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 2,
+      "score": 0.6208920477718939
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 4,
+      "score": 0.6190694298308678
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 3,
+      "score": 0.6168456211600265
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 15985,
+    "output_tokens": 187,
+    "latency_ms": 3161,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"a\",\"reasoning\":\"(A) 검색된 문서 발췌에서 FY22(2022년) AMD의 매출 변화에 대해 명확하게 언급하고 있다. 청크 1에서 'The increase in net revenue was driven by a 64% increase in Data Center segment revenue primarily due to higher sales of our EPYC™ server processors, a 21% increase in Gaming segment revenue primarily due to higher semi-custom product sales, and a significant increase in Embedded segment revenue from the prior year period driven by the inclusion of Xilinx embedded product sales.'라고 명시되어 있다. 이는 보기 a)의 내용과 정확히 일치한다. (B) 도메인 그래프에는 FY22 매출 변화의 구체적 원인에 대한 직접적인 정보가 없으므로, (A)의 구체적이고 명시적인 근거가 결정적이었다.\"}",
+    "parsed": {
+      "choice": "a",
+      "reasoning": "(A) 검색된 문서 발췌에서 FY22(2022년) AMD의 매출 변화에 대해 명확하게 언급하고 있다. 청크 1에서 'The increase in net revenue was driven by a 64% increase in Data Center segment revenue primarily due to higher sales of our EPYC™ server processors, a 21% increase in Gaming segment revenue primarily due to higher semi-custom product sales, and a significant increase in Embedded segment revenue from the prior year period driven by the inclusion of Xilinx embedded product sales.'라고 명시되어 있다. 이는 보기 a)의 내용과 정확히 일치한다. (B) 도메인 그래프에는 FY22 매출 변화의 구체적 원인에 대한 직접적인 정보가 없으므로, (A)의 구체적이고 명시적인 근거가 결정적이었다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 29824,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 12,
+    "chunk_setup_amortized": 29772,
+    "chunk_setup_total": 982504,
+    "graph_keyword_estimated": 40,
+    "questions_count_for_amortization": 33
+  },
+  "total_input_tokens": 16468,
+  "total_output_tokens": 236,
+  "total_tokens": 46528,
+  "total_latency_ms": 5432
+}

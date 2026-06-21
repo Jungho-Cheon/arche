@@ -1,0 +1,119 @@
+{
+  "column": "opentology",
+  "question_id": "Q31",
+  "run_index": 2,
+  "anchor_extraction": {
+    "input_tokens": 504,
+    "output_tokens": 57,
+    "latency_ms": 1107,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"restructuring costs\",\"aliases\":[\"restructuring costs\"]},{\"canonical\":\"Pepsico\",\"aliases\":[\"Pepsico\"]},{\"canonical\":\"income statements\",\"aliases\":[\"income statements\"]},{\"canonical\":\"FY2022\",\"aliases\":[\"FY2022\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "restructuring costs",
+          "aliases": [
+            "restructuring costs"
+          ]
+        },
+        {
+          "canonical": "Pepsico",
+          "aliases": [
+            "Pepsico"
+          ]
+        },
+        {
+          "canonical": "income statements",
+          "aliases": [
+            "income statements"
+          ]
+        },
+        {
+          "canonical": "FY2022",
+          "aliases": [
+            "FY2022"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 858,
+      "input": {
+        "keywords": [
+          "restructuring costs",
+          "Pepsico",
+          "income statements",
+          "FY2022"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 125,
+      "input": {
+        "entry_ids": [
+          "01KVKXJ3EADC5NHH8FH6S4BZBP",
+          "01KVKXW6ABBVCXNB643JN021HM",
+          "01KVKY7BCEZ1VT4ZXQQVXS13MF",
+          "01KVKY6A0NXZS2E5QD8SD8ZTTA",
+          "01KVKYDV08SQXMQ5FD15ZRF1VA",
+          "01KVKY6BWFZ8KTRJVJ4RDGKJSQ",
+          "01KVKYFMQ46G9ABTNBQ510494Z",
+          "01KVKYDX7RKV93A40S8WZNJJ0H",
+          "01KVKXKR64JXNW5MH1E8AT330K",
+          "01KVKXR8WD8YKTVHV75SV6X567"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 58,
+        "edges": 53,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVKXJ3EADC5NHH8FH6S4BZBP",
+    "01KVKXW6ABBVCXNB643JN021HM",
+    "01KVKY7BCEZ1VT4ZXQQVXS13MF",
+    "01KVKY6A0NXZS2E5QD8SD8ZTTA",
+    "01KVKYDV08SQXMQ5FD15ZRF1VA",
+    "01KVKY6BWFZ8KTRJVJ4RDGKJSQ",
+    "01KVKYFMQ46G9ABTNBQ510494Z",
+    "01KVKYDX7RKV93A40S8WZNJJ0H",
+    "01KVKXKR64JXNW5MH1E8AT330K",
+    "01KVKXR8WD8YKTVHV75SV6X567"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 26586,
+  "answer_generation": {
+    "input_tokens": 9230,
+    "output_tokens": 90,
+    "latency_ms": 1781,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"e\",\"reasoning\":\"제공된 도메인 그래프에는 Pepsico의 FY2022 손익계산서에 명시된 구조조정 비용(restructuring costs) 또는 그 금액에 대한 정보가 포함되어 있지 않습니다. 구조조정 비용에 대한 언급이나 수치가 그래프 내에 없으므로, 정답은 '정보 부족 / 알 수 없음'입니다.\"}",
+    "parsed": {
+      "choice": "e",
+      "reasoning": "제공된 도메인 그래프에는 Pepsico의 FY2022 손익계산서에 명시된 구조조정 비용(restructuring costs) 또는 그 금액에 대한 정보가 포함되어 있지 않습니다. 구조조정 비용에 대한 언급이나 수치가 그래프 내에 없으므로, 정답은 '정보 부족 / 알 수 없음'입니다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 32,
+  "total_input_tokens": 9734,
+  "total_output_tokens": 147,
+  "total_tokens": 9913,
+  "total_latency_ms": 3871
+}

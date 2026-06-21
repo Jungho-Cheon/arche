@@ -1,0 +1,81 @@
+{
+  "task_id": "con_01KVKYFPFTGTM7X65EJ49QDPBW",
+  "state": "succeeded",
+  "dry_run": false,
+  "progress": {
+    "entities_scanned": 479,
+    "candidates_total": 24,
+    "candidates_self_reference_skipped": 0,
+    "llm_calls": 24
+  },
+  "metrics": {
+    "merged": 0,
+    "rejected": 24,
+    "duration_seconds": 48.822
+  },
+  "sample": {
+    "merged_pairs": [],
+    "rejected_pairs": [
+      {
+        "a_id": "01KVKXHVH6K9ZYJ3R9DBQFYAQ1",
+        "b_id": "01KVKXK44BTHK3VKM1QBHARVVD",
+        "similarity": 0.8702,
+        "reason": "llm_different (conf=1.00)"
+      },
+      {
+        "a_id": "01KVKXJ584HQ4V170RE0T2BJY1",
+        "b_id": "01KVKXJ7FPFHPQ9FG657TRXKRG",
+        "similarity": 0.8648,
+        "reason": "llm_different (conf=0.90)"
+      },
+      {
+        "a_id": "01KVKXJ6R5DYD2WFBE190AA6D6",
+        "b_id": "01KVKXJA5CWH0PS61PWWN5G85J",
+        "similarity": 0.89,
+        "reason": "llm_different (conf=0.95)"
+      },
+      {
+        "a_id": "01KVKXJ6R5DYD2WFBE190AA6D6",
+        "b_id": "01KVKXJ905T1A41WCJD8E4EBEQ",
+        "similarity": 0.8826,
+        "reason": "llm_different (conf=0.95)"
+      },
+      {
+        "a_id": "01KVKXJ6R5DYD2WFBE190AA6D6",
+        "b_id": "01KVKXJARA7GVAA2SS5KMYTY3Y",
+        "similarity": 0.8689,
+        "reason": "llm_different (conf=0.95)"
+      },
+      {
+        "a_id": "01KVKXJ905T1A41WCJD8E4EBEQ",
+        "b_id": "01KVKXJA5CWH0PS61PWWN5G85J",
+        "similarity": 0.8633,
+        "reason": "llm_different (conf=0.95)"
+      },
+      {
+        "a_id": "01KVKXKDZP1ZHEQWH45Q80CGJC",
+        "b_id": "01KVKXKEP6BX9CK4T9K0PPQ507",
+        "similarity": 0.8802,
+        "reason": "llm_different (conf=0.90)"
+      },
+      {
+        "a_id": "01KVKXKF8AZWW59GNMCSY7JJ3G",
+        "b_id": "01KVKXKFZM71BJTRA173VE9H89",
+        "similarity": 0.8566,
+        "reason": "llm_different (conf=0.30)"
+      },
+      {
+        "a_id": "01KVKXKSZNNHMGQB5G4202222W",
+        "b_id": "01KVKXKV6128G44E1RXKEWF9G6",
+        "similarity": 0.8762,
+        "reason": "llm_different (conf=1.00)"
+      },
+      {
+        "a_id": "01KVKXN92SP38H40CMCY495XY1",
+        "b_id": "01KVKXNRZQN04EC9RHCSTWJ5X5",
+        "similarity": 0.8646,
+        "reason": "llm_different (conf=0.90)"
+      }
+    ]
+  }
+}

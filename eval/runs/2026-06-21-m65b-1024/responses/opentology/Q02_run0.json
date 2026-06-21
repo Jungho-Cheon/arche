@@ -1,0 +1,128 @@
+{
+  "column": "opentology",
+  "question_id": "Q02",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 493,
+    "output_tokens": 71,
+    "latency_ms": 1280,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"AMCOR\",\"aliases\":[\"AMCOR\"]},{\"canonical\":\"acquisitions\",\"aliases\":[\"acquisitions\",\"major acquisitions\"]},{\"canonical\":\"FY2023\",\"aliases\":[\"FY2023\"]},{\"canonical\":\"FY2022\",\"aliases\":[\"FY2022\"]},{\"canonical\":\"FY2021\",\"aliases\":[\"FY2021\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "AMCOR",
+          "aliases": [
+            "AMCOR"
+          ]
+        },
+        {
+          "canonical": "acquisitions",
+          "aliases": [
+            "acquisitions",
+            "major acquisitions"
+          ]
+        },
+        {
+          "canonical": "FY2023",
+          "aliases": [
+            "FY2023"
+          ]
+        },
+        {
+          "canonical": "FY2022",
+          "aliases": [
+            "FY2022"
+          ]
+        },
+        {
+          "canonical": "FY2021",
+          "aliases": [
+            "FY2021"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 903,
+      "input": {
+        "keywords": [
+          "AMCOR",
+          "acquisitions",
+          "major acquisitions",
+          "FY2023",
+          "FY2022",
+          "FY2021"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 182,
+      "input": {
+        "entry_ids": [
+          "01KVKXJ2WHXTTD2TB446EJFYBE",
+          "01KVKXJ3EADC5NHH8FH6S4BZBP",
+          "01KVKXJ905T1A41WCJD8E4EBEQ",
+          "01KVKXKFZM71BJTRA173VE9H89",
+          "01KVKXKTH2EJ1W3TT4D6JQQ3SW",
+          "01KVKXKF8AZWW59GNMCSY7JJ3G",
+          "01KVKXT4SBWC94P3HZ0WEPEFQ2",
+          "01KVKXHVH6K9ZYJ3R9DBQFYAQ1",
+          "01KVKXJ02ZQNN2QRBJBKDPG78V",
+          "01KVKXK9X07P1DDSCF9ST57TDH"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 70,
+        "edges": 79,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVKXJ2WHXTTD2TB446EJFYBE",
+    "01KVKXJ3EADC5NHH8FH6S4BZBP",
+    "01KVKXJ905T1A41WCJD8E4EBEQ",
+    "01KVKXKFZM71BJTRA173VE9H89",
+    "01KVKXKTH2EJ1W3TT4D6JQQ3SW",
+    "01KVKXKF8AZWW59GNMCSY7JJ3G",
+    "01KVKXT4SBWC94P3HZ0WEPEFQ2",
+    "01KVKXHVH6K9ZYJ3R9DBQFYAQ1",
+    "01KVKXJ02ZQNN2QRBJBKDPG78V",
+    "01KVKXK9X07P1DDSCF9ST57TDH"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 32895,
+  "answer_generation": {
+    "input_tokens": 11717,
+    "output_tokens": 143,
+    "latency_ms": 2392,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\": \"e\", \"reasoning\": \"제공된 도메인 그래프에는 Amcor plc가 FY2023, FY2022, FY2021에 어떤 기업을 인수했는지에 대한 구체적인 정보(예: 체코 공장, 상하이 의료기기 포장 사이트, 뉴질랜드 자동화 포장기계 제조사 등)가 명시되어 있지 않다. 그래프에는 Bemis Company, Inc. 인수(시점 불명)만 명확히 언급되어 있고, FY2023~2021 기간 내 주요 인수 내역에 대한 정보는 없다. 따라서 정답은 정보 부족이다.\"}",
+    "parsed": {
+      "choice": "e",
+      "reasoning": "제공된 도메인 그래프에는 Amcor plc가 FY2023, FY2022, FY2021에 어떤 기업을 인수했는지에 대한 구체적인 정보(예: 체코 공장, 상하이 의료기기 포장 사이트, 뉴질랜드 자동화 포장기계 제조사 등)가 명시되어 있지 않다. 그래프에는 Bemis Company, Inc. 인수(시점 불명)만 명확히 언급되어 있고, FY2023~2021 기간 내 주요 인수 내역에 대한 정보는 없다. 따라서 정답은 정보 부족이다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 48,
+  "total_input_tokens": 12210,
+  "total_output_tokens": 214,
+  "total_tokens": 12472,
+  "total_latency_ms": 4757
+}

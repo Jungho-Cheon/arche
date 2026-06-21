@@ -1,0 +1,156 @@
+{
+  "column": "combined",
+  "question_id": "Q23",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 480,
+    "output_tokens": 34,
+    "latency_ms": 832,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"Boeing\",\"aliases\":[\"Boeing\"]},{\"canonical\":\"cyclicality\",\"aliases\":[\"cyclicality\",\"business cycle\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "Boeing",
+          "aliases": [
+            "Boeing"
+          ]
+        },
+        {
+          "canonical": "cyclicality",
+          "aliases": [
+            "cyclicality",
+            "business cycle"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 960,
+      "input": {
+        "keywords": [
+          "Boeing",
+          "cyclicality",
+          "business cycle"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 89,
+      "input": {
+        "entry_ids": [
+          "01KVKXQMJTEWAD3WHCAPAB1T6E",
+          "01KVKXVKJSHGWH441VQYGJX8TN",
+          "01KVKXV63383JB0ZW5T5PXKAE6",
+          "01KVKXW4G2J8875WMRDC3VRVZ3",
+          "01KVKXV5NDX8NKRR9F2RHSW8T2",
+          "01KVKXVJZSY0D2RDY4JTX5YNE1",
+          "01KVKXV6S1ZW39SC3KAHZJBG7G",
+          "01KVKXJDZKPA92TRM5DD61MK31",
+          "01KVKXQSP3E546MZNVCXYSNSYW",
+          "01KVKXW6ABBVCXNB643JN021HM"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 31,
+        "edges": 30,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVKXQMJTEWAD3WHCAPAB1T6E",
+    "01KVKXVKJSHGWH441VQYGJX8TN",
+    "01KVKXV63383JB0ZW5T5PXKAE6",
+    "01KVKXW4G2J8875WMRDC3VRVZ3",
+    "01KVKXV5NDX8NKRR9F2RHSW8T2",
+    "01KVKXVJZSY0D2RDY4JTX5YNE1",
+    "01KVKXV6S1ZW39SC3KAHZJBG7G",
+    "01KVKXJDZKPA92TRM5DD61MK31",
+    "01KVKXQSP3E546MZNVCXYSNSYW",
+    "01KVKXW6ABBVCXNB643JN021HM"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 17537,
+  "retrieved_chunks": [
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 10,
+      "score": 0.6042984302771528
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 8,
+      "score": 0.6011174028907862
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 12,
+      "score": 0.5877800009724703
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 22,
+      "score": 0.5785350198939018
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 19,
+      "score": 0.560278444835389
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 60,
+      "score": 0.5579374211016418
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 4,
+      "score": 0.5577521175856426
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 29,
+      "score": 0.5572863487481964
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 12582,
+    "output_tokens": 225,
+    "latency_ms": 3040,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"c\",\"reasoning\":\"(A) 검색된 문서 발췌에서 Boeing의 사업이 항공사 산업의 경기 변동성(cyclicality)에 노출되어 있음을 명확히 언급하고 있다. 예를 들어, 청크 2와 4에서 Boeing의 상업용 항공기 사업이 항공사들의 재무 성과, 항공 여행 수요, 글로벌 경제 상황, 연료비 등 외부 요인에 의해 영향을 받으며, 이는 경기 변동성의 전형적인 특징임을 보여준다. 또한, 상업용 항공기 수요가 경기 회복, 정부 규제, 국제 무역 환경 등 외부 요인에 따라 변동함을 반복적으로 언급한다. 반면 (B) 도메인 그래프에는 cyclicality에 대한 직접적인 정보가 없다. 따라서 (A)의 구체적이고 명시적인 근거에 따라 c) Yes, Boeing's business is subject to cyclicality because it is exposed to the cyclical airline industry.가 정답이다.\"}",
+    "parsed": {
+      "choice": "c",
+      "reasoning": "(A) 검색된 문서 발췌에서 Boeing의 사업이 항공사 산업의 경기 변동성(cyclicality)에 노출되어 있음을 명확히 언급하고 있다. 예를 들어, 청크 2와 4에서 Boeing의 상업용 항공기 사업이 항공사들의 재무 성과, 항공 여행 수요, 글로벌 경제 상황, 연료비 등 외부 요인에 의해 영향을 받으며, 이는 경기 변동성의 전형적인 특징임을 보여준다. 또한, 상업용 항공기 수요가 경기 회복, 정부 규제, 국제 무역 환경 등 외부 요인에 따라 변동함을 반복적으로 언급한다. 반면 (B) 도메인 그래프에는 cyclicality에 대한 직접적인 정보가 없다. 따라서 (A)의 구체적이고 명시적인 근거에 따라 c) Yes, Boeing's business is subject to cyclicality because it is exposed to the cyclical airline industry.가 정답이다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 29805,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 9,
+    "chunk_setup_amortized": 29772,
+    "chunk_setup_total": 982504,
+    "graph_keyword_estimated": 24,
+    "questions_count_for_amortization": 33
+  },
+  "total_input_tokens": 13062,
+  "total_output_tokens": 259,
+  "total_tokens": 43126,
+  "total_latency_ms": 4921
+}

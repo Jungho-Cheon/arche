@@ -1,0 +1,161 @@
+{
+  "column": "combined",
+  "question_id": "Q06",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 486,
+    "output_tokens": 32,
+    "latency_ms": 1339,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"AMD\",\"aliases\":[\"AMD\"]},{\"canonical\":\"products\",\"aliases\":[\"products\"]},{\"canonical\":\"services\",\"aliases\":[\"services\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "AMD",
+          "aliases": [
+            "AMD"
+          ]
+        },
+        {
+          "canonical": "products",
+          "aliases": [
+            "products"
+          ]
+        },
+        {
+          "canonical": "services",
+          "aliases": [
+            "services"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 888,
+      "input": {
+        "keywords": [
+          "AMD",
+          "products",
+          "services"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 150,
+      "input": {
+        "entry_ids": [
+          "01KVKXR6ZN458J7TFF420QJ8N2",
+          "01KVKYE1GVMAF5ZKR2W6ZTBRKF",
+          "01KVKXR6JQWXWEDYA92FS2WZ36",
+          "01KVKXN3H5KF7GPN8YBN0AHMX5",
+          "01KVKXNAJXDA21K4PKZW1RR45A",
+          "01KVKXNN2YRXM89Z47Q5V9HG8Y",
+          "01KVKXV7Y9RVABQ5QVSJH0NQDF",
+          "01KVKXNNN7HKRW9SP8RD2EKFH8",
+          "01KVKXVMQK2A9SWMPGYCFQFXRN",
+          "01KVKYF5NXVSZZWN5BDXX084PM"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 71,
+        "edges": 67,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVKXR6ZN458J7TFF420QJ8N2",
+    "01KVKYE1GVMAF5ZKR2W6ZTBRKF",
+    "01KVKXR6JQWXWEDYA92FS2WZ36",
+    "01KVKXN3H5KF7GPN8YBN0AHMX5",
+    "01KVKXNAJXDA21K4PKZW1RR45A",
+    "01KVKXNN2YRXM89Z47Q5V9HG8Y",
+    "01KVKXV7Y9RVABQ5QVSJH0NQDF",
+    "01KVKXNNN7HKRW9SP8RD2EKFH8",
+    "01KVKXVMQK2A9SWMPGYCFQFXRN",
+    "01KVKYF5NXVSZZWN5BDXX084PM"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 33012,
+  "retrieved_chunks": [
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 3,
+      "score": 0.6948725500323174
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 13,
+      "score": 0.6934358303960223
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 10,
+      "score": 0.6857263994096907
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 4,
+      "score": 0.6735370494968888
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 2,
+      "score": 0.6703321866585266
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 48,
+      "score": 0.6650018671113759
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 47,
+      "score": 0.6638816612383478
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 46,
+      "score": 0.649914229753475
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 18233,
+    "output_tokens": 215,
+    "latency_ms": 3213,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"a\",\"reasoning\":\"(A) 검색된 문서 발췌에서 AMD가 FY22 기준으로 판매하는 주요 제품과 서비스에 대해 명확하게 기술하고 있다. 예를 들어, 'server microprocessors (CPUs) and graphics processing units (GPUs), data processing units (DPUs), Field Programmable Gate Arrays (FPGAs), and Adaptive System-on-Chip (SoC) products for data centers; CPUs, accelerated processing units (APUs) that integrate CPUs and GPUs, and chipsets for desktop and notebook personal computers; discrete GPUs, and semi-custom SoC products and development services; and embedded CPUs, GPUs, APUs, FPGAs, and Adaptive SoC products.'라고 명시되어 있다. (B) 도메인 그래프에서도 AMD의 사업 부문과 제품군이 위와 같이 분류되어 있음을 확인할 수 있다. 두 출처가 모두 일치하며, 보기 a)가 이 내용을 정확히 반영한다. 따라서 a)가 정답이다.\"}",
+    "parsed": {
+      "choice": "a",
+      "reasoning": "(A) 검색된 문서 발췌에서 AMD가 FY22 기준으로 판매하는 주요 제품과 서비스에 대해 명확하게 기술하고 있다. 예를 들어, 'server microprocessors (CPUs) and graphics processing units (GPUs), data processing units (DPUs), Field Programmable Gate Arrays (FPGAs), and Adaptive System-on-Chip (SoC) products for data centers; CPUs, accelerated processing units (APUs) that integrate CPUs and GPUs, and chipsets for desktop and notebook personal computers; discrete GPUs, and semi-custom SoC products and development services; and embedded CPUs, GPUs, APUs, FPGAs, and Adaptive SoC products.'라고 명시되어 있다. (B) 도메인 그래프에서도 AMD의 사업 부문과 제품군이 위와 같이 분류되어 있음을 확인할 수 있다. 두 출처가 모두 일치하며, 보기 a)가 이 내용을 정확히 반영한다. 따라서 a)가 정답이다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 29811,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 15,
+    "chunk_setup_amortized": 29772,
+    "chunk_setup_total": 982504,
+    "graph_keyword_estimated": 24,
+    "questions_count_for_amortization": 33
+  },
+  "total_input_tokens": 18719,
+  "total_output_tokens": 247,
+  "total_tokens": 48777,
+  "total_latency_ms": 5590
+}

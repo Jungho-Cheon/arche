@@ -1,0 +1,107 @@
+{
+  "column": "opentology",
+  "question_id": "Q13",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 488,
+    "output_tokens": 29,
+    "latency_ms": 835,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"American Express\",\"aliases\":[\"American Express\"]},{\"canonical\":\"geographies\",\"aliases\":[\"geographies\",\"regions\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "American Express",
+          "aliases": [
+            "American Express"
+          ]
+        },
+        {
+          "canonical": "geographies",
+          "aliases": [
+            "geographies",
+            "regions"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 703,
+      "input": {
+        "keywords": [
+          "American Express",
+          "geographies",
+          "regions"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 165,
+      "input": {
+        "entry_ids": [
+          "01KVKXQGQ60MKRGHXKW6VP5WS7",
+          "01KVKY6D2Z4QDS9Z2KAK2FHJRK",
+          "01KVKXSYX6355ENMDF79XZ8SHD",
+          "01KVKY6E64RWCZNQ897KHRGF0F",
+          "01KVKXSXR7SF9BBD7VMH3GYCYN",
+          "01KVKXQHZJ8BD06KZ8ADR0B9JB",
+          "01KVKXT663PHYJHGTRT6RK7KB0",
+          "01KVKXT6YD4GBR7D1XJNKKRAJP",
+          "01KVKXSYB7N1W3EC9FSHFFM4A5",
+          "01KVKY6DM18JENDV88D4WVGAA8"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 71,
+        "edges": 75,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVKXQGQ60MKRGHXKW6VP5WS7",
+    "01KVKY6D2Z4QDS9Z2KAK2FHJRK",
+    "01KVKXSYX6355ENMDF79XZ8SHD",
+    "01KVKY6E64RWCZNQ897KHRGF0F",
+    "01KVKXSXR7SF9BBD7VMH3GYCYN",
+    "01KVKXQHZJ8BD06KZ8ADR0B9JB",
+    "01KVKXT663PHYJHGTRT6RK7KB0",
+    "01KVKXT6YD4GBR7D1XJNKKRAJP",
+    "01KVKXSYB7N1W3EC9FSHFFM4A5",
+    "01KVKY6DM18JENDV88D4WVGAA8"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 36371,
+  "answer_generation": {
+    "input_tokens": 11411,
+    "output_tokens": 191,
+    "latency_ms": 4051,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\": \"e\", \"reasoning\": \"그래프 내 American Express Company의 주요 운영 지역(geographies)에 대한 직접적인 정보나, 해당 지역을 명시적으로 나열하는 엔티티/관계가 존재하지 않습니다. 제공된 그래프에는 American Express의 사업 부문(예: U.S. Consumer Services, International Card Services 등)이나 경쟁사, 파트너, 감독기관 등은 있으나, 'United States, EMEA, APAC, LACC' 등과 같은 지리적 구분이나 명칭이 American Express와 직접적으로 연결되어 있지 않습니다. 반면, 'Africa, Middle East and South Asia', 'Europe', 'Asia Pacific, Australia and New Zealand and China Region' 등은 PepsiCo, Inc.와 관련된 엔티티로만 나타납니다. 따라서 American Express의 주요 운영 지역을 그래프만으로는 알 수 없습니다.\"}",
+    "parsed": {
+      "choice": "e",
+      "reasoning": "그래프 내 American Express Company의 주요 운영 지역(geographies)에 대한 직접적인 정보나, 해당 지역을 명시적으로 나열하는 엔티티/관계가 존재하지 않습니다. 제공된 그래프에는 American Express의 사업 부문(예: U.S. Consumer Services, International Card Services 등)이나 경쟁사, 파트너, 감독기관 등은 있으나, 'United States, EMEA, APAC, LACC' 등과 같은 지리적 구분이나 명칭이 American Express와 직접적으로 연결되어 있지 않습니다. 반면, 'Africa, Middle East and South Asia', 'Europe', 'Asia Pacific, Australia and New Zealand and China Region' 등은 PepsiCo, Inc.와 관련된 엔티티로만 나타납니다. 따라서 American Express의 주요 운영 지역을 그래프만으로는 알 수 없습니다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 24,
+  "total_input_tokens": 11899,
+  "total_output_tokens": 220,
+  "total_tokens": 12143,
+  "total_latency_ms": 5754
+}

@@ -1,0 +1,176 @@
+{
+  "column": "combined",
+  "question_id": "Q30",
+  "run_index": 1,
+  "anchor_extraction": {
+    "input_tokens": 491,
+    "output_tokens": 77,
+    "latency_ms": 2369,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"Pepsico\",\"aliases\":[\"Pepsico\"]},{\"canonical\":\"ongoing legal battles\",\"aliases\":[\"ongoing legal battles\",\"legal battles\",\"lawsuits\"]},{\"canonical\":\"FY2022\",\"aliases\":[\"FY2022\",\"Fiscal Year 2022\"]},{\"canonical\":\"FY2021\",\"aliases\":[\"FY2021\",\"Fiscal Year 2021\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "Pepsico",
+          "aliases": [
+            "Pepsico"
+          ]
+        },
+        {
+          "canonical": "ongoing legal battles",
+          "aliases": [
+            "ongoing legal battles",
+            "legal battles",
+            "lawsuits"
+          ]
+        },
+        {
+          "canonical": "FY2022",
+          "aliases": [
+            "FY2022",
+            "Fiscal Year 2022"
+          ]
+        },
+        {
+          "canonical": "FY2021",
+          "aliases": [
+            "FY2021",
+            "Fiscal Year 2021"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 1682,
+      "input": {
+        "keywords": [
+          "Pepsico",
+          "ongoing legal battles",
+          "legal battles",
+          "lawsuits",
+          "FY2022",
+          "Fiscal Year 2022",
+          "FY2021",
+          "Fiscal Year 2021"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 46,
+      "input": {
+        "entry_ids": [
+          "01KVKXT3SCDC0VGPVJ3CNNA1YA",
+          "01KVKXT4SBWC94P3HZ0WEPEFQ2",
+          "01KVKXJ3EADC5NHH8FH6S4BZBP",
+          "01KVKXKDZP1ZHEQWH45Q80CGJC",
+          "01KVKXKR64JXNW5MH1E8AT330K",
+          "01KVKXJ2WHXTTD2TB446EJFYBE",
+          "01KVKXVH0KN3J6H16ZEN6WH1DC",
+          "01KVKXKTH2EJ1W3TT4D6JQQ3SW",
+          "01KVKYF4FY9WS2GME92J8K243H",
+          "01KVKXKSZNNHMGQB5G4202222W"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 17,
+        "edges": 14,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVKXT3SCDC0VGPVJ3CNNA1YA",
+    "01KVKXT4SBWC94P3HZ0WEPEFQ2",
+    "01KVKXJ3EADC5NHH8FH6S4BZBP",
+    "01KVKXKDZP1ZHEQWH45Q80CGJC",
+    "01KVKXKR64JXNW5MH1E8AT330K",
+    "01KVKXJ2WHXTTD2TB446EJFYBE",
+    "01KVKXVH0KN3J6H16ZEN6WH1DC",
+    "01KVKXKTH2EJ1W3TT4D6JQQ3SW",
+    "01KVKYF4FY9WS2GME92J8K243H",
+    "01KVKXKSZNNHMGQB5G4202222W"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 7678,
+  "retrieved_chunks": [
+    {
+      "source_path": "PEPSICO_2022_10K.md",
+      "chunk_index": 15,
+      "score": 0.6819380179246841
+    },
+    {
+      "source_path": "PEPSICO_2022_10K.md",
+      "chunk_index": 36,
+      "score": 0.6385842463621512
+    },
+    {
+      "source_path": "PEPSICO_2022_10K.md",
+      "chunk_index": 0,
+      "score": 0.6369427722771306
+    },
+    {
+      "source_path": "PEPSICO_2022_10K.md",
+      "chunk_index": 13,
+      "score": 0.6319461935412792
+    },
+    {
+      "source_path": "PEPSICO_2022_10K.md",
+      "chunk_index": 1,
+      "score": 0.6276128657066357
+    },
+    {
+      "source_path": "PEPSICO_2022_10K.md",
+      "chunk_index": 35,
+      "score": 0.6229326829444517
+    },
+    {
+      "source_path": "PEPSICO_2022_10K.md",
+      "chunk_index": 29,
+      "score": 0.6189470412543671
+    },
+    {
+      "source_path": "PEPSICO_2022_10K.md",
+      "chunk_index": 40,
+      "score": 0.6151709506075742
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 9405,
+    "output_tokens": 211,
+    "latency_ms": 2229,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"b\",\"reasoning\":\"(A) 검색된 문서 발췌에서 PEPSICO_2022_10K.md:29는 'We and our subsidiaries are party to a variety of litigation, claims, legal or regulatory proceedings, inquiries and investigations. While the results of such litigation, claims, legal or regulatory proceedings, inquiries and investigations cannot be predicted with certainty, management believes that the final outcome of the foregoing will not have a material adverse effect on our financial condition, results of operations or cash flows.'라고 명시하고 있습니다. 즉, 소송 등은 있으나, 경영진은 이들이 재무 상태, 영업 실적, 현금 흐름에 중대한 영향을 미치지 않을 것이라고 보고 있습니다. (B) 도메인 그래프에는 관련 정보가 없습니다. 따라서 (A)의 근거로 보기에 가장 부합하는 답은 'b) Pepsico reported minor legal disputes, but none were material in FY2022 and FY2021.'입니다.\"}",
+    "parsed": {
+      "choice": "b",
+      "reasoning": "(A) 검색된 문서 발췌에서 PEPSICO_2022_10K.md:29는 'We and our subsidiaries are party to a variety of litigation, claims, legal or regulatory proceedings, inquiries and investigations. While the results of such litigation, claims, legal or regulatory proceedings, inquiries and investigations cannot be predicted with certainty, management believes that the final outcome of the foregoing will not have a material adverse effect on our financial condition, results of operations or cash flows.'라고 명시하고 있습니다. 즉, 소송 등은 있으나, 경영진은 이들이 재무 상태, 영업 실적, 현금 흐름에 중대한 영향을 미치지 않을 것이라고 보고 있습니다. (B) 도메인 그래프에는 관련 정보가 없습니다. 따라서 (A)의 근거로 보기에 가장 부합하는 답은 'b) Pepsico reported minor legal disputes, but none were material in FY2022 and FY2021.'입니다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 29856,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 20,
+    "chunk_setup_amortized": 29772,
+    "chunk_setup_total": 982504,
+    "graph_keyword_estimated": 64,
+    "questions_count_for_amortization": 33
+  },
+  "total_input_tokens": 9896,
+  "total_output_tokens": 288,
+  "total_tokens": 40040,
+  "total_latency_ms": 6326
+}

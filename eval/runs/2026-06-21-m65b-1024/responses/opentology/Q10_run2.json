@@ -1,0 +1,130 @@
+{
+  "column": "opentology",
+  "question_id": "Q10",
+  "run_index": 2,
+  "anchor_extraction": {
+    "input_tokens": 494,
+    "output_tokens": 67,
+    "latency_ms": 970,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"FY21\",\"aliases\":[\"FY21\"]},{\"canonical\":\"FY22\",\"aliases\":[\"FY22\"]},{\"canonical\":\"Embedded\",\"aliases\":[\"Embedded\"]},{\"canonical\":\"AMD reporting segment\",\"aliases\":[\"AMD reporting segment\",\"AMD segment\"]},{\"canonical\":\"sales proportion\",\"aliases\":[\"sales proportion\",\"sales proportionally\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "FY21",
+          "aliases": [
+            "FY21"
+          ]
+        },
+        {
+          "canonical": "FY22",
+          "aliases": [
+            "FY22"
+          ]
+        },
+        {
+          "canonical": "Embedded",
+          "aliases": [
+            "Embedded"
+          ]
+        },
+        {
+          "canonical": "AMD reporting segment",
+          "aliases": [
+            "AMD reporting segment",
+            "AMD segment"
+          ]
+        },
+        {
+          "canonical": "sales proportion",
+          "aliases": [
+            "sales proportion",
+            "sales proportionally"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 1284,
+      "input": {
+        "keywords": [
+          "FY21",
+          "FY22",
+          "Embedded",
+          "AMD reporting segment",
+          "AMD segment",
+          "sales proportion",
+          "sales proportionally"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 147,
+      "input": {
+        "entry_ids": [
+          "01KVKXN7S88H8EWRV95WG8EVRV",
+          "01KVKXN71CGD7AXV4JA1E5T6X4",
+          "01KVKXN3H5KF7GPN8YBN0AHMX5",
+          "01KVKXN6G7ZXGEFX6MMJRQDAWY",
+          "01KVKXNSP1N83TGYGTNXJEPYM4",
+          "01KVKXNRZQN04EC9RHCSTWJ5X5",
+          "01KVKXNPCDXHMM3JV3RZ0M1RVR",
+          "01KVKXN92SP38H40CMCY495XY1",
+          "01KVKXNN2YRXM89Z47Q5V9HG8Y",
+          "01KVKXNAJXDA21K4PKZW1RR45A"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 62,
+        "edges": 61,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVKXN7S88H8EWRV95WG8EVRV",
+    "01KVKXN71CGD7AXV4JA1E5T6X4",
+    "01KVKXN3H5KF7GPN8YBN0AHMX5",
+    "01KVKXN6G7ZXGEFX6MMJRQDAWY",
+    "01KVKXNSP1N83TGYGTNXJEPYM4",
+    "01KVKXNRZQN04EC9RHCSTWJ5X5",
+    "01KVKXNPCDXHMM3JV3RZ0M1RVR",
+    "01KVKXN92SP38H40CMCY495XY1",
+    "01KVKXNN2YRXM89Z47Q5V9HG8Y",
+    "01KVKXNAJXDA21K4PKZW1RR45A"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 27532,
+  "answer_generation": {
+    "input_tokens": 9108,
+    "output_tokens": 245,
+    "latency_ms": 3121,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"c\",\"reasoning\":\"그래프에서 AMD의 사업 부문(segments)은 Data Center, Gaming, Client, Embedded, All Other로 명확히 구분되어 있다. 질문은 FY21~FY22 기간 동안 Embedded를 제외한 AMD의 보고 부문 중 매출 비중이 가장 많이 증가한 부문을 묻고 있다. 보기 a)와 d)는 AMD의 2022년 사업 부문 명칭과 일치하지 않는다(Enterprise, Embedded and Semi-Custom, Computing and Graphics는 과거 명칭임). Embedded는 제외하라고 했으므로 b)는 정답이 될 수 없다. 남은 보기 중 Data Center segment는 2022년 10-K에서 신설된 주요 부문이며, Gaming과 Client는 상대적으로 성장률이 낮았던 것으로 알려져 있다. 그래프에는 각 부문별 매출 증가율 수치는 없으나, Embedded를 제외하면 Data Center segment가 신설 이후 가장 큰 비중 증가를 보였다는 점이 도메인 지식과 부합하며, 다른 보기는 부문 명칭이 일치하지 않으므로 c)가 가장 적합하다.\"}",
+    "parsed": {
+      "choice": "c",
+      "reasoning": "그래프에서 AMD의 사업 부문(segments)은 Data Center, Gaming, Client, Embedded, All Other로 명확히 구분되어 있다. 질문은 FY21~FY22 기간 동안 Embedded를 제외한 AMD의 보고 부문 중 매출 비중이 가장 많이 증가한 부문을 묻고 있다. 보기 a)와 d)는 AMD의 2022년 사업 부문 명칭과 일치하지 않는다(Enterprise, Embedded and Semi-Custom, Computing and Graphics는 과거 명칭임). Embedded는 제외하라고 했으므로 b)는 정답이 될 수 없다. 남은 보기 중 Data Center segment는 2022년 10-K에서 신설된 주요 부문이며, Gaming과 Client는 상대적으로 성장률이 낮았던 것으로 알려져 있다. 그래프에는 각 부문별 매출 증가율 수치는 없으나, Embedded를 제외하면 Data Center segment가 신설 이후 가장 큰 비중 증가를 보였다는 점이 도메인 지식과 부합하며, 다른 보기는 부문 명칭이 일치하지 않으므로 c)가 가장 적합하다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 56,
+  "total_input_tokens": 9602,
+  "total_output_tokens": 312,
+  "total_tokens": 9970,
+  "total_latency_ms": 5522
+}

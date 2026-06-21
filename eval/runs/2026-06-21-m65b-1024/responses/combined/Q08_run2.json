@@ -1,0 +1,165 @@
+{
+  "column": "combined",
+  "question_id": "Q08",
+  "run_index": 2,
+  "anchor_extraction": {
+    "input_tokens": 506,
+    "output_tokens": 49,
+    "latency_ms": 2010,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"operating margin\",\"aliases\":[\"operating margin\"]},{\"canonical\":\"FY22\",\"aliases\":[\"FY22\",\"fiscal year 2022\"]},{\"canonical\":\"AMD\",\"aliases\":[\"AMD\",\"Advanced Micro Devices\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "operating margin",
+          "aliases": [
+            "operating margin"
+          ]
+        },
+        {
+          "canonical": "FY22",
+          "aliases": [
+            "FY22",
+            "fiscal year 2022"
+          ]
+        },
+        {
+          "canonical": "AMD",
+          "aliases": [
+            "AMD",
+            "Advanced Micro Devices"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 1230,
+      "input": {
+        "keywords": [
+          "operating margin",
+          "FY22",
+          "fiscal year 2022",
+          "AMD",
+          "Advanced Micro Devices"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 119,
+      "input": {
+        "entry_ids": [
+          "01KVKXN3H5KF7GPN8YBN0AHMX5",
+          "01KVKXNGS9NXGESR30K7161VTV",
+          "01KVKXT4SBWC94P3HZ0WEPEFQ2",
+          "01KVKXT3SCDC0VGPVJ3CNNA1YA",
+          "01KVKXNPCDXHMM3JV3RZ0M1RVR",
+          "01KVKXNQNR3S0Y08JCJ30F2R6W",
+          "01KVKXNAJXDA21K4PKZW1RR45A",
+          "01KVKXNN2YRXM89Z47Q5V9HG8Y",
+          "01KVKXN9SBQH2EB9M8BC71AB7K",
+          "01KVKXNR9AVJP8346MZ7M164XF"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 54,
+        "edges": 52,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVKXN3H5KF7GPN8YBN0AHMX5",
+    "01KVKXNGS9NXGESR30K7161VTV",
+    "01KVKXT4SBWC94P3HZ0WEPEFQ2",
+    "01KVKXT3SCDC0VGPVJ3CNNA1YA",
+    "01KVKXNPCDXHMM3JV3RZ0M1RVR",
+    "01KVKXNQNR3S0Y08JCJ30F2R6W",
+    "01KVKXNAJXDA21K4PKZW1RR45A",
+    "01KVKXNN2YRXM89Z47Q5V9HG8Y",
+    "01KVKXN9SBQH2EB9M8BC71AB7K",
+    "01KVKXNR9AVJP8346MZ7M164XF"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 24409,
+  "retrieved_chunks": [
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 47,
+      "score": 0.5931201677607411
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 46,
+      "score": 0.5928808972108613
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 3,
+      "score": 0.5715361781272471
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 14,
+      "score": 0.5636437934002243
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 13,
+      "score": 0.5634274334986279
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 2,
+      "score": 0.5622365426302012
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 64,
+      "score": 0.5503617449125477
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 4,
+      "score": 0.5413216875155408
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 15392,
+    "output_tokens": 149,
+    "latency_ms": 2026,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"b\",\"reasoning\":\"(A) 검색된 문서 발췌에서 AMD의 2022년 영업이익(operating income) 감소의 주요 원인이 Xilinx 인수와 관련된 무형자산 상각(amortization of intangible assets)임이 명확하게 언급되어 있다. 예시로, 'The decrease in operating income was primarily driven by amortization of intangible assets associated with the Xilinx acquisition.'라는 문장이 있다. (B) 도메인 그래프에는 이 질문에 직접적으로 답하는 관계가 없으므로, (A)의 구체적이고 명시적인 근거가 결정적이다. 따라서 정답은 b)이다.\"}",
+    "parsed": {
+      "choice": "b",
+      "reasoning": "(A) 검색된 문서 발췌에서 AMD의 2022년 영업이익(operating income) 감소의 주요 원인이 Xilinx 인수와 관련된 무형자산 상각(amortization of intangible assets)임이 명확하게 언급되어 있다. 예시로, 'The decrease in operating income was primarily driven by amortization of intangible assets associated with the Xilinx acquisition.'라는 문장이 있다. (B) 도메인 그래프에는 이 질문에 직접적으로 답하는 관계가 없으므로, (A)의 구체적이고 명시적인 근거가 결정적이다. 따라서 정답은 b)이다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 29847,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 35,
+    "chunk_setup_amortized": 29772,
+    "chunk_setup_total": 982504,
+    "graph_keyword_estimated": 40,
+    "questions_count_for_amortization": 33
+  },
+  "total_input_tokens": 15898,
+  "total_output_tokens": 198,
+  "total_tokens": 45943,
+  "total_latency_ms": 5385
+}

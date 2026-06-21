@@ -1,0 +1,147 @@
+{
+  "column": "combined",
+  "question_id": "Q03",
+  "run_index": 1,
+  "anchor_extraction": {
+    "input_tokens": 480,
+    "output_tokens": 16,
+    "latency_ms": 903,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"AMCOR\",\"aliases\":[\"AMCOR\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "AMCOR",
+          "aliases": [
+            "AMCOR"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 429,
+      "input": {
+        "keywords": [
+          "AMCOR"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 181,
+      "input": {
+        "entry_ids": [
+          "01KVKXHVH6K9ZYJ3R9DBQFYAQ1",
+          "01KVKXJ6R5DYD2WFBE190AA6D6",
+          "01KVKXK44BTHK3VKM1QBHARVVD",
+          "01KVKXJ5XWR5B83M5Z91NHPJXB",
+          "01KVKXJ905T1A41WCJD8E4EBEQ",
+          "01KVKXK4NP12PQN23BEVT760HM",
+          "01KVKXJDC3JFZ4A7C4ZDZR0RQB",
+          "01KVKXJ4S7QZX1NJEMQ4FKQNRS",
+          "01KVKXK6CGRYNEHSJMRT2JQMWA",
+          "01KVKXJA5CWH0PS61PWWN5G85J"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 67,
+        "edges": 75,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVKXHVH6K9ZYJ3R9DBQFYAQ1",
+    "01KVKXJ6R5DYD2WFBE190AA6D6",
+    "01KVKXK44BTHK3VKM1QBHARVVD",
+    "01KVKXJ5XWR5B83M5Z91NHPJXB",
+    "01KVKXJ905T1A41WCJD8E4EBEQ",
+    "01KVKXK4NP12PQN23BEVT760HM",
+    "01KVKXJDC3JFZ4A7C4ZDZR0RQB",
+    "01KVKXJ4S7QZX1NJEMQ4FKQNRS",
+    "01KVKXK6CGRYNEHSJMRT2JQMWA",
+    "01KVKXJA5CWH0PS61PWWN5G85J"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 31237,
+  "retrieved_chunks": [
+    {
+      "source_path": "AMCOR_2023_10K.md",
+      "chunk_index": 7,
+      "score": 0.6405713076491244
+    },
+    {
+      "source_path": "AMCOR_2023_10K.md",
+      "chunk_index": 8,
+      "score": 0.6298776608941158
+    },
+    {
+      "source_path": "AMCOR_2023_10K.md",
+      "chunk_index": 4,
+      "score": 0.6235819270133053
+    },
+    {
+      "source_path": "AMCOR_2023_10K.md",
+      "chunk_index": 6,
+      "score": 0.6228309365249228
+    },
+    {
+      "source_path": "AMCOR_2023_10K.md",
+      "chunk_index": 28,
+      "score": 0.6167527611408246
+    },
+    {
+      "source_path": "AMCOR_2023_10K.md",
+      "chunk_index": 5,
+      "score": 0.6109444258008451
+    },
+    {
+      "source_path": "AMCOR_2023_10K.md",
+      "chunk_index": 10,
+      "score": 0.5977085724438008
+    },
+    {
+      "source_path": "AMCOR_2023_10K.md",
+      "chunk_index": 11,
+      "score": 0.5958839708805329
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 17754,
+    "output_tokens": 162,
+    "latency_ms": 3073,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"c\",\"reasoning\":\"(A) 검색된 문서 발췌에서 Amcor는 'a global leader in developing and producing responsible packaging for food, beverage, pharmaceutical, medical, home and personal-care, and other products'라고 명확히 언급되어 있습니다. 또한, 'Our innovation excellence and global packaging expertise enables us to solve packaging challenges around the world every day' 등 packaging이 Amcor의 주력 산업임을 반복적으로 강조합니다. (B) 도메인 그래프에서도 Amcor plc의 설명에 'global leader in developing and producing responsible packaging'이라고 되어 있어, packaging production industry가 주 산업임을 명확히 알 수 있습니다. 두 출처 모두 일치하므로, 정답은 c) Packaging production industry입니다.\"}",
+    "parsed": {
+      "choice": "c",
+      "reasoning": "(A) 검색된 문서 발췌에서 Amcor는 'a global leader in developing and producing responsible packaging for food, beverage, pharmaceutical, medical, home and personal-care, and other products'라고 명확히 언급되어 있습니다. 또한, 'Our innovation excellence and global packaging expertise enables us to solve packaging challenges around the world every day' 등 packaging이 Amcor의 주력 산업임을 반복적으로 강조합니다. (B) 도메인 그래프에서도 Amcor plc의 설명에 'global leader in developing and producing responsible packaging'이라고 되어 있어, packaging production industry가 주 산업임을 명확히 알 수 있습니다. 두 출처 모두 일치하므로, 정답은 c) Packaging production industry입니다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 29789,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 9,
+    "chunk_setup_amortized": 29772,
+    "chunk_setup_total": 982504,
+    "graph_keyword_estimated": 8,
+    "questions_count_for_amortization": 33
+  },
+  "total_input_tokens": 18234,
+  "total_output_tokens": 178,
+  "total_tokens": 48201,
+  "total_latency_ms": 4586
+}

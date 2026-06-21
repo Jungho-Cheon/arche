@@ -1,0 +1,195 @@
+{
+  "column": "combined",
+  "question_id": "Q32",
+  "run_index": 1,
+  "anchor_extraction": {
+    "input_tokens": 545,
+    "output_tokens": 128,
+    "latency_ms": 1716,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"FY2022 unadjusted EBITDA\",\"aliases\":[\"FY2022 unadjusted EBITDA\",\"unadjusted EBITDA for FY2022\"]},{\"canonical\":\"capex\",\"aliases\":[\"capex\",\"capital expenditures\"]},{\"canonical\":\"PepsiCo\",\"aliases\":[\"PepsiCo\"]},{\"canonical\":\"unadjusted operating income\",\"aliases\":[\"unadjusted operating income\"]},{\"canonical\":\"depreciation and amortization\",\"aliases\":[\"depreciation and amortization\"]},{\"canonical\":\"statement of cash flows\",\"aliases\":[\"statement of cash flows\",\"cash flow statement\"]},{\"canonical\":\"income statement\",\"aliases\":[\"income statement\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "FY2022 unadjusted EBITDA",
+          "aliases": [
+            "FY2022 unadjusted EBITDA",
+            "unadjusted EBITDA for FY2022"
+          ]
+        },
+        {
+          "canonical": "capex",
+          "aliases": [
+            "capex",
+            "capital expenditures"
+          ]
+        },
+        {
+          "canonical": "PepsiCo",
+          "aliases": [
+            "PepsiCo"
+          ]
+        },
+        {
+          "canonical": "unadjusted operating income",
+          "aliases": [
+            "unadjusted operating income"
+          ]
+        },
+        {
+          "canonical": "depreciation and amortization",
+          "aliases": [
+            "depreciation and amortization"
+          ]
+        },
+        {
+          "canonical": "statement of cash flows",
+          "aliases": [
+            "statement of cash flows",
+            "cash flow statement"
+          ]
+        },
+        {
+          "canonical": "income statement",
+          "aliases": [
+            "income statement"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 1564,
+      "input": {
+        "keywords": [
+          "FY2022 unadjusted EBITDA",
+          "unadjusted EBITDA for FY2022",
+          "capex",
+          "capital expenditures",
+          "PepsiCo",
+          "unadjusted operating income",
+          "depreciation and amortization",
+          "statement of cash flows",
+          "cash flow statement",
+          "income statement"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 58,
+      "input": {
+        "entry_ids": [
+          "01KVKXW6ABBVCXNB643JN021HM",
+          "01KVKXVD86F6EPXRVAW4NMYZX7",
+          "01KVKY7BCEZ1VT4ZXQQVXS13MF",
+          "01KVKXKR64JXNW5MH1E8AT330K",
+          "01KVKXVBB3XNT0RX1CJ67DF6BT",
+          "01KVKXTH2WRXMXCR65TVQKC9CR",
+          "01KVKXKTH2EJ1W3TT4D6JQQ3SW",
+          "01KVKXTBAJNQNW2EBRX56SXR8B",
+          "01KVKXVNBXZAVS70BRDCP0QTYF",
+          "01KVKXRX7W87KMEP99QBDAT304"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 28,
+        "edges": 20,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVKXW6ABBVCXNB643JN021HM",
+    "01KVKXVD86F6EPXRVAW4NMYZX7",
+    "01KVKY7BCEZ1VT4ZXQQVXS13MF",
+    "01KVKXKR64JXNW5MH1E8AT330K",
+    "01KVKXVBB3XNT0RX1CJ67DF6BT",
+    "01KVKXTH2WRXMXCR65TVQKC9CR",
+    "01KVKXKTH2EJ1W3TT4D6JQQ3SW",
+    "01KVKXTBAJNQNW2EBRX56SXR8B",
+    "01KVKXVNBXZAVS70BRDCP0QTYF",
+    "01KVKXRX7W87KMEP99QBDAT304"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 14053,
+  "retrieved_chunks": [
+    {
+      "source_path": "PEPSICO_2022_10K.md",
+      "chunk_index": 52,
+      "score": 0.6306889925308987
+    },
+    {
+      "source_path": "PEPSICO_2022_10K.md",
+      "chunk_index": 76,
+      "score": 0.5967683991932274
+    },
+    {
+      "source_path": "PEPSICO_2022_10K.md",
+      "chunk_index": 112,
+      "score": 0.5933363862916422
+    },
+    {
+      "source_path": "PEPSICO_2022_10K.md",
+      "chunk_index": 51,
+      "score": 0.5873204768253544
+    },
+    {
+      "source_path": "PEPSICO_2022_10K.md",
+      "chunk_index": 67,
+      "score": 0.582492737468621
+    },
+    {
+      "source_path": "PEPSICO_2022_10K.md",
+      "chunk_index": 57,
+      "score": 0.5820974903236654
+    },
+    {
+      "source_path": "PEPSICO_2022_10K.md",
+      "chunk_index": 74,
+      "score": 0.5776292033601146
+    },
+    {
+      "source_path": "PEPSICO_2022_10K.md",
+      "chunk_index": 69,
+      "score": 0.5736686357356832
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 11066,
+    "output_tokens": 324,
+    "latency_ms": 3068,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"d\",\"reasoning\":\"To answer the question, we need to calculate 'unadjusted EBITDA less capex' for PepsiCo in FY2022, using only the statement of cash flows and income statement. \\n\\nStep 1: Find unadjusted operating income (operating profit) for 2022. The corpus does not provide a direct line for operating income in the cash flow statement, but the income statement data is present in the document. From the extracted data (Chunk 1, 'Reported, GAAP Measure'), operating profit for 2022 is $11,512 million.\\n\\nStep 2: Find depreciation and amortization for 2022. From the cash flow statement (Chunk 5), depreciation and amortization is $2,763 million.\\n\\nStep 3: Calculate EBITDA = Operating income + Depreciation and amortization = $11,512M + $2,763M = $14,275M.\\n\\nStep 4: Find capex (capital spending) for 2022. From the cash flow statement (Chunk 5), capital spending is $5,207 million.\\n\\nStep 5: Calculate EBITDA less capex = $14,275M - $5,207M = $9,068M.\\n\\nAmong the choices, (d) $9,068 million matches this calculation. The decisive evidence comes from (A) the document excerpts, specifically the cash flow statement and the income statement data. The domain graph (B) does not provide relevant numerical data for this calculation.\"}",
+    "parsed": {
+      "choice": "d",
+      "reasoning": "To answer the question, we need to calculate 'unadjusted EBITDA less capex' for PepsiCo in FY2022, using only the statement of cash flows and income statement. \n\nStep 1: Find unadjusted operating income (operating profit) for 2022. The corpus does not provide a direct line for operating income in the cash flow statement, but the income statement data is present in the document. From the extracted data (Chunk 1, 'Reported, GAAP Measure'), operating profit for 2022 is $11,512 million.\n\nStep 2: Find depreciation and amortization for 2022. From the cash flow statement (Chunk 5), depreciation and amortization is $2,763 million.\n\nStep 3: Calculate EBITDA = Operating income + Depreciation and amortization = $11,512M + $2,763M = $14,275M.\n\nStep 4: Find capex (capital spending) for 2022. From the cash flow statement (Chunk 5), capital spending is $5,207 million.\n\nStep 5: Calculate EBITDA less capex = $14,275M - $5,207M = $9,068M.\n\nAmong the choices, (d) $9,068 million matches this calculation. The decisive evidence comes from (A) the document excerpts, specifically the cash flow statement and the income statement data. The domain graph (B) does not provide relevant numerical data for this calculation."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 29927,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 75,
+    "chunk_setup_amortized": 29772,
+    "chunk_setup_total": 982504,
+    "graph_keyword_estimated": 80,
+    "questions_count_for_amortization": 33
+  },
+  "total_input_tokens": 11611,
+  "total_output_tokens": 452,
+  "total_tokens": 41990,
+  "total_latency_ms": 6406
+}

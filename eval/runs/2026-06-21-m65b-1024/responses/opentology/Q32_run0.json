@@ -1,0 +1,146 @@
+{
+  "column": "opentology",
+  "question_id": "Q32",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 545,
+    "output_tokens": 128,
+    "latency_ms": 1228,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"FY2022 unadjusted EBITDA\",\"aliases\":[\"FY2022 unadjusted EBITDA\",\"unadjusted EBITDA for FY2022\"]},{\"canonical\":\"capex\",\"aliases\":[\"capex\",\"capital expenditures\"]},{\"canonical\":\"PepsiCo\",\"aliases\":[\"PepsiCo\"]},{\"canonical\":\"unadjusted operating income\",\"aliases\":[\"unadjusted operating income\"]},{\"canonical\":\"depreciation and amortization\",\"aliases\":[\"depreciation and amortization\"]},{\"canonical\":\"statement of cash flows\",\"aliases\":[\"statement of cash flows\",\"cash flow statement\"]},{\"canonical\":\"income statement\",\"aliases\":[\"income statement\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "FY2022 unadjusted EBITDA",
+          "aliases": [
+            "FY2022 unadjusted EBITDA",
+            "unadjusted EBITDA for FY2022"
+          ]
+        },
+        {
+          "canonical": "capex",
+          "aliases": [
+            "capex",
+            "capital expenditures"
+          ]
+        },
+        {
+          "canonical": "PepsiCo",
+          "aliases": [
+            "PepsiCo"
+          ]
+        },
+        {
+          "canonical": "unadjusted operating income",
+          "aliases": [
+            "unadjusted operating income"
+          ]
+        },
+        {
+          "canonical": "depreciation and amortization",
+          "aliases": [
+            "depreciation and amortization"
+          ]
+        },
+        {
+          "canonical": "statement of cash flows",
+          "aliases": [
+            "statement of cash flows",
+            "cash flow statement"
+          ]
+        },
+        {
+          "canonical": "income statement",
+          "aliases": [
+            "income statement"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 1460,
+      "input": {
+        "keywords": [
+          "FY2022 unadjusted EBITDA",
+          "unadjusted EBITDA for FY2022",
+          "capex",
+          "capital expenditures",
+          "PepsiCo",
+          "unadjusted operating income",
+          "depreciation and amortization",
+          "statement of cash flows",
+          "cash flow statement",
+          "income statement"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 56,
+      "input": {
+        "entry_ids": [
+          "01KVKXW6ABBVCXNB643JN021HM",
+          "01KVKXVD86F6EPXRVAW4NMYZX7",
+          "01KVKY7BCEZ1VT4ZXQQVXS13MF",
+          "01KVKXKR64JXNW5MH1E8AT330K",
+          "01KVKXVBB3XNT0RX1CJ67DF6BT",
+          "01KVKXTH2WRXMXCR65TVQKC9CR",
+          "01KVKXKTH2EJ1W3TT4D6JQQ3SW",
+          "01KVKXTBAJNQNW2EBRX56SXR8B",
+          "01KVKXVNBXZAVS70BRDCP0QTYF",
+          "01KVKXRX7W87KMEP99QBDAT304"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 28,
+        "edges": 20,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVKXW6ABBVCXNB643JN021HM",
+    "01KVKXVD86F6EPXRVAW4NMYZX7",
+    "01KVKY7BCEZ1VT4ZXQQVXS13MF",
+    "01KVKXKR64JXNW5MH1E8AT330K",
+    "01KVKXVBB3XNT0RX1CJ67DF6BT",
+    "01KVKXTH2WRXMXCR65TVQKC9CR",
+    "01KVKXKTH2EJ1W3TT4D6JQQ3SW",
+    "01KVKXTBAJNQNW2EBRX56SXR8B",
+    "01KVKXVNBXZAVS70BRDCP0QTYF",
+    "01KVKXRX7W87KMEP99QBDAT304"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 14053,
+  "answer_generation": {
+    "input_tokens": 4677,
+    "output_tokens": 103,
+    "latency_ms": 1339,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"e\",\"reasoning\":\"그래프에는 PepsiCo의 FY2022 unadjusted EBITDA, operating income, depreciation and amortization, capex(자본적 지출) 등 재무 수치가 전혀 포함되어 있지 않습니다. 또한, 현금흐름표나 손익계산서의 구체적 수치도 제공되지 않았으므로, 보기 중 어느 숫자가 맞는지 판단할 수 없습니다. 따라서 정보 부족(e)이 정답입니다.\"}",
+    "parsed": {
+      "choice": "e",
+      "reasoning": "그래프에는 PepsiCo의 FY2022 unadjusted EBITDA, operating income, depreciation and amortization, capex(자본적 지출) 등 재무 수치가 전혀 포함되어 있지 않습니다. 또한, 현금흐름표나 손익계산서의 구체적 수치도 제공되지 않았으므로, 보기 중 어느 숫자가 맞는지 판단할 수 없습니다. 따라서 정보 부족(e)이 정답입니다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 80,
+  "total_input_tokens": 5222,
+  "total_output_tokens": 231,
+  "total_tokens": 5533,
+  "total_latency_ms": 4083
+}

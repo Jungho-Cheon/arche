@@ -1,0 +1,123 @@
+{
+  "column": "opentology",
+  "question_id": "Q25",
+  "run_index": 2,
+  "anchor_extraction": {
+    "input_tokens": 488,
+    "output_tokens": 71,
+    "latency_ms": 1499,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"Boeing\",\"aliases\":[\"Boeing\"]},{\"canonical\":\"effective tax rate\",\"aliases\":[\"effective tax rate\"]},{\"canonical\":\"FY2022\",\"aliases\":[\"FY2022\",\"fiscal year 2022\"]},{\"canonical\":\"FY2021\",\"aliases\":[\"FY2021\",\"fiscal year 2021\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "Boeing",
+          "aliases": [
+            "Boeing"
+          ]
+        },
+        {
+          "canonical": "effective tax rate",
+          "aliases": [
+            "effective tax rate"
+          ]
+        },
+        {
+          "canonical": "FY2022",
+          "aliases": [
+            "FY2022",
+            "fiscal year 2022"
+          ]
+        },
+        {
+          "canonical": "FY2021",
+          "aliases": [
+            "FY2021",
+            "fiscal year 2021"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 894,
+      "input": {
+        "keywords": [
+          "Boeing",
+          "effective tax rate",
+          "FY2022",
+          "fiscal year 2022",
+          "FY2021",
+          "fiscal year 2021"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 65,
+      "input": {
+        "entry_ids": [
+          "01KVKXT4SBWC94P3HZ0WEPEFQ2",
+          "01KVKXT3SCDC0VGPVJ3CNNA1YA",
+          "01KVKXKR64JXNW5MH1E8AT330K",
+          "01KVKXJ3EADC5NHH8FH6S4BZBP",
+          "01KVKXK9X07P1DDSCF9ST57TDH",
+          "01KVKXJ02ZQNN2QRBJBKDPG78V",
+          "01KVKYEGZ90XAY73TCPAKV6YEH",
+          "01KVKYF8Z922RWXDRE1QMTRCWM",
+          "01KVKXKDZP1ZHEQWH45Q80CGJC",
+          "01KVKXS3P456916CJ9M7QXTRV0"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 29,
+        "edges": 25,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVKXT4SBWC94P3HZ0WEPEFQ2",
+    "01KVKXT3SCDC0VGPVJ3CNNA1YA",
+    "01KVKXKR64JXNW5MH1E8AT330K",
+    "01KVKXJ3EADC5NHH8FH6S4BZBP",
+    "01KVKXK9X07P1DDSCF9ST57TDH",
+    "01KVKXJ02ZQNN2QRBJBKDPG78V",
+    "01KVKYEGZ90XAY73TCPAKV6YEH",
+    "01KVKYF8Z922RWXDRE1QMTRCWM",
+    "01KVKXKDZP1ZHEQWH45Q80CGJC",
+    "01KVKXS3P456916CJ9M7QXTRV0"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 13418,
+  "answer_generation": {
+    "input_tokens": 4702,
+    "output_tokens": 88,
+    "latency_ms": 1496,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"e\",\"reasoning\":\"제공된 도메인 그래프에는 Boeing의 유효세율(effective tax rate)이나 FY2022, FY2021에 대한 어떠한 정보도 포함되어 있지 않습니다. Boeing 관련 엔티티, 관계, 수치 데이터가 전혀 없으므로, 보기 중에서 정답을 도출할 수 없습니다. 따라서 정보 부족(e)을 선택합니다.\"}",
+    "parsed": {
+      "choice": "e",
+      "reasoning": "제공된 도메인 그래프에는 Boeing의 유효세율(effective tax rate)이나 FY2022, FY2021에 대한 어떠한 정보도 포함되어 있지 않습니다. Boeing 관련 엔티티, 관계, 수치 데이터가 전혀 없으므로, 보기 중에서 정답을 도출할 수 없습니다. 따라서 정보 부족(e)을 선택합니다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 48,
+  "total_input_tokens": 5190,
+  "total_output_tokens": 159,
+  "total_tokens": 5397,
+  "total_latency_ms": 3954
+}

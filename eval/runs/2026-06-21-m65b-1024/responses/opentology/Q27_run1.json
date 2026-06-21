@@ -1,0 +1,114 @@
+{
+  "column": "opentology",
+  "question_id": "Q27",
+  "run_index": 1,
+  "anchor_extraction": {
+    "input_tokens": 508,
+    "output_tokens": 44,
+    "latency_ms": 1159,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"gross margin\",\"aliases\":[\"gross margin\"]},{\"canonical\":\"FY2022\",\"aliases\":[\"FY2022\"]},{\"canonical\":\"JnJ\",\"aliases\":[\"JnJ\",\"Johnson & Johnson\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "gross margin",
+          "aliases": [
+            "gross margin"
+          ]
+        },
+        {
+          "canonical": "FY2022",
+          "aliases": [
+            "FY2022"
+          ]
+        },
+        {
+          "canonical": "JnJ",
+          "aliases": [
+            "JnJ",
+            "Johnson & Johnson"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 706,
+      "input": {
+        "keywords": [
+          "gross margin",
+          "FY2022",
+          "JnJ",
+          "Johnson & Johnson"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 79,
+      "input": {
+        "entry_ids": [
+          "01KVKY2SP2BTKHWJ1Y39K1CY34",
+          "01KVKY48FSE7BN9FSWBB331ZN6",
+          "01KVKY51MJ6K34TTZSYYHDHF7V",
+          "01KVKY4YWFPZQ0CPSCEGDZ0V1D",
+          "01KVKY2WZRQAHPF64V1E035J0P",
+          "01KVKY56FNG4ARXNRK1JEJEB6Q",
+          "01KVKY4XFCNRVZNHV18MVYKZ2H",
+          "01KVKY4Y9888ADFKPSZF4833FA",
+          "01KVKY4D9AX325GTKTFGD3SVVH",
+          "01KVKY4C2V5NXYA974Y89K19VB"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 32,
+        "edges": 29,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVKY2SP2BTKHWJ1Y39K1CY34",
+    "01KVKY48FSE7BN9FSWBB331ZN6",
+    "01KVKY51MJ6K34TTZSYYHDHF7V",
+    "01KVKY4YWFPZQ0CPSCEGDZ0V1D",
+    "01KVKY2WZRQAHPF64V1E035J0P",
+    "01KVKY56FNG4ARXNRK1JEJEB6Q",
+    "01KVKY4XFCNRVZNHV18MVYKZ2H",
+    "01KVKY4Y9888ADFKPSZF4833FA",
+    "01KVKY4D9AX325GTKTFGD3SVVH",
+    "01KVKY4C2V5NXYA974Y89K19VB"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 15542,
+  "answer_generation": {
+    "input_tokens": 5403,
+    "output_tokens": 242,
+    "latency_ms": 2660,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\": \"d\", \"reasoning\": \"도메인 그래프에는 FY2022 Johnson & Johnson의 gross margin 변화에 대한 직접적인 설명은 없으나, 보기 d)에서 언급된 'COVID-19 vaccine exit costs, currency impacts in Pharmaceuticals, commodity inflation in MedTech and Consumer Health, partly offset by supply chain benefits in Consumer Health'는 실제 10-K 등에서 자주 언급되는 주요 요인들이다. 그래프에서 MedTech, Pharmaceutical, Consumer Health가 J&J의 주요 사업부임이 명확히 드러나 있고, 각 사업부의 외부 환경(commodity inflation, currency impact 등)이 J&J에 영향을 준다는 관계(Pharmacy Benefit Managers --시장에 영향준다--> Johnson & Johnson, Inflation Reduction Act --적용된다--> Johnson & Johnson 등)도 명시되어 있다. 또한 COVID-19 관련 비용이 언급된 다른 보기는 없으며, gross margin이 J&J 같은 제조/헬스케어 기업에서 일반적으로 중요한 지표임도 도메인 상식과 일치한다. 따라서 보기 d)가 그래프 정보와 가장 부합한다.\"}",
+    "parsed": {
+      "choice": "d",
+      "reasoning": "도메인 그래프에는 FY2022 Johnson & Johnson의 gross margin 변화에 대한 직접적인 설명은 없으나, 보기 d)에서 언급된 'COVID-19 vaccine exit costs, currency impacts in Pharmaceuticals, commodity inflation in MedTech and Consumer Health, partly offset by supply chain benefits in Consumer Health'는 실제 10-K 등에서 자주 언급되는 주요 요인들이다. 그래프에서 MedTech, Pharmaceutical, Consumer Health가 J&J의 주요 사업부임이 명확히 드러나 있고, 각 사업부의 외부 환경(commodity inflation, currency impact 등)이 J&J에 영향을 준다는 관계(Pharmacy Benefit Managers --시장에 영향준다--> Johnson & Johnson, Inflation Reduction Act --적용된다--> Johnson & Johnson 등)도 명시되어 있다. 또한 COVID-19 관련 비용이 언급된 다른 보기는 없으며, gross margin이 J&J 같은 제조/헬스케어 기업에서 일반적으로 중요한 지표임도 도메인 상식과 일치한다. 따라서 보기 d)가 그래프 정보와 가장 부합한다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 32,
+  "total_input_tokens": 5911,
+  "total_output_tokens": 286,
+  "total_tokens": 6229,
+  "total_latency_ms": 4604
+}

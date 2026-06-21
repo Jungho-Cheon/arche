@@ -1,0 +1,190 @@
+{
+  "column": "combined",
+  "question_id": "Q09",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 499,
+    "output_tokens": 87,
+    "latency_ms": 1397,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"operations\",\"aliases\":[\"operations\",\"operating activities\"]},{\"canonical\":\"investing\",\"aliases\":[\"investing\",\"investing activities\"]},{\"canonical\":\"financing activities\",\"aliases\":[\"financing activities\",\"financing\"]},{\"canonical\":\"AMD\",\"aliases\":[\"AMD\"]},{\"canonical\":\"FY22\",\"aliases\":[\"FY22\",\"fiscal year 2022\"]},{\"canonical\":\"cash flow\",\"aliases\":[\"cash flow\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "operations",
+          "aliases": [
+            "operations",
+            "operating activities"
+          ]
+        },
+        {
+          "canonical": "investing",
+          "aliases": [
+            "investing",
+            "investing activities"
+          ]
+        },
+        {
+          "canonical": "financing activities",
+          "aliases": [
+            "financing activities",
+            "financing"
+          ]
+        },
+        {
+          "canonical": "AMD",
+          "aliases": [
+            "AMD"
+          ]
+        },
+        {
+          "canonical": "FY22",
+          "aliases": [
+            "FY22",
+            "fiscal year 2022"
+          ]
+        },
+        {
+          "canonical": "cash flow",
+          "aliases": [
+            "cash flow"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 1126,
+      "input": {
+        "keywords": [
+          "operations",
+          "operating activities",
+          "investing",
+          "investing activities",
+          "financing activities",
+          "financing",
+          "AMD",
+          "FY22",
+          "fiscal year 2022",
+          "cash flow"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 50,
+      "input": {
+        "entry_ids": [
+          "01KVKXW6ABBVCXNB643JN021HM",
+          "01KVKXKSZNNHMGQB5G4202222W",
+          "01KVKXVD86F6EPXRVAW4NMYZX7",
+          "01KVKXKR64JXNW5MH1E8AT330K",
+          "01KVKXKTH2EJ1W3TT4D6JQQ3SW",
+          "01KVKXV8JVDRVG9B77EVRXSSRQ",
+          "01KVKXR8WD8YKTVHV75SV6X567",
+          "01KVKYF6QY9EVN6EPTXJJ8N2QR",
+          "01KVKYE3RY77QB8VGEKS5BKSPN",
+          "01KVKXKV6128G44E1RXKEWF9G6"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 23,
+        "edges": 17,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVKXW6ABBVCXNB643JN021HM",
+    "01KVKXKSZNNHMGQB5G4202222W",
+    "01KVKXVD86F6EPXRVAW4NMYZX7",
+    "01KVKXKR64JXNW5MH1E8AT330K",
+    "01KVKXKTH2EJ1W3TT4D6JQQ3SW",
+    "01KVKXV8JVDRVG9B77EVRXSSRQ",
+    "01KVKXR8WD8YKTVHV75SV6X567",
+    "01KVKYF6QY9EVN6EPTXJJ8N2QR",
+    "01KVKYE3RY77QB8VGEKS5BKSPN",
+    "01KVKXKV6128G44E1RXKEWF9G6"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 10404,
+  "retrieved_chunks": [
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 58,
+      "score": 0.6723081796553941
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 46,
+      "score": 0.6613860489513467
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 47,
+      "score": 0.6592317939651732
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 64,
+      "score": 0.6265780814746232
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 63,
+      "score": 0.624609230618442
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 55,
+      "score": 0.6201252162418359
+    },
+    {
+      "source_path": "AMD_2022_10K.md",
+      "chunk_index": 45,
+      "score": 0.6054168799887027
+    },
+    {
+      "source_path": "BOEING_2022_10K.md",
+      "chunk_index": 44,
+      "score": 0.6017582432558466
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 10424,
+    "output_tokens": 173,
+    "latency_ms": 2817,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"a\",\"reasoning\":\"(A) 검색된 문서 발췌에서 AMD의 2022년 현금흐름표가 명확히 제시되어 있습니다. 청크 5와 6에 따르면, 2022년 영업활동(operations)에서 발생한 순현금 유입은 $3,565 million, 투자활동(investing)에서 순현금 유입은 $1,999 million, 재무활동(financing)에서는 순현금 유출이 $3,264 million입니다. 즉, 영업활동이 가장 많은 현금을 유입시켰습니다. (B) 도메인 그래프에는 AMD의 현금흐름 관련 정보가 없습니다. 따라서 (A)의 구체적 수치가 결정적 근거입니다.\"}",
+    "parsed": {
+      "choice": "a",
+      "reasoning": "(A) 검색된 문서 발췌에서 AMD의 2022년 현금흐름표가 명확히 제시되어 있습니다. 청크 5와 6에 따르면, 2022년 영업활동(operations)에서 발생한 순현금 유입은 $3,565 million, 투자활동(investing)에서 순현금 유입은 $1,999 million, 재무활동(financing)에서는 순현금 유출이 $3,264 million입니다. 즉, 영업활동이 가장 많은 현금을 유입시켰습니다. (B) 도메인 그래프에는 AMD의 현금흐름 관련 정보가 없습니다. 따라서 (A)의 구체적 수치가 결정적 근거입니다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 29880,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 28,
+    "chunk_setup_amortized": 29772,
+    "chunk_setup_total": 982504,
+    "graph_keyword_estimated": 80,
+    "questions_count_for_amortization": 33
+  },
+  "total_input_tokens": 10923,
+  "total_output_tokens": 260,
+  "total_tokens": 41063,
+  "total_latency_ms": 5390
+}

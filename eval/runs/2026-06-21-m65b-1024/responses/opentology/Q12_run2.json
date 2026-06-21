@@ -1,0 +1,112 @@
+{
+  "column": "opentology",
+  "question_id": "Q12",
+  "run_index": 2,
+  "anchor_extraction": {
+    "input_tokens": 494,
+    "output_tokens": 42,
+    "latency_ms": 1107,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"debt securities\",\"aliases\":[\"debt securities\"]},{\"canonical\":\"national securities exchange\",\"aliases\":[\"national securities exchange\"]},{\"canonical\":\"American Express\",\"aliases\":[\"American Express\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "debt securities",
+          "aliases": [
+            "debt securities"
+          ]
+        },
+        {
+          "canonical": "national securities exchange",
+          "aliases": [
+            "national securities exchange"
+          ]
+        },
+        {
+          "canonical": "American Express",
+          "aliases": [
+            "American Express"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 852,
+      "input": {
+        "keywords": [
+          "debt securities",
+          "national securities exchange",
+          "American Express"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 175,
+      "input": {
+        "entry_ids": [
+          "01KVKXHXMS5706J8KGDHCJHR7J",
+          "01KVKXKPJXNX0WY4YMC1YWWQGV",
+          "01KVKXHZ0YA83ZJ5PK871KWY6E",
+          "01KVKXQHZJ8BD06KZ8ADR0B9JB",
+          "01KVKXSXR7SF9BBD7VMH3GYCYN",
+          "01KVKXJK2QMZ7BWVEH62PJWXJH",
+          "01KVKXQGQ60MKRGHXKW6VP5WS7",
+          "01KVKXSYX6355ENMDF79XZ8SHD",
+          "01KVKXHY9Y3W4MZR0GG67TJ93W",
+          "01KVKXT663PHYJHGTRT6RK7KB0"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 73,
+        "edges": 80,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVKXHXMS5706J8KGDHCJHR7J",
+    "01KVKXKPJXNX0WY4YMC1YWWQGV",
+    "01KVKXHZ0YA83ZJ5PK871KWY6E",
+    "01KVKXQHZJ8BD06KZ8ADR0B9JB",
+    "01KVKXSXR7SF9BBD7VMH3GYCYN",
+    "01KVKXJK2QMZ7BWVEH62PJWXJH",
+    "01KVKXQGQ60MKRGHXKW6VP5WS7",
+    "01KVKXSYX6355ENMDF79XZ8SHD",
+    "01KVKXHY9Y3W4MZR0GG67TJ93W",
+    "01KVKXT663PHYJHGTRT6RK7KB0"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 39025,
+  "answer_generation": {
+    "input_tokens": 12349,
+    "output_tokens": 116,
+    "latency_ms": 2580,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\": \"e\", \"reasoning\": \"제공된 도메인 그래프에는 American Express의 주식 또는 채권(부채증권)이 어느 증권거래소에 상장되어 있는지, 또는 부채증권이 상장되어 있는지에 대한 정보가 전혀 포함되어 있지 않습니다. 상장(등록) 관련 정보는 Amcor plc에 대해서만 명시되어 있고, American Express에 대해서는 해당 내용이 없습니다. 따라서 보기 중 '정보 부족 / 알 수 없음'이 정답입니다.\"}",
+    "parsed": {
+      "choice": "e",
+      "reasoning": "제공된 도메인 그래프에는 American Express의 주식 또는 채권(부채증권)이 어느 증권거래소에 상장되어 있는지, 또는 부채증권이 상장되어 있는지에 대한 정보가 전혀 포함되어 있지 않습니다. 상장(등록) 관련 정보는 Amcor plc에 대해서만 명시되어 있고, American Express에 대해서는 해당 내용이 없습니다. 따라서 보기 중 '정보 부족 / 알 수 없음'이 정답입니다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 24,
+  "total_input_tokens": 12843,
+  "total_output_tokens": 158,
+  "total_tokens": 13025,
+  "total_latency_ms": 4714
+}

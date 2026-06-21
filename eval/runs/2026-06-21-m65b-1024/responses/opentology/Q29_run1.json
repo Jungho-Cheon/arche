@@ -1,0 +1,107 @@
+{
+  "column": "opentology",
+  "question_id": "Q29",
+  "run_index": 1,
+  "anchor_extraction": {
+    "input_tokens": 489,
+    "output_tokens": 37,
+    "latency_ms": 1256,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"Pepsico\",\"aliases\":[\"Pepsico\"]},{\"canonical\":\"FY2022\",\"aliases\":[\"FY2022\",\"Fiscal Year 2022\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "Pepsico",
+          "aliases": [
+            "Pepsico"
+          ]
+        },
+        {
+          "canonical": "FY2022",
+          "aliases": [
+            "FY2022",
+            "Fiscal Year 2022"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 679,
+      "input": {
+        "keywords": [
+          "Pepsico",
+          "FY2022",
+          "Fiscal Year 2022"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 131,
+      "input": {
+        "entry_ids": [
+          "01KVKXT4SBWC94P3HZ0WEPEFQ2",
+          "01KVKXT3SCDC0VGPVJ3CNNA1YA",
+          "01KVKY7BCEZ1VT4ZXQQVXS13MF",
+          "01KVKYDV08SQXMQ5FD15ZRF1VA",
+          "01KVKY6A0NXZS2E5QD8SD8ZTTA",
+          "01KVKXJ3EADC5NHH8FH6S4BZBP",
+          "01KVKY6BWFZ8KTRJVJ4RDGKJSQ",
+          "01KVKYDX7RKV93A40S8WZNJJ0H",
+          "01KVKYF8Z922RWXDRE1QMTRCWM",
+          "01KVKYEEP8PBS9WZ2EQAV34531"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 60,
+        "edges": 56,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVKXT4SBWC94P3HZ0WEPEFQ2",
+    "01KVKXT3SCDC0VGPVJ3CNNA1YA",
+    "01KVKY7BCEZ1VT4ZXQQVXS13MF",
+    "01KVKYDV08SQXMQ5FD15ZRF1VA",
+    "01KVKY6A0NXZS2E5QD8SD8ZTTA",
+    "01KVKXJ3EADC5NHH8FH6S4BZBP",
+    "01KVKY6BWFZ8KTRJVJ4RDGKJSQ",
+    "01KVKYDX7RKV93A40S8WZNJJ0H",
+    "01KVKYF8Z922RWXDRE1QMTRCWM",
+    "01KVKYEEP8PBS9WZ2EQAV34531"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 27131,
+  "answer_generation": {
+    "input_tokens": 9395,
+    "output_tokens": 157,
+    "latency_ms": 2877,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"d\",\"reasoning\":\"그래프에서 'PepsiCo, Inc. [id=01KVKY]'가 포함하는 지역(division)으로 'Asia Pacific, Australia and New Zealand and China Region', 'Africa, Middle East and South Asia', 'Europe', 'Latin America', 'PepsiCo Beverages North America', 'Quaker Foods North America', 'Frito-Lay North America'가 명시되어 있다. 이로부터 North America, Latin America, Europe, Africa, Middle East, South Asia, Asia Pacific, Australia, New Zealand, China가 모두 포함됨을 알 수 있다. 보기 d)가 이와 정확히 일치한다. South America는 별도로 언급되지 않았으므로 c)는 오답이다.\"}",
+    "parsed": {
+      "choice": "d",
+      "reasoning": "그래프에서 'PepsiCo, Inc. [id=01KVKY]'가 포함하는 지역(division)으로 'Asia Pacific, Australia and New Zealand and China Region', 'Africa, Middle East and South Asia', 'Europe', 'Latin America', 'PepsiCo Beverages North America', 'Quaker Foods North America', 'Frito-Lay North America'가 명시되어 있다. 이로부터 North America, Latin America, Europe, Africa, Middle East, South Asia, Asia Pacific, Australia, New Zealand, China가 모두 포함됨을 알 수 있다. 보기 d)가 이와 정확히 일치한다. South America는 별도로 언급되지 않았으므로 c)는 오답이다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 24,
+  "total_input_tokens": 9884,
+  "total_output_tokens": 194,
+  "total_tokens": 10102,
+  "total_latency_ms": 4943
+}

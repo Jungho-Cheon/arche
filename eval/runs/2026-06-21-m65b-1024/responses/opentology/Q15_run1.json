@@ -1,0 +1,116 @@
+{
+  "column": "opentology",
+  "question_id": "Q15",
+  "run_index": 1,
+  "anchor_extraction": {
+    "input_tokens": 508,
+    "output_tokens": 50,
+    "latency_ms": 1050,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"gross margin\",\"aliases\":[\"gross margin\"]},{\"canonical\":\"FY2022\",\"aliases\":[\"FY2022\",\"fiscal year 2022\"]},{\"canonical\":\"American Express\",\"aliases\":[\"American Express\",\"Amex\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "gross margin",
+          "aliases": [
+            "gross margin"
+          ]
+        },
+        {
+          "canonical": "FY2022",
+          "aliases": [
+            "FY2022",
+            "fiscal year 2022"
+          ]
+        },
+        {
+          "canonical": "American Express",
+          "aliases": [
+            "American Express",
+            "Amex"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 951,
+      "input": {
+        "keywords": [
+          "gross margin",
+          "FY2022",
+          "fiscal year 2022",
+          "American Express",
+          "Amex"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 178,
+      "input": {
+        "entry_ids": [
+          "01KVKXQGQ60MKRGHXKW6VP5WS7",
+          "01KVKXT4SBWC94P3HZ0WEPEFQ2",
+          "01KVKXT3SCDC0VGPVJ3CNNA1YA",
+          "01KVKXSYX6355ENMDF79XZ8SHD",
+          "01KVKXSXR7SF9BBD7VMH3GYCYN",
+          "01KVKXQHZJ8BD06KZ8ADR0B9JB",
+          "01KVKXT6YD4GBR7D1XJNKKRAJP",
+          "01KVKXSYB7N1W3EC9FSHFFM4A5",
+          "01KVKXT663PHYJHGTRT6RK7KB0",
+          "01KVKXQH98KQ2K0N6RFMFECE35"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 71,
+        "edges": 77,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVKXQGQ60MKRGHXKW6VP5WS7",
+    "01KVKXT4SBWC94P3HZ0WEPEFQ2",
+    "01KVKXT3SCDC0VGPVJ3CNNA1YA",
+    "01KVKXSYX6355ENMDF79XZ8SHD",
+    "01KVKXSXR7SF9BBD7VMH3GYCYN",
+    "01KVKXQHZJ8BD06KZ8ADR0B9JB",
+    "01KVKXT6YD4GBR7D1XJNKKRAJP",
+    "01KVKXSYB7N1W3EC9FSHFFM4A5",
+    "01KVKXT663PHYJHGTRT6RK7KB0",
+    "01KVKXQH98KQ2K0N6RFMFECE35"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 36716,
+  "answer_generation": {
+    "input_tokens": 11507,
+    "output_tokens": 126,
+    "latency_ms": 2284,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\": \"a\", \"reasoning\": \"The domain graph describes American Express as a globally integrated payments company providing credit and charge cards, merchant acquisition, network services, and other financial products and services. There is no mention of gross margin or cost of goods sold, which are typical metrics for manufacturing or product-based companies. For financial services companies like American Express, performance is generally measured by metrics such as net interest margin, fee income, or operating margin, not gross margin. Therefore, based on the provided graph, gross margin is not a useful metric for American Express, and performance is not measured through gross margin.\"}",
+    "parsed": {
+      "choice": "a",
+      "reasoning": "The domain graph describes American Express as a globally integrated payments company providing credit and charge cards, merchant acquisition, network services, and other financial products and services. There is no mention of gross margin or cost of goods sold, which are typical metrics for manufacturing or product-based companies. For financial services companies like American Express, performance is generally measured by metrics such as net interest margin, fee income, or operating margin, not gross margin. Therefore, based on the provided graph, gross margin is not a useful metric for American Express, and performance is not measured through gross margin."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 40,
+  "total_input_tokens": 12015,
+  "total_output_tokens": 176,
+  "total_tokens": 12231,
+  "total_latency_ms": 4463
+}

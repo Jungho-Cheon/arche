@@ -1,0 +1,130 @@
+{
+  "column": "opentology",
+  "question_id": "Q10",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 494,
+    "output_tokens": 67,
+    "latency_ms": 922,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"FY21\",\"aliases\":[\"FY21\"]},{\"canonical\":\"FY22\",\"aliases\":[\"FY22\"]},{\"canonical\":\"Embedded\",\"aliases\":[\"Embedded\"]},{\"canonical\":\"AMD reporting segment\",\"aliases\":[\"AMD reporting segment\",\"AMD segment\"]},{\"canonical\":\"sales proportion\",\"aliases\":[\"sales proportion\",\"sales proportionally\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "FY21",
+          "aliases": [
+            "FY21"
+          ]
+        },
+        {
+          "canonical": "FY22",
+          "aliases": [
+            "FY22"
+          ]
+        },
+        {
+          "canonical": "Embedded",
+          "aliases": [
+            "Embedded"
+          ]
+        },
+        {
+          "canonical": "AMD reporting segment",
+          "aliases": [
+            "AMD reporting segment",
+            "AMD segment"
+          ]
+        },
+        {
+          "canonical": "sales proportion",
+          "aliases": [
+            "sales proportion",
+            "sales proportionally"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 960,
+      "input": {
+        "keywords": [
+          "FY21",
+          "FY22",
+          "Embedded",
+          "AMD reporting segment",
+          "AMD segment",
+          "sales proportion",
+          "sales proportionally"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 143,
+      "input": {
+        "entry_ids": [
+          "01KVKXN7S88H8EWRV95WG8EVRV",
+          "01KVKXN71CGD7AXV4JA1E5T6X4",
+          "01KVKXN3H5KF7GPN8YBN0AHMX5",
+          "01KVKXN6G7ZXGEFX6MMJRQDAWY",
+          "01KVKXNSP1N83TGYGTNXJEPYM4",
+          "01KVKXNRZQN04EC9RHCSTWJ5X5",
+          "01KVKXNPCDXHMM3JV3RZ0M1RVR",
+          "01KVKXN92SP38H40CMCY495XY1",
+          "01KVKXNN2YRXM89Z47Q5V9HG8Y",
+          "01KVKXNAJXDA21K4PKZW1RR45A"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 62,
+        "edges": 61,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVKXN7S88H8EWRV95WG8EVRV",
+    "01KVKXN71CGD7AXV4JA1E5T6X4",
+    "01KVKXN3H5KF7GPN8YBN0AHMX5",
+    "01KVKXN6G7ZXGEFX6MMJRQDAWY",
+    "01KVKXNSP1N83TGYGTNXJEPYM4",
+    "01KVKXNRZQN04EC9RHCSTWJ5X5",
+    "01KVKXNPCDXHMM3JV3RZ0M1RVR",
+    "01KVKXN92SP38H40CMCY495XY1",
+    "01KVKXNN2YRXM89Z47Q5V9HG8Y",
+    "01KVKXNAJXDA21K4PKZW1RR45A"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 27532,
+  "answer_generation": {
+    "input_tokens": 9108,
+    "output_tokens": 233,
+    "latency_ms": 3376,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"c\",\"reasoning\":\"그래프에서 AMD의 FY22 사업부 구분은 Data Center, Gaming, Client, Embedded, All Other로 되어 있다. 질문은 Embedded를 제외하고 FY21~FY22 기간 동안 비율적으로(즉, 성장률 기준) 매출이 가장 많이 증가한 사업부를 묻고 있다. 보기 a)와 d)는 AMD의 2022년 사업부 명칭과 일치하지 않는다(Enterprise, Embedded and Semi-Custom, Computing and Graphics는 과거 명칭). Embedded를 제외하면 Data Center, Gaming, Client가 남는데, 보기 c)는 Data Center를 지목한다. 그래프에는 각 사업부의 매출 증가율 데이터는 없으나, 보기 b)는 Embedded를 지목하므로 제외(Embedded는 제외 조건). 따라서, 그래프의 사업부 명칭과 질문 조건에 가장 부합하는 것은 c) Data Center segment이다. (단, 실제 수치가 없어 절대적 확정은 어렵지만, 보기 명칭 일치와 제외 조건을 근거로 c) 선택이 타당하다.)\"}",
+    "parsed": {
+      "choice": "c",
+      "reasoning": "그래프에서 AMD의 FY22 사업부 구분은 Data Center, Gaming, Client, Embedded, All Other로 되어 있다. 질문은 Embedded를 제외하고 FY21~FY22 기간 동안 비율적으로(즉, 성장률 기준) 매출이 가장 많이 증가한 사업부를 묻고 있다. 보기 a)와 d)는 AMD의 2022년 사업부 명칭과 일치하지 않는다(Enterprise, Embedded and Semi-Custom, Computing and Graphics는 과거 명칭). Embedded를 제외하면 Data Center, Gaming, Client가 남는데, 보기 c)는 Data Center를 지목한다. 그래프에는 각 사업부의 매출 증가율 데이터는 없으나, 보기 b)는 Embedded를 지목하므로 제외(Embedded는 제외 조건). 따라서, 그래프의 사업부 명칭과 질문 조건에 가장 부합하는 것은 c) Data Center segment이다. (단, 실제 수치가 없어 절대적 확정은 어렵지만, 보기 명칭 일치와 제외 조건을 근거로 c) 선택이 타당하다.)"
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 56,
+  "total_input_tokens": 9602,
+  "total_output_tokens": 300,
+  "total_tokens": 9958,
+  "total_latency_ms": 5401
+}

@@ -1,0 +1,114 @@
+{
+  "column": "opentology",
+  "question_id": "Q15",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 508,
+    "output_tokens": 43,
+    "latency_ms": 918,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"gross margin\",\"aliases\":[\"gross margin\"]},{\"canonical\":\"FY2022\",\"aliases\":[\"FY2022\"]},{\"canonical\":\"American Express\",\"aliases\":[\"American Express\",\"Amex\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "gross margin",
+          "aliases": [
+            "gross margin"
+          ]
+        },
+        {
+          "canonical": "FY2022",
+          "aliases": [
+            "FY2022"
+          ]
+        },
+        {
+          "canonical": "American Express",
+          "aliases": [
+            "American Express",
+            "Amex"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 776,
+      "input": {
+        "keywords": [
+          "gross margin",
+          "FY2022",
+          "American Express",
+          "Amex"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 170,
+      "input": {
+        "entry_ids": [
+          "01KVKXQGQ60MKRGHXKW6VP5WS7",
+          "01KVKXSYX6355ENMDF79XZ8SHD",
+          "01KVKXSXR7SF9BBD7VMH3GYCYN",
+          "01KVKXQHZJ8BD06KZ8ADR0B9JB",
+          "01KVKXT6YD4GBR7D1XJNKKRAJP",
+          "01KVKXSYB7N1W3EC9FSHFFM4A5",
+          "01KVKXT663PHYJHGTRT6RK7KB0",
+          "01KVKXQH98KQ2K0N6RFMFECE35",
+          "01KVKXT375RC2JVVBP91WWNEWZ",
+          "01KVKXQRBEKVHRCRZPZDRXNW7H"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 69,
+        "edges": 75,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVKXQGQ60MKRGHXKW6VP5WS7",
+    "01KVKXSYX6355ENMDF79XZ8SHD",
+    "01KVKXSXR7SF9BBD7VMH3GYCYN",
+    "01KVKXQHZJ8BD06KZ8ADR0B9JB",
+    "01KVKXT6YD4GBR7D1XJNKKRAJP",
+    "01KVKXSYB7N1W3EC9FSHFFM4A5",
+    "01KVKXT663PHYJHGTRT6RK7KB0",
+    "01KVKXQH98KQ2K0N6RFMFECE35",
+    "01KVKXT375RC2JVVBP91WWNEWZ",
+    "01KVKXQRBEKVHRCRZPZDRXNW7H"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 35934,
+  "answer_generation": {
+    "input_tokens": 11249,
+    "output_tokens": 126,
+    "latency_ms": 1648,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\": \"a\", \"reasoning\": \"The provided domain graph describes American Express as a globally integrated payments company, offering credit and charge cards, merchant acquisition, network services, and other financial products and services. There is no mention of gross margin or cost of goods sold, which are typical metrics for manufacturing or product-based companies. For financial services companies like American Express, performance is usually measured by metrics such as net interest margin, fee income, or operating margin, not gross margin. Therefore, based on the graph, gross margin is not a useful metric for American Express, and the correct answer is (a).\"}",
+    "parsed": {
+      "choice": "a",
+      "reasoning": "The provided domain graph describes American Express as a globally integrated payments company, offering credit and charge cards, merchant acquisition, network services, and other financial products and services. There is no mention of gross margin or cost of goods sold, which are typical metrics for manufacturing or product-based companies. For financial services companies like American Express, performance is usually measured by metrics such as net interest margin, fee income, or operating margin, not gross margin. Therefore, based on the graph, gross margin is not a useful metric for American Express, and the correct answer is (a)."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 32,
+  "total_input_tokens": 11757,
+  "total_output_tokens": 169,
+  "total_tokens": 11958,
+  "total_latency_ms": 3512
+}

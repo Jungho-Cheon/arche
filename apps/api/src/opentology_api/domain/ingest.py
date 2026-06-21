@@ -63,6 +63,21 @@ PDF_EXTS: frozenset[str] = frozenset({".pdf"})
 # 컨텍스트* 기준 (128K 등) 으로 잘라 한 청크가 임베딩 한도를 초과할 수 있어
 # chunk store 저장 시 본 cap 으로 추가 truncate.
 EMBEDDING_MAX_INPUT_TOKENS: int = 8192
+
+
+def _truncate_to_embedding_limit(text: str) -> str:
+    """텍스트를 embedding 입력 한도까지 정확히 자른다.
+
+    cl100k_base 로 encode → 한도 초과 시 slice → decode. count_tokens 의 추정
+    오차를 그대로 호출에 노출하지 않게 *어댑터 직전* 에 잘라 줌.
+    """
+    import tiktoken
+
+    enc = tiktoken.get_encoding("cl100k_base")
+    tokens = enc.encode(text)
+    if len(tokens) <= EMBEDDING_MAX_INPUT_TOKENS:
+        return text
+    return enc.decode(tokens[:EMBEDDING_MAX_INPUT_TOKENS])
 # 이미지 확장자는 image_loader 의 단일 source 와 동기화 — 한 곳에서만 정의.
 SUPPORTED_EXTS: frozenset[str] = frozenset(TEXT_EXTS | PDF_EXTS | IMAGE_EXTS)
 # WHY 빈 집합 보존: 호출자 (crawl) 가 import 하던 심볼. 이후 follow-up 이 새로
@@ -588,17 +603,12 @@ class IngestService:
 
         # 청크 텍스트 embed.
         # WHY 8192 토큰 cap: text-embedding-3-small 의 단일 입력 한도.
-        # `chunk_text` 분할기는 *LLM 컨텍스트* 기준 (128K 등) 으로 잘라 한 청크가
-        # 임베딩 한도를 초과할 수 있다. 보수 측: 토큰 카운트 비율로 문자 자르기.
-        texts: list[str] = []
-        for c in chunks:
-            t = c.text
-            tok = count_tokens(t)
-            if tok > EMBEDDING_MAX_INPUT_TOKENS:
-                # 비율 기반 문자 자르기. 90% safety margin.
-                ratio = (EMBEDDING_MAX_INPUT_TOKENS * 0.9) / tok
-                t = t[: int(len(t) * ratio)]
-            texts.append(t)
+        # chunk_text 분할기는 *LLM 컨텍스트* (128K 등) 기준이라 임베딩 한도를
+        # 초과할 수 있다. count_tokens (cl100k_base) 의 추정이 1-2% 어긋날 수
+        # 있어 *정확한* 토큰 자르기를 강제 — encode → 토큰 한도로 slice → decode.
+        texts: list[str] = [
+            _truncate_to_embedding_limit(c.text) for c in chunks
+        ]
         embeddings = self._embedder.embed(texts)
         if len(embeddings) != len(chunks):
             raise ValueError(

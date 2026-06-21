@@ -1,0 +1,163 @@
+{
+  "column": "combined",
+  "question_id": "Q04",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 507,
+    "output_tokens": 44,
+    "latency_ms": 821,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"AMCOR\",\"aliases\":[\"AMCOR\"]},{\"canonical\":\"gross margin\",\"aliases\":[\"gross margin\",\"gross margin profile\"]},{\"canonical\":\"FY2023\",\"aliases\":[\"FY2023\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "AMCOR",
+          "aliases": [
+            "AMCOR"
+          ]
+        },
+        {
+          "canonical": "gross margin",
+          "aliases": [
+            "gross margin",
+            "gross margin profile"
+          ]
+        },
+        {
+          "canonical": "FY2023",
+          "aliases": [
+            "FY2023"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 822,
+      "input": {
+        "keywords": [
+          "AMCOR",
+          "gross margin",
+          "gross margin profile",
+          "FY2023"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 179,
+      "input": {
+        "entry_ids": [
+          "01KVKXKR64JXNW5MH1E8AT330K",
+          "01KVKXHVH6K9ZYJ3R9DBQFYAQ1",
+          "01KVKXR84BWFP6Y6C6M4VFYRZ0",
+          "01KVKXK44BTHK3VKM1QBHARVVD",
+          "01KVKXJ6R5DYD2WFBE190AA6D6",
+          "01KVKYF87N5Y0M6SM2GNCTQBV5",
+          "01KVKXJ5XWR5B83M5Z91NHPJXB",
+          "01KVKXJ905T1A41WCJD8E4EBEQ",
+          "01KVKXHW915ZD1JM06Z1XH5YTV",
+          "01KVKXN71CGD7AXV4JA1E5T6X4"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 79,
+        "edges": 81,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVKXKR64JXNW5MH1E8AT330K",
+    "01KVKXHVH6K9ZYJ3R9DBQFYAQ1",
+    "01KVKXR84BWFP6Y6C6M4VFYRZ0",
+    "01KVKXK44BTHK3VKM1QBHARVVD",
+    "01KVKXJ6R5DYD2WFBE190AA6D6",
+    "01KVKYF87N5Y0M6SM2GNCTQBV5",
+    "01KVKXJ5XWR5B83M5Z91NHPJXB",
+    "01KVKXJ905T1A41WCJD8E4EBEQ",
+    "01KVKXHW915ZD1JM06Z1XH5YTV",
+    "01KVKXN71CGD7AXV4JA1E5T6X4"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 35689,
+  "retrieved_chunks": [
+    {
+      "source_path": "AMCOR_2023_10K.md",
+      "chunk_index": 28,
+      "score": 0.6058205528057966
+    },
+    {
+      "source_path": "AMCOR_2023_10K.md",
+      "chunk_index": 49,
+      "score": 0.5934763448493025
+    },
+    {
+      "source_path": "AMCOR_2023_10K.md",
+      "chunk_index": 35,
+      "score": 0.586316207022259
+    },
+    {
+      "source_path": "AMCOR_2023_10K.md",
+      "chunk_index": 6,
+      "score": 0.5771376454959097
+    },
+    {
+      "source_path": "AMCOR_2023_10K.md",
+      "chunk_index": 99,
+      "score": 0.5769282693276239
+    },
+    {
+      "source_path": "AMCOR_2023_10K.md",
+      "chunk_index": 3,
+      "score": 0.574686546428245
+    },
+    {
+      "source_path": "AMCOR_2023_10K.md",
+      "chunk_index": 8,
+      "score": 0.5712870794122199
+    },
+    {
+      "source_path": "AMCOR_2023_10K.md",
+      "chunk_index": 0,
+      "score": 0.5700682606264309
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 19091,
+    "output_tokens": 192,
+    "latency_ms": 3075,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"c\",\"reasoning\":\"(A) 검색된 문서 발췌에서 FY2023과 FY2022의 gross margin(매출총이익률) 수치를 명확히 확인할 수 있습니다. 청크 1과 2 모두 FY2023의 gross margin이 18.5% (2,725/14,694), FY2022는 19.4% (2,820/14,544)임을 보여줍니다. 즉, 약 0.9%p 하락(실제 계산상 0.9%p, 보기에서는 0.8%로 근사)했습니다. (B) 도메인 그래프에는 gross margin 관련 정보가 없으므로 (A)가 결정적 근거입니다. 따라서 정답은 c) No, AMCOR's gross margin declined slightly by 0.8% as of FY2023.\"}",
+    "parsed": {
+      "choice": "c",
+      "reasoning": "(A) 검색된 문서 발췌에서 FY2023과 FY2022의 gross margin(매출총이익률) 수치를 명확히 확인할 수 있습니다. 청크 1과 2 모두 FY2023의 gross margin이 18.5% (2,725/14,694), FY2022는 19.4% (2,820/14,544)임을 보여줍니다. 즉, 약 0.9%p 하락(실제 계산상 0.9%p, 보기에서는 0.8%로 근사)했습니다. (B) 도메인 그래프에는 gross margin 관련 정보가 없으므로 (A)가 결정적 근거입니다. 따라서 정답은 c) No, AMCOR's gross margin declined slightly by 0.8% as of FY2023."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 29840,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 36,
+    "chunk_setup_amortized": 29772,
+    "chunk_setup_total": 982504,
+    "graph_keyword_estimated": 32,
+    "questions_count_for_amortization": 33
+  },
+  "total_input_tokens": 19598,
+  "total_output_tokens": 236,
+  "total_tokens": 49674,
+  "total_latency_ms": 4897
+}

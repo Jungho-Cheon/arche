@@ -1,0 +1,109 @@
+{
+  "column": "opentology",
+  "question_id": "Q18",
+  "run_index": 2,
+  "anchor_extraction": {
+    "input_tokens": 484,
+    "output_tokens": 33,
+    "latency_ms": 916,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"American Express\",\"aliases\":[\"American Express\",\"Amex\"]},{\"canonical\":\"card members\",\"aliases\":[\"card members\",\"cardholders\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "American Express",
+          "aliases": [
+            "American Express",
+            "Amex"
+          ]
+        },
+        {
+          "canonical": "card members",
+          "aliases": [
+            "card members",
+            "cardholders"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 867,
+      "input": {
+        "keywords": [
+          "American Express",
+          "Amex",
+          "card members",
+          "cardholders"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 170,
+      "input": {
+        "entry_ids": [
+          "01KVKXQGQ60MKRGHXKW6VP5WS7",
+          "01KVKXSYB7N1W3EC9FSHFFM4A5",
+          "01KVKXSYX6355ENMDF79XZ8SHD",
+          "01KVKXQHZJ8BD06KZ8ADR0B9JB",
+          "01KVKXSXR7SF9BBD7VMH3GYCYN",
+          "01KVKXR7P8GV0PKW8GN8MQCQY1",
+          "01KVKXT6YD4GBR7D1XJNKKRAJP",
+          "01KVKXT663PHYJHGTRT6RK7KB0",
+          "01KVKXQRBEKVHRCRZPZDRXNW7H",
+          "01KVKXR2VRM92NQW2Z80K89NCZ"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 67,
+        "edges": 72,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVKXQGQ60MKRGHXKW6VP5WS7",
+    "01KVKXSYB7N1W3EC9FSHFFM4A5",
+    "01KVKXSYX6355ENMDF79XZ8SHD",
+    "01KVKXQHZJ8BD06KZ8ADR0B9JB",
+    "01KVKXSXR7SF9BBD7VMH3GYCYN",
+    "01KVKXR7P8GV0PKW8GN8MQCQY1",
+    "01KVKXT6YD4GBR7D1XJNKKRAJP",
+    "01KVKXT663PHYJHGTRT6RK7KB0",
+    "01KVKXQRBEKVHRCRZPZDRXNW7H",
+    "01KVKXR2VRM92NQW2Z80K89NCZ"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 34588,
+  "answer_generation": {
+    "input_tokens": 10853,
+    "output_tokens": 110,
+    "latency_ms": 2034,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"e\",\"reasoning\":\"The provided domain graph contains detailed information about American Express's business segments, partnerships, competitors, programs, and regulatory environment, but it does not include any data or statements regarding card member retention or changes in card membership for the year 2022. There are no entities or relationships in the graph that address card member retention statistics or trends for 2022. Therefore, the correct answer is '정보 부족 / 알 수 없음' (e), as the graph does not provide sufficient information to answer the question.\"}",
+    "parsed": {
+      "choice": "e",
+      "reasoning": "The provided domain graph contains detailed information about American Express's business segments, partnerships, competitors, programs, and regulatory environment, but it does not include any data or statements regarding card member retention or changes in card membership for the year 2022. There are no entities or relationships in the graph that address card member retention statistics or trends for 2022. Therefore, the correct answer is '정보 부족 / 알 수 없음' (e), as the graph does not provide sufficient information to answer the question."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 32,
+  "total_input_tokens": 11337,
+  "total_output_tokens": 143,
+  "total_tokens": 11512,
+  "total_latency_ms": 3987
+}

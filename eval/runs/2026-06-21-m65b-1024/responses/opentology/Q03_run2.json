@@ -1,0 +1,98 @@
+{
+  "column": "opentology",
+  "question_id": "Q03",
+  "run_index": 2,
+  "anchor_extraction": {
+    "input_tokens": 480,
+    "output_tokens": 16,
+    "latency_ms": 746,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"AMCOR\",\"aliases\":[\"AMCOR\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "AMCOR",
+          "aliases": [
+            "AMCOR"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 442,
+      "input": {
+        "keywords": [
+          "AMCOR"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 175,
+      "input": {
+        "entry_ids": [
+          "01KVKXHVH6K9ZYJ3R9DBQFYAQ1",
+          "01KVKXJ6R5DYD2WFBE190AA6D6",
+          "01KVKXK44BTHK3VKM1QBHARVVD",
+          "01KVKXJ5XWR5B83M5Z91NHPJXB",
+          "01KVKXJ905T1A41WCJD8E4EBEQ",
+          "01KVKXK4NP12PQN23BEVT760HM",
+          "01KVKXJDC3JFZ4A7C4ZDZR0RQB",
+          "01KVKXJ4S7QZX1NJEMQ4FKQNRS",
+          "01KVKXK6CGRYNEHSJMRT2JQMWA",
+          "01KVKXJA5CWH0PS61PWWN5G85J"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 67,
+        "edges": 75,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVKXHVH6K9ZYJ3R9DBQFYAQ1",
+    "01KVKXJ6R5DYD2WFBE190AA6D6",
+    "01KVKXK44BTHK3VKM1QBHARVVD",
+    "01KVKXJ5XWR5B83M5Z91NHPJXB",
+    "01KVKXJ905T1A41WCJD8E4EBEQ",
+    "01KVKXK4NP12PQN23BEVT760HM",
+    "01KVKXJDC3JFZ4A7C4ZDZR0RQB",
+    "01KVKXJ4S7QZX1NJEMQ4FKQNRS",
+    "01KVKXK6CGRYNEHSJMRT2JQMWA",
+    "01KVKXJA5CWH0PS61PWWN5G85J"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 31237,
+  "answer_generation": {
+    "input_tokens": 11071,
+    "output_tokens": 104,
+    "latency_ms": 1506,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"c\",\"reasoning\":\"그래프에서 Amcor plc는 'global leader in developing and producing responsible packaging'이라고 설명되어 있으며, Flexibles Segment(유연 포장)와 Rigid Packaging Segment(경질 포장)라는 사업 부문을 포함한다고 명시되어 있습니다. 이는 Amcor가 주로 포장 생산(패키징 프로덕션) 산업에서 활동함을 명확히 보여줍니다. 따라서 정답은 c) Packaging production industry입니다.\"}",
+    "parsed": {
+      "choice": "c",
+      "reasoning": "그래프에서 Amcor plc는 'global leader in developing and producing responsible packaging'이라고 설명되어 있으며, Flexibles Segment(유연 포장)와 Rigid Packaging Segment(경질 포장)라는 사업 부문을 포함한다고 명시되어 있습니다. 이는 Amcor가 주로 포장 생산(패키징 프로덕션) 산업에서 활동함을 명확히 보여줍니다. 따라서 정답은 c) Packaging production industry입니다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 8,
+  "total_input_tokens": 11551,
+  "total_output_tokens": 120,
+  "total_tokens": 11679,
+  "total_latency_ms": 2869
+}

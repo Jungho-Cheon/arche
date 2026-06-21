@@ -1,0 +1,168 @@
+{
+  "column": "combined",
+  "question_id": "Q16",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 491,
+    "output_tokens": 55,
+    "latency_ms": 1389,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"effective tax rate\",\"aliases\":[\"effective tax rate\"]},{\"canonical\":\"American Express\",\"aliases\":[\"American Express\"]},{\"canonical\":\"FY2021\",\"aliases\":[\"FY2021\"]},{\"canonical\":\"FY2022\",\"aliases\":[\"FY2022\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "effective tax rate",
+          "aliases": [
+            "effective tax rate"
+          ]
+        },
+        {
+          "canonical": "American Express",
+          "aliases": [
+            "American Express"
+          ]
+        },
+        {
+          "canonical": "FY2021",
+          "aliases": [
+            "FY2021"
+          ]
+        },
+        {
+          "canonical": "FY2022",
+          "aliases": [
+            "FY2022"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 1179,
+      "input": {
+        "keywords": [
+          "effective tax rate",
+          "American Express",
+          "FY2021",
+          "FY2022"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 141,
+      "input": {
+        "entry_ids": [
+          "01KVKXTN2W0MXDR4EVFKPD8J0A",
+          "01KVKXKR64JXNW5MH1E8AT330K",
+          "01KVKYF4FY9WS2GME92J8K243H",
+          "01KVKXVH0KN3J6H16ZEN6WH1DC",
+          "01KVKXW6ABBVCXNB643JN021HM",
+          "01KVKXQGQ60MKRGHXKW6VP5WS7",
+          "01KVKXJ3EADC5NHH8FH6S4BZBP",
+          "01KVKXJ2WHXTTD2TB446EJFYBE",
+          "01KVKXSYX6355ENMDF79XZ8SHD",
+          "01KVKXT4SBWC94P3HZ0WEPEFQ2"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 68,
+        "edges": 67,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVKXTN2W0MXDR4EVFKPD8J0A",
+    "01KVKXKR64JXNW5MH1E8AT330K",
+    "01KVKYF4FY9WS2GME92J8K243H",
+    "01KVKXVH0KN3J6H16ZEN6WH1DC",
+    "01KVKXW6ABBVCXNB643JN021HM",
+    "01KVKXQGQ60MKRGHXKW6VP5WS7",
+    "01KVKXJ3EADC5NHH8FH6S4BZBP",
+    "01KVKXJ2WHXTTD2TB446EJFYBE",
+    "01KVKXSYX6355ENMDF79XZ8SHD",
+    "01KVKXT4SBWC94P3HZ0WEPEFQ2"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 33981,
+  "retrieved_chunks": [
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 57,
+      "score": 0.6534468890431033
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 72,
+      "score": 0.6448725397067233
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 58,
+      "score": 0.6159339394293643
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 137,
+      "score": 0.6084209112892892
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 54,
+      "score": 0.605801572906744
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 53,
+      "score": 0.6037937874640043
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 49,
+      "score": 0.5924097755858633
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 173,
+      "score": 0.5918331381354537
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 17224,
+    "output_tokens": 171,
+    "latency_ms": 3405,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"c\",\"reasoning\":\"(A) 검색된 문서 발췌에서 명확하게 FY2021의 effective tax rate가 24.6%, FY2022의 effective tax rate가 21.6%임을 여러 번 언급하고 있으며, 'The effective tax rate was 21.6 percent and 24.6 percent for 2022 and 2021, respectively. The reduction in the effective tax rate primarily reflected discrete tax benefits in the current year...'라는 문장이 있어 FY2021에서 FY2022로 24.6%에서 21.6%로 감소했음을 알 수 있습니다. (B) 도메인 그래프에는 세율 변화에 대한 정보가 없습니다. 따라서 (A)의 구체적 수치와 설명이 결정적 근거입니다.\"}",
+    "parsed": {
+      "choice": "c",
+      "reasoning": "(A) 검색된 문서 발췌에서 명확하게 FY2021의 effective tax rate가 24.6%, FY2022의 effective tax rate가 21.6%임을 여러 번 언급하고 있으며, 'The effective tax rate was 21.6 percent and 24.6 percent for 2022 and 2021, respectively. The reduction in the effective tax rate primarily reflected discrete tax benefits in the current year...'라는 문장이 있어 FY2021에서 FY2022로 24.6%에서 21.6%로 감소했음을 알 수 있습니다. (B) 도메인 그래프에는 세율 변화에 대한 정보가 없습니다. 따라서 (A)의 구체적 수치와 설명이 결정적 근거입니다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 29824,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 20,
+    "chunk_setup_amortized": 29772,
+    "chunk_setup_total": 982504,
+    "graph_keyword_estimated": 32,
+    "questions_count_for_amortization": 33
+  },
+  "total_input_tokens": 17715,
+  "total_output_tokens": 226,
+  "total_tokens": 47765,
+  "total_latency_ms": 6114
+}

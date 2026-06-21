@@ -1,0 +1,112 @@
+{
+  "column": "opentology",
+  "question_id": "Q05",
+  "run_index": 1,
+  "anchor_extraction": {
+    "input_tokens": 506,
+    "output_tokens": 40,
+    "latency_ms": 1230,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"AMD\",\"aliases\":[\"AMD\"]},{\"canonical\":\"quick ratio\",\"aliases\":[\"quick ratio\"]},{\"canonical\":\"liquidity profile\",\"aliases\":[\"liquidity profile\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "AMD",
+          "aliases": [
+            "AMD"
+          ]
+        },
+        {
+          "canonical": "quick ratio",
+          "aliases": [
+            "quick ratio"
+          ]
+        },
+        {
+          "canonical": "liquidity profile",
+          "aliases": [
+            "liquidity profile"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 962,
+      "input": {
+        "keywords": [
+          "AMD",
+          "quick ratio",
+          "liquidity profile"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 113,
+      "input": {
+        "entry_ids": [
+          "01KVKXN3H5KF7GPN8YBN0AHMX5",
+          "01KVKXNAJXDA21K4PKZW1RR45A",
+          "01KVKXNN2YRXM89Z47Q5V9HG8Y",
+          "01KVKXNNN7HKRW9SP8RD2EKFH8",
+          "01KVKXNPCDXHMM3JV3RZ0M1RVR",
+          "01KVKXNQNR3S0Y08JCJ30F2R6W",
+          "01KVKYE3RY77QB8VGEKS5BKSPN",
+          "01KVKXN9SBQH2EB9M8BC71AB7K",
+          "01KVKXN92SP38H40CMCY495XY1",
+          "01KVKXTH2WRXMXCR65TVQKC9CR"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 54,
+        "edges": 51,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVKXN3H5KF7GPN8YBN0AHMX5",
+    "01KVKXNAJXDA21K4PKZW1RR45A",
+    "01KVKXNN2YRXM89Z47Q5V9HG8Y",
+    "01KVKXNNN7HKRW9SP8RD2EKFH8",
+    "01KVKXNPCDXHMM3JV3RZ0M1RVR",
+    "01KVKXNQNR3S0Y08JCJ30F2R6W",
+    "01KVKYE3RY77QB8VGEKS5BKSPN",
+    "01KVKXN9SBQH2EB9M8BC71AB7K",
+    "01KVKXN92SP38H40CMCY495XY1",
+    "01KVKXTH2WRXMXCR65TVQKC9CR"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 24172,
+  "answer_generation": {
+    "input_tokens": 8046,
+    "output_tokens": 102,
+    "latency_ms": 2606,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\": \"e\", \"reasoning\": \"The provided domain graph contains detailed information about AMD's business segments, products, partnerships, and regulatory environment, but it does not include any financial ratios, such as the quick ratio or current ratio, nor does it provide any financial statement data (e.g., cash, receivables, current liabilities) for FY22. Therefore, there is insufficient information in the graph to determine AMD's quick ratio or to assess its liquidity profile based on that metric.\"}",
+    "parsed": {
+      "choice": "e",
+      "reasoning": "The provided domain graph contains detailed information about AMD's business segments, products, partnerships, and regulatory environment, but it does not include any financial ratios, such as the quick ratio or current ratio, nor does it provide any financial statement data (e.g., cash, receivables, current liabilities) for FY22. Therefore, there is insufficient information in the graph to determine AMD's quick ratio or to assess its liquidity profile based on that metric."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 24,
+  "total_input_tokens": 8552,
+  "total_output_tokens": 142,
+  "total_tokens": 8718,
+  "total_latency_ms": 4911
+}

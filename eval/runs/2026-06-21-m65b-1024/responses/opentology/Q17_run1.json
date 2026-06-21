@@ -1,0 +1,112 @@
+{
+  "column": "opentology",
+  "question_id": "Q17",
+  "run_index": 1,
+  "anchor_extraction": {
+    "input_tokens": 487,
+    "output_tokens": 38,
+    "latency_ms": 930,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"American Express\",\"aliases\":[\"American Express\"]},{\"canonical\":\"Balance Sheet\",\"aliases\":[\"Balance Sheet\"]},{\"canonical\":\"liability\",\"aliases\":[\"liability\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "American Express",
+          "aliases": [
+            "American Express"
+          ]
+        },
+        {
+          "canonical": "Balance Sheet",
+          "aliases": [
+            "Balance Sheet"
+          ]
+        },
+        {
+          "canonical": "liability",
+          "aliases": [
+            "liability"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 1172,
+      "input": {
+        "keywords": [
+          "American Express",
+          "Balance Sheet",
+          "liability"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 186,
+      "input": {
+        "entry_ids": [
+          "01KVKXQGQ60MKRGHXKW6VP5WS7",
+          "01KVKXSYX6355ENMDF79XZ8SHD",
+          "01KVKXSXR7SF9BBD7VMH3GYCYN",
+          "01KVKXQHZJ8BD06KZ8ADR0B9JB",
+          "01KVKXT663PHYJHGTRT6RK7KB0",
+          "01KVKXT6YD4GBR7D1XJNKKRAJP",
+          "01KVKYF6QY9EVN6EPTXJJ8N2QR",
+          "01KVKXV8JVDRVG9B77EVRXSSRQ",
+          "01KVKXSYB7N1W3EC9FSHFFM4A5",
+          "01KVKXQH98KQ2K0N6RFMFECE35"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 78,
+        "edges": 83,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVKXQGQ60MKRGHXKW6VP5WS7",
+    "01KVKXSYX6355ENMDF79XZ8SHD",
+    "01KVKXSXR7SF9BBD7VMH3GYCYN",
+    "01KVKXQHZJ8BD06KZ8ADR0B9JB",
+    "01KVKXT663PHYJHGTRT6RK7KB0",
+    "01KVKXT6YD4GBR7D1XJNKKRAJP",
+    "01KVKYF6QY9EVN6EPTXJJ8N2QR",
+    "01KVKXV8JVDRVG9B77EVRXSSRQ",
+    "01KVKXSYB7N1W3EC9FSHFFM4A5",
+    "01KVKXQH98KQ2K0N6RFMFECE35"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 40220,
+  "answer_generation": {
+    "input_tokens": 12595,
+    "output_tokens": 81,
+    "latency_ms": 1701,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"e\",\"reasoning\":\"The provided domain graph contains detailed information about American Express's business structure, subsidiaries, regulatory environment, and various plans and programs, but it does not include any specific financial statement data such as the balance sheet or the amounts or rankings of liabilities. Therefore, there is insufficient information to determine what the largest liability was in American Express's Balance Sheet in 2022.\"}",
+    "parsed": {
+      "choice": "e",
+      "reasoning": "The provided domain graph contains detailed information about American Express's business structure, subsidiaries, regulatory environment, and various plans and programs, but it does not include any specific financial statement data such as the balance sheet or the amounts or rankings of liabilities. Therefore, there is insufficient information to determine what the largest liability was in American Express's Balance Sheet in 2022."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 24,
+  "total_input_tokens": 13082,
+  "total_output_tokens": 119,
+  "total_tokens": 13225,
+  "total_latency_ms": 3989
+}

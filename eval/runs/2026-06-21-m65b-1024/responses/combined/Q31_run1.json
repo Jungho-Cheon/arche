@@ -1,0 +1,168 @@
+{
+  "column": "combined",
+  "question_id": "Q31",
+  "run_index": 1,
+  "anchor_extraction": {
+    "input_tokens": 504,
+    "output_tokens": 57,
+    "latency_ms": 1499,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"restructuring costs\",\"aliases\":[\"restructuring costs\"]},{\"canonical\":\"Pepsico\",\"aliases\":[\"Pepsico\"]},{\"canonical\":\"income statements\",\"aliases\":[\"income statements\"]},{\"canonical\":\"FY2022\",\"aliases\":[\"FY2022\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "restructuring costs",
+          "aliases": [
+            "restructuring costs"
+          ]
+        },
+        {
+          "canonical": "Pepsico",
+          "aliases": [
+            "Pepsico"
+          ]
+        },
+        {
+          "canonical": "income statements",
+          "aliases": [
+            "income statements"
+          ]
+        },
+        {
+          "canonical": "FY2022",
+          "aliases": [
+            "FY2022"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 1074,
+      "input": {
+        "keywords": [
+          "restructuring costs",
+          "Pepsico",
+          "income statements",
+          "FY2022"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 125,
+      "input": {
+        "entry_ids": [
+          "01KVKXJ3EADC5NHH8FH6S4BZBP",
+          "01KVKXW6ABBVCXNB643JN021HM",
+          "01KVKY7BCEZ1VT4ZXQQVXS13MF",
+          "01KVKY6A0NXZS2E5QD8SD8ZTTA",
+          "01KVKYDV08SQXMQ5FD15ZRF1VA",
+          "01KVKY6BWFZ8KTRJVJ4RDGKJSQ",
+          "01KVKYFMQ46G9ABTNBQ510494Z",
+          "01KVKYDX7RKV93A40S8WZNJJ0H",
+          "01KVKXKR64JXNW5MH1E8AT330K",
+          "01KVKXR8WD8YKTVHV75SV6X567"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 58,
+        "edges": 53,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVKXJ3EADC5NHH8FH6S4BZBP",
+    "01KVKXW6ABBVCXNB643JN021HM",
+    "01KVKY7BCEZ1VT4ZXQQVXS13MF",
+    "01KVKY6A0NXZS2E5QD8SD8ZTTA",
+    "01KVKYDV08SQXMQ5FD15ZRF1VA",
+    "01KVKY6BWFZ8KTRJVJ4RDGKJSQ",
+    "01KVKYFMQ46G9ABTNBQ510494Z",
+    "01KVKYDX7RKV93A40S8WZNJJ0H",
+    "01KVKXKR64JXNW5MH1E8AT330K",
+    "01KVKXR8WD8YKTVHV75SV6X567"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 26586,
+  "retrieved_chunks": [
+    {
+      "source_path": "PEPSICO_2022_10K.md",
+      "chunk_index": 83,
+      "score": 0.6810178730618048
+    },
+    {
+      "source_path": "PEPSICO_2022_10K.md",
+      "chunk_index": 82,
+      "score": 0.6255104604524061
+    },
+    {
+      "source_path": "PEPSICO_2022_10K.md",
+      "chunk_index": 53,
+      "score": 0.6085355868633526
+    },
+    {
+      "source_path": "PEPSICO_2022_10K.md",
+      "chunk_index": 52,
+      "score": 0.5963956207920458
+    },
+    {
+      "source_path": "PEPSICO_2022_10K.md",
+      "chunk_index": 75,
+      "score": 0.5884719972020884
+    },
+    {
+      "source_path": "PEPSICO_2022_10K.md",
+      "chunk_index": 74,
+      "score": 0.5865487141062316
+    },
+    {
+      "source_path": "PEPSICO_2022_10K.md",
+      "chunk_index": 112,
+      "score": 0.575499228733025
+    },
+    {
+      "source_path": "PEPSICO_2022_10K.md",
+      "chunk_index": 76,
+      "score": 0.5749605439751085
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 15291,
+    "output_tokens": 118,
+    "latency_ms": 2279,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"a\",\"reasoning\":\"(A) 검색된 문서 발췌에서 'Total restructuring and impairment charges $ 411' for 2022 is explicitly stated in multiple places (see 청크 1 and 청크 2). The question asks for the quantity of restructuring costs directly outlined in Pepsico's income statements for FY2022, and $411 million is the figure given for 2022. The 도메인 그래프 (B) does not provide any direct numerical data about restructuring costs, so (A) is the decisive source.\"}",
+    "parsed": {
+      "choice": "a",
+      "reasoning": "(A) 검색된 문서 발췌에서 'Total restructuring and impairment charges $ 411' for 2022 is explicitly stated in multiple places (see 청크 1 and 청크 2). The question asks for the quantity of restructuring costs directly outlined in Pepsico's income statements for FY2022, and $411 million is the figure given for 2022. The 도메인 그래프 (B) does not provide any direct numerical data about restructuring costs, so (A) is the decisive source."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 29837,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 33,
+    "chunk_setup_amortized": 29772,
+    "chunk_setup_total": 982504,
+    "graph_keyword_estimated": 32,
+    "questions_count_for_amortization": 33
+  },
+  "total_input_tokens": 15795,
+  "total_output_tokens": 175,
+  "total_tokens": 45807,
+  "total_latency_ms": 4977
+}

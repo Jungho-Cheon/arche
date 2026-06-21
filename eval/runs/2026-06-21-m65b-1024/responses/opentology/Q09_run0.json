@@ -1,0 +1,141 @@
+{
+  "column": "opentology",
+  "question_id": "Q09",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 499,
+    "output_tokens": 88,
+    "latency_ms": 1070,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"operations\",\"aliases\":[\"operations\",\"operating activities\"]},{\"canonical\":\"investing activities\",\"aliases\":[\"investing activities\",\"investing\"]},{\"canonical\":\"financing activities\",\"aliases\":[\"financing activities\",\"financing\"]},{\"canonical\":\"AMD\",\"aliases\":[\"AMD\"]},{\"canonical\":\"FY22\",\"aliases\":[\"FY22\",\"fiscal year 2022\"]},{\"canonical\":\"cash flow\",\"aliases\":[\"cash flow\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "operations",
+          "aliases": [
+            "operations",
+            "operating activities"
+          ]
+        },
+        {
+          "canonical": "investing activities",
+          "aliases": [
+            "investing activities",
+            "investing"
+          ]
+        },
+        {
+          "canonical": "financing activities",
+          "aliases": [
+            "financing activities",
+            "financing"
+          ]
+        },
+        {
+          "canonical": "AMD",
+          "aliases": [
+            "AMD"
+          ]
+        },
+        {
+          "canonical": "FY22",
+          "aliases": [
+            "FY22",
+            "fiscal year 2022"
+          ]
+        },
+        {
+          "canonical": "cash flow",
+          "aliases": [
+            "cash flow"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 1143,
+      "input": {
+        "keywords": [
+          "operations",
+          "operating activities",
+          "investing activities",
+          "investing",
+          "financing activities",
+          "financing",
+          "AMD",
+          "FY22",
+          "fiscal year 2022",
+          "cash flow"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 51,
+      "input": {
+        "entry_ids": [
+          "01KVKXW6ABBVCXNB643JN021HM",
+          "01KVKXKSZNNHMGQB5G4202222W",
+          "01KVKXVD86F6EPXRVAW4NMYZX7",
+          "01KVKXKR64JXNW5MH1E8AT330K",
+          "01KVKXKTH2EJ1W3TT4D6JQQ3SW",
+          "01KVKXV8JVDRVG9B77EVRXSSRQ",
+          "01KVKXR8WD8YKTVHV75SV6X567",
+          "01KVKYF6QY9EVN6EPTXJJ8N2QR",
+          "01KVKYE3RY77QB8VGEKS5BKSPN",
+          "01KVKXKV6128G44E1RXKEWF9G6"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 23,
+        "edges": 17,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVKXW6ABBVCXNB643JN021HM",
+    "01KVKXKSZNNHMGQB5G4202222W",
+    "01KVKXVD86F6EPXRVAW4NMYZX7",
+    "01KVKXKR64JXNW5MH1E8AT330K",
+    "01KVKXKTH2EJ1W3TT4D6JQQ3SW",
+    "01KVKXV8JVDRVG9B77EVRXSSRQ",
+    "01KVKXR8WD8YKTVHV75SV6X567",
+    "01KVKYF6QY9EVN6EPTXJJ8N2QR",
+    "01KVKYE3RY77QB8VGEKS5BKSPN",
+    "01KVKXKV6128G44E1RXKEWF9G6"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 10404,
+  "answer_generation": {
+    "input_tokens": 3652,
+    "output_tokens": 82,
+    "latency_ms": 1273,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"e\",\"reasoning\":\"그래프 내에는 AMD의 FY22(2022 회계연도) 현금흐름(operations, investing, financing activities) 관련 정보가 전혀 존재하지 않습니다. AMD에 대한 언급이나 해당 연도 현금흐름 데이터가 없으므로, 제공된 그래프만으로는 답을 도출할 수 없습니다.\"}",
+    "parsed": {
+      "choice": "e",
+      "reasoning": "그래프 내에는 AMD의 FY22(2022 회계연도) 현금흐름(operations, investing, financing activities) 관련 정보가 전혀 존재하지 않습니다. AMD에 대한 언급이나 해당 연도 현금흐름 데이터가 없으므로, 제공된 그래프만으로는 답을 도출할 수 없습니다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 80,
+  "total_input_tokens": 4151,
+  "total_output_tokens": 170,
+  "total_tokens": 4401,
+  "total_latency_ms": 3537
+}

@@ -1,0 +1,116 @@
+{
+  "column": "opentology",
+  "question_id": "Q29",
+  "run_index": 2,
+  "anchor_extraction": {
+    "input_tokens": 489,
+    "output_tokens": 50,
+    "latency_ms": 1051,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"Pepsico\",\"aliases\":[\"Pepsico\"]},{\"canonical\":\"geographies\",\"aliases\":[\"geographies\",\"regions\"]},{\"canonical\":\"FY2022\",\"aliases\":[\"FY2022\",\"Fiscal Year 2022\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "Pepsico",
+          "aliases": [
+            "Pepsico"
+          ]
+        },
+        {
+          "canonical": "geographies",
+          "aliases": [
+            "geographies",
+            "regions"
+          ]
+        },
+        {
+          "canonical": "FY2022",
+          "aliases": [
+            "FY2022",
+            "Fiscal Year 2022"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 802,
+      "input": {
+        "keywords": [
+          "Pepsico",
+          "geographies",
+          "regions",
+          "FY2022",
+          "Fiscal Year 2022"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 124,
+      "input": {
+        "entry_ids": [
+          "01KVKXT4SBWC94P3HZ0WEPEFQ2",
+          "01KVKXT3SCDC0VGPVJ3CNNA1YA",
+          "01KVKYFMQ46G9ABTNBQ510494Z",
+          "01KVKY7BCEZ1VT4ZXQQVXS13MF",
+          "01KVKY6A0NXZS2E5QD8SD8ZTTA",
+          "01KVKYDV08SQXMQ5FD15ZRF1VA",
+          "01KVKY6D2Z4QDS9Z2KAK2FHJRK",
+          "01KVKXJ3EADC5NHH8FH6S4BZBP",
+          "01KVKY6BWFZ8KTRJVJ4RDGKJSQ",
+          "01KVKY6E64RWCZNQ897KHRGF0F"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 51,
+        "edges": 48,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVKXT4SBWC94P3HZ0WEPEFQ2",
+    "01KVKXT3SCDC0VGPVJ3CNNA1YA",
+    "01KVKYFMQ46G9ABTNBQ510494Z",
+    "01KVKY7BCEZ1VT4ZXQQVXS13MF",
+    "01KVKY6A0NXZS2E5QD8SD8ZTTA",
+    "01KVKYDV08SQXMQ5FD15ZRF1VA",
+    "01KVKY6D2Z4QDS9Z2KAK2FHJRK",
+    "01KVKXJ3EADC5NHH8FH6S4BZBP",
+    "01KVKY6BWFZ8KTRJVJ4RDGKJSQ",
+    "01KVKY6E64RWCZNQ897KHRGF0F"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 23015,
+  "answer_generation": {
+    "input_tokens": 8152,
+    "output_tokens": 219,
+    "latency_ms": 2619,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"d\",\"reasoning\":\"그래프에서 'PepsiCo, Inc. [id=01KVKY]'가 포함하는 Division으로 Asia Pacific, Australia and New Zealand and China Region, Africa, Middle East and South Asia, Europe, Latin America, PepsiCo Beverages North America, Quaker Foods North America, Frito-Lay North America가 명시되어 있다. Asia Pacific, Australia and New Zealand and China Region은 Asia Pacific, Australia, New Zealand, China를 모두 포함한다. Africa, Middle East and South Asia는 Africa, Middle East, South Asia를 포함한다. North America는 여러 division(예: PepsiCo Beverages North America, Quaker Foods North America, Frito-Lay North America)로 분리되어 있지만, 모두 North America에 해당한다. 따라서 보기 d) North America, Latin America, Europe, Africa, Middle East, South Asia, Asia Pacific, Australia, New Zealand, and China가 정확히 일치한다. South America는 별도로 언급되지 않으므로 c)는 오답이다.\"}",
+    "parsed": {
+      "choice": "d",
+      "reasoning": "그래프에서 'PepsiCo, Inc. [id=01KVKY]'가 포함하는 Division으로 Asia Pacific, Australia and New Zealand and China Region, Africa, Middle East and South Asia, Europe, Latin America, PepsiCo Beverages North America, Quaker Foods North America, Frito-Lay North America가 명시되어 있다. Asia Pacific, Australia and New Zealand and China Region은 Asia Pacific, Australia, New Zealand, China를 모두 포함한다. Africa, Middle East and South Asia는 Africa, Middle East, South Asia를 포함한다. North America는 여러 division(예: PepsiCo Beverages North America, Quaker Foods North America, Frito-Lay North America)로 분리되어 있지만, 모두 North America에 해당한다. 따라서 보기 d) North America, Latin America, Europe, Africa, Middle East, South Asia, Asia Pacific, Australia, New Zealand, and China가 정확히 일치한다. South America는 별도로 언급되지 않으므로 c)는 오답이다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 40,
+  "total_input_tokens": 8641,
+  "total_output_tokens": 269,
+  "total_tokens": 8950,
+  "total_latency_ms": 4596
+}

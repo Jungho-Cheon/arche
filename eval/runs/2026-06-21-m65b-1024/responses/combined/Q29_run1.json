@@ -1,0 +1,156 @@
+{
+  "column": "combined",
+  "question_id": "Q29",
+  "run_index": 1,
+  "anchor_extraction": {
+    "input_tokens": 489,
+    "output_tokens": 37,
+    "latency_ms": 1085,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"Pepsico\",\"aliases\":[\"Pepsico\"]},{\"canonical\":\"FY2022\",\"aliases\":[\"FY2022\",\"Fiscal Year 2022\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "Pepsico",
+          "aliases": [
+            "Pepsico"
+          ]
+        },
+        {
+          "canonical": "FY2022",
+          "aliases": [
+            "FY2022",
+            "Fiscal Year 2022"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 853,
+      "input": {
+        "keywords": [
+          "Pepsico",
+          "FY2022",
+          "Fiscal Year 2022"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 126,
+      "input": {
+        "entry_ids": [
+          "01KVKXT4SBWC94P3HZ0WEPEFQ2",
+          "01KVKXT3SCDC0VGPVJ3CNNA1YA",
+          "01KVKY7BCEZ1VT4ZXQQVXS13MF",
+          "01KVKYDV08SQXMQ5FD15ZRF1VA",
+          "01KVKY6A0NXZS2E5QD8SD8ZTTA",
+          "01KVKXJ3EADC5NHH8FH6S4BZBP",
+          "01KVKY6BWFZ8KTRJVJ4RDGKJSQ",
+          "01KVKYDX7RKV93A40S8WZNJJ0H",
+          "01KVKYF8Z922RWXDRE1QMTRCWM",
+          "01KVKYEEP8PBS9WZ2EQAV34531"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 60,
+        "edges": 56,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVKXT4SBWC94P3HZ0WEPEFQ2",
+    "01KVKXT3SCDC0VGPVJ3CNNA1YA",
+    "01KVKY7BCEZ1VT4ZXQQVXS13MF",
+    "01KVKYDV08SQXMQ5FD15ZRF1VA",
+    "01KVKY6A0NXZS2E5QD8SD8ZTTA",
+    "01KVKXJ3EADC5NHH8FH6S4BZBP",
+    "01KVKY6BWFZ8KTRJVJ4RDGKJSQ",
+    "01KVKYDX7RKV93A40S8WZNJJ0H",
+    "01KVKYF8Z922RWXDRE1QMTRCWM",
+    "01KVKYEEP8PBS9WZ2EQAV34531"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 27131,
+  "retrieved_chunks": [
+    {
+      "source_path": "PEPSICO_2022_10K.md",
+      "chunk_index": 36,
+      "score": 0.662095868661818
+    },
+    {
+      "source_path": "PEPSICO_2022_10K.md",
+      "chunk_index": 3,
+      "score": 0.6297033485475717
+    },
+    {
+      "source_path": "PEPSICO_2022_10K.md",
+      "chunk_index": 15,
+      "score": 0.6190301093307939
+    },
+    {
+      "source_path": "PEPSICO_2022_10K.md",
+      "chunk_index": 35,
+      "score": 0.6136720999646552
+    },
+    {
+      "source_path": "PEPSICO_2022_10K.md",
+      "chunk_index": 401,
+      "score": 0.6097613061144491
+    },
+    {
+      "source_path": "PEPSICO_2022_10K.md",
+      "chunk_index": 7,
+      "score": 0.608386843275169
+    },
+    {
+      "source_path": "PEPSICO_2022_10K.md",
+      "chunk_index": 402,
+      "score": 0.6042329403421376
+    },
+    {
+      "source_path": "PEPSICO_2022_10K.md",
+      "chunk_index": 403,
+      "score": 0.60313306523974
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 15570,
+    "output_tokens": 178,
+    "latency_ms": 2650,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"d\",\"reasoning\":\"(A) 검색된 문서 발췌에서 'We are organized into seven reportable segments (also referred to as divisions), as follows: 1) Frito-Lay North America (FLNA)... 4) Latin America (LatAm)... 5) Europe... 6) Africa, Middle East and South Asia (AMESA)... 7) Asia Pacific, Australia and New Zealand and China Region (APAC)'라는 명확한 설명이 있습니다. (B) 도메인 그래프에서도 PepsiCo, Inc.가 포함하는 지역으로 North America, Latin America, Europe, Africa, Middle East, South Asia, Asia Pacific, Australia, New Zealand, China가 모두 명시되어 있습니다. 두 출처 모두 보기 d)와 정확히 일치하므로, d)가 정답입니다.\"}",
+    "parsed": {
+      "choice": "d",
+      "reasoning": "(A) 검색된 문서 발췌에서 'We are organized into seven reportable segments (also referred to as divisions), as follows: 1) Frito-Lay North America (FLNA)... 4) Latin America (LatAm)... 5) Europe... 6) Africa, Middle East and South Asia (AMESA)... 7) Asia Pacific, Australia and New Zealand and China Region (APAC)'라는 명확한 설명이 있습니다. (B) 도메인 그래프에서도 PepsiCo, Inc.가 포함하는 지역으로 North America, Latin America, Europe, Africa, Middle East, South Asia, Asia Pacific, Australia, New Zealand, China가 모두 명시되어 있습니다. 두 출처 모두 보기 d)와 정확히 일치하므로, d)가 정답입니다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 29814,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 18,
+    "chunk_setup_amortized": 29772,
+    "chunk_setup_total": 982504,
+    "graph_keyword_estimated": 24,
+    "questions_count_for_amortization": 33
+  },
+  "total_input_tokens": 16059,
+  "total_output_tokens": 215,
+  "total_tokens": 46088,
+  "total_latency_ms": 4714
+}

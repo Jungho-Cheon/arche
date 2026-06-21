@@ -1,0 +1,118 @@
+{
+  "column": "opentology",
+  "question_id": "Q20",
+  "run_index": 1,
+  "anchor_extraction": {
+    "input_tokens": 485,
+    "output_tokens": 58,
+    "latency_ms": 1225,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"Boeing\",\"aliases\":[\"Boeing\"]},{\"canonical\":\"FY2022\",\"aliases\":[\"FY2022\",\"Fiscal Year 2022\"]},{\"canonical\":\"ongoing legal battles\",\"aliases\":[\"ongoing legal battles\",\"legal battles\",\"lawsuits\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "Boeing",
+          "aliases": [
+            "Boeing"
+          ]
+        },
+        {
+          "canonical": "FY2022",
+          "aliases": [
+            "FY2022",
+            "Fiscal Year 2022"
+          ]
+        },
+        {
+          "canonical": "ongoing legal battles",
+          "aliases": [
+            "ongoing legal battles",
+            "legal battles",
+            "lawsuits"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 971,
+      "input": {
+        "keywords": [
+          "Boeing",
+          "FY2022",
+          "Fiscal Year 2022",
+          "ongoing legal battles",
+          "legal battles",
+          "lawsuits"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 47,
+      "input": {
+        "entry_ids": [
+          "01KVKXJK2QMZ7BWVEH62PJWXJH",
+          "01KVKXT4SBWC94P3HZ0WEPEFQ2",
+          "01KVKXT3SCDC0VGPVJ3CNNA1YA",
+          "01KVKXR3JT1F84FNF64RCZZ6VB",
+          "01KVKYEKWD0RB5G0KJWHTRB65Q",
+          "01KVKXR8WD8YKTVHV75SV6X567",
+          "01KVKYFJGSMTB5P558P4JCC151",
+          "01KVKXJMP3JS6P4C2A5JS79GK6",
+          "01KVKY3XJWYWYKWCJYK86D73Y1",
+          "01KVKXJHS7EAZAPM7NXKX7MRFM"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 19,
+        "edges": 14,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVKXJK2QMZ7BWVEH62PJWXJH",
+    "01KVKXT4SBWC94P3HZ0WEPEFQ2",
+    "01KVKXT3SCDC0VGPVJ3CNNA1YA",
+    "01KVKXR3JT1F84FNF64RCZZ6VB",
+    "01KVKYEKWD0RB5G0KJWHTRB65Q",
+    "01KVKXR8WD8YKTVHV75SV6X567",
+    "01KVKYFJGSMTB5P558P4JCC151",
+    "01KVKXJMP3JS6P4C2A5JS79GK6",
+    "01KVKY3XJWYWYKWCJYK86D73Y1",
+    "01KVKXJHS7EAZAPM7NXKX7MRFM"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 9069,
+  "answer_generation": {
+    "input_tokens": 3226,
+    "output_tokens": 77,
+    "latency_ms": 1373,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"e\",\"reasoning\":\"제공된 도메인 그래프에는 Boeing에 대한 엔티티, 관계, 또는 FY2022의 법적 분쟁에 관한 정보가 전혀 포함되어 있지 않습니다. 따라서 Boeing의 FY2022 법적 분쟁 여부에 대해 답변할 수 있는 근거가 없습니다. 정보 부족에 해당합니다.\"}",
+    "parsed": {
+      "choice": "e",
+      "reasoning": "제공된 도메인 그래프에는 Boeing에 대한 엔티티, 관계, 또는 FY2022의 법적 분쟁에 관한 정보가 전혀 포함되어 있지 않습니다. 따라서 Boeing의 FY2022 법적 분쟁 여부에 대해 답변할 수 있는 근거가 없습니다. 정보 부족에 해당합니다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 48,
+  "total_input_tokens": 3711,
+  "total_output_tokens": 135,
+  "total_tokens": 3894,
+  "total_latency_ms": 3616
+}

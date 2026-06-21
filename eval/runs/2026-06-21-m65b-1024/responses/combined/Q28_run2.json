@@ -1,0 +1,165 @@
+{
+  "column": "combined",
+  "question_id": "Q28",
+  "run_index": 2,
+  "anchor_extraction": {
+    "input_tokens": 514,
+    "output_tokens": 51,
+    "latency_ms": 858,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"JnJ\",\"aliases\":[\"JnJ\",\"Johnson & Johnson\"]},{\"canonical\":\"inventory turnover ratio\",\"aliases\":[\"inventory turnover ratio\",\"inventory turnover\"]},{\"canonical\":\"conventional inventory management\",\"aliases\":[\"conventional inventory management\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "JnJ",
+          "aliases": [
+            "JnJ",
+            "Johnson & Johnson"
+          ]
+        },
+        {
+          "canonical": "inventory turnover ratio",
+          "aliases": [
+            "inventory turnover ratio",
+            "inventory turnover"
+          ]
+        },
+        {
+          "canonical": "conventional inventory management",
+          "aliases": [
+            "conventional inventory management"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 887,
+      "input": {
+        "keywords": [
+          "JnJ",
+          "Johnson & Johnson",
+          "inventory turnover ratio",
+          "inventory turnover",
+          "conventional inventory management"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 76,
+      "input": {
+        "entry_ids": [
+          "01KVKY5050XW5J9CZA79C5KW3T",
+          "01KVKY2SP2BTKHWJ1Y39K1CY34",
+          "01KVKYFNWGWXAEB2RVB5P1MTP3",
+          "01KVKY48FSE7BN9FSWBB331ZN6",
+          "01KVKY51MJ6K34TTZSYYHDHF7V",
+          "01KVKY4YWFPZQ0CPSCEGDZ0V1D",
+          "01KVKXW6ABBVCXNB643JN021HM",
+          "01KVKXVD86F6EPXRVAW4NMYZX7",
+          "01KVKY2WZRQAHPF64V1E035J0P",
+          "01KVKY56FNG4ARXNRK1JEJEB6Q"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 31,
+        "edges": 27,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVKY5050XW5J9CZA79C5KW3T",
+    "01KVKY2SP2BTKHWJ1Y39K1CY34",
+    "01KVKYFNWGWXAEB2RVB5P1MTP3",
+    "01KVKY48FSE7BN9FSWBB331ZN6",
+    "01KVKY51MJ6K34TTZSYYHDHF7V",
+    "01KVKY4YWFPZQ0CPSCEGDZ0V1D",
+    "01KVKXW6ABBVCXNB643JN021HM",
+    "01KVKXVD86F6EPXRVAW4NMYZX7",
+    "01KVKY2WZRQAHPF64V1E035J0P",
+    "01KVKY56FNG4ARXNRK1JEJEB6Q"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 14856,
+  "retrieved_chunks": [
+    {
+      "source_path": "JOHNSON_JOHNSON_2022_10K.md",
+      "chunk_index": 90,
+      "score": 0.57294909462432
+    },
+    {
+      "source_path": "JOHNSON_JOHNSON_2022_10K.md",
+      "chunk_index": 132,
+      "score": 0.5666518404645714
+    },
+    {
+      "source_path": "JOHNSON_JOHNSON_2022_10K.md",
+      "chunk_index": 58,
+      "score": 0.5651047612568162
+    },
+    {
+      "source_path": "JOHNSON_JOHNSON_2022_10K.md",
+      "chunk_index": 30,
+      "score": 0.5615692968665145
+    },
+    {
+      "source_path": "JOHNSON_JOHNSON_2022_10K.md",
+      "chunk_index": 29,
+      "score": 0.5548613533976271
+    },
+    {
+      "source_path": "JOHNSON_JOHNSON_2022_10K.md",
+      "chunk_index": 52,
+      "score": 0.5457301712913328
+    },
+    {
+      "source_path": "JOHNSON_JOHNSON_2022_10K.md",
+      "chunk_index": 138,
+      "score": 0.5438902922497703
+    },
+    {
+      "source_path": "JOHNSON_JOHNSON_2022_10K.md",
+      "chunk_index": 91,
+      "score": 0.5438334216463875
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 12025,
+    "output_tokens": 123,
+    "latency_ms": 1921,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"e\",\"reasoning\":\"Neither (A) the document excerpts nor (B) the domain graph provide the necessary financial data (specifically, cost of goods sold and average inventory for FY2022) to calculate the inventory turnover ratio for Johnson & Johnson. The excerpts discuss business segments, stock compensation, and other financial details, but do not include the required inventory or COGS figures. The domain graph also does not contain relationships or attributes relevant to inventory turnover. Therefore, the only justifiable answer is '정보 부족 / 알 수 없음' (e), based on information from both sources.\"}",
+    "parsed": {
+      "choice": "e",
+      "reasoning": "Neither (A) the document excerpts nor (B) the domain graph provide the necessary financial data (specifically, cost of goods sold and average inventory for FY2022) to calculate the inventory turnover ratio for Johnson & Johnson. The excerpts discuss business segments, stock compensation, and other financial details, but do not include the required inventory or COGS figures. The domain graph also does not contain relationships or attributes relevant to inventory turnover. Therefore, the only justifiable answer is '정보 부족 / 알 수 없음' (e), based on information from both sources."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 29856,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 44,
+    "chunk_setup_amortized": 29772,
+    "chunk_setup_total": 982504,
+    "graph_keyword_estimated": 40,
+    "questions_count_for_amortization": 33
+  },
+  "total_input_tokens": 12539,
+  "total_output_tokens": 174,
+  "total_tokens": 42569,
+  "total_latency_ms": 3742
+}

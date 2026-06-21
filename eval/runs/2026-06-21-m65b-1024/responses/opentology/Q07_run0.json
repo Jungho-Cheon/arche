@@ -1,0 +1,116 @@
+{
+  "column": "opentology",
+  "question_id": "Q07",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 483,
+    "output_tokens": 47,
+    "latency_ms": 877,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"revenue\",\"aliases\":[\"revenue\"]},{\"canonical\":\"FY22\",\"aliases\":[\"FY22\",\"fiscal year 2022\"]},{\"canonical\":\"AMD\",\"aliases\":[\"AMD\",\"Advanced Micro Devices\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "revenue",
+          "aliases": [
+            "revenue"
+          ]
+        },
+        {
+          "canonical": "FY22",
+          "aliases": [
+            "FY22",
+            "fiscal year 2022"
+          ]
+        },
+        {
+          "canonical": "AMD",
+          "aliases": [
+            "AMD",
+            "Advanced Micro Devices"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 679,
+      "input": {
+        "keywords": [
+          "revenue",
+          "FY22",
+          "fiscal year 2022",
+          "AMD",
+          "Advanced Micro Devices"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 128,
+      "input": {
+        "entry_ids": [
+          "01KVKXN3H5KF7GPN8YBN0AHMX5",
+          "01KVKXT4SBWC94P3HZ0WEPEFQ2",
+          "01KVKXT3SCDC0VGPVJ3CNNA1YA",
+          "01KVKXS2ZGN87V5S4DAZN5W9S3",
+          "01KVKXNPCDXHMM3JV3RZ0M1RVR",
+          "01KVKXNQNR3S0Y08JCJ30F2R6W",
+          "01KVKXNAJXDA21K4PKZW1RR45A",
+          "01KVKXNN2YRXM89Z47Q5V9HG8Y",
+          "01KVKXN9SBQH2EB9M8BC71AB7K",
+          "01KVKXNR9AVJP8346MZ7M164XF"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 56,
+        "edges": 53,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVKXN3H5KF7GPN8YBN0AHMX5",
+    "01KVKXT4SBWC94P3HZ0WEPEFQ2",
+    "01KVKXT3SCDC0VGPVJ3CNNA1YA",
+    "01KVKXS2ZGN87V5S4DAZN5W9S3",
+    "01KVKXNPCDXHMM3JV3RZ0M1RVR",
+    "01KVKXNQNR3S0Y08JCJ30F2R6W",
+    "01KVKXNAJXDA21K4PKZW1RR45A",
+    "01KVKXNN2YRXM89Z47Q5V9HG8Y",
+    "01KVKXN9SBQH2EB9M8BC71AB7K",
+    "01KVKXNR9AVJP8346MZ7M164XF"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 25632,
+  "answer_generation": {
+    "input_tokens": 8431,
+    "output_tokens": 136,
+    "latency_ms": 2306,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"a\",\"reasoning\":\"그래프에서 AMD가 FY22에 Xilinx, Inc.를 인수했으며, Xilinx는 FPGAs 및 Adaptive SoCs(임베디드 제품)를 제공한다고 명시되어 있다. 또한 AMD의 Data Center segment에는 서버 CPU(EPYC), Gaming segment에는 세미커스텀 SoC가 포함되어 있다. 따라서 'Higher sales of EPYC server processors, increased semi-custom product sales, and inclusion of Xilinx embedded product sales'가 FY22의 매출 변화 요인임을 뒷받침한다. 보기 a)가 그래프 정보와 가장 일치한다.\"}",
+    "parsed": {
+      "choice": "a",
+      "reasoning": "그래프에서 AMD가 FY22에 Xilinx, Inc.를 인수했으며, Xilinx는 FPGAs 및 Adaptive SoCs(임베디드 제품)를 제공한다고 명시되어 있다. 또한 AMD의 Data Center segment에는 서버 CPU(EPYC), Gaming segment에는 세미커스텀 SoC가 포함되어 있다. 따라서 'Higher sales of EPYC server processors, increased semi-custom product sales, and inclusion of Xilinx embedded product sales'가 FY22의 매출 변화 요인임을 뒷받침한다. 보기 a)가 그래프 정보와 가장 일치한다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 40,
+  "total_input_tokens": 8914,
+  "total_output_tokens": 183,
+  "total_tokens": 9137,
+  "total_latency_ms": 3990
+}

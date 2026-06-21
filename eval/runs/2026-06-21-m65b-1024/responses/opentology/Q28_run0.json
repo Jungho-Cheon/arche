@@ -1,0 +1,116 @@
+{
+  "column": "opentology",
+  "question_id": "Q28",
+  "run_index": 0,
+  "anchor_extraction": {
+    "input_tokens": 514,
+    "output_tokens": 51,
+    "latency_ms": 920,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"JnJ\",\"aliases\":[\"JnJ\",\"Johnson & Johnson\"]},{\"canonical\":\"inventory turnover ratio\",\"aliases\":[\"inventory turnover ratio\",\"inventory turnover\"]},{\"canonical\":\"conventional inventory management\",\"aliases\":[\"conventional inventory management\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "JnJ",
+          "aliases": [
+            "JnJ",
+            "Johnson & Johnson"
+          ]
+        },
+        {
+          "canonical": "inventory turnover ratio",
+          "aliases": [
+            "inventory turnover ratio",
+            "inventory turnover"
+          ]
+        },
+        {
+          "canonical": "conventional inventory management",
+          "aliases": [
+            "conventional inventory management"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 749,
+      "input": {
+        "keywords": [
+          "JnJ",
+          "Johnson & Johnson",
+          "inventory turnover ratio",
+          "inventory turnover",
+          "conventional inventory management"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 75,
+      "input": {
+        "entry_ids": [
+          "01KVKY5050XW5J9CZA79C5KW3T",
+          "01KVKY2SP2BTKHWJ1Y39K1CY34",
+          "01KVKYFNWGWXAEB2RVB5P1MTP3",
+          "01KVKY48FSE7BN9FSWBB331ZN6",
+          "01KVKY51MJ6K34TTZSYYHDHF7V",
+          "01KVKY4YWFPZQ0CPSCEGDZ0V1D",
+          "01KVKXW6ABBVCXNB643JN021HM",
+          "01KVKXVD86F6EPXRVAW4NMYZX7",
+          "01KVKY2WZRQAHPF64V1E035J0P",
+          "01KVKY56FNG4ARXNRK1JEJEB6Q"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 31,
+        "edges": 27,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVKY5050XW5J9CZA79C5KW3T",
+    "01KVKY2SP2BTKHWJ1Y39K1CY34",
+    "01KVKYFNWGWXAEB2RVB5P1MTP3",
+    "01KVKY48FSE7BN9FSWBB331ZN6",
+    "01KVKY51MJ6K34TTZSYYHDHF7V",
+    "01KVKY4YWFPZQ0CPSCEGDZ0V1D",
+    "01KVKXW6ABBVCXNB643JN021HM",
+    "01KVKXVD86F6EPXRVAW4NMYZX7",
+    "01KVKY2WZRQAHPF64V1E035J0P",
+    "01KVKY56FNG4ARXNRK1JEJEB6Q"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 14856,
+  "answer_generation": {
+    "input_tokens": 5142,
+    "output_tokens": 120,
+    "latency_ms": 1937,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\": \"e\", \"reasoning\": \"제공된 도메인 그래프에는 Johnson & Johnson의 FY2022 재고자산 회전율(inventory turnover ratio) 또는 관련 재무 수치(매출원가, 평균재고 등)에 대한 정보가 포함되어 있지 않습니다. 따라서 FY2022의 재고자산 회전율을 계산하거나, 관습적인 재고관리의 의미 여부를 판단할 수 있는 근거가 없습니다. 오직 그래프에 근거해야 하므로 '정보 부족'이 정답입니다.\"}",
+    "parsed": {
+      "choice": "e",
+      "reasoning": "제공된 도메인 그래프에는 Johnson & Johnson의 FY2022 재고자산 회전율(inventory turnover ratio) 또는 관련 재무 수치(매출원가, 평균재고 등)에 대한 정보가 포함되어 있지 않습니다. 따라서 FY2022의 재고자산 회전율을 계산하거나, 관습적인 재고관리의 의미 여부를 판단할 수 있는 근거가 없습니다. 오직 그래프에 근거해야 하므로 '정보 부족'이 정답입니다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 40,
+  "total_input_tokens": 5656,
+  "total_output_tokens": 171,
+  "total_tokens": 5867,
+  "total_latency_ms": 3681
+}

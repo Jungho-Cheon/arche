@@ -1,0 +1,163 @@
+{
+  "column": "combined",
+  "question_id": "Q27",
+  "run_index": 2,
+  "anchor_extraction": {
+    "input_tokens": 508,
+    "output_tokens": 44,
+    "latency_ms": 913,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"gross margin\",\"aliases\":[\"gross margin\"]},{\"canonical\":\"FY2022\",\"aliases\":[\"FY2022\"]},{\"canonical\":\"JnJ\",\"aliases\":[\"JnJ\",\"Johnson & Johnson\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "gross margin",
+          "aliases": [
+            "gross margin"
+          ]
+        },
+        {
+          "canonical": "FY2022",
+          "aliases": [
+            "FY2022"
+          ]
+        },
+        {
+          "canonical": "JnJ",
+          "aliases": [
+            "JnJ",
+            "Johnson & Johnson"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 1045,
+      "input": {
+        "keywords": [
+          "gross margin",
+          "FY2022",
+          "JnJ",
+          "Johnson & Johnson"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 78,
+      "input": {
+        "entry_ids": [
+          "01KVKY2SP2BTKHWJ1Y39K1CY34",
+          "01KVKY48FSE7BN9FSWBB331ZN6",
+          "01KVKY51MJ6K34TTZSYYHDHF7V",
+          "01KVKY4YWFPZQ0CPSCEGDZ0V1D",
+          "01KVKY2WZRQAHPF64V1E035J0P",
+          "01KVKY56FNG4ARXNRK1JEJEB6Q",
+          "01KVKY4XFCNRVZNHV18MVYKZ2H",
+          "01KVKY4Y9888ADFKPSZF4833FA",
+          "01KVKY4D9AX325GTKTFGD3SVVH",
+          "01KVKY4C2V5NXYA974Y89K19VB"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 32,
+        "edges": 29,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVKY2SP2BTKHWJ1Y39K1CY34",
+    "01KVKY48FSE7BN9FSWBB331ZN6",
+    "01KVKY51MJ6K34TTZSYYHDHF7V",
+    "01KVKY4YWFPZQ0CPSCEGDZ0V1D",
+    "01KVKY2WZRQAHPF64V1E035J0P",
+    "01KVKY56FNG4ARXNRK1JEJEB6Q",
+    "01KVKY4XFCNRVZNHV18MVYKZ2H",
+    "01KVKY4Y9888ADFKPSZF4833FA",
+    "01KVKY4D9AX325GTKTFGD3SVVH",
+    "01KVKY4C2V5NXYA974Y89K19VB"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 15542,
+  "retrieved_chunks": [
+    {
+      "source_path": "JOHNSON_JOHNSON_2022_10K.md",
+      "chunk_index": 4,
+      "score": 0.6044992764063912
+    },
+    {
+      "source_path": "JOHNSON_JOHNSON_2022_10K.md",
+      "chunk_index": 30,
+      "score": 0.589253522816796
+    },
+    {
+      "source_path": "JOHNSON_JOHNSON_2022_10K.md",
+      "chunk_index": 132,
+      "score": 0.5751277023587696
+    },
+    {
+      "source_path": "JOHNSON_JOHNSON_2022_10K.md",
+      "chunk_index": 52,
+      "score": 0.5736123510625748
+    },
+    {
+      "source_path": "JOHNSON_JOHNSON_2022_10K.md",
+      "chunk_index": 58,
+      "score": 0.5623961550998757
+    },
+    {
+      "source_path": "JOHNSON_JOHNSON_2022_10K.md",
+      "chunk_index": 138,
+      "score": 0.5594818465138561
+    },
+    {
+      "source_path": "JOHNSON_JOHNSON_2022_10K.md",
+      "chunk_index": 40,
+      "score": 0.5459631657347145
+    },
+    {
+      "source_path": "JOHNSON_JOHNSON_2022_10K.md",
+      "chunk_index": 8,
+      "score": 0.5435846831917671
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 12440,
+    "output_tokens": 169,
+    "latency_ms": 3054,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"d\",\"reasoning\":\"(A) 검색된 문서 발췌에서 FY22의 손익 및 기타(Income) Expense, Net 항목에 COVID-19 백신 제조 종료 관련 일회성 비용, 환율 영향, 원자재 인플레이션, 그리고 Consumer Health의 공급망 이점이 언급되어 있습니다. 특히 청크 7에서 'One-time COVID-19 vaccine manufacturing exit related costs', 'commodity inflation', 'currency impacts', 'supply chain benefits' 등이 FY22 실적에 영향을 미쳤다고 명시되어 있습니다. (B) 도메인 그래프에는 gross margin의 구체적 변동 요인에 대한 정보가 없습니다. 따라서 (A)의 구체적이고 명시적인 근거에 따라 d)가 정답입니다.\"}",
+    "parsed": {
+      "choice": "d",
+      "reasoning": "(A) 검색된 문서 발췌에서 FY22의 손익 및 기타(Income) Expense, Net 항목에 COVID-19 백신 제조 종료 관련 일회성 비용, 환율 영향, 원자재 인플레이션, 그리고 Consumer Health의 공급망 이점이 언급되어 있습니다. 특히 청크 7에서 'One-time COVID-19 vaccine manufacturing exit related costs', 'commodity inflation', 'currency impacts', 'supply chain benefits' 등이 FY22 실적에 영향을 미쳤다고 명시되어 있습니다. (B) 도메인 그래프에는 gross margin의 구체적 변동 요인에 대한 정보가 없습니다. 따라서 (A)의 구체적이고 명시적인 근거에 따라 d)가 정답입니다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 29841,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 37,
+    "chunk_setup_amortized": 29772,
+    "chunk_setup_total": 982504,
+    "graph_keyword_estimated": 32,
+    "questions_count_for_amortization": 33
+  },
+  "total_input_tokens": 12948,
+  "total_output_tokens": 213,
+  "total_tokens": 43002,
+  "total_latency_ms": 5090
+}

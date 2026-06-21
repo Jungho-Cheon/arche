@@ -1,0 +1,161 @@
+{
+  "column": "combined",
+  "question_id": "Q17",
+  "run_index": 1,
+  "anchor_extraction": {
+    "input_tokens": 487,
+    "output_tokens": 38,
+    "latency_ms": 855,
+    "model": "gpt-4.1",
+    "raw_response": "{\"entities\":[{\"canonical\":\"American Express\",\"aliases\":[\"American Express\"]},{\"canonical\":\"Balance Sheet\",\"aliases\":[\"Balance Sheet\"]},{\"canonical\":\"liability\",\"aliases\":[\"liability\"]}]}",
+    "parsed": {
+      "entities": [
+        {
+          "canonical": "American Express",
+          "aliases": [
+            "American Express"
+          ]
+        },
+        {
+          "canonical": "Balance Sheet",
+          "aliases": [
+            "Balance Sheet"
+          ]
+        },
+        {
+          "canonical": "liability",
+          "aliases": [
+            "liability"
+          ]
+        }
+      ]
+    },
+    "parse_error": null,
+    "retried": false
+  },
+  "primitives_called": [
+    {
+      "name": "find_entities",
+      "latency_ms": 1113,
+      "input": {
+        "keywords": [
+          "American Express",
+          "Balance Sheet",
+          "liability"
+        ],
+        "limit": 10,
+        "include_scores": false
+      },
+      "result_size": {
+        "matches": 10
+      }
+    },
+    {
+      "name": "get_subgraph",
+      "latency_ms": 177,
+      "input": {
+        "entry_ids": [
+          "01KVKXQGQ60MKRGHXKW6VP5WS7",
+          "01KVKXSYX6355ENMDF79XZ8SHD",
+          "01KVKXSXR7SF9BBD7VMH3GYCYN",
+          "01KVKXQHZJ8BD06KZ8ADR0B9JB",
+          "01KVKXT663PHYJHGTRT6RK7KB0",
+          "01KVKXT6YD4GBR7D1XJNKKRAJP",
+          "01KVKYF6QY9EVN6EPTXJJ8N2QR",
+          "01KVKXV8JVDRVG9B77EVRXSSRQ",
+          "01KVKXSYB7N1W3EC9FSHFFM4A5",
+          "01KVKXQH98KQ2K0N6RFMFECE35"
+        ],
+        "hops": 1,
+        "max_nodes": 80
+      },
+      "result_size": {
+        "nodes": 78,
+        "edges": 83,
+        "truncated": false
+      }
+    }
+  ],
+  "entry_point_count": 10,
+  "entry_ids": [
+    "01KVKXQGQ60MKRGHXKW6VP5WS7",
+    "01KVKXSYX6355ENMDF79XZ8SHD",
+    "01KVKXSXR7SF9BBD7VMH3GYCYN",
+    "01KVKXQHZJ8BD06KZ8ADR0B9JB",
+    "01KVKXT663PHYJHGTRT6RK7KB0",
+    "01KVKXT6YD4GBR7D1XJNKKRAJP",
+    "01KVKYF6QY9EVN6EPTXJJ8N2QR",
+    "01KVKXV8JVDRVG9B77EVRXSSRQ",
+    "01KVKXSYB7N1W3EC9FSHFFM4A5",
+    "01KVKXQH98KQ2K0N6RFMFECE35"
+  ],
+  "primitive_combination": "subgraph_hops1",
+  "primitive_error": null,
+  "subgraph_serialized_chars": 40220,
+  "retrieved_chunks": [
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 77,
+      "score": 0.6821603260339505
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 137,
+      "score": 0.6694022556656873
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 151,
+      "score": 0.6660445899178413
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 72,
+      "score": 0.6536017910004933
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 164,
+      "score": 0.6421939491780734
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 136,
+      "score": 0.6361380868793285
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 177,
+      "score": 0.6173977815440552
+    },
+    {
+      "source_path": "AMERICANEXPRESS_2022_10K.md",
+      "chunk_index": 6,
+      "score": 0.6114213640505282
+    }
+  ],
+  "answer_generation": {
+    "input_tokens": 18863,
+    "output_tokens": 208,
+    "latency_ms": 2330,
+    "model": "gpt-4.1",
+    "raw_response": "{\"choice\":\"d\",\"reasoning\":\"(A) 검색된 문서 발췌에서 2022년 American Express의 주요 부채 항목별 금액을 확인할 수 있습니다. 청크 3에 따르면, 2022년 말 기준 장기부채(Long-term debt)는 약 430억 달러($43 billion)이고, 같은 표에서 'Financial liabilities for which carrying values equal or approximate fair value'는 1,230억 달러($123 billion)로 나타나 있습니다. 이 항목은 주로 고객예치금(Customer deposits)을 포함하는 것으로, 별도로 Certificates of deposit(160억 달러)와 Long-term debt(430억 달러)가 추가로 명시되어 있습니다. 즉, 고객예치금이 가장 큰 부채 항목임을 알 수 있습니다. (B) 도메인 그래프에는 부채 항목별 구체적 금액 정보가 없으므로 (A)의 수치가 결정적 근거입니다.\"}",
+    "parsed": {
+      "choice": "d",
+      "reasoning": "(A) 검색된 문서 발췌에서 2022년 American Express의 주요 부채 항목별 금액을 확인할 수 있습니다. 청크 3에 따르면, 2022년 말 기준 장기부채(Long-term debt)는 약 430억 달러($43 billion)이고, 같은 표에서 'Financial liabilities for which carrying values equal or approximate fair value'는 1,230억 달러($123 billion)로 나타나 있습니다. 이 항목은 주로 고객예치금(Customer deposits)을 포함하는 것으로, 별도로 Certificates of deposit(160억 달러)와 Long-term debt(430억 달러)가 추가로 명시되어 있습니다. 즉, 고객예치금이 가장 큰 부채 항목임을 알 수 있습니다. (B) 도메인 그래프에는 부채 항목별 구체적 금액 정보가 없으므로 (A)의 수치가 결정적 근거입니다."
+    },
+    "parse_error": null
+  },
+  "embedding_tokens_estimated": 29812,
+  "embedding_tokens_breakdown": {
+    "chunk_question_embedding": 16,
+    "chunk_setup_amortized": 29772,
+    "chunk_setup_total": 982504,
+    "graph_keyword_estimated": 24,
+    "questions_count_for_amortization": 33
+  },
+  "total_input_tokens": 19350,
+  "total_output_tokens": 246,
+  "total_tokens": 49408,
+  "total_latency_ms": 4475
+}
