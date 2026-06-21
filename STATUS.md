@@ -2,7 +2,31 @@
 
 > 이 파일의 위치: 본 저장소에 기여하는 모두를 위한 **단일 진입점**. 마일스톤 진행도 / 다음 액션 / 알려진 stub 표가 한 페이지에 모인다.
 
-## 현재 상태 — M6.5 종료, M6.5b (EntityConsolidator) 신설 gating + smoke 로 Combined 유의미성 1 차 확인
+## 현재 상태 — M7-D Phase 1 RFC 시작 (파괴적 재구성, 2026-06-21)
+
+PR #54 의 EntityConsolidator 1M 적용 결과 (Combined 78.8% > chunk 72.7%) 로 ADR-0007 D2 분기는 "D1 유지 + M7 unblock" 으로 결정. 그러나 *graphify 와의 비교 평가* (2026-06-21 합의) 에서 다음이 드러남:
+
+1. 우리 도구의 *그래프 생성 자체* 가 graphify 보다 손해. 손실 요인 7 종: 순차 호출, 캐싱 부재, 임베딩 강제, AST 미활용, Step 3 cosine 자기갚음, INFERRED edge 부재, **추출 단계 컨텍스트 부재 (root cause)**.
+2. STOPLIST + Consolidator 는 *증상 가림*. 동명이인 / 학술 논문 / 다회사 KB 시나리오 미해결.
+3. MVP 성공 최소 조건 (사용자 goal 2026-06-21): graphify 우월 그래프 + Agent API + MCP + 사내 공유 KB.
+
+→ M7 (productization) 직진 대신 **M7-D (Destructive rebuild)** 로 진로 변경. 3 Phase 시퀀스:
+
+| Phase | 목표 | 산출물 | 상태 |
+|---|---|---|---|
+| Phase 1 — graphify parity 회복 | 추출 단계 컨텍스트 동봉 + parallel + 캐싱 + Step 3 옵션화 | ADR-0009/0010/0011 + spec | **RFC** (본 PR) |
+| Phase 2 — Agent API + MCP HTTP | Agent 친화 contract + MCP HTTP transport | ADR-0013/0014 (예정) | pending |
+| Phase 3 — 공유 KB 운영 모델 | 사내 인프라 활용 + multi-tenant + namespace | ADR-0015/0016 (예정) | pending |
+
+상세:
+- [ADR-0009 — Context-aware extraction](./docs/adr/0009-context-aware-extraction.md)
+- [ADR-0010 — Multi-agent parallel + cache](./docs/adr/0010-multi-agent-parallel-and-cache.md)
+- [ADR-0011 — Step 3 cosine opt-in + STOPLIST/Consolidator deprecation](./docs/adr/0011-step3-cosine-opt-in.md)
+- [Phase 1 spec — 5 PR 분할](./docs/superpowers/specs/destructive-rebuild-phase1.md)
+
+본 RFC 머지 (사용자 합의 후) → Phase 1 의 PR B-E 진행. PR #54 (EntityConsolidator) 는 *baseline 으로 머지 유지* → Phase 1 의 deprecation 경로 시작점.
+
+## 이전 상태 — M6.5 종료, M6.5b (EntityConsolidator) 신설 gating + smoke 로 Combined 유의미성 1 차 확인
 
 M1-M6 모든 마일스톤 완료. 2026-06-19 본 측정 (Pareto 우월 가설 미달) → 2026-06-20 95K 후속 검증 (**Combined RAG 100%** , ADR-0007 채택) → 2026-06-20 1M FinanceBench 재검증 (M6.5) 에서 **graph catastrophic over-merge** 발견. ADR-0008 로 EntityConsolidator 를 M7 gating (M6.5b) 으로 격상.
 

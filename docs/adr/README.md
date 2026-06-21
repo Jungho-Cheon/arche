@@ -33,6 +33,9 @@ ADR 은 *불변에 가깝게* 다룬다. 결정이 바뀌면 *기존 ADR 을 수
 | 6 | [ADR-0006 — MCP/REST 표면](./0006-mcp-rest-primitives-surface.md) | graph primitives 만 노출, 자연어 미수용, Neo4j MCP 와 공존 |
 | 7 | [ADR-0007 — Combined RAG 채택 (정체성 피벗)](./0007-combined-rag-pivot.md) | MVP 가설 미달 후 chunk + graph 결합으로 100% 달성, 정체성을 retrieval orchestrator 로 |
 | 8 | [ADR-0008 — EntityConsolidator gating (M6.5 1M 결과)](./0008-entity-consolidator-gating.md) | 1M 측정에서 catastrophic over-merge 발견 → ADR-0007 D2 결정 보류, EntityConsolidator 를 M7 gating 으로 격상 |
+| 9 | [ADR-0009 — Context-aware extraction (RFC)](./0009-context-aware-extraction.md) | 추출 단계에 문서 메타 + 기존 graph 동봉, `matched_existing_id` 로 매칭을 *예방* 으로 전환. ADR-0008 의 증상 가림을 root-cause 해법으로. |
+| 10 | [ADR-0010 — Multi-agent parallel + cache (RFC)](./0010-multi-agent-parallel-and-cache.md) | 청크 호출 batch parallel + sha256 캐시. graphify Part B 패턴 채택. 1M ingest 30 분 → 8 분 목표. |
+| 11 | [ADR-0011 — Step 3 cosine opt-in (RFC)](./0011-step3-cosine-opt-in.md) | Step 3 cosine 매칭 default off. STOPLIST + Consolidator 의 단계별 deprecation 경로. |
 
 ---
 
