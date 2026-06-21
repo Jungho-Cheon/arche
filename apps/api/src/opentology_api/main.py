@@ -19,9 +19,11 @@ from .api.routers import (
     schema_router,
     subgraph_router,
 )
+from .api.error_codes import ErrorCode
 from .api.schemas import ErrorBody, ErrorEnvelope
 from .config import get_settings
 from .domain.errors import OpentologyError
+from fastapi.exceptions import RequestValidationError
 
 
 logger = logging.getLogger("opentology_api")
@@ -86,6 +88,14 @@ def create_app() -> FastAPI:
     app.include_router(paths_router)
     app.include_router(subgraph_router)
     app.include_router(admin_router)
+    # ADR-0013 D8 — /v1/ versioning alias. 기존 path 유지 + /v1/ prefix 동시 노출.
+    # deprecation 시점에 기존 path 에 Deprecation 헤더 추가 예정.
+    app.include_router(health_router, prefix="/v1")
+    app.include_router(schema_router, prefix="/v1")
+    app.include_router(entities_router, prefix="/v1")
+    app.include_router(paths_router, prefix="/v1")
+    app.include_router(subgraph_router, prefix="/v1")
+    app.include_router(admin_router, prefix="/v1")
 
     @app.exception_handler(OpentologyError)
     async def _opentology_exc_handler(  # type: ignore[unused-ignore]
@@ -95,6 +105,29 @@ def create_app() -> FastAPI:
             status_code=exc.http_status,
             content=ErrorEnvelope(
                 error=ErrorBody(code=exc.code, message=exc.message, details=exc.details)
+            ).model_dump(),
+        )
+
+    @app.exception_handler(RequestValidationError)
+    async def _validation_exc_handler(  # type: ignore[unused-ignore]
+        request: Request, exc: RequestValidationError
+    ) -> JSONResponse:
+        """ADR-0013 D1 — 422 validation 도 ErrorEnvelope 으로 wrap. agent 가
+        같은 envelope 형태로 파싱 가능.
+        """
+        # pydantic 의 ValidationError.errors() 는 raw exception 객체 (input,
+        # ctx.error) 를 포함할 수 있어 JSON 직렬화 불가. 안전 변환.
+        safe_errors = [
+            {k: str(v) for k, v in e.items() if k != "ctx"} for e in exc.errors()
+        ]
+        return JSONResponse(
+            status_code=422,
+            content=ErrorEnvelope(
+                error=ErrorBody(
+                    code=ErrorCode.INVALID_INPUT.value,
+                    message="request validation failed",
+                    details={"errors": safe_errors},
+                )
             ).model_dump(),
         )
 

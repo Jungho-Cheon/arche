@@ -115,6 +115,7 @@ def run_ingest_task(
     service: IngestService,
     directory_path: Path,
     dry_run: bool,
+    namespace_id: str = "default",
 ) -> None:
     """worker thread 진입점 — 동기 ingest 흐름 + state 종결.
 
@@ -126,6 +127,7 @@ def run_ingest_task(
             directory_path,
             dry_run=dry_run,
             progress=lambda ev: _on_progress(state, ev),
+            namespace_id=namespace_id,
         )
         state.files_total = result.files_total
         state.files_pending_skipped = result.files_pending_skipped
@@ -144,6 +146,7 @@ def spawn_ingest_task(
     service: IngestService,
     directory_path: Path,
     dry_run: bool,
+    namespace_id: str = "default",
 ) -> IngestTaskState:
     """state 생성 + worker thread 시작 + registry 에 thread 핸들 보관.
 
@@ -158,6 +161,7 @@ def spawn_ingest_task(
             "service": service,
             "directory_path": directory_path,
             "dry_run": dry_run,
+            "namespace_id": namespace_id,
         },
         daemon=True,
         name=f"ingest-{state.task_id}",

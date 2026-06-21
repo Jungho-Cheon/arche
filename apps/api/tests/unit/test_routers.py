@@ -176,6 +176,9 @@ class StubGraph(GraphRepository):
     ) -> list[PathResult]:
         return []
 
+    def count_entities_by_namespace(self):
+        return {}
+
     def entity_exists(self, *, entity_id) -> bool:  # noqa: D401
         return any(n.id == entity_id for n in self._nodes)
 

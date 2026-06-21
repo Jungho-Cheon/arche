@@ -359,6 +359,10 @@ class GraphRepository(ABC):
         """단일 ID 가 그래프에 존재하는지 — find_path / get_neighbors 의 사전 검증."""
 
     @abstractmethod
+    def count_entities_by_namespace(self) -> dict[str, int]:
+        """ADR-0015 D6 — namespace 별 entity 수. /admin/namespaces 운영 가시성."""
+
+    @abstractmethod
     def get_stored_entity(self, *, entity_id: str) -> StoredEntity | None:
         """단일 id → StoredEntity (embedding 포함). ADR-0009 의 matched_existing_id
         흐름에서 *LLM 이 매칭 결정한 entity 의 전체 상태* 를 가져와 EntityMerger
@@ -583,6 +587,7 @@ class Neo4jGraphRepository(GraphRepository):
                     normalized_aliases: $normalized_aliases,
                     type: $type, aliases: $aliases, description: $description,
                     embedding: $embedding,
+                    namespace_id: $namespace_id,
                     source_paths: $source_paths,
                     source_chunk_indexes: $source_chunk_indexes,
                     source_total_chunks: $source_total_chunks,
@@ -597,6 +602,7 @@ class Neo4jGraphRepository(GraphRepository):
                 aliases=entity.aliases,
                 description=entity.description or "",
                 embedding=entity.embedding,
+                namespace_id=entity.namespace_id or "default",
                 source_paths=[sr.source_path for sr in entity.source_refs],
                 source_chunk_indexes=source_chunks,
                 source_total_chunks=source_totals,
@@ -1064,6 +1070,15 @@ class Neo4jGraphRepository(GraphRepository):
                 id=entity_id,
             ).single()
         return rec is not None
+
+    def count_entities_by_namespace(self) -> dict[str, int]:
+        with self._driver.session() as s:
+            rows = s.run(
+                f"MATCH (e:{ENTITY_LABEL}) "
+                "RETURN coalesce(e.namespace_id, 'default') AS ns, count(*) AS c "
+                "ORDER BY c DESC"
+            ).data()
+        return {r["ns"]: int(r["c"]) for r in rows}
 
     def get_stored_entity(self, *, entity_id: str) -> StoredEntity | None:
         with self._driver.session() as s:

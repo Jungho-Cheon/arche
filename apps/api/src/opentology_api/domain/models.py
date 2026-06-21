@@ -112,6 +112,10 @@ class StoredEntity:
     created_at: str
     updated_at: str
     embedding: list[float]
+    # ADR-0015 D1 — namespace property. 본 entity 가 속한 namespace.
+    # 기존 노드는 backfill 없이 default 로 간주. cross-namespace 공유는 ADR-0015
+    # D3 의 명시 opt-in.
+    namespace_id: str = "default"
     normalized_name: str = ""  # WHY default: PR #16 의 노드는 이 필드가 없다 — backfill 로 채움.
     # WHY 정규화된 alias 사본을 따로 저장: PRD 2 §5.1 Step 1·2 의 lookup 은
     # *normalize 된 키 == 정규명 OR 정규명 alias 중 하나* 면 hit 여야 한다.

@@ -133,6 +133,9 @@ class FakeGraph(GraphRepository):
                 return EntityWithCounts(node=node, outgoing={}, incoming={"applies_to": 1})
         return None
 
+    def count_entities_by_namespace(self):
+        return {}
+
     def entity_exists(self, *, entity_id) -> bool:
         return entity_id in {self._data.node_a.id, self._data.node_b.id}
 

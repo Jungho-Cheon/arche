@@ -254,6 +254,9 @@ class FakeGraph(GraphRepository):
             ]
         return []
 
+    def count_entities_by_namespace(self):
+        return {}
+
     def entity_exists(self, *, entity_id) -> bool:
         return entity_id in self._nodes
 

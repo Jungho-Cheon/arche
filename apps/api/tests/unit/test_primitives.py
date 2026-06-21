@@ -204,6 +204,9 @@ class PrimitiveStubGraph(GraphRepository):
     ) -> list[PathResult]:
         return self._paths_result
 
+    def count_entities_by_namespace(self):
+        return {}
+
     def entity_exists(self, *, entity_id) -> bool:
         return entity_id in self._nodes_by_id
 

@@ -203,6 +203,7 @@ class IngestService:
         *,
         dry_run: bool = False,
         progress: ProgressCallback | None = None,
+        namespace_id: str = "default",
     ) -> DirectoryIngestResult:
         """디렉토리 재귀 ingest — PRD 2 §1.1 + §2 + §6.
 
@@ -244,7 +245,7 @@ class IngestService:
                 if dry_run:
                     result = self._dry_run_file(fp)
                 else:
-                    result = self.ingest_file(fp)
+                    result = self.ingest_file(fp, namespace_id=namespace_id)
             except (InvalidInputError, UnsupportedFileTypeError) as e:
                 # PRD 2 §8 — 파일별 실패 isolation. 깨진 PDF / 알 수 없는
                 # 확장자 / 빈 이미지 등은 *그 파일만 skip + warning* 으로 흡수.
@@ -393,7 +394,9 @@ class IngestService:
             chunks_total=chunks_total,
         )
 
-    def ingest_file(self, path: Path) -> IngestResult:
+    def ingest_file(
+        self, path: Path, *, namespace_id: str = "default"
+    ) -> IngestResult:
         path = path.resolve()
         if path.is_dir():
             # WHY 명시 거부: 디렉토리는 `ingest_directory` 가 처리한다. ingest_file
@@ -535,6 +538,7 @@ class IngestService:
                     matcher=matcher,
                     merger=merger,
                     run_id=run_id,
+                    namespace_id=namespace_id,
                 )
                 rel_created, rel_dangling, rel_ids = self._upsert_relations(
                     extracted=extracted,
@@ -833,6 +837,7 @@ class IngestService:
         matcher: EntityMatcher,
         merger: EntityMerger,
         run_id: str,
+        namespace_id: str = "default",
     ) -> tuple[dict[str, str], dict]:
         name_to_id: dict[str, str] = {}
         created = 0
@@ -934,6 +939,7 @@ class IngestService:
                 created_at=now,
                 updated_at=now,
                 embedding=embed_out[0],
+                namespace_id=namespace_id,
                 normalized_name=normalize(e_new.name),
                 normalized_aliases=[
                     normalize(a)
