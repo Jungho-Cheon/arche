@@ -1,0 +1,1 @@
+{"data":{"task_id":"ing_01KVN2R2MEVDGXZM95AS1JWH4J","state":"succeeded","progress":{"files_total":6,"files_processed":6,"files_skipped":0,"files_pending_skipped":0,"files_unsupported_skipped":0},"metrics":{"entities_created":344,"entities_updated":78,"relations_created":379,"relations_skipped_dangling":0,"chunks_total":13}}}
