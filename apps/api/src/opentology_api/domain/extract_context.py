@@ -246,9 +246,27 @@ class ExtractContextBuilder:
         self._keywords_per_chunk = keywords_per_chunk
         self._use_dense = use_dense and embedder is not None
 
-    def build(self, *, source_path: str, chunk_text: str) -> ExtractContext:
-        """청크 1 개에 대한 ExtractContext."""
-        doc = DocContext(file_path=source_path)
+    def build(
+        self,
+        *,
+        source_path: str,
+        chunk_text: str,
+        main_entity_name: str | None = None,
+        main_entity_type: str | None = None,
+        main_entity_aliases: list[str] | None = None,
+    ) -> ExtractContext:
+        """청크 1 개에 대한 ExtractContext.
+
+        PR C — main_entity 인자 추가. 호출자 (ingest 흐름) 가 2nd pass 결과를
+        문서 단위로 1 회 계산 후, 그 결과를 *같은 문서의 모든 청크 build* 에
+        반복 전달한다.
+        """
+        doc = DocContext(
+            file_path=source_path,
+            main_entity_name=main_entity_name,
+            main_entity_type=main_entity_type,
+            main_entity_aliases=list(main_entity_aliases or []),
+        )
         known = self._known_entities_for_chunk(chunk_text=chunk_text)
         schema = self._schema_summary()
         return ExtractContext(doc=doc, known_entities=known, schema=schema)

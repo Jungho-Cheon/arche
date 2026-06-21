@@ -31,14 +31,16 @@ from typing import Callable
 from ulid import ULID
 
 from ..adapters.embedding import EmbeddingProvider
+from ..adapters.extract_cache import ExtractionCache, make_key
 from ..adapters.graph import GraphRepository
 from ..adapters.image_loader import IMAGE_EXTS, load_image_as_b64
-from ..adapters.llm import ImageInput, LLMProvider
+from ..adapters.llm import SYSTEM_PROMPT, ImageInput, LLMProvider
 from ..adapters.pdf import PdfPage, extract_pdf
 from .chunking import Chunk, TOKEN_BUDGET_RATIO, chunk_text, count_tokens
 from .crawl import crawl
 from .errors import InvalidInputError, UnsupportedFileTypeError
-from .extract_context import ExtractContext, ExtractContextBuilder
+from .extract_context import ExtractContext, ExtractContextBuilder, render_context_block
+from .main_entity import MainEntity, MainEntityExtractor
 from .identity import (
     NON_IDENTIFYING_ALIAS_STOPLIST,
     EntityMatcher,
@@ -167,6 +169,10 @@ class IngestService:
         graph: GraphRepository,
         model_context_tokens: int = 128_000,
         enable_context_aware_extraction: bool = True,
+        main_entity_extractor: MainEntityExtractor | None = None,
+        extraction_cache: ExtractionCache | None = None,
+        extract_batch_size: int = 8,
+        llm_model_id: str = "openai/gpt-4.1",
     ) -> None:
         self._llm = llm
         self._embedder = embedder
@@ -183,6 +189,13 @@ class IngestService:
             if enable_context_aware_extraction
             else None
         )
+        # ADR-0009 D3 — 문서당 1 회 호출되는 2nd pass main_entity extractor.
+        # None 이면 main_entity 동봉 없이 진행 (legacy 또는 테스트).
+        self._main_entity_extractor = main_entity_extractor
+        # ADR-0010 D2/D3 — 추출 결과 캐시 + batch parallel.
+        self._extraction_cache = extraction_cache
+        self._extract_batch_size = max(1, extract_batch_size)
+        self._llm_model_id = llm_model_id
 
     def ingest_directory(
         self,
@@ -301,9 +314,14 @@ class IngestService:
             chunks = chunk_text(
                 text, model_context_tokens=self._model_context_tokens
             )
+            main_entity = self._detect_main_entity(
+                source_path=source_path, text=text
+            )
             for chunk in chunks:
                 ctx = self._build_chunk_context(
-                    source_path=source_path, chunk_text=chunk.text
+                    source_path=source_path,
+                    chunk_text=chunk.text,
+                    main_entity=main_entity,
                 )
                 extracted = self._llm.extract(
                     text=chunk.text,
@@ -317,9 +335,16 @@ class IngestService:
         elif ext in PDF_EXTS:
             pages = extract_pdf(path)
             inputs = self._build_pdf_extract_inputs(pages)
+            # PR C — PDF 도 첫 인풋의 텍스트 (= 첫 페이지) 를 main_entity 입력으로.
+            main_entity = self._detect_main_entity(
+                source_path=source_path,
+                text=(inputs[0].text if inputs else None),
+            )
             for inp in inputs:
                 ctx = self._build_chunk_context(
-                    source_path=source_path, chunk_text=inp.text or ""
+                    source_path=source_path,
+                    chunk_text=inp.text or "",
+                    main_entity=main_entity,
                 )
                 extracted = self._llm.extract(
                     text=inp.text,
@@ -334,8 +359,9 @@ class IngestService:
 
         elif ext in IMAGE_EXTS:
             b64, mime = load_image_as_b64(path)
+            # 이미지 단독은 main_entity 호출 안 함 (텍스트 없음).
             ctx = self._build_chunk_context(
-                source_path=source_path, chunk_text=""
+                source_path=source_path, chunk_text="", main_entity=None
             )
             extracted = self._llm.extract(
                 images=[ImageInput(b64_data=b64, mime_type=mime)],
@@ -442,6 +468,17 @@ class IngestService:
                 path=path, raw_bytes=raw_bytes, ext=ext
             )
 
+            # ADR-0009 D3 — 문서당 1 회 main_entity 식별. 결과를 모든 청크 build
+            # 에 전달. text 가 None 인 모달 (단일 이미지 파일) 은 None 유지.
+            main_entity_input_text: str | None = None
+            if ext in TEXT_EXTS:
+                main_entity_input_text = raw_bytes.decode("utf-8", errors="replace")
+            elif ext in PDF_EXTS and llm_inputs:
+                main_entity_input_text = llm_inputs[0].text
+            main_entity = self._detect_main_entity(
+                source_path=source_path, text=main_entity_input_text
+            )
+
             matcher = EntityMatcher(repo=self._graph, embedder=self._embedder)
             merger = EntityMerger()
 
@@ -462,7 +499,16 @@ class IngestService:
             agg_rel_dangling = 0
             total_chunks = len(llm_inputs)
 
-            for inp in llm_inputs:
+            # ADR-0010 D1 — 청크 묶음을 batch parallel 로 *추출만* 동시 실행.
+            # upsert (그래프 mutate) 는 cross-chunk 상태 의존이라 입력 순서대로
+            # 직렬. 즉 *I/O bound 인 LLM 호출만* parallel 화.
+            extracted_results = self._extract_inputs_parallel(
+                inputs=llm_inputs,
+                source_path=source_path,
+                main_entity=main_entity,
+            )
+
+            for inp, extracted in zip(llm_inputs, extracted_results):
                 # chunk_index 의미 부여 정책:
                 #  - 단일 input 이면 None (텍스트 청크 1 개 / 이미지 파일).
                 #    PRD 3 §1.3 의 nullable 형태와 일관.
@@ -482,16 +528,6 @@ class IngestService:
                         chunk_index=None,
                         total_chunks=None,
                     )
-
-                ctx = self._build_chunk_context(
-                    source_path=source_path, chunk_text=inp.text or ""
-                )
-                extracted = self._llm.extract(
-                    text=inp.text,
-                    images=inp.images or None,
-                    source_path=source_path,
-                    context=ctx,
-                )
 
                 name_to_id, entity_metrics = self._upsert_entities(
                     extracted=extracted,
@@ -668,18 +704,126 @@ class IngestService:
         return out
 
     def _build_chunk_context(
-        self, *, source_path: str, chunk_text: str
+        self,
+        *,
+        source_path: str,
+        chunk_text: str,
+        main_entity: MainEntity | None = None,
     ) -> ExtractContext | None:
         """ADR-0009 의 청크 컨텍스트 빌드 — 옵션 꺼져 있으면 None.
 
         WHY None 분기 보존: legacy 동작 (context 없음) 도 같은 호출로 가능. 측정
         통제 변수 변경을 점진적으로.
+
+        PR C — main_entity 가 주어지면 doc context 의 main_entity 필드 채움.
         """
         if self._extract_context_builder is None:
             return None
         return self._extract_context_builder.build(
-            source_path=source_path, chunk_text=chunk_text
+            source_path=source_path,
+            chunk_text=chunk_text,
+            main_entity_name=main_entity.name if main_entity else None,
+            main_entity_type=main_entity.type if main_entity else None,
+            main_entity_aliases=main_entity.aliases if main_entity else None,
         )
+
+    def _detect_main_entity(
+        self, *, source_path: str, text: str | None
+    ) -> MainEntity | None:
+        """문서 1 회 main_entity 추출 — extractor 가 없거나 텍스트가 없으면 None."""
+        if self._main_entity_extractor is None or not text:
+            return None
+        return self._main_entity_extractor.extract(
+            source_path=source_path, text=text
+        )
+
+    def _extract_inputs_parallel(
+        self,
+        *,
+        inputs: list,
+        source_path: str,
+        main_entity: MainEntity | None,
+    ) -> list:
+        """ADR-0010 D1 — 청크 묶음 batch parallel 추출.
+
+        Thread pool — OpenAI SDK 가 동기 호출이라 thread 가 I/O bound 의
+        효율적 parallel. batch_size 만큼 동시 호출.
+
+        결과 순서는 *입력 순서* 와 같다 (zip 으로 그래프 mutate 가 deterministic).
+        """
+        from concurrent.futures import ThreadPoolExecutor
+
+        if not inputs:
+            return []
+        max_workers = min(len(inputs), self._extract_batch_size)
+        if max_workers <= 1:
+            # 단일 입력은 thread 오버헤드 회피.
+            return [
+                self._extract_with_cache(
+                    text=inp.text,
+                    images=inp.images or None,
+                    source_path=source_path,
+                    context=self._build_chunk_context(
+                        source_path=source_path,
+                        chunk_text=inp.text or "",
+                        main_entity=main_entity,
+                    ),
+                )
+                for inp in inputs
+            ]
+
+        def _one(inp):
+            ctx = self._build_chunk_context(
+                source_path=source_path,
+                chunk_text=inp.text or "",
+                main_entity=main_entity,
+            )
+            return self._extract_with_cache(
+                text=inp.text,
+                images=inp.images or None,
+                source_path=source_path,
+                context=ctx,
+            )
+
+        with ThreadPoolExecutor(max_workers=max_workers) as pool:
+            return list(pool.map(_one, inputs))
+
+    def _extract_with_cache(
+        self,
+        *,
+        text: str | None,
+        images: list[ImageInput] | None,
+        source_path: str,
+        context: ExtractContext | None,
+    ):
+        """ADR-0010 D2 — cache check 우선 후 LLM 호출. cache miss 면 결과를
+        저장. images 가 있는 경우는 캐시 안 함 (입력 결정 불가).
+        """
+        if self._extraction_cache is None or images:
+            return self._llm.extract(
+                text=text,
+                images=images,
+                source_path=source_path,
+                context=context,
+            )
+        key = make_key(
+            chunk_text=text or "",
+            context_block=render_context_block(context) if context else "",
+            system_prompt=SYSTEM_PROMPT,
+            model_id=self._llm_model_id,
+        )
+        hit = self._extraction_cache.get(key)
+        if hit is not None:
+            logger.debug("cache hit source=%s", source_path)
+            return hit
+        result = self._llm.extract(
+            text=text,
+            images=images,
+            source_path=source_path,
+            context=context,
+        )
+        self._extraction_cache.put(key, result)
+        return result
 
     def _upsert_entities(
         self,

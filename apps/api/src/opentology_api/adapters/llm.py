@@ -155,6 +155,17 @@ class ImageInput:
     mime_type: str
 
 
+@dataclass(frozen=True)
+class GenericCompleteResult:
+    """ADR-0013 D7 — generic chat completion 결과. main_entity / answer 등에서
+    재사용. 기존 ingest 의 extract 와는 다른 *임의 system + user + schema* 경로.
+    """
+
+    raw: str
+    parsed: dict[str, Any] | None
+    parse_error: str | None
+
+
 class LLMProvider(ABC):
     """추출 LLM 의 추상 인터페이스.
 
@@ -177,6 +188,15 @@ class LLMProvider(ABC):
         context 가 주어지면 ADR-0009 의 4 종 컨텍스트 블록이 user message 앞부분
         에 prepend 된다. context=None 이면 기존 동작 (legacy) — 점진 도입.
         """
+
+    def complete(
+        self, *, system: str, user: str, response_format: dict[str, Any]
+    ) -> GenericCompleteResult:
+        """generic chat completion (ADR-0013 D7). 기본 구현은 NotImplementedError —
+        OpenAI 같은 실 어댑터에서 override. 본 메서드는 main_entity (PR C),
+        answer/retrieve (Phase 2) 등 *임의 schema 호출* 의 단일 진입점.
+        """
+        raise NotImplementedError
 
 
 class OpenAILLMProvider(LLMProvider):
@@ -232,6 +252,36 @@ class OpenAILLMProvider(LLMProvider):
                 ) from e
         raise DependencyUnavailableError(
             f"LLM extraction failed after 2 attempts: {last_err}"
+        )
+
+    def complete(
+        self, *, system: str, user: str, response_format: dict[str, Any]
+    ) -> GenericCompleteResult:
+        """generic JSON-schema chat completion. main_entity / answer 가 사용."""
+        try:
+            resp = self._client.chat.completions.create(
+                model=self.model_id,
+                messages=[
+                    {"role": "system", "content": system},
+                    {"role": "user", "content": user},
+                ],
+                temperature=0,
+                response_format=response_format,
+            )
+        except Exception as e:  # noqa: BLE001
+            raise DependencyUnavailableError(
+                f"LLM provider call failed: {e}"
+            ) from e
+        raw = resp.choices[0].message.content or ""
+        parsed: dict[str, Any] | None = None
+        parse_error: str | None = None
+        try:
+            parsed = json.loads(raw)
+        except (json.JSONDecodeError, ValueError) as e:
+            parse_error = f"json decode failed: {e}"
+            logger.warning("complete parse failed err=%s", e)
+        return GenericCompleteResult(
+            raw=raw, parsed=parsed, parse_error=parse_error
         )
 
     def _call(
