@@ -37,6 +37,7 @@ class ChunkAwareFakeLLM(LLMProvider):
         text: str | None = None,
         images: list | None = None,  # noqa: ARG002
         source_path: str,
+        context=None,  # noqa: ARG002
     ) -> ExtractedGraph:
         self.calls.append(text or "")
         text = text or ""

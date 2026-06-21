@@ -68,7 +68,7 @@ def test_ingest_and_find_by_keyword(repo, tmp_path: Path):
     )
 
     class _LLM(LLMProvider):
-        def extract(self, *, text=None, images=None, source_path) -> ExtractedGraph:
+        def extract(self, *, text=None, images=None, source_path, context=None) -> ExtractedGraph:
             return ExtractedGraph(
                 entities=[
                     ExtractedEntity(name="여름 환영 쿠폰", type="coupon", aliases=["여름 쿠폰"]),

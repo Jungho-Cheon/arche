@@ -359,6 +359,13 @@ class GraphRepository(ABC):
         """단일 ID 가 그래프에 존재하는지 — find_path / get_neighbors 의 사전 검증."""
 
     @abstractmethod
+    def get_stored_entity(self, *, entity_id: str) -> StoredEntity | None:
+        """단일 id → StoredEntity (embedding 포함). ADR-0009 의 matched_existing_id
+        흐름에서 *LLM 이 매칭 결정한 entity 의 전체 상태* 를 가져와 EntityMerger
+        에 전달.
+        """
+
+    @abstractmethod
     def close(self) -> None: ...
 
 
@@ -1057,6 +1064,16 @@ class Neo4jGraphRepository(GraphRepository):
                 id=entity_id,
             ).single()
         return rec is not None
+
+    def get_stored_entity(self, *, entity_id: str) -> StoredEntity | None:
+        with self._driver.session() as s:
+            rec = s.run(
+                f"MATCH (e:{ENTITY_LABEL} {{id: $id}}) RETURN e",
+                id=entity_id,
+            ).single()
+        if rec is None:
+            return None
+        return _node_to_stored(rec["e"])
 
     def get_entity_with_counts(
         self, *, entity_id: str

@@ -26,6 +26,7 @@ def _make_provider_with_responses(responses: list[str]) -> OpenAILLMProvider:
         *,
         text: str | None = None,
         images: list | None = None,  # noqa: ARG001 — 인자 시그니처 호환만 맞춘다
+        context=None,  # noqa: ARG001
     ) -> str:
         idx = call_count["i"]
         call_count["i"] += 1

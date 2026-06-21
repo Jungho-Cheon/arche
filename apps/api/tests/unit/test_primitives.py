@@ -207,12 +207,15 @@ class PrimitiveStubGraph(GraphRepository):
     def entity_exists(self, *, entity_id) -> bool:
         return entity_id in self._nodes_by_id
 
+    def get_stored_entity(self, *, entity_id):
+        return None
+
     def close(self) -> None:
         pass
 
 
 class _StubLLM(LLMProvider):
-    def extract(self, *, text=None, images=None, source_path) -> ExtractedGraph:
+    def extract(self, *, text=None, images=None, source_path, context=None) -> ExtractedGraph:
         return ExtractedGraph(entities=[], relations=[])
 
 

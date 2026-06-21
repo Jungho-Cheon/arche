@@ -75,6 +75,10 @@ class ExtractedEntity:
     aliases: list[str] = field(default_factory=list)
     description: str | None = None
     properties: dict[str, Any] = field(default_factory=dict)
+    # ADR-0009 D2: 추출 단계에서 LLM 이 기존 graph entity 와의 매칭을 결정한
+    # 경우, 해당 entity id 를 명시. 값이 있으면 ingest 흐름이 Step 1-3 매처를
+    # 건너뛰고 곧바로 merge 한다. 값이 없으면 기존 매처 fallback (점진 도입).
+    matched_existing_id: str | None = None
 
 
 @dataclass(frozen=True)

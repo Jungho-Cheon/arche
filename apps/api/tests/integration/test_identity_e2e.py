@@ -77,7 +77,7 @@ class _LLMScripted:
         self._scripts = list(scripts)
         self.calls = 0
 
-    def extract(self, *, text=None, images=None, source_path):
+    def extract(self, *, text=None, images=None, source_path, context=None):
         self.calls += 1
         if not self._scripts:
             raise AssertionError("LLM called more times than scripted")

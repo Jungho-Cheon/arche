@@ -24,7 +24,7 @@ from __future__ import annotations
 import base64
 import hashlib
 import logging
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from pathlib import Path
 from typing import Callable
 
@@ -38,6 +38,7 @@ from ..adapters.pdf import PdfPage, extract_pdf
 from .chunking import Chunk, TOKEN_BUDGET_RATIO, chunk_text, count_tokens
 from .crawl import crawl
 from .errors import InvalidInputError, UnsupportedFileTypeError
+from .extract_context import ExtractContext, ExtractContextBuilder
 from .identity import (
     NON_IDENTIFYING_ALIAS_STOPLIST,
     EntityMatcher,
@@ -165,6 +166,7 @@ class IngestService:
         embedder: EmbeddingProvider,
         graph: GraphRepository,
         model_context_tokens: int = 128_000,
+        enable_context_aware_extraction: bool = True,
     ) -> None:
         self._llm = llm
         self._embedder = embedder
@@ -173,6 +175,14 @@ class IngestService:
         # monkeypatch 해 청크 분할을 강제할 수 있어야 한다. config 의 기본값을
         # 라우터/CLI 가 주입.
         self._model_context_tokens = model_context_tokens
+        # ADR-0009 — 추출 단계의 컨텍스트 동봉. default on. False 면 legacy
+        # 동작 (context=None → 기존 system prompt 그대로).
+        self._enable_context_aware_extraction = enable_context_aware_extraction
+        self._extract_context_builder: ExtractContextBuilder | None = (
+            ExtractContextBuilder(graph=graph, embedder=embedder)
+            if enable_context_aware_extraction
+            else None
+        )
 
     def ingest_directory(
         self,
@@ -292,8 +302,13 @@ class IngestService:
                 text, model_context_tokens=self._model_context_tokens
             )
             for chunk in chunks:
+                ctx = self._build_chunk_context(
+                    source_path=source_path, chunk_text=chunk.text
+                )
                 extracted = self._llm.extract(
-                    text=chunk.text, source_path=source_path
+                    text=chunk.text,
+                    source_path=source_path,
+                    context=ctx,
                 )
                 total_entities += len(extracted.entities)
                 total_relations += len(extracted.relations)
@@ -303,10 +318,14 @@ class IngestService:
             pages = extract_pdf(path)
             inputs = self._build_pdf_extract_inputs(pages)
             for inp in inputs:
+                ctx = self._build_chunk_context(
+                    source_path=source_path, chunk_text=inp.text or ""
+                )
                 extracted = self._llm.extract(
                     text=inp.text,
                     images=inp.images or None,
                     source_path=source_path,
+                    context=ctx,
                 )
                 total_entities += len(extracted.entities)
                 total_relations += len(extracted.relations)
@@ -315,9 +334,13 @@ class IngestService:
 
         elif ext in IMAGE_EXTS:
             b64, mime = load_image_as_b64(path)
+            ctx = self._build_chunk_context(
+                source_path=source_path, chunk_text=""
+            )
             extracted = self._llm.extract(
                 images=[ImageInput(b64_data=b64, mime_type=mime)],
                 source_path=source_path,
+                context=ctx,
             )
             total_entities += len(extracted.entities)
             total_relations += len(extracted.relations)
@@ -433,7 +456,7 @@ class IngestService:
             all_name_to_id: dict[str, str] = {}
             agg_created = 0
             agg_updated = 0
-            agg_by_step: dict[int, int] = {1: 0, 2: 0, 3: 0}
+            agg_by_step: dict[int, int] = {0: 0, 1: 0, 2: 0, 3: 0}
             all_rel_ids: list[str] = []
             agg_rel_created = 0
             agg_rel_dangling = 0
@@ -460,10 +483,14 @@ class IngestService:
                         total_chunks=None,
                     )
 
+                ctx = self._build_chunk_context(
+                    source_path=source_path, chunk_text=inp.text or ""
+                )
                 extracted = self._llm.extract(
                     text=inp.text,
                     images=inp.images or None,
                     source_path=source_path,
+                    context=ctx,
                 )
 
                 name_to_id, entity_metrics = self._upsert_entities(
@@ -487,7 +514,7 @@ class IngestService:
                 all_name_to_id.update(name_to_id)
                 agg_created += entity_metrics["created"]
                 agg_updated += entity_metrics["updated"]
-                for step in (1, 2, 3):
+                for step in (0, 1, 2, 3):
                     agg_by_step[step] += entity_metrics["by_step"].get(step, 0)
                 agg_rel_created += rel_created
                 agg_rel_dangling += rel_dangling
@@ -640,6 +667,20 @@ class IngestService:
                 )
         return out
 
+    def _build_chunk_context(
+        self, *, source_path: str, chunk_text: str
+    ) -> ExtractContext | None:
+        """ADR-0009 의 청크 컨텍스트 빌드 — 옵션 꺼져 있으면 None.
+
+        WHY None 분기 보존: legacy 동작 (context 없음) 도 같은 호출로 가능. 측정
+        통제 변수 변경을 점진적으로.
+        """
+        if self._extract_context_builder is None:
+            return None
+        return self._extract_context_builder.build(
+            source_path=source_path, chunk_text=chunk_text
+        )
+
     def _upsert_entities(
         self,
         *,
@@ -652,10 +693,57 @@ class IngestService:
         name_to_id: dict[str, str] = {}
         created = 0
         updated = 0
-        by_step: dict[int, int] = {1: 0, 2: 0, 3: 0}
+        # ADR-0009 D2 — LLM 이 추출 단계에서 매칭 결정한 entity 도 step 분포에
+        # 보고. step=0 = "LLM 결정". 기존 1/2/3 (Matcher Step 1/2/3) 와 분리.
+        by_step: dict[int, int] = {0: 0, 1: 0, 2: 0, 3: 0}
         now = now_rfc3339()
 
         for e_new in extracted.entities:
+            # ADR-0009 D2 — LLM 이 matched_existing_id 를 명시했으면 Step 1-3
+            # 매처를 *skip* 하고 직접 merge. id 가 실제로 존재하는지 검증해
+            # *환각* (없는 id) 케이스는 fallback.
+            if e_new.matched_existing_id:
+                survivor = self._graph.get_stored_entity(
+                    entity_id=e_new.matched_existing_id
+                )
+                if survivor is not None:
+                    # ADR-0009 D2 — LLM 이 *기존 entity 와 같은 대상* 으로 판단한
+                    # 새 표면형 (e_new.name) 도 alias 로 흡수해야 표기 흔들림이
+                    # 그래프에 보존된다. EntityMerger.merge 는 aliases 만 union
+                    # 하므로 e_new.name 을 alias 리스트에 prepend 후 호출.
+                    aliases_with_name = [
+                        e_new.name,
+                        *(e_new.aliases or []),
+                    ]
+                    e_new_for_merge = replace(e_new, aliases=aliases_with_name)
+                    mutation = EntityMerger.merge(
+                        existing=survivor,
+                        e_new=e_new_for_merge,
+                        new_source_ref=source_ref,
+                        now=now,
+                    )
+                    self._graph.apply_merge_mutation(mutation=mutation)
+                    name_to_id[e_new.name] = survivor.id
+                    updated += 1
+                    by_step[0] += 1
+                    self._graph.mark_entity_emitted(
+                        entity_id=survivor.id, run_id=run_id
+                    )
+                    logger.debug(
+                        "entity matched by LLM (ADR-0009) existing_id=%s "
+                        "new_name=%s",
+                        survivor.id,
+                        e_new.name,
+                    )
+                    continue
+                else:
+                    logger.warning(
+                        "matched_existing_id=%s does not exist — fallback to "
+                        "Step 1-3 matcher (new_name=%s)",
+                        e_new.matched_existing_id,
+                        e_new.name,
+                    )
+
             result = matcher.match(e_new)
             if result.existing is not None and result.step in (1, 2, 3):
                 # 병합 분기.
