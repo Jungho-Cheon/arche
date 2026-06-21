@@ -2,7 +2,28 @@
 
 > 이 파일의 위치: 본 저장소에 기여하는 모두를 위한 **단일 진입점**. 마일스톤 진행도 / 다음 액션 / 알려진 stub 표가 한 페이지에 모인다.
 
-## 현재 상태 — M6.5 종료, M6.5b (EntityConsolidator) 신설 gating + smoke 로 Combined 유의미성 1 차 확인
+## 현재 상태 — 시제품 backbone 도달 (2026-06-21)
+
+variance 분석으로 default = combined 확정 후 시제품 backbone 3 단계 모두 통과. 외부 사용자가 `docker compose up` → ingest → `POST /answer` 한 호출로 답 + provenance 를 회수할 수 있다 (Getting Started 5 분 가이드: [`docs/getting-started.md`](./docs/getting-started.md)).
+
+| 단계 | 산출물 | 상태 |
+|---|---|---|
+| variance 결정 | `eval/reports/2026-06-21-variance-decision/` + PRD 6 §0.1 | 완료 |
+| 시제품 backbone spec | `docs/superpowers/specs/post-mvp-prototype-backbone.md` (5 PR 분할안) | 완료 |
+| PR 3: Neo4j (:Chunk) 노드 + vector index | apps/api/adapters/graph.py + ingest 통합 | 완료 |
+| PR 2: /answer + /retrieve | apps/api/answer/ + answer_router.py | 완료 |
+| PR 4: README + Getting Started + docker-compose | README.md + docs/getting-started.md (compose 기존) | 완료 |
+| PR 5: EntityConsolidator (#40) | ADR-0008 + PRD 6 §3.A | 다음 (variance 근본 해소) |
+
+**시제품 사용 경로**:
+- 호스트: `cp .env.example .env` → key 입력 → `docker compose up -d`
+- ingest: `uv run --package opentology-api opentology ingest ./my-docs` 또는 `/admin/ingest`
+- 질의: `POST /answer` (combined default), `POST /retrieve` (context only)
+- 노브: `mode`, `chunk_top_k`, `subgraph_hops`, `subgraph_max_nodes`, `skip_graph_if_no_anchor`, `answer_model`
+
+unit tests 188 passed.
+
+## 이전 상태 — M6.5 종료, M6.5b (EntityConsolidator) 신설 gating + smoke 로 Combined 유의미성 1 차 확인
 
 M1-M6 모든 마일스톤 완료. 2026-06-19 본 측정 (Pareto 우월 가설 미달) → 2026-06-20 95K 후속 검증 (**Combined RAG 100%** , ADR-0007 채택) → 2026-06-20 1M FinanceBench 재검증 (M6.5) 에서 **graph catastrophic over-merge** 발견. ADR-0008 로 EntityConsolidator 를 M7 gating (M6.5b) 으로 격상.
 
