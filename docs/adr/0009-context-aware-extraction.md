@@ -1,8 +1,21 @@
 # ADR-0009: Context-aware extraction — *추출 단계* 에 문서 메타 + 기존 graph KB 동봉
 
-Status: proposed (RFC)
+Status: **accepted (2026-06-21 실측 evidence)**
 Date: 2026-06-21
 Amends: [ADR-0001](./0001-project-identity-and-mvp-validation-hypothesis.md) §5 (entity 추출), [ADR-0003](./0003-graph-entry-point-strategy-hybrid-lexical-dense.md), [ADR-0008](./0008-entity-consolidator-gating.md) (deprecation 경로 포함)
+
+## 2026-06-21 1M 검증 evidence
+
+본 ADR 의 종료 조건 (vs PR #54 baseline) 직접 측정 — `eval/reports/2026-06-21-m7d-1M-validation/CONCLUSION.md`.
+
+| 측정 | PR #54 baseline | M7-D | Δ |
+|---|---|---|---|
+| ingest 시간 | 17 분 | **9 분 7 초** | **-45%** |
+| catastrophic over-merge | 0 (Consolidator post-hoc) | **0 (extraction 단계 예방)** | root cause 해소 |
+| matched_existing_id 매칭 | 0 (기능 없음) | **78 (전체의 18.5%)** | LLM 결정 작동 |
+| aliases 회사 자기지칭 분리 | Consolidator 적용 후 | **Consolidator 없이도** | 정책 일반화 |
+
+본 결과로 ADR Status proposed → accepted. ADR-0011 의 Consolidator deprecation Phase 2 (deprecated 표시) 진입 권고.
 
 ## TL;DR
 

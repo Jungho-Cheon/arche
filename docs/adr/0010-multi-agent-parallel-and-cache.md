@@ -1,9 +1,17 @@
 # ADR-0010: Multi-agent parallel dispatch + 청크 결과 캐싱 — graphify Part B 패턴 채택
 
-Status: proposed (RFC)
+Status: **accepted (2026-06-21 실측 evidence)**
 Date: 2026-06-21
 Amends: [ADR-0001](./0001-project-identity-and-mvp-validation-hypothesis.md), [PRD 2 §6](../prd/2_mvp_walking_skeleton.md)
 Related: [ADR-0009](./0009-context-aware-extraction.md) (선행)
+
+## 2026-06-21 실측 evidence
+
+1M 회차 ingest 시간 — PR #54 baseline **17 분 (1014 초)** → 본 ADR 적용 후 **9 분 7 초 (547 초) — 45.9% 단축**. ThreadPoolExecutor batch=8 의 직접 효과. main_entity 2nd pass 가 추가됐는데도 단축 — pure parallel 효과는 더 큼.
+
+cache 효과는 본 회차에서 첫 ingest 라 miss 만. 재 ingest 시 효과는 후속 측정.
+
+본 결과로 ADR Status proposed → accepted.
 
 ## TL;DR
 

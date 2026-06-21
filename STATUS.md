@@ -14,9 +14,13 @@ PR #54 의 EntityConsolidator 1M 적용 결과 (Combined 78.8% > chunk 72.7%) �
 
 | Phase | 목표 | 산출물 | 상태 |
 |---|---|---|---|
-| Phase 1 — graphify parity 회복 | 추출 단계 컨텍스트 동봉 + parallel + 캐싱 + Step 3 옵션화 | ADR-0009/0010/0011 + spec | **RFC + 구현 시작** |
-| Phase 2 — Agent API + MCP HTTP | Agent 친화 contract + MCP HTTP transport | ADR-0013/0014 | **RFC** |
-| Phase 3 — 공유 KB 운영 모델 | 사내 인프라 활용 + namespace 부분 공유 | ADR-0015 | **RFC** |
+| Phase 1 — graphify parity 회복 | 추출 단계 컨텍스트 동봉 + parallel + 캐싱 + Step 3 옵션화 | ADR-0009/0010/0011 (accepted) + 5 PR 코드 + **1M 실측 evidence** | **★ 완료** |
+| Phase 2 — Agent API + MCP HTTP | Agent 친화 contract + MCP HTTP transport | ADR-0013 RFC + ADR-0014 + **mcp_http.py** (Streamable HTTP + SSE) | **MCP HTTP 코드 완료** |
+| Phase 3 — 공유 KB 운영 모델 | 사내 인프라 활용 + namespace 부분 공유 | ADR-0015 + **auth.py + Kubernetes manifest 골격** | **최소 viable + 배치 가이드** |
+
+### 2026-06-21 1M 검증 핵심
+
+PR #54 baseline 17 분 / 479 entities / Consolidator 가드 필요 → **M7-D 9 분 7 초 (-45%) / 422 entities / Consolidator 없이도 over-merge 0**. ADR-0009 의 root-cause 해법 (matched_existing_id 78 건 = 18.5%) 이 *추출 단계에서* 매칭 결정. 상세 — [CONCLUSION](./eval/reports/2026-06-21-m7d-1M-validation/CONCLUSION.md).
 
 상세:
 - [ADR-0009 — Context-aware extraction](./docs/adr/0009-context-aware-extraction.md)

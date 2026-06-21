@@ -1,9 +1,13 @@
 # ADR-0011: Step 3 cosine 매칭의 옵션화 + STOPLIST/Consolidator deprecation 경로
 
-Status: proposed (RFC)
+Status: **accepted, Phase 2 진입 (2026-06-21 실측 evidence)**
 Date: 2026-06-21
 Amends: [ADR-0001](./0001-project-identity-and-mvp-validation-hypothesis.md) §5, [ADR-0008](./0008-entity-consolidator-gating.md)
 Requires: [ADR-0009](./0009-context-aware-extraction.md) (선행 — `matched_existing_id` 도입)
+
+## 2026-06-21 실측 evidence — Phase 2 진입 정당화
+
+ADR-0009 의 1M 회차 결과 (`eval/reports/2026-06-21-m7d-1M-validation/CONCLUSION.md`) — *Consolidator 적용 없이* catastrophic over-merge 0. 본 ADR 의 Phase 2 (STOPLIST + Consolidator deprecated 표시) 진입 정당화. 코드 삭제는 다도메인 추가 회귀 측정 후 Phase 3.
 
 ## TL;DR
 
