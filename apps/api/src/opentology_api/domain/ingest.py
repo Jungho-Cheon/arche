@@ -173,6 +173,7 @@ class IngestService:
         extraction_cache: ExtractionCache | None = None,
         extract_batch_size: int = 8,
         llm_model_id: str = "openai/gpt-4.1",
+        extraction_chunk_tokens: int | None = 4_000,
     ) -> None:
         self._llm = llm
         self._embedder = embedder
@@ -181,6 +182,11 @@ class IngestService:
         # monkeypatch 해 청크 분할을 강제할 수 있어야 한다. config 의 기본값을
         # 라우터/CLI 가 주입.
         self._model_context_tokens = model_context_tokens
+        # WHY extraction_chunk_tokens (2026-06-22 추출 완성도): 추출 청크 예산을
+        # 모델 컨텍스트(=거대)와 분리해 작게 잡는다. 작은 청크일수록 LLM 이 표·수치를
+        # 빠짐없이 추출한다 (chunking.chunk_text 의 budget_tokens 주석 참조). None 이면
+        # 기존 model_context_tokens 기반 큰 청크로 동작 (legacy).
+        self._extraction_chunk_tokens = extraction_chunk_tokens
         # ADR-0009 — 추출 단계의 컨텍스트 동봉. default on. False 면 legacy
         # 동작 (context=None → 기존 system prompt 그대로).
         self._enable_context_aware_extraction = enable_context_aware_extraction
@@ -313,7 +319,9 @@ class IngestService:
         if ext in TEXT_EXTS:
             text = path.read_text(encoding="utf-8")
             chunks = chunk_text(
-                text, model_context_tokens=self._model_context_tokens
+                text,
+                model_context_tokens=self._model_context_tokens,
+                budget_tokens=self._extraction_chunk_tokens,
             )
             main_entity = self._detect_main_entity(
                 source_path=source_path, text=text
@@ -617,7 +625,9 @@ class IngestService:
         if ext in TEXT_EXTS:
             text = raw_bytes.decode("utf-8")
             chunks = chunk_text(
-                text, model_context_tokens=self._model_context_tokens
+                text,
+                model_context_tokens=self._model_context_tokens,
+                budget_tokens=self._extraction_chunk_tokens,
             )
             return [
                 _LLMCallInput(
@@ -675,6 +685,7 @@ class IngestService:
                 chunks = chunk_text(
                     page_text,
                     model_context_tokens=self._model_context_tokens,
+                    budget_tokens=self._extraction_chunk_tokens,
                 )
                 for i, chunk in enumerate(chunks):
                     images_for_chunk = page_images if i == 0 else []

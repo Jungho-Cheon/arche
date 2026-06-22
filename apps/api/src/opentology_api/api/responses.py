@@ -201,7 +201,11 @@ class GetSubgraphRequest(BaseModel):
 
     entry_ids: list[str] = Field(min_length=1, max_length=20)
     hops: int = Field(default=2, ge=1, le=4)
-    max_nodes: int = Field(default=200, ge=1, le=1000)
+    # 2026-06-22: 상한 1000 → 5000. clamp 수정으로 큰 서브그래프 500 크래시가
+    # 사라졌고, max_nodes 300→1000 sweep 에서 정답률이 recall 회복으로 +9pp
+    # 올라 (truncation 이 병목) 더 큰 윈도우 활용 여지를 연다. 큰 컨텍스트 모델
+    # (gpt-4.1 1M) 가정 — 직렬화가 윈도우를 넘으면 호출자가 조절.
+    max_nodes: int = Field(default=200, ge=1, le=5000)
     relation_types: list[str] | None = None
 
     @field_validator("entry_ids")

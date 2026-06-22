@@ -48,6 +48,25 @@ SYSTEM_PROMPT = """당신은 도메인 문서에서 엔티티와 관계를 추�
 2. 엔티티 이름은 본문 표기 그대로. 정규화는 별칭 필드로.
 3. 관계는 능동형 동사구로 ("적용된다", "포함한다", "대체한다" 등).
 4. 같은 엔티티가 본문에 여러 번 나오면 한 번만 추출하고 별칭을 모은다.
+5. 정량 사실·측정값 보존 (도메인 무관) — *반드시* 지킬 것:
+   본문의 측정값·수치·금액·비율·기간별 값을 요약하거나 누락하지 말고 *실제 값*
+   으로 보존한다. 재무든 과학이든 상거래든 코드 지표든, 숫자는 비교·계산·추론의
+   단위이므로 "데이터가 있다" 식으로 뭉뚱그려 버리지 않는다.
+   (a) 어떤 수치가 비교·계산·질문의 단위가 되는 지표면 *별도 엔티티* 로 추출한다.
+       type 은 그 지표의 성격을 반영 (예: metric / measurement / financial_metric).
+       name 은 "<소속 대상> <지표명>" 처럼 그 수치가 속한 대상을 포함해, 같은 이름의
+       지표라도 대상별로 구분되게 한다 (예: "<회사> 유동자산", "<실험> 반응 수율").
+       이는 서로 다른 대상의 동일 지표가 진입점 검색에서 뒤섞이는 것을 막는다
+       (ADR-0009 정체성 원칙과 정합). description 에 기간/조건별 값과 단위를 모두
+       적고, 소속 대상 엔티티와 관계로 잇는다.
+   (b) 부수적 수치(한 엔티티의 단일 속성)는 그 엔티티 description 에 "항목: 값
+       (기간/조건, 단위)" 형태로 기록한다.
+
+6. 표(table) 완전 추출 — *누락 금지* (도메인 무관):
+   본문에 표가 있으면 그 행·열의 값을 *요약하지 말고* 빠짐없이 옮긴다. 표의 각 행이
+   하나의 지표/항목이면 원칙 5 에 따라 별도 엔티티 또는 속성으로 추출하고, 여러
+   기간/열의 값을 모두 적는다. 표는 정량 정보가 가장 밀집한 곳이므로, 표를 통째로
+   생략하거나 일부 행만 뽑는 것은 금지한다.
 
 [CONTEXT 사용 규칙 — ADR-0009]
 입력의 앞부분에 [DOC_CONTEXT] / [KNOWN_ENTITIES] / [SCHEMA] 블록이 동봉됩니다.
@@ -72,15 +91,20 @@ SYSTEM_PROMPT = """당신은 도메인 문서에서 엔티티와 관계를 추�
 결과는 반드시 지정된 JSON 스키마로 응답하세요.
 """
 
-# WHY 한 시점의 본 SYSTEM_PROMPT 강화 시도 (수치 / 시계열 보존 강제) 를 보류:
-# 2026-06-20 smoke 측정에서 graph-only 모드는 +14.3pp (33.3% → 47.6%) 효과,
-# 단 aug 모드 (graph-guided chunk retrieval) 에서는 -4.8pp 후퇴 (Q05/Q08).
-# 원인: description 이 정량 수치 위주가 되면 "cash flow" 같은 *generic anchor*
-# 가 description 이 풍부한 *다른 회사* entity 와 lexical/dense 양쪽에서 강하게
-# 매칭 → 진입점이 cross-company 로 contamination. aug 가 default 컬럼이라
-# 본 강화는 별도 ingest profile 로 옵션화 검토 (ADR 거리).
-#
-# 참조: eval/reports/2026-06-20-F-strong-desc-smoke/ (측정), ADR-0007 amend 후보.
+# WHY 수치/시계열 보존 (원칙 5) 재활성화 — 2026-06-22:
+# 2026-06-20 1차 시도에서 graph-only 는 +14.3pp (33.3% → 47.6%) 였으나 aug 모드
+# (graph-guided chunk retrieval) 에서 -4.8pp 후퇴해 보류했었다. 후퇴 원인은
+# "cash flow" 같은 generic anchor 가 수치 풍부한 *다른 회사* entity 와 강하게
+# 매칭 → 진입점 cross-company contamination.
+# 재활성화 근거: (1) 현재 우선 타깃이 graph-only (MVP "우월한 그래프" 축), 바로
+# 그 모드가 +14.3pp 로 가장 크게 이득. (2) 보류를 강제했던 오염 문제를 두 가드로
+# 차단 — 원칙 5(a) 가 수치 엔티티 name 에 *소속 대상* (회사 등) 을 포함하도록 강제해
+# 같은 지표라도 대상별로 분리되고, ADR-0015 namespace 격리로 진입점 검색을 대상
+# 단위로 스코핑한다. 원칙 5·6 은 재무 용어를 하드코딩하지 않는 *도메인 무관* 규칙으로,
+# 특정 벤치마크 과적합(cherry-picking)을 피하고 범용 그래프 도구 성격을 지킨다.
+# 측정 근거: eval/reports/2026-06-22-graphify-mcq-baseline/ (graphify 그래프 단독
+# 57.6% vs opentology 21.2%, 수치 문항 양쪽 0). graphify 도 숫자를 노드화하지 않으므로
+# 본 원칙은 graphify 가 구조적으로 못 푸는 수치 문항을 그래프 단독·저토큰으로 여는 수.
 
 # PRD 2 §4.3 의 JSON Schema. additionalProperties=false + required 강제.
 EXTRACTION_RESPONSE_FORMAT: dict[str, Any] = {

@@ -586,3 +586,56 @@ def test_get_subgraph_rejects_non_ulid_entry():
     client = _client_with(graph)
     r = client.post("/subgraph", json={"entry_ids": ["bad-id"]})
     assert r.status_code == 422
+
+
+# ---------- 읽기 경계 clamp (2026-06-22 max_nodes=1000 /subgraph 500 회귀) ----------
+
+
+def test_clamp_truncates_over_limit():
+    """_clamp 은 max_length 초과 문자열만 자르고 이하/None 은 그대로."""
+    from opentology_api.adapters.graph import _clamp
+
+    assert _clamp(None, 64) is None
+    assert _clamp("short", 64) == "short"
+    long = "x" * 100
+    assert _clamp(long, 64) == "x" * 64
+
+
+def test_record_to_edge_clamps_oversized_relation_type():
+    """64 자 초과 관계 라벨이 Edge 생성에서 string_too_long 으로 깨지지 않는다.
+
+    조밀 그래프에서 BFS 가 verbose 라벨 엣지에 닿으면 응답 전체가 500 났던
+    회귀의 단위 재현. clamp 후엔 Edge 가 정상 생성되고 type 이 64 자로 잘린다.
+    """
+    from opentology_api.adapters.graph import _record_to_edge
+
+    oversized = "relates_to_in_a_very_long_and_verbose_way_" * 5  # > 64
+    edge = _record_to_edge(
+        rel_id="01AAA0G7M8N0RT0V0EXAMPLE00",
+        rel_type=oversized,
+        rel_created_at="2026-06-22T00:00:00Z",
+        rel_updated_at="2026-06-22T00:00:00Z",
+        rel_source_paths=[],
+        from_id="01AAA0G7M8N0RT0V0EXAMPLE01",
+        to_id="01AAA0G7M8N0RT0V0EXAMPLE02",
+    )
+    assert len(edge.type) == 64
+
+
+def test_node_to_response_clamps_oversized_fields():
+    """200 자 초과 name / 2000 자 초과 description 노드가 500 나지 않는다."""
+    from opentology_api.adapters.graph import _node_to_response
+
+    node = {
+        "id": "01AAA0G7M8N0RT0V0EXAMPLE03",
+        "name": "n" * 300,
+        "type": "t" * 100,
+        "aliases": [],
+        "description": "d" * 5000,
+        "created_at": "2026-06-22T00:00:00Z",
+        "updated_at": "2026-06-22T00:00:00Z",
+    }
+    resp = _node_to_response(node)
+    assert len(resp.name) == 200
+    assert len(resp.type) == 64
+    assert resp.description is not None and len(resp.description) == 2000

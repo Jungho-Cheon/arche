@@ -1,0 +1,262 @@
+[
+  {
+    "id": "X01",
+    "question": "Among the six companies in this corpus, which one derives approximately 40% of its 2022 revenues from U.S. government contracts?",
+    "options": [
+      {
+        "id": "a",
+        "text": "American Express"
+      },
+      {
+        "id": "b",
+        "text": "Boeing"
+      },
+      {
+        "id": "c",
+        "text": "Johnson & Johnson"
+      },
+      {
+        "id": "d",
+        "text": "AMD"
+      },
+      {
+        "id": "e",
+        "text": "Insufficient information / cannot determine"
+      }
+    ]
+  },
+  {
+    "id": "X02",
+    "question": "Which company in this corpus reports 'Customer deposits' exceeding $110 billion as one of its largest balance-sheet liabilities?",
+    "options": [
+      {
+        "id": "a",
+        "text": "PepsiCo"
+      },
+      {
+        "id": "b",
+        "text": "Amcor"
+      },
+      {
+        "id": "c",
+        "text": "American Express"
+      },
+      {
+        "id": "d",
+        "text": "Boeing"
+      },
+      {
+        "id": "e",
+        "text": "Insufficient information / cannot determine"
+      }
+    ]
+  },
+  {
+    "id": "X03",
+    "question": "Which company in this corpus reported sales of a COVID-19 vaccine product whose decline affected its pharmaceutical results in 2022?",
+    "options": [
+      {
+        "id": "a",
+        "text": "Johnson & Johnson"
+      },
+      {
+        "id": "b",
+        "text": "AMD"
+      },
+      {
+        "id": "c",
+        "text": "PepsiCo"
+      },
+      {
+        "id": "d",
+        "text": "Amcor"
+      },
+      {
+        "id": "e",
+        "text": "Insufficient information / cannot determine"
+      }
+    ]
+  },
+  {
+    "id": "X04",
+    "question": "Which company in this corpus is organized into exactly seven reportable segments (divisions)?",
+    "options": [
+      {
+        "id": "a",
+        "text": "Boeing"
+      },
+      {
+        "id": "b",
+        "text": "PepsiCo"
+      },
+      {
+        "id": "c",
+        "text": "American Express"
+      },
+      {
+        "id": "d",
+        "text": "AMD"
+      },
+      {
+        "id": "e",
+        "text": "Insufficient information / cannot determine"
+      }
+    ]
+  },
+  {
+    "id": "X05",
+    "question": "Which company in this corpus completed the acquisition of Xilinx in February 2022?",
+    "options": [
+      {
+        "id": "a",
+        "text": "American Express"
+      },
+      {
+        "id": "b",
+        "text": "Boeing"
+      },
+      {
+        "id": "c",
+        "text": "AMD"
+      },
+      {
+        "id": "d",
+        "text": "Johnson & Johnson"
+      },
+      {
+        "id": "e",
+        "text": "Insufficient information / cannot determine"
+      }
+    ]
+  },
+  {
+    "id": "X06",
+    "question": "Comparing FY2022 gross profit as a percentage of net sales, which company had the HIGHER gross margin: Amcor or Boeing?",
+    "options": [
+      {
+        "id": "a",
+        "text": "Amcor (about 18-19%) was higher than Boeing (about 5%)"
+      },
+      {
+        "id": "b",
+        "text": "Boeing (about 25%) was higher than Amcor (about 10%)"
+      },
+      {
+        "id": "c",
+        "text": "They were approximately equal (both near 15%)"
+      },
+      {
+        "id": "d",
+        "text": "Boeing (about 18%) was higher than Amcor (about 5%)"
+      },
+      {
+        "id": "e",
+        "text": "Insufficient information / cannot determine"
+      }
+    ]
+  },
+  {
+    "id": "X07",
+    "question": "Among AMD, Johnson & Johnson, and PepsiCo, which company had the LOWEST year-over-year total revenue growth in its most recent reported fiscal year?",
+    "options": [
+      {
+        "id": "a",
+        "text": "AMD"
+      },
+      {
+        "id": "b",
+        "text": "Johnson & Johnson"
+      },
+      {
+        "id": "c",
+        "text": "PepsiCo"
+      },
+      {
+        "id": "d",
+        "text": "All three declined"
+      },
+      {
+        "id": "e",
+        "text": "Insufficient information / cannot determine"
+      }
+    ]
+  },
+  {
+    "id": "X08",
+    "question": "Which company in this corpus is described as a global leader in consumer packaging, organized into Flexibles and Rigid Packaging segments?",
+    "options": [
+      {
+        "id": "a",
+        "text": "PepsiCo"
+      },
+      {
+        "id": "b",
+        "text": "Amcor"
+      },
+      {
+        "id": "c",
+        "text": "Johnson & Johnson"
+      },
+      {
+        "id": "d",
+        "text": "Boeing"
+      },
+      {
+        "id": "e",
+        "text": "Insufficient information / cannot determine"
+      }
+    ]
+  },
+  {
+    "id": "X09",
+    "question": "Between AMD and American Express, which company reports that a single customer accounted for approximately 16% of its consolidated net revenue?",
+    "options": [
+      {
+        "id": "a",
+        "text": "American Express"
+      },
+      {
+        "id": "b",
+        "text": "AMD"
+      },
+      {
+        "id": "c",
+        "text": "Both report a 16% single-customer concentration"
+      },
+      {
+        "id": "d",
+        "text": "Neither reports any single-customer concentration"
+      },
+      {
+        "id": "e",
+        "text": "Insufficient information / cannot determine"
+      }
+    ]
+  },
+  {
+    "id": "X10",
+    "question": "Two companies in this corpus are NOT manufacturers of physical products in the traditional sense (one is a payments/financial-services company). Which company is the financial-services company?",
+    "options": [
+      {
+        "id": "a",
+        "text": "Boeing"
+      },
+      {
+        "id": "b",
+        "text": "Amcor"
+      },
+      {
+        "id": "c",
+        "text": "American Express"
+      },
+      {
+        "id": "d",
+        "text": "PepsiCo"
+      },
+      {
+        "id": "e",
+        "text": "Insufficient information / cannot determine"
+      }
+    ]
+  }
+]

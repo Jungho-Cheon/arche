@@ -39,6 +39,7 @@ ADR 은 *불변에 가깝게* 다룬다. 결정이 바뀌면 *기존 ADR 을 수
 | 13 | [ADR-0013 — Agent 친화 API contract (RFC)](./0013-agent-friendly-api-contract.md) | DataEnvelope 통일, 표준 에러 코드, OpenAPI 깊이, idempotency, latency budget, next-action hints. *MVP 조건 (2)*. |
 | 14 | [ADR-0014 — MCP HTTP transport (RFC)](./0014-mcp-http-transport.md) | Streamable HTTP transport 추가 + stdio 코드 공유. 사내 인프라 + 외부 agent 양쪽 노출. *MVP 조건 (3)*. |
 | 15 | [ADR-0015 — 공유 KB 운영 모델 (RFC)](./0015-shared-kb-operating-model.md) | 단일 KB + namespace 부분 공유. 다회사 개인 KB 시나리오 자연 흡수. *MVP 조건 (4)*. |
+| 16 | [ADR-0016 — 에이전트 반복 graph-only + 정량 추출 (RFC)](./0016-agentic-graphonly-and-quantitative-extraction.md) | 측정으로 제품 방향 확정. graph-only 가 graphify 를 압도(FinanceBench 94-97% vs 57.6%, MedHop 30% vs 10%). 답변 LLM 외부화 + 정량-aware 추출 채택. 다음 레버 = 문서 간 엔티티 동일성 해소. *MVP 조건 (1)*. |
 
 ---
 

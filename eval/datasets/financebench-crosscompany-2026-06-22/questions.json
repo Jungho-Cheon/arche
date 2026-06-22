@@ -1,0 +1,142 @@
+[
+  {
+    "id": "X01",
+    "question": "Among the six companies in this corpus, which one derives approximately 40% of its 2022 revenues from U.S. government contracts?",
+    "type": "which_company",
+    "options": [
+      {"id": "a", "text": "American Express"},
+      {"id": "b", "text": "Boeing"},
+      {"id": "c", "text": "Johnson & Johnson"},
+      {"id": "d", "text": "AMD"},
+      {"id": "e", "text": "Insufficient information / cannot determine"}
+    ],
+    "gold": "b",
+    "reasoning": "Boeing 10-K: 'In 2022, 40% of our revenues were earned pursuant to U.S. government contracts.'"
+  },
+  {
+    "id": "X02",
+    "question": "Which company in this corpus reports 'Customer deposits' exceeding $110 billion as one of its largest balance-sheet liabilities?",
+    "type": "which_company",
+    "options": [
+      {"id": "a", "text": "PepsiCo"},
+      {"id": "b", "text": "Amcor"},
+      {"id": "c", "text": "American Express"},
+      {"id": "d", "text": "Boeing"},
+      {"id": "e", "text": "Insufficient information / cannot determine"}
+    ],
+    "gold": "c",
+    "reasoning": "American Express balance sheet: Customer deposits 110,239 ($M) as of Dec 31, 2022."
+  },
+  {
+    "id": "X03",
+    "question": "Which company in this corpus reported sales of a COVID-19 vaccine product whose decline affected its pharmaceutical results in 2022?",
+    "type": "which_company",
+    "options": [
+      {"id": "a", "text": "Johnson & Johnson"},
+      {"id": "b", "text": "AMD"},
+      {"id": "c", "text": "PepsiCo"},
+      {"id": "d", "text": "Amcor"},
+      {"id": "e", "text": "Insufficient information / cannot determine"}
+    ],
+    "gold": "a",
+    "reasoning": "Johnson & Johnson 10-K lists COVID-19 VACCINE sales of $2,179M and discusses its impact."
+  },
+  {
+    "id": "X04",
+    "question": "Which company in this corpus is organized into exactly seven reportable segments (divisions)?",
+    "type": "which_company",
+    "options": [
+      {"id": "a", "text": "Boeing"},
+      {"id": "b", "text": "PepsiCo"},
+      {"id": "c", "text": "American Express"},
+      {"id": "d", "text": "AMD"},
+      {"id": "e", "text": "Insufficient information / cannot determine"}
+    ],
+    "gold": "b",
+    "reasoning": "PepsiCo: 'We are organized into seven reportable segments (also referred to as divisions).'"
+  },
+  {
+    "id": "X05",
+    "question": "Which company in this corpus completed the acquisition of Xilinx in February 2022?",
+    "type": "which_company",
+    "options": [
+      {"id": "a", "text": "American Express"},
+      {"id": "b", "text": "Boeing"},
+      {"id": "c", "text": "AMD"},
+      {"id": "d", "text": "Johnson & Johnson"},
+      {"id": "e", "text": "Insufficient information / cannot determine"}
+    ],
+    "gold": "c",
+    "reasoning": "AMD: 'With the acquisition of Xilinx, Inc. in February 2022 ...'"
+  },
+  {
+    "id": "X06",
+    "question": "Comparing FY2022 gross profit as a percentage of net sales, which company had the HIGHER gross margin: Amcor or Boeing?",
+    "type": "comparison",
+    "options": [
+      {"id": "a", "text": "Amcor (about 18-19%) was higher than Boeing (about 5%)"},
+      {"id": "b", "text": "Boeing (about 25%) was higher than Amcor (about 10%)"},
+      {"id": "c", "text": "They were approximately equal (both near 15%)"},
+      {"id": "d", "text": "Boeing (about 18%) was higher than Amcor (about 5%)"},
+      {"id": "e", "text": "Insufficient information / cannot determine"}
+    ],
+    "gold": "a",
+    "reasoning": "Amcor gross margin FY2022 ~19.4% (FY2023 18.5%); Boeing 2022 gross margin ~5.3% ($3,502M / ~$66.6B)."
+  },
+  {
+    "id": "X07",
+    "question": "Among AMD, Johnson & Johnson, and PepsiCo, which company had the LOWEST year-over-year total revenue growth in its most recent reported fiscal year?",
+    "type": "ranking",
+    "options": [
+      {"id": "a", "text": "AMD"},
+      {"id": "b", "text": "Johnson & Johnson"},
+      {"id": "c", "text": "PepsiCo"},
+      {"id": "d", "text": "All three declined"},
+      {"id": "e", "text": "Insufficient information / cannot determine"}
+    ],
+    "gold": "b",
+    "reasoning": "J&J FY2022 sales grew ~1.3%; AMD grew ~44% (Xilinx); PepsiCo grew ~8.7%. J&J lowest."
+  },
+  {
+    "id": "X08",
+    "question": "Which company in this corpus is described as a global leader in consumer packaging, organized into Flexibles and Rigid Packaging segments?",
+    "type": "which_company",
+    "options": [
+      {"id": "a", "text": "PepsiCo"},
+      {"id": "b", "text": "Amcor"},
+      {"id": "c", "text": "Johnson & Johnson"},
+      {"id": "d", "text": "Boeing"},
+      {"id": "e", "text": "Insufficient information / cannot determine"}
+    ],
+    "gold": "b",
+    "reasoning": "Amcor: global leader in responsible packaging; Flexibles (~76%) and Rigid Packaging (~24%) segments."
+  },
+  {
+    "id": "X09",
+    "question": "Between AMD and American Express, which company reports that a single customer accounted for approximately 16% of its consolidated net revenue?",
+    "type": "comparison",
+    "options": [
+      {"id": "a", "text": "American Express"},
+      {"id": "b", "text": "AMD"},
+      {"id": "c", "text": "Both report a 16% single-customer concentration"},
+      {"id": "d", "text": "Neither reports any single-customer concentration"},
+      {"id": "e", "text": "Insufficient information / cannot determine"}
+    ],
+    "gold": "b",
+    "reasoning": "AMD reports one customer accounted for ~16% of consolidated net revenue; American Express does not."
+  },
+  {
+    "id": "X10",
+    "question": "Two companies in this corpus are NOT manufacturers of physical products in the traditional sense (one is a payments/financial-services company). Which company is the financial-services company?",
+    "type": "which_company",
+    "options": [
+      {"id": "a", "text": "Boeing"},
+      {"id": "b", "text": "Amcor"},
+      {"id": "c", "text": "American Express"},
+      {"id": "d", "text": "PepsiCo"},
+      {"id": "e", "text": "Insufficient information / cannot determine"}
+    ],
+    "gold": "c",
+    "reasoning": "American Express is a payments/financial-services company (no COGS, uses 'revenues net of interest expense')."
+  }
+]

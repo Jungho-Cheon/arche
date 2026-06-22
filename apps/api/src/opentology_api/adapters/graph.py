@@ -1389,14 +1389,34 @@ def _to_run_record(node: Any) -> IngestionRunRecord:
     )
 
 
+def _clamp(value: str | None, max_length: int) -> str | None:
+    """문자열을 응답 모델의 max_length 로 자른다 (None 은 그대로).
+
+    WHY 읽기 단계 clamp: ingest 시점의 LLM 추출이 드물게 모델 상한을 넘는
+    문자열 (예: 64 자 초과 관계 라벨, 200 자 초과 엔티티 이름) 을 만든다.
+    이 값이 그래프에 *이미 저장* 돼 있으면, get_subgraph / get_neighbors 의
+    BFS 가 그 노드·엣지에 닿는 순간 pydantic `string_too_long` 으로 응답
+    *전체* 가 500 으로 죽는다 (한 엣지가 서브그래프 전체를 무효화). 2026-06-22
+    max_nodes=1000 sweep 에서 Edge.type 64 자 초과로 /subgraph 가 6 문항에서
+    500 — 부분 손실이 아니라 전면 실패. 재적재는 비싸므로 *읽기 경계에서*
+    모델 상한으로 잘라 프리미티브가 어떤 데이터에도 깨지지 않도록 보장한다.
+    라벨/이름이 잘려도 엣지·노드 자체는 보존된다 (정보 손실 최소).
+    """
+    if value is None:
+        return None
+    return value if len(value) <= max_length else value[:max_length]
+
+
 def _node_to_response(node: Any) -> Node:
     """neo4j Node → 응답 Node (embedding 제외)."""
     return Node(
         id=node["id"],
-        name=node["name"],
-        type=node["type"],
+        # name 200 / type 64 / description 2000 — domain.models.Node 의 상한.
+        # 초과 시 clamp 해 BFS 가 비정상 노드에서 500 나는 것을 방지.
+        name=_clamp(node["name"], 200),
+        type=_clamp(node["type"], 64),
         aliases=list(node.get("aliases") or []),
-        description=node.get("description"),
+        description=_clamp(node.get("description"), 2000),
         properties={},
         source_refs=_extract_source_refs(node),
         created_at=node["created_at"],
@@ -1504,7 +1524,9 @@ def _record_to_edge(
         id=rel_id,
         **{"from": from_id},
         to=to_id,
-        type=rel_type or RELATION_TYPE_LABEL_DEFAULT,
+        # Edge.type 상한 64 — 초과 관계 라벨이 서브그래프 전체를 500 으로
+        # 죽이지 않도록 clamp (위 _clamp WHY 참조).
+        type=_clamp(rel_type or RELATION_TYPE_LABEL_DEFAULT, 64) or RELATION_TYPE_LABEL_DEFAULT,
         properties={},
         source_refs=[SourceRef(source_path=sp) for sp in (rel_source_paths or [])],
         created_at=rel_created_at,
@@ -1513,6 +1535,13 @@ def _record_to_edge(
 
 
 _LUCENE_SPECIAL = '+-&|!(){}[]^"~*?:\\/'
+
+# Lucene classic 파서의 boolean 연산자 — *대문자 토큰만* 연산자로 해석된다.
+# 엔티티 이름/키워드에 "Valuation AND Qualifying" 같은 대문자 AND 가 들어오면
+# 파서가 `db.index.fulltext.queryNodes` 에서 ParseException (column 0 의 <AND>).
+# _lucene_escape 가 이 토큰을 소문자화해 일반 term 으로 중립화한다 (인덱스 분석기도
+# 소문자화하므로 매칭 동일). 2026-06-22 전체 코퍼스 ingest 실패에서 발견.
+_LUCENE_RESERVED_WORDS = {"AND", "OR", "NOT"}
 
 
 def _lucene_escape(s: str) -> str:
@@ -1530,6 +1559,13 @@ def _lucene_escape(s: str) -> str:
         else:
             out.append(ch)
     escaped = "".join(out).strip()
+    # 예약 연산자(AND/OR/NOT) 대문자 토큰을 소문자화해 boolean 연산자 파싱을 막는다.
+    if escaped:
+        tokens = [
+            t.lower() if t in _LUCENE_RESERVED_WORDS else t
+            for t in escaped.split(" ")
+        ]
+        escaped = " ".join(t for t in tokens if t)
     # 멀티 토큰은 괄호로 묶어 OR 결합과 충돌하지 않게.
     if " " in escaped:
         return f"({escaped})"

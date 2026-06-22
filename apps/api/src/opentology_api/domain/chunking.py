@@ -85,6 +85,7 @@ def chunk_text(
     model_context_tokens: int,
     budget_ratio: float = TOKEN_BUDGET_RATIO,
     overlap_ratio: float = OVERLAP_RATIO,
+    budget_tokens: int | None = None,
 ) -> list[Chunk]:
     """본문을 청크 리스트로 분할.
 
@@ -94,6 +95,14 @@ def chunk_text(
 
     overlap 은 *직전 청크의 마지막 N 토큰* 을 다음 청크의 앞에 prepend (PRD 2
     §3.3). N = overlap_ratio * budget_tokens (= 청크 1 개 분량의 20%).
+
+    WHY budget_tokens override (2026-06-22 추출 완성도 개선): 청크 예산을 모델
+    컨텍스트 창(예: 128K)의 70% 로 잡으면 청크 하나가 ~90K 토큰까지 커진다. 그런
+    거대 청크에서는 LLM 이 표의 모든 행·기간별 수치를 빠짐없이 추출하지 못하고
+    핵심만 뽑아 정량 사실이 대거 누락된다 (Amcor 487KB → 2 청크 → quick ratio
+    계산용 라인 항목 미추출). 추출 충실도는 *작은 청크* 에서 훨씬 높으므로, ingest
+    추출 단계는 모델 컨텍스트와 무관한 작은 절대 예산을 직접 지정한다. 도메인 무관
+    개선 — 표가 밀집한 모든 코퍼스(재무·과학·코드)에서 동일하게 이득.
     """
     if budget_ratio <= 0 or budget_ratio > 1:
         raise ValueError(f"budget_ratio out of (0, 1]: {budget_ratio}")
@@ -101,8 +110,16 @@ def chunk_text(
         raise ValueError(f"overlap_ratio out of [0, 1): {overlap_ratio}")
     if model_context_tokens <= 0:
         raise ValueError(f"model_context_tokens must be positive: {model_context_tokens}")
+    if budget_tokens is not None and budget_tokens <= 0:
+        raise ValueError(f"budget_tokens must be positive: {budget_tokens}")
 
-    budget = max(1, int(model_context_tokens * budget_ratio))
+    # budget_tokens 가 명시되면 모델 컨텍스트 기반 계산을 무시하고 그 값을 직접
+    # 예산으로 쓴다 (추출 충실도용 작은 청크).
+    budget = (
+        budget_tokens
+        if budget_tokens is not None
+        else max(1, int(model_context_tokens * budget_ratio))
+    )
     total = count_tokens(text)
 
     # 70% 컷 안쪽 — 통째로 한 청크.

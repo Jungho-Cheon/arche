@@ -1,0 +1,212 @@
+[
+  {
+    "id": "MH_dev_0",
+    "question": "In this biomedical corpus, which candidate entity satisfies the relation 'interacts_with' with 'DB01171'? Find X such that 'interacts_with' holds between 'DB01171' and X, possibly via multi-hop chains across abstracts.",
+    "options": [
+      {
+        "id": "a",
+        "text": "DB00786"
+      },
+      {
+        "id": "b",
+        "text": "DB00863"
+      },
+      {
+        "id": "c",
+        "text": "DB01656"
+      },
+      {
+        "id": "d",
+        "text": "DB02377"
+      },
+      {
+        "id": "e",
+        "text": "DB04844"
+      },
+      {
+        "id": "f",
+        "text": "DB04871"
+      },
+      {
+        "id": "g",
+        "text": "DB05812"
+      },
+      {
+        "id": "h",
+        "text": "DB06101"
+      },
+      {
+        "id": "i",
+        "text": "DB08820"
+      }
+    ]
+  },
+  {
+    "id": "MH_dev_1",
+    "question": "In this biomedical corpus, which candidate entity satisfies the relation 'interacts_with' with 'DB00563'? Find X such that 'interacts_with' holds between 'DB00563' and X, possibly via multi-hop chains across abstracts.",
+    "options": [
+      {
+        "id": "a",
+        "text": "DB00065"
+      },
+      {
+        "id": "b",
+        "text": "DB00125"
+      },
+      {
+        "id": "c",
+        "text": "DB00133"
+      },
+      {
+        "id": "d",
+        "text": "DB00519"
+      },
+      {
+        "id": "e",
+        "text": "DB00989"
+      },
+      {
+        "id": "f",
+        "text": "DB01213"
+      },
+      {
+        "id": "g",
+        "text": "DB01259"
+      },
+      {
+        "id": "h",
+        "text": "DB04630"
+      },
+      {
+        "id": "i",
+        "text": "DB08910"
+      }
+    ]
+  },
+  {
+    "id": "MH_dev_2",
+    "question": "In this biomedical corpus, which candidate entity satisfies the relation 'interacts_with' with 'DB00472'? Find X such that 'interacts_with' holds between 'DB00472' and X, possibly via multi-hop chains across abstracts.",
+    "options": [
+      {
+        "id": "a",
+        "text": "DB00154"
+      },
+      {
+        "id": "b",
+        "text": "DB00921"
+      },
+      {
+        "id": "c",
+        "text": "DB01151"
+      },
+      {
+        "id": "d",
+        "text": "DB01216"
+      },
+      {
+        "id": "e",
+        "text": "DB01277"
+      },
+      {
+        "id": "f",
+        "text": "DB01590"
+      },
+      {
+        "id": "g",
+        "text": "DB02272"
+      },
+      {
+        "id": "h",
+        "text": "DB02527"
+      },
+      {
+        "id": "i",
+        "text": "DB06285"
+      }
+    ]
+  },
+  {
+    "id": "MH_dev_3",
+    "question": "In this biomedical corpus, which candidate entity satisfies the relation 'interacts_with' with 'DB08815'? Find X such that 'interacts_with' holds between 'DB08815' and X, possibly via multi-hop chains across abstracts.",
+    "options": [
+      {
+        "id": "a",
+        "text": "DB00162"
+      },
+      {
+        "id": "b",
+        "text": "DB00619"
+      },
+      {
+        "id": "c",
+        "text": "DB01221"
+      },
+      {
+        "id": "d",
+        "text": "DB01229"
+      },
+      {
+        "id": "e",
+        "text": "DB01240"
+      },
+      {
+        "id": "f",
+        "text": "DB05095"
+      },
+      {
+        "id": "g",
+        "text": "DB05465"
+      },
+      {
+        "id": "h",
+        "text": "DB05657"
+      },
+      {
+        "id": "i",
+        "text": "DB05876"
+      }
+    ]
+  },
+  {
+    "id": "MH_dev_4",
+    "question": "In this biomedical corpus, which candidate entity satisfies the relation 'interacts_with' with 'DB00977'? Find X such that 'interacts_with' holds between 'DB00977' and X, possibly via multi-hop chains across abstracts.",
+    "options": [
+      {
+        "id": "a",
+        "text": "DB00461"
+      },
+      {
+        "id": "b",
+        "text": "DB00588"
+      },
+      {
+        "id": "c",
+        "text": "DB00677"
+      },
+      {
+        "id": "d",
+        "text": "DB01373"
+      },
+      {
+        "id": "e",
+        "text": "DB03459"
+      },
+      {
+        "id": "f",
+        "text": "DB03516"
+      },
+      {
+        "id": "g",
+        "text": "DB04925"
+      },
+      {
+        "id": "h",
+        "text": "DB04958"
+      },
+      {
+        "id": "i",
+        "text": "DB05341"
+      }
+    ]
+  }
+]

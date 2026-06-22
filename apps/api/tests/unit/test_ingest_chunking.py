@@ -98,6 +98,8 @@ def test_large_doc_splits_and_calls_llm_per_chunk(tmp_path: Path):
         embedder=FakeEmbedder(),
         graph=graph,
         model_context_tokens=int(200 / 0.70),
+        # 분할을 좌우하는 knob 은 이제 추출 예산 (2026-06-22). budget=200 강제.
+        extraction_chunk_tokens=200,
     )
     result = service.ingest_file(p)
 
@@ -120,6 +122,8 @@ def test_entity_in_multiple_chunks_accumulates_source_refs(tmp_path: Path):
         embedder=FakeEmbedder(),
         graph=graph,
         model_context_tokens=int(200 / 0.70),
+        # 분할을 좌우하는 knob 은 이제 추출 예산 (2026-06-22). budget=200 강제.
+        extraction_chunk_tokens=200,
     )
     service.ingest_file(p)
 
@@ -142,6 +146,8 @@ def test_large_doc_idempotent_on_second_ingest(tmp_path: Path):
         embedder=FakeEmbedder(),
         graph=graph,
         model_context_tokens=int(200 / 0.70),
+        # 분할을 좌우하는 knob 은 이제 추출 예산 (2026-06-22). budget=200 강제.
+        extraction_chunk_tokens=200,
     )
     first = service.ingest_file(p)
     first_calls = len(llm.calls)
