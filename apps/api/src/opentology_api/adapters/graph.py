@@ -17,6 +17,7 @@
 from __future__ import annotations
 
 import logging
+import math
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import Any
@@ -137,6 +138,15 @@ class PathResult:
     nodes: list[Node]
     edges: list[Edge]
     length: int
+    # hub_score: 경로의 *중간* 노드 (끝점 제외) degree 합 — log(1+deg) 누적.
+    # WHY (2026-06-23, ADR-0017): allShortestPaths 는 같은 길이의 경로를 여러 개
+    # 돌려주는데, 그중 promiscuous 허브 (여러 문서에 걸친 공유 단백질, 또는
+    # 과연결된 추출 artifact) 를 *다리* 로 쓰는 경로는 "닿긴 닿지만 의미 없는"
+    # 가짜 연결이다. MedHop 실측에서 오답의 다수가 deg-339 artifact / deg-64
+    # 공유 단백질을 경유했다. hub_score 가 낮을수록 *구체적* 경로 → 같은 길이면
+    # 이걸 먼저 돌려준다. 끝점 (질문이 묻는 두 엔티티) 은 합산에서 제외 — 금융
+    # 도메인에서 정답이 고-degree metric/회사 *끝점* 인 경우를 페널티에서 보호.
+    hub_score: float = 0.0
 
 
 logger = logging.getLogger(__name__)
@@ -1301,9 +1311,21 @@ class Neo4jGraphRepository(GraphRepository):
         # 동일 원인. driver 가 relationships(p) 리스트를 dict/객체 어느 한 형태
         # 로 일관 직렬화하지 않을 수 있다. 노드 → 노드 사이의 엣지 속성만 꺼내
         # 원시 값으로 묶는다.
+        # WHY internal fetch limit > max_paths (ADR-0017): allShortestPaths 는
+        # 같은 *최단* 길이의 경로를 여러 개 돌려준다. 그중 promiscuous 허브를
+        # 경유하지 *않는* (구체적인) 경로를 골라 max_paths 만큼 돌려주려면, 먼저
+        # 넉넉히 받아 (fetch_limit) hub_score 로 재정렬한 뒤 잘라야 한다. Cypher
+        # 의 LIMIT 만으로 자르면 허브 경로가 임의로 먼저 잘려 들어온다.
+        fetch_limit = min(50, max(max_paths * 5, 10))
+        # WHY [:RELATES_TO*] 로 관계 타입 제한 (2026-06-23, ADR-0017): 무제한
+        # `-[*1..N]-` 는 EMITTED_IN (Entity→IngestionRun provenance) 엣지까지 타고
+        # 들어가 (1) name 없는 IngestionRun 노드에서 직렬화 크래시 (KeyError),
+        # (2) "같은 적재 run 에서 나왔다" 는 무의미한 다리로 두 엔티티를 잇는
+        # 가짜 경로를 만든다. 의미 그래프 경로는 *엔티티 간 관계* (RELATES_TO)
+        # 만 따라야 한다 — 크래시 회귀와 가짜 다리를 한 번에 제거.
         cypher = """
         MATCH (a:Entity {id: $from_id}), (b:Entity {id: $to_id})
-        MATCH p = allShortestPaths((a)-[*1..%d]-(b))
+        MATCH p = allShortestPaths((a)-[:%s*1..%d]-(b))
         WITH p,
              [r IN relationships(p) | r.type] AS rel_types,
              length(p) AS len
@@ -1318,8 +1340,8 @@ class Neo4jGraphRepository(GraphRepository):
                }] AS rels,
                len AS length
         ORDER BY length ASC
-        LIMIT $max_paths
-        """ % int(max_hops)
+        LIMIT $fetch_limit
+        """ % (RELATION_TYPE_LABEL_DEFAULT, int(max_hops))
         with self._driver.session() as s:
             rows = s.run(
                 cypher,
@@ -1327,8 +1349,29 @@ class Neo4jGraphRepository(GraphRepository):
                 to_id=to_id,
                 filter_rels=bool(relation_types),
                 rel_types=relation_types or [],
-                max_paths=max_paths,
+                fetch_limit=fetch_limit,
             ).data()
+
+            # 경로의 *중간* 노드 degree 를 한 쿼리로 조회 (끝점 from/to 는 제외).
+            # WHY COUNT{} 최상위 바인딩: 리스트 comprehension 안의 변수에 묶인
+            # 서브쿼리 degree 는 5.x 에서 동작 보장이 모호하므로, intermediate id
+            # 를 모아 단일 MATCH 로 안전하게 degree 를 받는다.
+            endpoints = {from_id, to_id}
+            intermediate_ids = {
+                n["id"]
+                for row in rows
+                for n in row["nodes"]
+                if n["id"] not in endpoints
+            }
+            degree_by_id: dict[str, int] = {}
+            if intermediate_ids:
+                deg_rows = s.run(
+                    f"MATCH (n:{ENTITY_LABEL}) WHERE n.id IN $ids "
+                    f"RETURN n.id AS id, COUNT {{ (n)-[:{RELATION_TYPE_LABEL_DEFAULT}]-() }} AS deg",
+                    ids=list(intermediate_ids),
+                ).data()
+                degree_by_id = {r["id"]: int(r["deg"]) for r in deg_rows}
+
         paths: list[PathResult] = []
         for row in rows:
             node_objs = [_node_to_response(n) for n in row["nodes"]]
@@ -1349,10 +1392,23 @@ class Neo4jGraphRepository(GraphRepository):
                         to_id=node_objs[i + 1].id,
                     )
                 )
-            paths.append(
-                PathResult(nodes=node_objs, edges=edges, length=int(row["length"]))
+            # hub_score = 중간 노드 (끝점 제외) 의 log(1+degree) 합. 끝점만 있는
+            # 1-hop 직접 경로는 중간 노드가 없어 0.0 (가장 구체적 = 최선).
+            hub_score = sum(
+                math.log1p(degree_by_id.get(n.id, 0))
+                for n in node_objs[1:-1]
             )
-        return paths
+            paths.append(
+                PathResult(
+                    nodes=node_objs,
+                    edges=edges,
+                    length=int(row["length"]),
+                    hub_score=hub_score,
+                )
+            )
+        # 같은 길이면 hub_score 가 낮은 (구체적) 경로 우선 → max_paths 로 절단.
+        paths.sort(key=lambda p: (p.length, p.hub_score))
+        return paths[:max_paths]
 
 
 # ---------- helpers ----------

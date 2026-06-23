@@ -5,6 +5,13 @@ Date: 2026-06-23
 Phase: 측정 기반 방향 확정 (M7-D 직후)
 Requires: [ADR-0009](./0009-context-aware-extraction.md), [ADR-0013](./0013-agent-friendly-api-contract.md), [ADR-0014](./0014-mcp-http-transport.md)
 
+> **Amendment (ADR-0017, 2026-06-23)**: 본 ADR 의 D4("다음 레버 = 문서 간 엔티티
+> 병합 강화")를 라이브 그래프 실측이 부분적으로 뒤집었다. MedHop 30% 천장의 다수
+> (오답 10 중 5)는 재현율(병합 부족)이 아니라 *정밀도* 문제 — 경로가 있는데도
+> promiscuous 허브를 다리로 써서 틀린 후보를 골랐다. 무차별 병합은 허브를 키워
+> 정밀도를 *악화* 시킨다. 다음 레버는 "경로 정밀도(허브 down-weighting + 타입된
+> 관계)" 가 1 순위, "선별 병합" 이 2 순위로 재정렬된다. [ADR-0017](./0017-hub-aware-path-scoring.md) 참조.
+
 ## 용어 한 줄 풀이 (처음 등장)
 
 - **graph-only**: 원본 문서를 다시 읽지 않고 *그래프만* 으로 질문에 답하는 방식.

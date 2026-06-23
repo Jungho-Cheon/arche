@@ -175,6 +175,13 @@ class PathSegment(BaseModel):
     nodes: list[Node]
     edges: list[Edge]
     length: int = Field(ge=1)
+    # hub_score: 경로 *중간* 노드 (끝점 제외) 의 log(1+degree) 합. 0.0 = 모든
+    # 중간 노드가 고유 (또는 1-hop 직접 경로) = 가장 구체적. 값이 클수록 경로가
+    # promiscuous 허브 (수많은 엔티티와 연결된 공유 노드/추출 artifact) 를 다리로
+    # 쓴다는 뜻 — "닿긴 닿지만 의미가 약한" 연결일 가능성. 같은 length 의 경로
+    # 중 hub_score 가 낮은 것을 어댑터가 먼저 돌려준다. 소비 에이전트는 hub_score
+    # 가 높은 경로를 *근거로 채택하기 전에 의심* 해야 한다. (ADR-0017)
+    hub_score: float = Field(default=0.0, ge=0.0)
 
 
 class FindPathResponse(BaseModel):
