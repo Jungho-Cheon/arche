@@ -195,6 +195,64 @@ def test_step2_skips_non_identifying_alias_stoplist():
     assert result.existing is None
 
 
+def test_step2_skips_scientific_discourse_aliases():
+    """논문 담론 자기지칭("this study" / "our findings")도 Step 2 에서 제외.
+
+    MedHop 실측에서 관측된 over-merge — 논문마다 "this study" 가 같은 문자열이라
+    cross-document alias 일치로 무관한 엔티티가 한 노드로 뭉쳤다. 기존 stoplist 는
+    10-K 자기지칭만 담아 이 케이스를 못 막았다(2026-06-23 확장).
+    """
+    paper_a = _entity("Contact sensitization to oxazolone", type_="concept")
+    repo = FakeRepo(
+        # 이전 논문에서 "this study" 가 인덱싱돼 있었다고 가정.
+        norm_index={("this study", "concept"): paper_a},
+        vector_pool=[],
+    )
+    matcher = EntityMatcher(repo=repo, embedder=FakeEmbedder())
+    result = matcher.match(
+        ExtractedEntity(
+            name="lithium-induced neuritogenesis",
+            type="concept",
+            aliases=["this study", "our findings", "the present results"],
+        )
+    )
+    # 무관한 두 논문이 "this study" 로 병합되면 안 됨 → 신규(step 4).
+    assert result.step == 4
+    assert result.existing is None
+
+
+def test_generic_deixis_pattern_catches_unseen_variants():
+    """결정적 패턴이 명시 목록에 없는 변형도 비-식별로 판정."""
+    from opentology_api.domain.identity import is_identifying_alias
+
+    for phrase in [
+        "the present study",
+        "our findings",
+        "these results",
+        "this investigation",
+        "the current methodology",
+        "our experiments",
+    ]:
+        assert not is_identifying_alias(phrase), phrase
+
+
+def test_deixis_pattern_does_not_eat_real_entities():
+    """담론 단어가 들어가도 *순수 deixis 형태가 아니면* 식별성 유지 (병합 가능).
+
+    안전 방향은 under-merge 지만, 명백한 도메인 엔티티까지 막으면 안 된다.
+    """
+    from opentology_api.domain.identity import is_identifying_alias
+
+    for phrase in [
+        "Framingham Heart Study",  # 고유명 + study
+        "thymidylate synthase",
+        "P34969",
+        "the Boeing Company",  # "the Company" 와 달리 식별성 있음
+        "study group A",  # 한정사 없이 추가 토큰
+    ]:
+        assert is_identifying_alias(phrase), phrase
+
+
 def test_step2_still_matches_identifying_alias():
     """stoplist 가 아닌 일반 alias 는 종전대로 Step 2 매칭."""
     coupon = _entity("쿠폰 X")
