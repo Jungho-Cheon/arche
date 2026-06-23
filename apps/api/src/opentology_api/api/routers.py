@@ -31,6 +31,7 @@ from .admin_tasks import (
     spawn_ingest_task,
     state_to_status_dict,
 )
+from .auth import AuthContext, auth_context_dep
 from .deps import (
     embedding_provider_dep,
     graph_repo_dep,
@@ -55,12 +56,14 @@ from .schemas import (
     AdminIngestRequest,
     AdminIngestResponse,
     AdminIngestStatusResponse,
+    AdminNamespacesResponse,
     DataEnvelope,
     ErrorBody,
     ErrorEnvelope,
     FindEntitiesRequest,
     FindEntitiesResponse,
     HealthzResponse,
+    NamespaceSummary,
 )
 
 
@@ -206,6 +209,7 @@ def admin_ingest(
     response: Response,
     service: IngestService = Depends(ingest_service_dep),
     registry: IngestTaskRegistry = Depends(task_registry_dep),
+    auth: AuthContext = Depends(auth_context_dep),
 ) -> DataEnvelope[AdminIngestResponse]:
     """admin ingest — PRD 2 §1.2 의 비동기 작업 생성.
 
@@ -234,11 +238,14 @@ def admin_ingest(
             ).model_dump(),
         )
 
+    # ADR-0015 D2 — namespace 결정: body 명시 > auth header > "default".
+    namespace_id = body.namespace_id or auth.namespace_id
     state = spawn_ingest_task(
         registry=registry,
         service=service,
         directory_path=directory,
         dry_run=body.dry_run,
+        namespace_id=namespace_id,
     )
     response.status_code = 202
     return DataEnvelope(
@@ -247,6 +254,22 @@ def admin_ingest(
             status_url=f"/admin/ingest/{state.task_id}/status",
         )
     )
+
+
+@admin_router.get(
+    "/namespaces",
+    response_model=DataEnvelope[AdminNamespacesResponse],
+)
+def admin_namespaces(
+    graph: GraphRepository = Depends(graph_repo_dep),
+) -> DataEnvelope[AdminNamespacesResponse]:
+    """ADR-0015 D6 — namespace 별 entity 수. 운영 가시성."""
+    by_ns = graph.count_entities_by_namespace()
+    namespaces = sorted(
+        (NamespaceSummary(namespace_id=ns, entity_count=c) for ns, c in by_ns.items()),
+        key=lambda s: -s.entity_count,
+    )
+    return DataEnvelope(data=AdminNamespacesResponse(namespaces=namespaces))
 
 
 @admin_router.get(

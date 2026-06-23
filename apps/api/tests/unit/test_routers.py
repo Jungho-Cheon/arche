@@ -176,15 +176,21 @@ class StubGraph(GraphRepository):
     ) -> list[PathResult]:
         return []
 
+    def count_entities_by_namespace(self):
+        return {}
+
     def entity_exists(self, *, entity_id) -> bool:  # noqa: D401
         return any(n.id == entity_id for n in self._nodes)
+
+    def get_stored_entity(self, *, entity_id):
+        return None
 
     def close(self) -> None:
         pass
 
 
 class StubLLM(LLMProvider):
-    def extract(self, *, text=None, images=None, source_path) -> ExtractedGraph:
+    def extract(self, *, text=None, images=None, source_path, context=None) -> ExtractedGraph:
         return ExtractedGraph(entities=[], relations=[])
 
 

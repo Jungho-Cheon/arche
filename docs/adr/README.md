@@ -33,6 +33,14 @@ ADR 은 *불변에 가깝게* 다룬다. 결정이 바뀌면 *기존 ADR 을 수
 | 6 | [ADR-0006 — MCP/REST 표면](./0006-mcp-rest-primitives-surface.md) | graph primitives 만 노출, 자연어 미수용, Neo4j MCP 와 공존 |
 | 7 | [ADR-0007 — Combined RAG 채택 (정체성 피벗)](./0007-combined-rag-pivot.md) | MVP 가설 미달 후 chunk + graph 결합으로 100% 달성, 정체성을 retrieval orchestrator 로 |
 | 8 | [ADR-0008 — EntityConsolidator gating (M6.5 1M 결과)](./0008-entity-consolidator-gating.md) | 1M 측정에서 catastrophic over-merge 발견 → ADR-0007 D2 결정 보류, EntityConsolidator 를 M7 gating 으로 격상 |
+| 9 | [ADR-0009 — Context-aware extraction (RFC)](./0009-context-aware-extraction.md) | 추출 단계에 문서 메타 + 기존 graph 동봉, `matched_existing_id` 로 매칭을 *예방* 으로 전환. ADR-0008 의 증상 가림을 root-cause 해법으로. |
+| 10 | [ADR-0010 — Multi-agent parallel + cache (RFC)](./0010-multi-agent-parallel-and-cache.md) | 청크 호출 batch parallel + sha256 캐시. graphify Part B 패턴 채택. 1M ingest 30 분 → 8 분 목표. |
+| 11 | [ADR-0011 — Step 3 cosine opt-in (RFC)](./0011-step3-cosine-opt-in.md) | Step 3 cosine 매칭 default off. STOPLIST + Consolidator 의 단계별 deprecation 경로. |
+| 13 | [ADR-0013 — Agent 친화 API contract (RFC)](./0013-agent-friendly-api-contract.md) | DataEnvelope 통일, 표준 에러 코드, OpenAPI 깊이, idempotency, latency budget, next-action hints. *MVP 조건 (2)*. |
+| 14 | [ADR-0014 — MCP HTTP transport (RFC)](./0014-mcp-http-transport.md) | Streamable HTTP transport 추가 + stdio 코드 공유. 사내 인프라 + 외부 agent 양쪽 노출. *MVP 조건 (3)*. |
+| 15 | [ADR-0015 — 공유 KB 운영 모델 (RFC)](./0015-shared-kb-operating-model.md) | 단일 KB + namespace 부분 공유. 다회사 개인 KB 시나리오 자연 흡수. *MVP 조건 (4)*. |
+| 16 | [ADR-0016 — 에이전트 반복 graph-only + 정량 추출 (RFC)](./0016-agentic-graphonly-and-quantitative-extraction.md) | 측정으로 제품 방향 확정. graph-only 가 graphify 를 압도(FinanceBench 94-97% vs 57.6%, MedHop 30% vs 10%). 답변 LLM 외부화 + 정량-aware 추출 채택. 다음 레버 = 문서 간 엔티티 동일성 해소 (ADR-0017 이 정밀도로 교정). *MVP 조건 (1)*. |
+| 17 | [ADR-0017 — 허브 인지 경로 점수](./0017-hub-aware-path-scoring.md) | MedHop 30% 천장의 다수는 병합 부족이 아니라 *정밀도* — promiscuous 허브를 다리로 쓴 가짜 경로. find_path 가 같은 길이면 허브를 덜 거치는 구체적 경로를 우선하고 hub_score 를 노출(끝점 제외 → 금융 무회귀). RELATES_TO 경로 제한으로 출처 노드 경유 크래시/가짜 다리 제거. ADR-0016 D4 교정. |
 
 ---
 

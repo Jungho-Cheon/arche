@@ -1,0 +1,16 @@
+e.type, c
+"company", 73
+"financial_instrument", 47
+"concept", 46
+"organization", 45
+"regulation", 36
+"business_segment", 24
+"person", 23
+"policy", 16
+"role", 13
+"contract", 8
+"document", 6
+"plan", 2
+"law", 2
+"event", 2
+"program", 1

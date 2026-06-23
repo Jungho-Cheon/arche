@@ -380,7 +380,9 @@ def find_path(
     )
     return FindPathResponse(
         paths=[
-            PathSegment(nodes=p.nodes, edges=p.edges, length=p.length)
+            PathSegment(
+                nodes=p.nodes, edges=p.edges, length=p.length, hub_score=p.hub_score
+            )
             for p in paths
         ]
     )

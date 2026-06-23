@@ -1,0 +1,9 @@
+e.name, e.type, e.aliases
+"American Express Retirement Restoration Plan", "policy", ["the Plan", "American Express Company Supplemental Retirement Plan", "American Express Supplementary Pension Plan", "American Express Retirement Plan", "American Express Supplemental Retirement Plan", "RP", "Excess Savings Plan", "409A Program", "Pre-409A Program"]
+"Amcor plc", "company", ["Amcor plc", "Amcor", "the Company", "Registrant", "we", "us", "our"]
+"American Express Company", "company", ["American Express Company", "American Express", "the Company", "registrant", "we", "us", "our"]
+"PepsiCo, Inc.", "company", ["PepsiCo, Inc.", "PepsiCo", "the Company", "the registrant", "we", "us", "our"]
+"The Boeing Company", "company", ["Boeing", "the Company", "registrant", "we", "us", "our"]
+"Johnson & Johnson", "company", ["JOHNSON & JOHNSON", "the Company", "registrant", "we", "us", "our"]
+"PepsiCo International Retirement Plan Defined Benefit Program (PIRP-DB)", "policy", ["DB Program", "PIRP-DB", "DC Program", "PIRP-DC", "PepsiCo International Pension Plan", "PIPP"]
+"Section 401(a)(17) of the Code", "regulation", ["Section 401(a)(17) Limitation", "Section 401(a)(17) of the Code", "Code Section 401(a)(17)", "Internal Revenue Code section 401(a)(17)", "Section 401(a)(17)"]

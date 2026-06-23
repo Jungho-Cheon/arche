@@ -46,10 +46,16 @@ class FakeLLM(LLMProvider):
         text: str | None = None,
         images: list[ImageInput] | None = None,
         source_path: str,
+        context=None,
     ) -> ExtractedGraph:
         self.calls += 1
         self.call_args.append(
-            {"text": text, "images": list(images) if images else [], "source_path": source_path}
+            {
+                "text": text,
+                "images": list(images) if images else [],
+                "source_path": source_path,
+                "context": context,
+            }
         )
         return self._graph
 
@@ -302,8 +308,14 @@ class FakeGraph(GraphRepository):
     ):
         return []
 
+    def count_entities_by_namespace(self):
+        return {}
+
     def entity_exists(self, *, entity_id):
         return entity_id in self._entities
+
+    def get_stored_entity(self, *, entity_id):
+        return self._entities.get(entity_id)
 
     def close(self) -> None:
         pass
@@ -352,6 +364,68 @@ def test_ingest_creates_entities_and_relations(tmp_path: Path, fake_graph: FakeG
     assert result.relations_created == 1
     assert result.relations_skipped_dangling == 0
     assert result.short_circuited is False
+
+
+def test_matched_existing_id_skips_step123_matcher(
+    tmp_path: Path, fake_graph: FakeGraph
+):
+    """ADR-0009 D2 — LLM 이 matched_existing_id 명시 시 EntityMatcher Step 1-3
+    skip 하고 곧바로 merge. by_step[0] 카운터 증가.
+    """
+    p1 = tmp_path / "v1.md"
+    p1.write_text("aaa", encoding="utf-8")
+    extracted_v1 = ExtractedGraph(
+        entities=[ExtractedEntity(name="VVIP", type="grade")],
+        relations=[],
+    )
+    service1 = _build_service(fake_graph, extracted_v1)
+    res1 = service1.ingest_file(p1)
+    assert res1.entities_created == 1
+    [vvip_id] = res1.entity_ids
+
+    # v2: 같은 표현 "다이아 등급" 을 LLM 이 *기존 VVIP id 에 매칭* 으로 명시.
+    p2 = tmp_path / "v2.md"
+    p2.write_text("bbb", encoding="utf-8")
+    extracted_v2 = ExtractedGraph(
+        entities=[
+            ExtractedEntity(
+                name="다이아 등급",
+                type="grade",
+                matched_existing_id=vvip_id,
+            )
+        ],
+        relations=[],
+    )
+    service2 = _build_service(fake_graph, extracted_v2)
+    res2 = service2.ingest_file(p2)
+    # *신규 생성 0* + *기존 업데이트 1* + step 0 (LLM 결정) 분포.
+    assert res2.entities_created == 0
+    assert res2.entities_updated == 1
+    assert res2.entities_matched_by_step.get(0, 0) == 1
+    # survivor 의 aliases 에 "다이아 등급" 흡수.
+    assert "다이아 등급" in fake_graph._entities[vvip_id].aliases
+
+
+def test_matched_existing_id_with_hallucinated_id_falls_back_to_matcher(
+    tmp_path: Path, fake_graph: FakeGraph
+):
+    """LLM 이 *없는 id* 를 보고하면 Step 1-3 fallback (현 구현 — 안전 우선)."""
+    p = tmp_path / "v.md"
+    p.write_text("aaa", encoding="utf-8")
+    extracted = ExtractedGraph(
+        entities=[
+            ExtractedEntity(
+                name="Boeing",
+                type="company",
+                matched_existing_id="01HALLUCINATEDXXXXXXXXXXXX",  # 없는 id
+            )
+        ],
+        relations=[],
+    )
+    service = _build_service(fake_graph, extracted)
+    res = service.ingest_file(p)
+    # 신규 생성 1 (fallback Step 4).
+    assert res.entities_created == 1
 
 
 def test_short_circuit_on_unchanged_file(tmp_path: Path, fake_graph: FakeGraph):

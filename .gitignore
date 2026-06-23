@@ -35,6 +35,12 @@ apps/web/storybook-static/
 # Eval run outputs — 측정 산출물은 별도 트래킹 (commit 하지 않음)
 eval/runs/
 
+# Eval 대용량 원본 데이터 — 재현 가능 (다운로드/파생). 코퍼스 텍스트와 raw 데이터는
+# commit 하지 않고 questions/answer_key 만 트래킹.
+eval/datasets/*/raw/
+eval/datasets/medhop-2026-06-22/corpus/
+eval/external/
+
 # IDE
 .vscode/
 .idea/
@@ -61,3 +67,9 @@ config.local.yaml
 # graphify — 그래프 산출물·캐시는 commit, 머신 로컬 경로 마커만 제외
 graphify-out/.graphify_python
 graphify-out/.graphify_root
+
+# ADR-0010 extraction cache
+.opentology-cache/
+
+# poc-amcor 코퍼스는 financebench-2026-06-20 의 중복본 (재현 가능)
+eval/datasets/poc-amcor/

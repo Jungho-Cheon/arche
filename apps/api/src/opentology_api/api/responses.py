@@ -175,6 +175,13 @@ class PathSegment(BaseModel):
     nodes: list[Node]
     edges: list[Edge]
     length: int = Field(ge=1)
+    # hub_score: 경로 *중간* 노드 (끝점 제외) 의 log(1+degree) 합. 0.0 = 모든
+    # 중간 노드가 고유 (또는 1-hop 직접 경로) = 가장 구체적. 값이 클수록 경로가
+    # promiscuous 허브 (수많은 엔티티와 연결된 공유 노드/추출 artifact) 를 다리로
+    # 쓴다는 뜻 — "닿긴 닿지만 의미가 약한" 연결일 가능성. 같은 length 의 경로
+    # 중 hub_score 가 낮은 것을 어댑터가 먼저 돌려준다. 소비 에이전트는 hub_score
+    # 가 높은 경로를 *근거로 채택하기 전에 의심* 해야 한다. (ADR-0017)
+    hub_score: float = Field(default=0.0, ge=0.0)
 
 
 class FindPathResponse(BaseModel):
@@ -201,7 +208,11 @@ class GetSubgraphRequest(BaseModel):
 
     entry_ids: list[str] = Field(min_length=1, max_length=20)
     hops: int = Field(default=2, ge=1, le=4)
-    max_nodes: int = Field(default=200, ge=1, le=1000)
+    # 2026-06-22: 상한 1000 → 5000. clamp 수정으로 큰 서브그래프 500 크래시가
+    # 사라졌고, max_nodes 300→1000 sweep 에서 정답률이 recall 회복으로 +9pp
+    # 올라 (truncation 이 병목) 더 큰 윈도우 활용 여지를 연다. 큰 컨텍스트 모델
+    # (gpt-4.1 1M) 가정 — 직렬화가 윈도우를 넘으면 호출자가 조절.
+    max_nodes: int = Field(default=200, ge=1, le=5000)
     relation_types: list[str] | None = None
 
     @field_validator("entry_ids")

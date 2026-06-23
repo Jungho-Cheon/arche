@@ -70,7 +70,16 @@ _TOOL_DESCRIPTIONS: dict[str, str] = {
     "find_path": (
         "Find paths between two nodes — useful when reasoning about *how* "
         "two entities are related (e.g. 'why does coupon X apply to product "
-        "Y')."
+        "Y'). Each path carries `hub_score`: the summed connectivity "
+        "(log degree) of its *intermediate* nodes, endpoints excluded. "
+        "LOWER hub_score = a more SPECIFIC path; HIGHER = the path leans on a "
+        "promiscuous hub (a node linked to very many others) as a bridge, "
+        "which often means 'connected but not meaningfully related'. Paths are "
+        "returned lowest-hub_score first. TUNING: if your best path has a high "
+        "hub_score, do not trust it as evidence — re-call with `relation_types` "
+        "set to the specific relation you expect, to force a typed connection "
+        "instead of a generic hub bridge. A hub_score of 0 means a direct or "
+        "fully specific path."
     ),
     "get_subgraph": (
         "Extract a subgraph centered on multiple entry-point nodes, expanded "

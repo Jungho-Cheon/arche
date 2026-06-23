@@ -9,10 +9,12 @@ from __future__ import annotations
 from fastapi import Depends, Request
 
 from ..adapters.embedding import EmbeddingProvider, OpenAIEmbeddingProvider
+from ..adapters.extract_cache import DEFAULT_CACHE_DIR, ExtractionCache
 from ..adapters.graph import GraphRepository, Neo4jGraphRepository
 from ..adapters.llm import LLMProvider, OpenAILLMProvider
 from ..config import Settings, get_settings
 from ..domain.ingest import IngestService
+from ..domain.main_entity import MainEntityExtractor
 from .admin_tasks import IngestTaskRegistry
 
 
@@ -45,6 +47,13 @@ def ingest_service_dep(
         embedder=embedder,
         graph=graph,
         model_context_tokens=settings.llm_model_context_tokens,
+        # ADR-0009 D3 — main_entity 2nd pass. 같은 LLM provider 의 generic
+        # complete 경로 재사용.
+        main_entity_extractor=MainEntityExtractor(llm=llm),
+        # ADR-0010 D2 — 청크 추출 캐시 + ADR-0010 D1 — batch parallel default 8.
+        extraction_cache=ExtractionCache(root=DEFAULT_CACHE_DIR),
+        extract_batch_size=8,
+        llm_model_id=settings.llm_model_id,
     )
 
 

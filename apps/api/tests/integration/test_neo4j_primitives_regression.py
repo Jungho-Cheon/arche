@@ -134,6 +134,87 @@ def seeded_chain(repo):
     }
 
 
+# ---------- ADR-0017 hub-aware path ordering ----------
+# A 에서 B 로 가는 길이-2 경로가 둘: 하나는 *구체적* 중간 노드 (degree 2), 다른
+# 하나는 *promiscuous 허브* 중간 노드 (decoy 다수와 연결되어 degree 높음). 같은
+# 길이라도 어댑터는 hub_score 가 낮은 (구체적) 경로를 먼저 돌려줘야 한다.
+HUB_SRC = "01HZXHUB0000000000000000A1"
+HUB_DST = "01HZXHUB0000000000000000B2"
+HUB_SPEC = "01HZXHUB0000000000000000C3"
+HUB_HUB = "01HZXHUB0000000000000000D4"
+HUB_DECOYS = [f"01HZXHUB0000000000000000E{i}" for i in range(8)]
+
+
+@pytest.fixture(scope="module")
+def seeded_hub(repo):
+    from opentology_api.domain.models import SourceRef
+
+    src = SourceRef(source_path="/tmp/hub.md")
+    nodes = {
+        HUB_SRC: "엔티티 A",
+        HUB_DST: "엔티티 B",
+        HUB_SPEC: "구체적 중간",
+        HUB_HUB: "공유 허브",
+    }
+    for i, did in enumerate(HUB_DECOYS):
+        nodes[did] = f"decoy {i}"
+    for nid, name in nodes.items():
+        if not repo.entity_exists(entity_id=nid):
+            repo.create_entity(entity=_make_entity(id_=nid, name=name))
+    # 두 길이-2 경로: A-SPEC-B, A-HUB-B.
+    for a, b in [
+        (HUB_SRC, HUB_SPEC),
+        (HUB_SPEC, HUB_DST),
+        (HUB_SRC, HUB_HUB),
+        (HUB_HUB, HUB_DST),
+    ]:
+        repo.upsert_relation(from_id=a, to_id=b, rel_type="links", source_ref=src)
+    # 허브를 decoy 다수와 연결 → degree 폭증 (promiscuous).
+    for did in HUB_DECOYS:
+        repo.upsert_relation(
+            from_id=HUB_HUB, to_id=did, rel_type="links", source_ref=src
+        )
+    return {"a": HUB_SRC, "b": HUB_DST, "spec": HUB_SPEC, "hub": HUB_HUB}
+
+
+def test_find_shortest_paths_prefers_specific_over_hub(repo, seeded_hub):
+    """ADR-0017 — 같은 길이의 두 경로 중 promiscuous 허브를 *경유하지 않는*
+    구체적 경로가 먼저 와야 하고, hub_score 가 그 순서를 정량적으로 뒷받침해야
+    한다. 끝점 (A,B) 은 hub_score 합에서 제외된다."""
+    paths = repo.find_shortest_paths(
+        from_id=seeded_hub["a"],
+        to_id=seeded_hub["b"],
+        max_hops=2,
+        max_paths=2,
+        relation_types=None,
+    )
+    assert len(paths) == 2, "A→B 길이-2 경로가 둘 (구체적/허브) 있어야 함"
+    # 첫 경로가 더 구체적 (hub_score 낮음).
+    assert paths[0].hub_score < paths[1].hub_score
+    # 첫 경로의 중간 노드 = 구체적 노드, 둘째 = 허브.
+    assert paths[0].nodes[1].id == seeded_hub["spec"]
+    assert paths[1].nodes[1].id == seeded_hub["hub"]
+    # 끝점 제외 검증 — 구체적 경로의 중간 노드 degree 는 2 (A,B 와만 연결)
+    # 이므로 hub_score = log(1+2) ≈ 1.0986.
+    import math
+
+    assert abs(paths[0].hub_score - math.log1p(2)) < 1e-6
+
+
+def test_find_shortest_paths_direct_edge_zero_hub_score(repo, seeded_chain):
+    """1-hop 직접 경로는 중간 노드가 없어 hub_score = 0.0 (가장 구체적)."""
+    paths = repo.find_shortest_paths(
+        from_id=seeded_chain["coupon"],
+        to_id=seeded_chain["promo"],
+        max_hops=1,
+        max_paths=3,
+        relation_types=None,
+    )
+    assert len(paths) >= 1
+    assert paths[0].length == 1
+    assert paths[0].hub_score == 0.0
+
+
 def _assert_edge_shape(edge):
     """이슈 #27 회귀 2 의 검증 포인트 — 모든 핵심 필드가 *원시 string* 으로
     채워지고, tuple 등의 자료형이 아니어야 한다."""

@@ -120,6 +120,28 @@ class AdminIngestRequest(BaseModel):
     dry_run: bool = Field(
         default=False, description="True 면 그래프에 쓰지 않고 추출만 수행."
     )
+    # ADR-0015 D2 — namespace 명시 override. 부재 시 auth 헤더의 namespace 또는
+    # "default" 사용.
+    namespace_id: str | None = Field(
+        default=None,
+        description="ADR-0015 — entity 의 namespace. 미지정 시 'default' 또는 auth 헤더 추출",
+    )
+
+
+# ---------- admin/namespaces (ADR-0015 D6) ----------
+
+
+class NamespaceSummary(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    namespace_id: str
+    entity_count: int
+
+
+class AdminNamespacesResponse(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    namespaces: list[NamespaceSummary]
 
 
 class AdminIngestResponse(BaseModel):

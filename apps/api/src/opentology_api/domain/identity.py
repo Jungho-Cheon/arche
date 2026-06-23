@@ -83,19 +83,64 @@ NON_IDENTIFYING_ALIAS_STOPLIST: frozenset[str] = frozenset(
         "본 법인",
         "본인",
         "주식회사",
+        # 학술/문서 담론 자기지칭 (논문 abstract 표준) — 2026-06-23 추가.
+        # WHY: 기존 목록은 10-K/사업보고서("the Company", "당사")에 맞춰져 있어
+        # *논문* 코퍼스의 담론 표현을 못 걸렀다. MedHop 실측에서 "this study" /
+        # "our findings" 등이 cross-document alias 일치로 무관한 엔티티를 한 노드
+        # 로 병합(별칭 95개 deg-339 불량 노드) — ADR-0008 catastrophic over-merge
+        # 가 *논문 도메인에서 재현*. 아래는 그 직접 관측 + 결정적 패턴
+        # (_GENERIC_DEIXIS_RE) 이 못 잡는 무관사 형태를 보강한다. 패턴이 대부분의
+        # "(한정사)+(담론 명사)" 조합을 잡으므로 여기엔 무관사/특수형만 명시.
+        "we",  # (이미 위에 있으나 의미 묶음 유지)
+        "findings",
+        "results",
+        "data",
+        "methods",
+        "conclusions",
     }
 )
+
+
+# WHY 결정적 deixis 패턴 (명시 목록의 보완): 자기지칭 표현은 enumerate 로 다 담을
+# 수 없다(도메인마다 새 표현). 그러나 구조는 일정하다 — *한정사/소유격 + 일반
+# 담론 명사*("this study", "our findings", "the present results"). 이 구조를 패턴으로
+# 잡으면 미관측 변형도 결정적으로 걸린다. 안전 방향: stoplist 는 *병합 열쇠 제외*
+# 만 하고 노드/관계/표시 alias 는 보존하므로, 과포함의 비용은 "이 표기로 병합 안
+# 됨"(= under-merge, ADR-0008 이 경고한 over-merge 의 *안전한* 반대쪽)뿐이다. 그래서
+# 도메인 엔티티가 되기 쉬운 명사(model/system/sample/therapy 등)는 *의도적으로 제외*.
+_GENERIC_DEIXIS_RE = re.compile(
+    r"^(?:(?:the|this|that|these|those|our|its|their|present|current|a|an)\s+)+"
+    r"(?:stud(?:y|ies)|papers?|reports?|articles?|manuscripts?|research|"
+    r"findings?|results?|datasets?|data|methods?|methodolog(?:y|ies)|"
+    r"analys[ie]s|investigations?|works?|approach(?:es)?|documents?|"
+    r"observations?|reviews?|hypothes[ie]s|conclusions?|aims?|"
+    r"assays?|protocols?|procedures?|process(?:es)?|experiments?|trials?)$"
+)
+
+
+def _is_non_identifying_normalized(normalized: str) -> bool:
+    """*이미 정규화된* 문자열이 비-식별 generic 자기지칭인가.
+
+    명시 stoplist 멤버십 OR 결정적 deixis 패턴 중 하나라도 맞으면 True.
+    matcher Step 2 처럼 이미 normalize 한 값을 재정규화 없이 판정하려는 호출용.
+    """
+    if not normalized:
+        return False
+    if normalized in NON_IDENTIFYING_ALIAS_STOPLIST:
+        return True
+    return _GENERIC_DEIXIS_RE.match(normalized) is not None
 
 
 def is_identifying_alias(alias: str) -> bool:
     """이 alias 가 *식별성* 을 가지는가 (= 인덱스에 들어가도 되는가).
 
     Returns:
-        False 이면 stoplist 의 generic 자기지칭. `normalized_aliases` 에 *적재
-        하지 않고*, matcher Step 2 의 lookup 도 *건너뛴다*. 표시용 aliases 에는
-        그대로 둔다.
+        False 이면 stoplist 또는 deixis 패턴에 걸린 generic 자기지칭.
+        `normalized_aliases` 에 *적재하지 않고*, matcher Step 2 의 lookup 도
+        *건너뛴다*. 표시용 aliases 에는 그대로 둔다 (노드/관계 보존, 병합 열쇠로만
+        제외).
     """
-    return normalize(alias) not in NON_IDENTIFYING_ALIAS_STOPLIST
+    return not _is_non_identifying_normalized(normalize(alias))
 
 
 def normalize(s: str) -> str:
@@ -202,7 +247,8 @@ class EntityMatcher:
             normalized_alias = normalize(alias)
             if not normalized_alias:
                 continue
-            if normalized_alias in NON_IDENTIFYING_ALIAS_STOPLIST:
+            # stoplist 멤버십 + 결정적 deixis 패턴 둘 다 건너뜀 (단일 판정으로 통일).
+            if _is_non_identifying_normalized(normalized_alias):
                 continue
             hit = self._repo.find_by_normalized_name(
                 normalized=normalized_alias, type_=e_new.type

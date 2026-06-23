@@ -143,7 +143,9 @@ class OpentologyRunner:
     anchor_llm: LLMProvider | None = None
     subgraph_hops_few: int = 2
     subgraph_hops_many: int = 1
-    subgraph_max_nodes: int = 80
+    # 2026-06-22: 조밀한 그래프(5.6K 노드)에서 80 상한은 truncated=True 로 정답 노드를
+    # 잘라낸다. 진단 검증용으로 상향 (truncation 가설 테스트).
+    subgraph_max_nodes: int = 300
     find_path_max_hops: int = 4
     find_path_max_paths: int = 5
     find_entities_limit: int = 10

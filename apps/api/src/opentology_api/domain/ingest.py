@@ -24,20 +24,23 @@ from __future__ import annotations
 import base64
 import hashlib
 import logging
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from pathlib import Path
 from typing import Callable
 
 from ulid import ULID
 
 from ..adapters.embedding import EmbeddingProvider
+from ..adapters.extract_cache import ExtractionCache, make_key
 from ..adapters.graph import GraphRepository
 from ..adapters.image_loader import IMAGE_EXTS, load_image_as_b64
-from ..adapters.llm import ImageInput, LLMProvider
+from ..adapters.llm import SYSTEM_PROMPT, ImageInput, LLMProvider
 from ..adapters.pdf import PdfPage, extract_pdf
 from .chunking import Chunk, TOKEN_BUDGET_RATIO, chunk_text, count_tokens
 from .crawl import crawl
 from .errors import InvalidInputError, UnsupportedFileTypeError
+from .extract_context import ExtractContext, ExtractContextBuilder, render_context_block
+from .main_entity import MainEntity, MainEntityExtractor
 from .identity import (
     NON_IDENTIFYING_ALIAS_STOPLIST,
     EntityMatcher,
@@ -165,6 +168,12 @@ class IngestService:
         embedder: EmbeddingProvider,
         graph: GraphRepository,
         model_context_tokens: int = 128_000,
+        enable_context_aware_extraction: bool = True,
+        main_entity_extractor: MainEntityExtractor | None = None,
+        extraction_cache: ExtractionCache | None = None,
+        extract_batch_size: int = 8,
+        llm_model_id: str = "openai/gpt-4.1",
+        extraction_chunk_tokens: int | None = 4_000,
     ) -> None:
         self._llm = llm
         self._embedder = embedder
@@ -173,6 +182,26 @@ class IngestService:
         # monkeypatch 해 청크 분할을 강제할 수 있어야 한다. config 의 기본값을
         # 라우터/CLI 가 주입.
         self._model_context_tokens = model_context_tokens
+        # WHY extraction_chunk_tokens (2026-06-22 추출 완성도): 추출 청크 예산을
+        # 모델 컨텍스트(=거대)와 분리해 작게 잡는다. 작은 청크일수록 LLM 이 표·수치를
+        # 빠짐없이 추출한다 (chunking.chunk_text 의 budget_tokens 주석 참조). None 이면
+        # 기존 model_context_tokens 기반 큰 청크로 동작 (legacy).
+        self._extraction_chunk_tokens = extraction_chunk_tokens
+        # ADR-0009 — 추출 단계의 컨텍스트 동봉. default on. False 면 legacy
+        # 동작 (context=None → 기존 system prompt 그대로).
+        self._enable_context_aware_extraction = enable_context_aware_extraction
+        self._extract_context_builder: ExtractContextBuilder | None = (
+            ExtractContextBuilder(graph=graph, embedder=embedder)
+            if enable_context_aware_extraction
+            else None
+        )
+        # ADR-0009 D3 — 문서당 1 회 호출되는 2nd pass main_entity extractor.
+        # None 이면 main_entity 동봉 없이 진행 (legacy 또는 테스트).
+        self._main_entity_extractor = main_entity_extractor
+        # ADR-0010 D2/D3 — 추출 결과 캐시 + batch parallel.
+        self._extraction_cache = extraction_cache
+        self._extract_batch_size = max(1, extract_batch_size)
+        self._llm_model_id = llm_model_id
 
     def ingest_directory(
         self,
@@ -180,6 +209,7 @@ class IngestService:
         *,
         dry_run: bool = False,
         progress: ProgressCallback | None = None,
+        namespace_id: str = "default",
     ) -> DirectoryIngestResult:
         """디렉토리 재귀 ingest — PRD 2 §1.1 + §2 + §6.
 
@@ -221,7 +251,7 @@ class IngestService:
                 if dry_run:
                     result = self._dry_run_file(fp)
                 else:
-                    result = self.ingest_file(fp)
+                    result = self.ingest_file(fp, namespace_id=namespace_id)
             except (InvalidInputError, UnsupportedFileTypeError) as e:
                 # PRD 2 §8 — 파일별 실패 isolation. 깨진 PDF / 알 수 없는
                 # 확장자 / 빈 이미지 등은 *그 파일만 skip + warning* 으로 흡수.
@@ -289,11 +319,23 @@ class IngestService:
         if ext in TEXT_EXTS:
             text = path.read_text(encoding="utf-8")
             chunks = chunk_text(
-                text, model_context_tokens=self._model_context_tokens
+                text,
+                model_context_tokens=self._model_context_tokens,
+                budget_tokens=self._extraction_chunk_tokens,
+            )
+            main_entity = self._detect_main_entity(
+                source_path=source_path, text=text
             )
             for chunk in chunks:
+                ctx = self._build_chunk_context(
+                    source_path=source_path,
+                    chunk_text=chunk.text,
+                    main_entity=main_entity,
+                )
                 extracted = self._llm.extract(
-                    text=chunk.text, source_path=source_path
+                    text=chunk.text,
+                    source_path=source_path,
+                    context=ctx,
                 )
                 total_entities += len(extracted.entities)
                 total_relations += len(extracted.relations)
@@ -302,11 +344,22 @@ class IngestService:
         elif ext in PDF_EXTS:
             pages = extract_pdf(path)
             inputs = self._build_pdf_extract_inputs(pages)
+            # PR C — PDF 도 첫 인풋의 텍스트 (= 첫 페이지) 를 main_entity 입력으로.
+            main_entity = self._detect_main_entity(
+                source_path=source_path,
+                text=(inputs[0].text if inputs else None),
+            )
             for inp in inputs:
+                ctx = self._build_chunk_context(
+                    source_path=source_path,
+                    chunk_text=inp.text or "",
+                    main_entity=main_entity,
+                )
                 extracted = self._llm.extract(
                     text=inp.text,
                     images=inp.images or None,
                     source_path=source_path,
+                    context=ctx,
                 )
                 total_entities += len(extracted.entities)
                 total_relations += len(extracted.relations)
@@ -315,9 +368,14 @@ class IngestService:
 
         elif ext in IMAGE_EXTS:
             b64, mime = load_image_as_b64(path)
+            # 이미지 단독은 main_entity 호출 안 함 (텍스트 없음).
+            ctx = self._build_chunk_context(
+                source_path=source_path, chunk_text="", main_entity=None
+            )
             extracted = self._llm.extract(
                 images=[ImageInput(b64_data=b64, mime_type=mime)],
                 source_path=source_path,
+                context=ctx,
             )
             total_entities += len(extracted.entities)
             total_relations += len(extracted.relations)
@@ -344,7 +402,9 @@ class IngestService:
             chunks_total=chunks_total,
         )
 
-    def ingest_file(self, path: Path) -> IngestResult:
+    def ingest_file(
+        self, path: Path, *, namespace_id: str = "default"
+    ) -> IngestResult:
         path = path.resolve()
         if path.is_dir():
             # WHY 명시 거부: 디렉토리는 `ingest_directory` 가 처리한다. ingest_file
@@ -419,6 +479,17 @@ class IngestService:
                 path=path, raw_bytes=raw_bytes, ext=ext
             )
 
+            # ADR-0009 D3 — 문서당 1 회 main_entity 식별. 결과를 모든 청크 build
+            # 에 전달. text 가 None 인 모달 (단일 이미지 파일) 은 None 유지.
+            main_entity_input_text: str | None = None
+            if ext in TEXT_EXTS:
+                main_entity_input_text = raw_bytes.decode("utf-8", errors="replace")
+            elif ext in PDF_EXTS and llm_inputs:
+                main_entity_input_text = llm_inputs[0].text
+            main_entity = self._detect_main_entity(
+                source_path=source_path, text=main_entity_input_text
+            )
+
             matcher = EntityMatcher(repo=self._graph, embedder=self._embedder)
             merger = EntityMerger()
 
@@ -433,13 +504,22 @@ class IngestService:
             all_name_to_id: dict[str, str] = {}
             agg_created = 0
             agg_updated = 0
-            agg_by_step: dict[int, int] = {1: 0, 2: 0, 3: 0}
+            agg_by_step: dict[int, int] = {0: 0, 1: 0, 2: 0, 3: 0}
             all_rel_ids: list[str] = []
             agg_rel_created = 0
             agg_rel_dangling = 0
             total_chunks = len(llm_inputs)
 
-            for inp in llm_inputs:
+            # ADR-0010 D1 — 청크 묶음을 batch parallel 로 *추출만* 동시 실행.
+            # upsert (그래프 mutate) 는 cross-chunk 상태 의존이라 입력 순서대로
+            # 직렬. 즉 *I/O bound 인 LLM 호출만* parallel 화.
+            extracted_results = self._extract_inputs_parallel(
+                inputs=llm_inputs,
+                source_path=source_path,
+                main_entity=main_entity,
+            )
+
+            for inp, extracted in zip(llm_inputs, extracted_results):
                 # chunk_index 의미 부여 정책:
                 #  - 단일 input 이면 None (텍스트 청크 1 개 / 이미지 파일).
                 #    PRD 3 §1.3 의 nullable 형태와 일관.
@@ -460,18 +540,13 @@ class IngestService:
                         total_chunks=None,
                     )
 
-                extracted = self._llm.extract(
-                    text=inp.text,
-                    images=inp.images or None,
-                    source_path=source_path,
-                )
-
                 name_to_id, entity_metrics = self._upsert_entities(
                     extracted=extracted,
                     source_ref=source_ref,
                     matcher=matcher,
                     merger=merger,
                     run_id=run_id,
+                    namespace_id=namespace_id,
                 )
                 rel_created, rel_dangling, rel_ids = self._upsert_relations(
                     extracted=extracted,
@@ -487,7 +562,7 @@ class IngestService:
                 all_name_to_id.update(name_to_id)
                 agg_created += entity_metrics["created"]
                 agg_updated += entity_metrics["updated"]
-                for step in (1, 2, 3):
+                for step in (0, 1, 2, 3):
                     agg_by_step[step] += entity_metrics["by_step"].get(step, 0)
                 agg_rel_created += rel_created
                 agg_rel_dangling += rel_dangling
@@ -550,7 +625,9 @@ class IngestService:
         if ext in TEXT_EXTS:
             text = raw_bytes.decode("utf-8")
             chunks = chunk_text(
-                text, model_context_tokens=self._model_context_tokens
+                text,
+                model_context_tokens=self._model_context_tokens,
+                budget_tokens=self._extraction_chunk_tokens,
             )
             return [
                 _LLMCallInput(
@@ -608,6 +685,7 @@ class IngestService:
                 chunks = chunk_text(
                     page_text,
                     model_context_tokens=self._model_context_tokens,
+                    budget_tokens=self._extraction_chunk_tokens,
                 )
                 for i, chunk in enumerate(chunks):
                     images_for_chunk = page_images if i == 0 else []
@@ -640,6 +718,128 @@ class IngestService:
                 )
         return out
 
+    def _build_chunk_context(
+        self,
+        *,
+        source_path: str,
+        chunk_text: str,
+        main_entity: MainEntity | None = None,
+    ) -> ExtractContext | None:
+        """ADR-0009 의 청크 컨텍스트 빌드 — 옵션 꺼져 있으면 None.
+
+        WHY None 분기 보존: legacy 동작 (context 없음) 도 같은 호출로 가능. 측정
+        통제 변수 변경을 점진적으로.
+
+        PR C — main_entity 가 주어지면 doc context 의 main_entity 필드 채움.
+        """
+        if self._extract_context_builder is None:
+            return None
+        return self._extract_context_builder.build(
+            source_path=source_path,
+            chunk_text=chunk_text,
+            main_entity_name=main_entity.name if main_entity else None,
+            main_entity_type=main_entity.type if main_entity else None,
+            main_entity_aliases=main_entity.aliases if main_entity else None,
+        )
+
+    def _detect_main_entity(
+        self, *, source_path: str, text: str | None
+    ) -> MainEntity | None:
+        """문서 1 회 main_entity 추출 — extractor 가 없거나 텍스트가 없으면 None."""
+        if self._main_entity_extractor is None or not text:
+            return None
+        return self._main_entity_extractor.extract(
+            source_path=source_path, text=text
+        )
+
+    def _extract_inputs_parallel(
+        self,
+        *,
+        inputs: list,
+        source_path: str,
+        main_entity: MainEntity | None,
+    ) -> list:
+        """ADR-0010 D1 — 청크 묶음 batch parallel 추출.
+
+        Thread pool — OpenAI SDK 가 동기 호출이라 thread 가 I/O bound 의
+        효율적 parallel. batch_size 만큼 동시 호출.
+
+        결과 순서는 *입력 순서* 와 같다 (zip 으로 그래프 mutate 가 deterministic).
+        """
+        from concurrent.futures import ThreadPoolExecutor
+
+        if not inputs:
+            return []
+        max_workers = min(len(inputs), self._extract_batch_size)
+        if max_workers <= 1:
+            # 단일 입력은 thread 오버헤드 회피.
+            return [
+                self._extract_with_cache(
+                    text=inp.text,
+                    images=inp.images or None,
+                    source_path=source_path,
+                    context=self._build_chunk_context(
+                        source_path=source_path,
+                        chunk_text=inp.text or "",
+                        main_entity=main_entity,
+                    ),
+                )
+                for inp in inputs
+            ]
+
+        def _one(inp):
+            ctx = self._build_chunk_context(
+                source_path=source_path,
+                chunk_text=inp.text or "",
+                main_entity=main_entity,
+            )
+            return self._extract_with_cache(
+                text=inp.text,
+                images=inp.images or None,
+                source_path=source_path,
+                context=ctx,
+            )
+
+        with ThreadPoolExecutor(max_workers=max_workers) as pool:
+            return list(pool.map(_one, inputs))
+
+    def _extract_with_cache(
+        self,
+        *,
+        text: str | None,
+        images: list[ImageInput] | None,
+        source_path: str,
+        context: ExtractContext | None,
+    ):
+        """ADR-0010 D2 — cache check 우선 후 LLM 호출. cache miss 면 결과를
+        저장. images 가 있는 경우는 캐시 안 함 (입력 결정 불가).
+        """
+        if self._extraction_cache is None or images:
+            return self._llm.extract(
+                text=text,
+                images=images,
+                source_path=source_path,
+                context=context,
+            )
+        key = make_key(
+            chunk_text=text or "",
+            context_block=render_context_block(context) if context else "",
+            system_prompt=SYSTEM_PROMPT,
+            model_id=self._llm_model_id,
+        )
+        hit = self._extraction_cache.get(key)
+        if hit is not None:
+            logger.debug("cache hit source=%s", source_path)
+            return hit
+        result = self._llm.extract(
+            text=text,
+            images=images,
+            source_path=source_path,
+            context=context,
+        )
+        self._extraction_cache.put(key, result)
+        return result
+
     def _upsert_entities(
         self,
         *,
@@ -648,14 +848,62 @@ class IngestService:
         matcher: EntityMatcher,
         merger: EntityMerger,
         run_id: str,
+        namespace_id: str = "default",
     ) -> tuple[dict[str, str], dict]:
         name_to_id: dict[str, str] = {}
         created = 0
         updated = 0
-        by_step: dict[int, int] = {1: 0, 2: 0, 3: 0}
+        # ADR-0009 D2 — LLM 이 추출 단계에서 매칭 결정한 entity 도 step 분포에
+        # 보고. step=0 = "LLM 결정". 기존 1/2/3 (Matcher Step 1/2/3) 와 분리.
+        by_step: dict[int, int] = {0: 0, 1: 0, 2: 0, 3: 0}
         now = now_rfc3339()
 
         for e_new in extracted.entities:
+            # ADR-0009 D2 — LLM 이 matched_existing_id 를 명시했으면 Step 1-3
+            # 매처를 *skip* 하고 직접 merge. id 가 실제로 존재하는지 검증해
+            # *환각* (없는 id) 케이스는 fallback.
+            if e_new.matched_existing_id:
+                survivor = self._graph.get_stored_entity(
+                    entity_id=e_new.matched_existing_id
+                )
+                if survivor is not None:
+                    # ADR-0009 D2 — LLM 이 *기존 entity 와 같은 대상* 으로 판단한
+                    # 새 표면형 (e_new.name) 도 alias 로 흡수해야 표기 흔들림이
+                    # 그래프에 보존된다. EntityMerger.merge 는 aliases 만 union
+                    # 하므로 e_new.name 을 alias 리스트에 prepend 후 호출.
+                    aliases_with_name = [
+                        e_new.name,
+                        *(e_new.aliases or []),
+                    ]
+                    e_new_for_merge = replace(e_new, aliases=aliases_with_name)
+                    mutation = EntityMerger.merge(
+                        existing=survivor,
+                        e_new=e_new_for_merge,
+                        new_source_ref=source_ref,
+                        now=now,
+                    )
+                    self._graph.apply_merge_mutation(mutation=mutation)
+                    name_to_id[e_new.name] = survivor.id
+                    updated += 1
+                    by_step[0] += 1
+                    self._graph.mark_entity_emitted(
+                        entity_id=survivor.id, run_id=run_id
+                    )
+                    logger.debug(
+                        "entity matched by LLM (ADR-0009) existing_id=%s "
+                        "new_name=%s",
+                        survivor.id,
+                        e_new.name,
+                    )
+                    continue
+                else:
+                    logger.warning(
+                        "matched_existing_id=%s does not exist — fallback to "
+                        "Step 1-3 matcher (new_name=%s)",
+                        e_new.matched_existing_id,
+                        e_new.name,
+                    )
+
             result = matcher.match(e_new)
             if result.existing is not None and result.step in (1, 2, 3):
                 # 병합 분기.
@@ -702,6 +950,7 @@ class IngestService:
                 created_at=now,
                 updated_at=now,
                 embedding=embed_out[0],
+                namespace_id=namespace_id,
                 normalized_name=normalize(e_new.name),
                 normalized_aliases=[
                     normalize(a)

@@ -17,6 +17,7 @@
 from __future__ import annotations
 
 import logging
+import math
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import Any
@@ -137,6 +138,15 @@ class PathResult:
     nodes: list[Node]
     edges: list[Edge]
     length: int
+    # hub_score: 경로의 *중간* 노드 (끝점 제외) degree 합 — log(1+deg) 누적.
+    # WHY (2026-06-23, ADR-0017): allShortestPaths 는 같은 길이의 경로를 여러 개
+    # 돌려주는데, 그중 promiscuous 허브 (여러 문서에 걸친 공유 단백질, 또는
+    # 과연결된 추출 artifact) 를 *다리* 로 쓰는 경로는 "닿긴 닿지만 의미 없는"
+    # 가짜 연결이다. MedHop 실측에서 오답의 다수가 deg-339 artifact / deg-64
+    # 공유 단백질을 경유했다. hub_score 가 낮을수록 *구체적* 경로 → 같은 길이면
+    # 이걸 먼저 돌려준다. 끝점 (질문이 묻는 두 엔티티) 은 합산에서 제외 — 금융
+    # 도메인에서 정답이 고-degree metric/회사 *끝점* 인 경우를 페널티에서 보호.
+    hub_score: float = 0.0
 
 
 logger = logging.getLogger(__name__)
@@ -359,6 +369,17 @@ class GraphRepository(ABC):
         """단일 ID 가 그래프에 존재하는지 — find_path / get_neighbors 의 사전 검증."""
 
     @abstractmethod
+    def count_entities_by_namespace(self) -> dict[str, int]:
+        """ADR-0015 D6 — namespace 별 entity 수. /admin/namespaces 운영 가시성."""
+
+    @abstractmethod
+    def get_stored_entity(self, *, entity_id: str) -> StoredEntity | None:
+        """단일 id → StoredEntity (embedding 포함). ADR-0009 의 matched_existing_id
+        흐름에서 *LLM 이 매칭 결정한 entity 의 전체 상태* 를 가져와 EntityMerger
+        에 전달.
+        """
+
+    @abstractmethod
     def close(self) -> None: ...
 
 
@@ -576,6 +597,7 @@ class Neo4jGraphRepository(GraphRepository):
                     normalized_aliases: $normalized_aliases,
                     type: $type, aliases: $aliases, description: $description,
                     embedding: $embedding,
+                    namespace_id: $namespace_id,
                     source_paths: $source_paths,
                     source_chunk_indexes: $source_chunk_indexes,
                     source_total_chunks: $source_total_chunks,
@@ -590,6 +612,7 @@ class Neo4jGraphRepository(GraphRepository):
                 aliases=entity.aliases,
                 description=entity.description or "",
                 embedding=entity.embedding,
+                namespace_id=entity.namespace_id or "default",
                 source_paths=[sr.source_path for sr in entity.source_refs],
                 source_chunk_indexes=source_chunks,
                 source_total_chunks=source_totals,
@@ -1058,6 +1081,25 @@ class Neo4jGraphRepository(GraphRepository):
             ).single()
         return rec is not None
 
+    def count_entities_by_namespace(self) -> dict[str, int]:
+        with self._driver.session() as s:
+            rows = s.run(
+                f"MATCH (e:{ENTITY_LABEL}) "
+                "RETURN coalesce(e.namespace_id, 'default') AS ns, count(*) AS c "
+                "ORDER BY c DESC"
+            ).data()
+        return {r["ns"]: int(r["c"]) for r in rows}
+
+    def get_stored_entity(self, *, entity_id: str) -> StoredEntity | None:
+        with self._driver.session() as s:
+            rec = s.run(
+                f"MATCH (e:{ENTITY_LABEL} {{id: $id}}) RETURN e",
+                id=entity_id,
+            ).single()
+        if rec is None:
+            return None
+        return _node_to_stored(rec["e"])
+
     def get_entity_with_counts(
         self, *, entity_id: str
     ) -> EntityWithCounts | None:
@@ -1269,9 +1311,21 @@ class Neo4jGraphRepository(GraphRepository):
         # 동일 원인. driver 가 relationships(p) 리스트를 dict/객체 어느 한 형태
         # 로 일관 직렬화하지 않을 수 있다. 노드 → 노드 사이의 엣지 속성만 꺼내
         # 원시 값으로 묶는다.
+        # WHY internal fetch limit > max_paths (ADR-0017): allShortestPaths 는
+        # 같은 *최단* 길이의 경로를 여러 개 돌려준다. 그중 promiscuous 허브를
+        # 경유하지 *않는* (구체적인) 경로를 골라 max_paths 만큼 돌려주려면, 먼저
+        # 넉넉히 받아 (fetch_limit) hub_score 로 재정렬한 뒤 잘라야 한다. Cypher
+        # 의 LIMIT 만으로 자르면 허브 경로가 임의로 먼저 잘려 들어온다.
+        fetch_limit = min(50, max(max_paths * 5, 10))
+        # WHY [:RELATES_TO*] 로 관계 타입 제한 (2026-06-23, ADR-0017): 무제한
+        # `-[*1..N]-` 는 EMITTED_IN (Entity→IngestionRun provenance) 엣지까지 타고
+        # 들어가 (1) name 없는 IngestionRun 노드에서 직렬화 크래시 (KeyError),
+        # (2) "같은 적재 run 에서 나왔다" 는 무의미한 다리로 두 엔티티를 잇는
+        # 가짜 경로를 만든다. 의미 그래프 경로는 *엔티티 간 관계* (RELATES_TO)
+        # 만 따라야 한다 — 크래시 회귀와 가짜 다리를 한 번에 제거.
         cypher = """
         MATCH (a:Entity {id: $from_id}), (b:Entity {id: $to_id})
-        MATCH p = allShortestPaths((a)-[*1..%d]-(b))
+        MATCH p = allShortestPaths((a)-[:%s*1..%d]-(b))
         WITH p,
              [r IN relationships(p) | r.type] AS rel_types,
              length(p) AS len
@@ -1286,8 +1340,8 @@ class Neo4jGraphRepository(GraphRepository):
                }] AS rels,
                len AS length
         ORDER BY length ASC
-        LIMIT $max_paths
-        """ % int(max_hops)
+        LIMIT $fetch_limit
+        """ % (RELATION_TYPE_LABEL_DEFAULT, int(max_hops))
         with self._driver.session() as s:
             rows = s.run(
                 cypher,
@@ -1295,8 +1349,29 @@ class Neo4jGraphRepository(GraphRepository):
                 to_id=to_id,
                 filter_rels=bool(relation_types),
                 rel_types=relation_types or [],
-                max_paths=max_paths,
+                fetch_limit=fetch_limit,
             ).data()
+
+            # 경로의 *중간* 노드 degree 를 한 쿼리로 조회 (끝점 from/to 는 제외).
+            # WHY COUNT{} 최상위 바인딩: 리스트 comprehension 안의 변수에 묶인
+            # 서브쿼리 degree 는 5.x 에서 동작 보장이 모호하므로, intermediate id
+            # 를 모아 단일 MATCH 로 안전하게 degree 를 받는다.
+            endpoints = {from_id, to_id}
+            intermediate_ids = {
+                n["id"]
+                for row in rows
+                for n in row["nodes"]
+                if n["id"] not in endpoints
+            }
+            degree_by_id: dict[str, int] = {}
+            if intermediate_ids:
+                deg_rows = s.run(
+                    f"MATCH (n:{ENTITY_LABEL}) WHERE n.id IN $ids "
+                    f"RETURN n.id AS id, COUNT {{ (n)-[:{RELATION_TYPE_LABEL_DEFAULT}]-() }} AS deg",
+                    ids=list(intermediate_ids),
+                ).data()
+                degree_by_id = {r["id"]: int(r["deg"]) for r in deg_rows}
+
         paths: list[PathResult] = []
         for row in rows:
             node_objs = [_node_to_response(n) for n in row["nodes"]]
@@ -1317,10 +1392,23 @@ class Neo4jGraphRepository(GraphRepository):
                         to_id=node_objs[i + 1].id,
                     )
                 )
-            paths.append(
-                PathResult(nodes=node_objs, edges=edges, length=int(row["length"]))
+            # hub_score = 중간 노드 (끝점 제외) 의 log(1+degree) 합. 끝점만 있는
+            # 1-hop 직접 경로는 중간 노드가 없어 0.0 (가장 구체적 = 최선).
+            hub_score = sum(
+                math.log1p(degree_by_id.get(n.id, 0))
+                for n in node_objs[1:-1]
             )
-        return paths
+            paths.append(
+                PathResult(
+                    nodes=node_objs,
+                    edges=edges,
+                    length=int(row["length"]),
+                    hub_score=hub_score,
+                )
+            )
+        # 같은 길이면 hub_score 가 낮은 (구체적) 경로 우선 → max_paths 로 절단.
+        paths.sort(key=lambda p: (p.length, p.hub_score))
+        return paths[:max_paths]
 
 
 # ---------- helpers ----------
@@ -1357,14 +1445,34 @@ def _to_run_record(node: Any) -> IngestionRunRecord:
     )
 
 
+def _clamp(value: str | None, max_length: int) -> str | None:
+    """문자열을 응답 모델의 max_length 로 자른다 (None 은 그대로).
+
+    WHY 읽기 단계 clamp: ingest 시점의 LLM 추출이 드물게 모델 상한을 넘는
+    문자열 (예: 64 자 초과 관계 라벨, 200 자 초과 엔티티 이름) 을 만든다.
+    이 값이 그래프에 *이미 저장* 돼 있으면, get_subgraph / get_neighbors 의
+    BFS 가 그 노드·엣지에 닿는 순간 pydantic `string_too_long` 으로 응답
+    *전체* 가 500 으로 죽는다 (한 엣지가 서브그래프 전체를 무효화). 2026-06-22
+    max_nodes=1000 sweep 에서 Edge.type 64 자 초과로 /subgraph 가 6 문항에서
+    500 — 부분 손실이 아니라 전면 실패. 재적재는 비싸므로 *읽기 경계에서*
+    모델 상한으로 잘라 프리미티브가 어떤 데이터에도 깨지지 않도록 보장한다.
+    라벨/이름이 잘려도 엣지·노드 자체는 보존된다 (정보 손실 최소).
+    """
+    if value is None:
+        return None
+    return value if len(value) <= max_length else value[:max_length]
+
+
 def _node_to_response(node: Any) -> Node:
     """neo4j Node → 응답 Node (embedding 제외)."""
     return Node(
         id=node["id"],
-        name=node["name"],
-        type=node["type"],
+        # name 200 / type 64 / description 2000 — domain.models.Node 의 상한.
+        # 초과 시 clamp 해 BFS 가 비정상 노드에서 500 나는 것을 방지.
+        name=_clamp(node["name"], 200),
+        type=_clamp(node["type"], 64),
         aliases=list(node.get("aliases") or []),
-        description=node.get("description"),
+        description=_clamp(node.get("description"), 2000),
         properties={},
         source_refs=_extract_source_refs(node),
         created_at=node["created_at"],
@@ -1472,7 +1580,9 @@ def _record_to_edge(
         id=rel_id,
         **{"from": from_id},
         to=to_id,
-        type=rel_type or RELATION_TYPE_LABEL_DEFAULT,
+        # Edge.type 상한 64 — 초과 관계 라벨이 서브그래프 전체를 500 으로
+        # 죽이지 않도록 clamp (위 _clamp WHY 참조).
+        type=_clamp(rel_type or RELATION_TYPE_LABEL_DEFAULT, 64) or RELATION_TYPE_LABEL_DEFAULT,
         properties={},
         source_refs=[SourceRef(source_path=sp) for sp in (rel_source_paths or [])],
         created_at=rel_created_at,
@@ -1481,6 +1591,13 @@ def _record_to_edge(
 
 
 _LUCENE_SPECIAL = '+-&|!(){}[]^"~*?:\\/'
+
+# Lucene classic 파서의 boolean 연산자 — *대문자 토큰만* 연산자로 해석된다.
+# 엔티티 이름/키워드에 "Valuation AND Qualifying" 같은 대문자 AND 가 들어오면
+# 파서가 `db.index.fulltext.queryNodes` 에서 ParseException (column 0 의 <AND>).
+# _lucene_escape 가 이 토큰을 소문자화해 일반 term 으로 중립화한다 (인덱스 분석기도
+# 소문자화하므로 매칭 동일). 2026-06-22 전체 코퍼스 ingest 실패에서 발견.
+_LUCENE_RESERVED_WORDS = {"AND", "OR", "NOT"}
 
 
 def _lucene_escape(s: str) -> str:
@@ -1498,6 +1615,13 @@ def _lucene_escape(s: str) -> str:
         else:
             out.append(ch)
     escaped = "".join(out).strip()
+    # 예약 연산자(AND/OR/NOT) 대문자 토큰을 소문자화해 boolean 연산자 파싱을 막는다.
+    if escaped:
+        tokens = [
+            t.lower() if t in _LUCENE_RESERVED_WORDS else t
+            for t in escaped.split(" ")
+        ]
+        escaped = " ".join(t for t in tokens if t)
     # 멀티 토큰은 괄호로 묶어 OR 결합과 충돌하지 않게.
     if " " in escaped:
         return f"({escaped})"
