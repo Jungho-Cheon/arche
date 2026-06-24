@@ -125,7 +125,15 @@ def _format_path_oneline(
             str(next_node.get("id", "")), str(next_node.get("name", ""))
         )
         parts.append(f"--{rel}--> {nxt}")
-    return " ".join(parts)
+    line = " ".join(parts)
+    # ADR-0017 방향 5 — hub_score 노출 + 허브 경유 경고. hub_score 가 클수록 경로가
+    # promiscuous 허브를 다리로 쓴 "닿지만 의미 약한" 연결이다. 답변 LLM 이 근거로
+    # 채택하기 전에 의심하도록 한 줄에 표시(임계 2.0 이상이면 경고 마커).
+    hub = path.get("hub_score")
+    if isinstance(hub, (int, float)):
+        warn = "  ⚠허브경유-근거약함" if hub >= 2.0 else ""
+        line = f"{line}  [hub_score={hub:.2f}{warn}]"
+    return line
 
 
 def serialize_subgraph(

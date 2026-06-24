@@ -185,3 +185,20 @@ def test_serialize_with_find_path_adds_path_section() -> None:
     # path 의 노드/엣지가 entity/edge 블록에 union 됨.
     assert "- B (type:" in out
     assert "- A --r1--> B" in out
+
+
+def test_serialize_path_shows_hub_score_and_warns_on_high(  # ADR-0017 방향 5
+) -> None:
+    n1 = _node(id="01" + "A" * 24, name="A")
+    n2 = _node(id="01" + "B" * 24, name="B")
+    e1 = _edge(id="01" + "D" * 24, from_id=n1["id"], to_id=n2["id"], type="r1")
+    # 낮은 hub_score → 경고 없음.
+    low = [{"nodes": [n1, n2], "edges": [e1], "length": 1, "hub_score": 0.0}]
+    out_low = serialize_subgraph({"nodes": [n1], "edges": []}, paths=low)
+    assert "hub_score=0.00" in out_low
+    assert "허브경유" not in out_low
+    # 높은 hub_score → 경고 마커.
+    high = [{"nodes": [n1, n2], "edges": [e1], "length": 1, "hub_score": 9.23}]
+    out_high = serialize_subgraph({"nodes": [n1], "edges": []}, paths=high)
+    assert "hub_score=9.23" in out_high
+    assert "허브경유-근거약함" in out_high
