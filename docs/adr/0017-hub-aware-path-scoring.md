@@ -257,8 +257,12 @@ abstract 를 신선한 neo4j 에 전량 재적재(약 2.5 시간)하고 베이�
    SYSTEM_PROMPT + 추출 스키마 + model_id 의 sha256(자동), `INGEST_PIPELINE_VERSION` 은
    매칭/정규화/stoplist 등 프롬프트 밖 로직 변경 시 수동 +1. 프롬프트 한 줄만 바꿔도
    같은 파일이 재추출되고, 안 바뀐 파일은 여전히 skip → 코드 변경을 델타로 잡는다.
-5. **eval 에이전트가 hub_score 소비** — 결정적 하니스 컬럼에 hub_score 기반 경로 불신
-   규칙을 넣고 MedHop·FinanceBench 동시 재측정.
+5. **eval 에이전트가 hub_score 소비** — ✅ **구현됨 (2026-06-24)**. `serialize_subgraph`
+   가 각 경로에 `[hub_score=X.XX]` 를 노출하고 임계(≥2.0) 초과 시 `⚠허브경유-근거약함`
+   마커를 단다. `OPENTOLOGY_ANSWER_SYSTEM` 프롬프트에 "두 보기가 경쟁하면 hub_score
+   낮은 경로 우선, ⚠ 경로로만 닿는 보기는 강한 근거로 삼지 않는다" 규칙 추가. 답변
+   LLM 이 가짜 허브 다리를 근거 채택 전에 의심하게 된다. end-to-end 재측정(MedHop·
+   FinanceBench)은 비용 때문에 별도. eval serializer 단위 테스트 추가.
 6. **이미 망가진 그래프의 탐지+교정 (정적 3단의 3번)** — 예방(stoplist)이 *앞으로의*
    적재는 막으나, 옛 코드로 만든 기존 그래프엔 불량 노드가 남는다. 정적 검사(별칭 수
    이상치 / 무관 ID 다중 보유 / deixis alias)로 플래그 + 출처 기준 분리. 우선순위 낮음
