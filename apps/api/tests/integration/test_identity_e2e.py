@@ -83,6 +83,9 @@ class _LLMScripted:
             raise AssertionError("LLM called more times than scripted")
         return self._scripts.pop(0)
 
+    def extraction_fingerprint(self) -> str:
+        return ""
+
 
 class _EmbConstant:
     """이름 무관하게 같은 벡터 — 임베딩 유사도 1.0 → Step 3 항상 hit.

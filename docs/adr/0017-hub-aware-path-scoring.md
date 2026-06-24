@@ -241,10 +241,15 @@ abstract 를 신선한 neo4j 에 전량 재적재(약 2.5 시간)하고 베이�
 3. **이웃/서브그래프 허브 인지 절단** — `get_neighbors`/`get_subgraph` BFS 절단을
    degree 낮은(구체적) 이웃 우선으로. 에이전트 주력 도구라 효과 클 것. hub_score 와
    동일 원리(끝점/진입점 제외).
-4. **추출 버전을 source_hash 에 포함 (코드-델타)** — 현재 short-circuit 은 *파일 내용*
-   해시라, 프롬프트/추출 로직을 바꿔도 "변경 없음" 으로 옛 추출을 유지한다(그래서 이번
-   엔 신선 그래프 full 재적재가 필요했다). `hash(content + extractor_version)` 으로 두면
-   *코드 변경* 도 델타로 잡아 변경분만 재추출. 운영 비용 큰 개선.
+4. **추출 버전을 short-circuit 게이트에 포함 (코드-델타)** — ✅ **구현됨
+   (2026-06-23)**. 옛 short-circuit 은 *파일 내용* 해시라 프롬프트/추출 로직을 바꿔도
+   "변경 없음" 으로 옛 추출을 유지했다(그래서 이번 검증엔 신선 그래프 full 재적재가
+   필요했다). 이제 `IngestionRun.extractor_version = f"p{INGEST_PIPELINE_VERSION}:{llm.
+   extraction_fingerprint()}"` 를 저장하고, short-circuit 을 `(path, hash,
+   extractor_version)` 3 자 일치로 강화했다. `extraction_fingerprint()` 는
+   SYSTEM_PROMPT + 추출 스키마 + model_id 의 sha256(자동), `INGEST_PIPELINE_VERSION` 은
+   매칭/정규화/stoplist 등 프롬프트 밖 로직 변경 시 수동 +1. 프롬프트 한 줄만 바꿔도
+   같은 파일이 재추출되고, 안 바뀐 파일은 여전히 skip → 코드 변경을 델타로 잡는다.
 5. **eval 에이전트가 hub_score 소비** — 결정적 하니스 컬럼에 hub_score 기반 경로 불신
    규칙을 넣고 MedHop·FinanceBench 동시 재측정.
 6. **이미 망가진 그래프의 탐지+교정 (정적 3단의 3번)** — 예방(stoplist)이 *앞으로의*
