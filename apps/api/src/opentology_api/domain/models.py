@@ -11,11 +11,10 @@ WHY embedding 필드 비공개: PRD 3 §1.1 명시 — *Node 응답에 `embeddin
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 from pydantic import BaseModel, ConfigDict, Field
-
 
 # ---------- 응답 모델 (REST 노출) ----------
 
@@ -145,6 +144,6 @@ class MergeMutation:
 
 def now_rfc3339() -> str:
     """RFC 3339 (UTC) timestamp — PRD 3 §1.1 의 `format: date-time` 충족."""
-    return datetime.now(tz=timezone.utc).isoformat(timespec="seconds").replace(
+    return datetime.now(tz=UTC).isoformat(timespec="seconds").replace(
         "+00:00", "Z"
     )

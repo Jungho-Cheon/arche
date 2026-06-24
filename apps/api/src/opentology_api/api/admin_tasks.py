@@ -28,12 +28,9 @@ from typing import Literal
 from ulid import ULID
 
 from ..domain.ingest import (
-    DirectoryIngestResult,
     FileProgressEvent,
-    IngestResult,
     IngestService,
 )
-
 
 logger = logging.getLogger(__name__)
 

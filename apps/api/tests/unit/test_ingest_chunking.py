@@ -8,7 +8,6 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from opentology_api.adapters.embedding import EmbeddingProvider
 from opentology_api.adapters.llm import LLMProvider
 from opentology_api.domain.ingest import IngestService
 from opentology_api.domain.models import (
@@ -149,7 +148,7 @@ def test_large_doc_idempotent_on_second_ingest(tmp_path: Path):
         # 분할을 좌우하는 knob 은 이제 추출 예산 (2026-06-22). budget=200 강제.
         extraction_chunk_tokens=200,
     )
-    first = service.ingest_file(p)
+    service.ingest_file(p)
     first_calls = len(llm.calls)
     snapshot = dict(graph._entities)
 

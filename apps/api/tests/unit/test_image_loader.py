@@ -13,9 +13,9 @@ from opentology_api.domain.errors import InvalidInputError
 
 def test_image_exts_covers_expected_extensions():
     """확장자 집합 자체가 silently 줄어들면 모달 분기가 깨진다 — 가드."""
-    assert IMAGE_EXTS == frozenset(
+    assert frozenset(
         {".jpg", ".jpeg", ".png", ".webp"}
-    )
+    ) == IMAGE_EXTS
 
 
 @pytest.mark.parametrize(

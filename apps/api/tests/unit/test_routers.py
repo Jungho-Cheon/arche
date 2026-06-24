@@ -7,13 +7,11 @@ from fastapi.testclient import TestClient
 from opentology_api.adapters.embedding import EmbeddingProvider
 from opentology_api.adapters.graph import (
     DenseHit,
-    EntityTypeStat,
     EntityWithCounts,
     GraphRepository,
     KeywordHit,
     NeighborhoodResult,
     PathResult,
-    RelationTypeStat,
 )
 from opentology_api.adapters.llm import LLMProvider
 from opentology_api.api.deps import (
@@ -25,7 +23,6 @@ from opentology_api.domain.models import (
     ExtractedGraph,
     Node,
     SourceRef,
-    StoredEntity,
     now_rfc3339,
 )
 from opentology_api.main import create_app

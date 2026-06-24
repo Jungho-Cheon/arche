@@ -24,9 +24,9 @@ from __future__ import annotations
 import base64
 import hashlib
 import logging
+from collections.abc import Callable
 from dataclasses import dataclass, field, replace
 from pathlib import Path
-from typing import Callable
 
 from ulid import ULID
 
@@ -34,13 +34,13 @@ from ..adapters.embedding import EmbeddingProvider
 from ..adapters.extract_cache import ExtractionCache, make_key
 from ..adapters.graph import GraphRepository
 from ..adapters.image_loader import IMAGE_EXTS, load_image_as_b64
-from ..adapters.llm import SYSTEM_PROMPT, ImageInput, LLMProvider
+from ..adapters.llm import ImageInput, LLMProvider
 from ..adapters.pdf import PdfPage, extract_pdf
-from .chunking import Chunk, TOKEN_BUDGET_RATIO, chunk_text, count_tokens
+from .chunking import chunk_text
 from .crawl import crawl
 from .errors import InvalidInputError, UnsupportedFileTypeError
 from .extract_context import ExtractContext, ExtractContextBuilder, render_context_block
-from .main_entity import MainEntity, MainEntityExtractor
+from .extraction_contract import EXTRACTION_SYSTEM_PROMPT as SYSTEM_PROMPT
 from .identity import (
     NON_IDENTIFYING_ALIAS_STOPLIST,
     EntityMatcher,
@@ -48,15 +48,13 @@ from .identity import (
     extract_identifier_aliases,
     normalize,
 )
+from .main_entity import MainEntity, MainEntityExtractor
 from .models import (
-    ExtractedEntity,
     ExtractedGraph,
-    ExtractedRelation,
     SourceRef,
     StoredEntity,
     now_rfc3339,
 )
-
 
 logger = logging.getLogger(__name__)
 
@@ -541,7 +539,7 @@ class IngestService:
                 main_entity=main_entity,
             )
 
-            for inp, extracted in zip(llm_inputs, extracted_results):
+            for inp, extracted in zip(llm_inputs, extracted_results, strict=True):
                 # chunk_index 의미 부여 정책:
                 #  - 단일 input 이면 None (텍스트 청크 1 개 / 이미지 파일).
                 #    PRD 3 §1.3 의 nullable 형태와 일관.
@@ -638,7 +636,7 @@ class IngestService:
 
     def _build_llm_inputs(
         self, *, path: Path, raw_bytes: bytes, ext: str
-    ) -> list["_LLMCallInput"]:
+    ) -> list[_LLMCallInput]:
         """확장자에 따라 LLM 호출 단위 시퀀스를 생성.
 
         WHY 단일 진입점: ingest_file 본 루프는 *모달이 무엇인지 모른다* . 본
@@ -678,7 +676,7 @@ class IngestService:
 
     def _build_pdf_extract_inputs(
         self, pages: list[PdfPage]
-    ) -> list["_LLMCallInput"]:
+    ) -> list[_LLMCallInput]:
         """PDF 페이지 시퀀스를 평탄화된 LLM 호출 input 시퀀스로 변환.
 
         결정 규칙 (PRD 2 §3.4):
@@ -700,7 +698,7 @@ class IngestService:
             page_text = page.text or ""
             page_images = [
                 ImageInput(b64_data=_b64encode(b), mime_type=m)
-                for b, m in zip(page.images, page.image_mime_types)
+                for b, m in zip(page.images, page.image_mime_types, strict=True)
             ]
 
             if page_text.strip():

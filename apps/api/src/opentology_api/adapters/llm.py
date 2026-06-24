@@ -24,153 +24,31 @@ from typing import Any
 
 from ..domain.errors import DependencyUnavailableError, UnsupportedFileTypeError
 from ..domain.extract_context import ExtractContext, render_context_block
+from ..domain.extraction_contract import (
+    EXTRACTION_ENTITY_RELATION_SCHEMA,
+    EXTRACTION_SYSTEM_PROMPT,
+)
 from ..domain.models import ExtractedEntity, ExtractedGraph, ExtractedRelation
-
 
 logger = logging.getLogger(__name__)
 
 
-# WHY 시스템 프롬프트 한국어: PRD 2 §4.2 의 패턴. 검증 도메인 (상거래) 이 한국어
-# 비즈니스 규칙이라 모델이 어휘를 그대로 유지하기 쉽도록.
-#
-# ADR-0009 (Context-aware extraction) 적용 — system prompt 가 호출에 동봉된
-# [DOC_CONTEXT] / [KNOWN_ENTITIES] / [SCHEMA] 블록을 *반드시 참조* 하도록 지시.
-# 이 변경으로 *추출 단계에서* generic 자기지칭 ("the Company", "당사") 이 문서
-# 주 entity 로 resolve 되고, 기존 graph entity 와의 매칭이 LLM 결정으로 이동.
-SYSTEM_PROMPT = """당신은 도메인 문서에서 엔티티와 관계를 추출하는 도구입니다.
+# 추출 계약 (지시문 + 엔티티/관계 스키마) 은 provider 중립이라 도메인
+# (`domain/extraction_contract.py`) 이 소유한다 (ADR-0018 LLM-agnostic 경계).
+# 어댑터는 그 중립 계약을 *자기 provider 의 구조화 출력 형식으로 번역* 하는 책임만
+# 진다. 아래 SYSTEM_PROMPT 별칭은 기존 import 경로 (`from ...llm import SYSTEM_PROMPT`)
+# 호환을 위해 유지한다.
+SYSTEM_PROMPT = EXTRACTION_SYSTEM_PROMPT
 
-주어진 텍스트에서 다음을 식별하세요.
-- 엔티티: 사물·개념·사람·시스템·정책·규칙 등 식별 가능한 단위.
-- 관계: 두 엔티티 사이의 의미 있는 연결.
-- 별칭: 같은 엔티티가 본문에서 다른 표현으로 등장하는 경우 모두 나열.
-
-원칙:
-1. 본문에 명시적으로 등장하는 정보만 추출. 추론·확장 금지.
-2. 엔티티 이름은 본문 표기 그대로. 정규화는 별칭 필드로.
-3. 관계는 능동형 동사구로 ("적용된다", "포함한다", "대체한다" 등).
-4. 같은 엔티티가 본문에 여러 번 나오면 한 번만 추출하고 별칭을 모은다.
-   (a) 식별자·기호와 정식 명칭의 동일성 — *반드시* 지킬 것 (도메인 무관):
-       같은 대상이 본문에서 *정식 명칭* 과 *식별자/기호/코드* (등록번호, 유전자·
-       단백질 ID, 종목코드, 제품·부품 코드, 약어 등) 두 형태로 등장하고 둘이 같은
-       대상을 가리킴이 맥락상 분명하면, *하나의 엔티티* 로 추출하고 모든 표기를
-       aliases 에 넣는다. "정식명칭 (ID)" 또는 "ID (정식명칭)" 패턴, 그리고 본문에서
-       교차로 쓰이는 약어/기호/등록번호는 강한 동일성 신호다.
-       WHY: 이렇게 묶어야 (1) 어느 표기로 검색해도 같은 노드에 닿고, (2) 여러 문장·
-       문서에 흩어진 같은 대상이 한 노드로 병합돼 관계 사슬이 끊기지 않는다. 반대로
-       명칭과 ID 를 *별개 노드* 로 두면 한쪽으로 들어온 질의가 다른 쪽의 관계를 못
-       본다 (multi-hop 사슬 단절의 주원인).
-5. 정량 사실·측정값 보존 (도메인 무관) — *반드시* 지킬 것:
-   본문의 측정값·수치·금액·비율·기간별 값을 요약하거나 누락하지 말고 *실제 값*
-   으로 보존한다. 재무든 과학이든 상거래든 코드 지표든, 숫자는 비교·계산·추론의
-   단위이므로 "데이터가 있다" 식으로 뭉뚱그려 버리지 않는다.
-   (a) 어떤 수치가 비교·계산·질문의 단위가 되는 지표면 *별도 엔티티* 로 추출한다.
-       type 은 그 지표의 성격을 반영 (예: metric / measurement / financial_metric).
-       name 은 "<소속 대상> <지표명>" 처럼 그 수치가 속한 대상을 포함해, 같은 이름의
-       지표라도 대상별로 구분되게 한다 (예: "<회사> 유동자산", "<실험> 반응 수율").
-       이는 서로 다른 대상의 동일 지표가 진입점 검색에서 뒤섞이는 것을 막는다
-       (ADR-0009 정체성 원칙과 정합). description 에 기간/조건별 값과 단위를 모두
-       적고, 소속 대상 엔티티와 관계로 잇는다.
-   (b) 부수적 수치(한 엔티티의 단일 속성)는 그 엔티티 description 에 "항목: 값
-       (기간/조건, 단위)" 형태로 기록한다.
-
-6. 표(table) 완전 추출 — *누락 금지* (도메인 무관):
-   본문에 표가 있으면 그 행·열의 값을 *요약하지 말고* 빠짐없이 옮긴다. 표의 각 행이
-   하나의 지표/항목이면 원칙 5 에 따라 별도 엔티티 또는 속성으로 추출하고, 여러
-   기간/열의 값을 모두 적는다. 표는 정량 정보가 가장 밀집한 곳이므로, 표를 통째로
-   생략하거나 일부 행만 뽑는 것은 금지한다.
-
-[CONTEXT 사용 규칙 — ADR-0009]
-입력의 앞부분에 [DOC_CONTEXT] / [KNOWN_ENTITIES] / [SCHEMA] 블록이 동봉됩니다.
-이 정보를 *반드시* 활용하세요.
-
-(a) 1인칭 / 자기지칭 표현 resolve
-  본문에 "the Company", "we", "us", "our", "당사", "본사", "회사" 같은 1 인칭
-  자기지칭이 등장하고 [DOC_CONTEXT].main_entity 가 명시되어 있으면, 그 표현은
-  *main_entity 의 이름* 으로 풀이해서 추출하세요. 절대 "the Company" 같은
-  generic 한 이름으로 entity 화하지 마세요.
-
-(b) 기존 entity 와의 매칭 (matched_existing_id)
-  추출하려는 entity 가 [KNOWN_ENTITIES] 의 후보 중 *같은 대상* 을 가리킨다고
-  확신되면, 새 entity 를 만들지 말고 그 후보의 id 를 `matched_existing_id`
-  필드에 명시하세요. *확신이 없으면 비워두세요* — 후처리 매처가 결정합니다.
-  확신 판단 기준 — 이름 일치 + 컨텍스트 일치 + 같은 type.
-
-(c) Type 일관성
-  새 entity 의 type 은 [SCHEMA].entity_types 의 알려진 type 우선 사용. 새 type
-  은 정말 새로운 의미일 때만.
-
-결과는 반드시 지정된 JSON 스키마로 응답하세요.
-"""
-
-# WHY 수치/시계열 보존 (원칙 5) 재활성화 — 2026-06-22:
-# 2026-06-20 1차 시도에서 graph-only 는 +14.3pp (33.3% → 47.6%) 였으나 aug 모드
-# (graph-guided chunk retrieval) 에서 -4.8pp 후퇴해 보류했었다. 후퇴 원인은
-# "cash flow" 같은 generic anchor 가 수치 풍부한 *다른 회사* entity 와 강하게
-# 매칭 → 진입점 cross-company contamination.
-# 재활성화 근거: (1) 현재 우선 타깃이 graph-only (MVP "우월한 그래프" 축), 바로
-# 그 모드가 +14.3pp 로 가장 크게 이득. (2) 보류를 강제했던 오염 문제를 두 가드로
-# 차단 — 원칙 5(a) 가 수치 엔티티 name 에 *소속 대상* (회사 등) 을 포함하도록 강제해
-# 같은 지표라도 대상별로 분리되고, ADR-0015 namespace 격리로 진입점 검색을 대상
-# 단위로 스코핑한다. 원칙 5·6 은 재무 용어를 하드코딩하지 않는 *도메인 무관* 규칙으로,
-# 특정 벤치마크 과적합(cherry-picking)을 피하고 범용 그래프 도구 성격을 지킨다.
-# 측정 근거: eval/reports/2026-06-22-graphify-mcq-baseline/ (graphify 그래프 단독
-# 57.6% vs opentology 21.2%, 수치 문항 양쪽 0). graphify 도 숫자를 노드화하지 않으므로
-# 본 원칙은 graphify 가 구조적으로 못 푸는 수치 문항을 그래프 단독·저토큰으로 여는 수.
-
-# PRD 2 §4.3 의 JSON Schema. additionalProperties=false + required 강제.
+# OpenAI 전용 봉투 (HOW): 중립 스키마를 OpenAI 의 strict `json_schema` response_format
+# 형식으로 감싼다. 다른 provider 어댑터는 같은 중립 스키마를 각자 형식 (Anthropic
+# tool input_schema / Gemini responseSchema 등) 으로 감싸면 된다.
 EXTRACTION_RESPONSE_FORMAT: dict[str, Any] = {
     "type": "json_schema",
     "json_schema": {
         "name": "extracted_graph",
         "strict": True,
-        "schema": {
-            "type": "object",
-            "additionalProperties": False,
-            "required": ["entities", "relations"],
-            "properties": {
-                "entities": {
-                    "type": "array",
-                    "items": {
-                        "type": "object",
-                        "additionalProperties": False,
-                        "required": [
-                            "name",
-                            "type",
-                            "aliases",
-                            "description",
-                            "matched_existing_id",
-                        ],
-                        "properties": {
-                            "name": {"type": "string"},
-                            "type": {"type": "string"},
-                            "aliases": {
-                                "type": "array",
-                                "items": {"type": "string"},
-                            },
-                            "description": {"type": ["string", "null"]},
-                            # ADR-0009 D2 — LLM 이 KNOWN_ENTITIES 후보 중 하나
-                            # 와 *같은 대상* 이라고 확신할 때만 그 id 명시.
-                            # 비어있으면 후처리 매처가 Step 1-3 로 결정.
-                            "matched_existing_id": {"type": ["string", "null"]},
-                        },
-                    },
-                },
-                "relations": {
-                    "type": "array",
-                    "items": {
-                        "type": "object",
-                        "additionalProperties": False,
-                        "required": ["from", "to", "type", "description"],
-                        "properties": {
-                            "from": {"type": "string"},
-                            "to": {"type": "string"},
-                            "type": {"type": "string"},
-                            "description": {"type": ["string", "null"]},
-                        },
-                    },
-                },
-            },
-        },
+        "schema": EXTRACTION_ENTITY_RELATION_SCHEMA,
     },
 }
 

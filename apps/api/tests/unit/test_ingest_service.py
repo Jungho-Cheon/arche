@@ -25,8 +25,6 @@ from opentology_api.domain.models import (
     ExtractedGraph,
     ExtractedRelation,
     MergeMutation,
-    Node,
-    SourceRef,
     StoredEntity,
 )
 

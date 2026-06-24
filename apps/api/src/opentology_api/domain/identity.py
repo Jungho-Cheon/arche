@@ -19,7 +19,6 @@ from ..adapters.embedding import EmbeddingProvider
 from ..adapters.graph import GraphRepository
 from .models import ExtractedEntity, MergeMutation, SourceRef, StoredEntity
 
-
 # WHY 단일 상수 + WHY 코멘트: 측정 통제 변수. 변경 시 모든 측정 회차의 그래프가
 # 달라진다. 변경하려면 ADR-0003 amend + 새 측정 회차 시작 필요. 절대 본 상수를
 # 호출부에서 "임시로" 우회하지 말 것 — 우회는 측정 무효의 원인이 된다.
@@ -92,7 +91,7 @@ NON_IDENTIFYING_ALIAS_STOPLIST: frozenset[str] = frozenset(
         # 가 *논문 도메인에서 재현*. 아래는 그 직접 관측 + 결정적 패턴
         # (_GENERIC_DEIXIS_RE) 이 못 잡는 무관사 형태를 보강한다. 패턴이 대부분의
         # "(한정사)+(담론 명사)" 조합을 잡으므로 여기엔 무관사/특수형만 명시.
-        "we",  # (이미 위에 있으나 의미 묶음 유지)
+        # "we" 는 위 1인칭 묶음에 이미 포함 — set 중복이라 담론 묶음에선 생략.
         "findings",
         "results",
         "data",

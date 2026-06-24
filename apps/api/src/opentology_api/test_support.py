@@ -16,7 +16,6 @@ from .adapters.graph import (
     EntityTypeStat,
     EntityWithCounts,
     GraphRepository,
-    IngestionRunRecord,
     KeywordHit,
     NeighborhoodResult,
     PathResult,

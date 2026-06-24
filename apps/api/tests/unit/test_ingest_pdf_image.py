@@ -13,7 +13,6 @@ from opentology_api.domain.ingest import IngestService
 from opentology_api.domain.models import (
     ExtractedEntity,
     ExtractedGraph,
-    ExtractedRelation,
 )
 
 from ..fixtures._pdf_builder import write_text_pdf

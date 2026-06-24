@@ -14,8 +14,6 @@ context 에 namespace_id 주입. 시제품 default 는 ns:<id> prefix 토큰.
 from __future__ import annotations
 
 import logging
-from contextlib import asynccontextmanager
-from typing import AsyncIterator
 
 from fastapi import FastAPI, Request
 from mcp.server.sse import SseServerTransport
@@ -27,7 +25,6 @@ from .adapters.graph import GraphRepository
 from .api.auth import parse_authorization_header
 from .config import Settings
 from .mcp_server import build_mcp_server
-
 
 logger = logging.getLogger(__name__)
 

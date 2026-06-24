@@ -15,10 +15,8 @@ WHY 단일 디렉토리 / 단일 테스트로 묶음: live 환경의 비용 (Ope
 from __future__ import annotations
 
 import os
-from pathlib import Path
 
 import pytest
-
 
 pytestmark = pytest.mark.live
 

@@ -13,7 +13,6 @@ from pathlib import Path
 
 import pytest
 
-
 docker_available = pytest.importorskip("testcontainers.neo4j")
 Neo4jContainer = docker_available.Neo4jContainer
 

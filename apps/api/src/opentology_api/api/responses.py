@@ -24,7 +24,6 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from ..domain.models import Edge, Node
 
-
 # WHY 모듈 상수: 여러 곳에서 같은 패턴 — 한 곳에 정의해 ADR / PRD 변경 시 단일
 # 갱신.
 _ULID_PATTERN = re.compile(r"^[0-9A-Z]{26}$")

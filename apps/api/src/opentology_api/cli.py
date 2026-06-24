@@ -19,11 +19,10 @@ from dotenv import load_dotenv
 
 from .adapters.embedding import OpenAIEmbeddingProvider
 from .adapters.graph import Neo4jGraphRepository
+from .adapters.llm import OpenAILLMProvider
 from .config import get_settings
 from .domain.errors import OpentologyError
 from .domain.ingest import FileProgressEvent, IngestService
-from .adapters.llm import OpenAILLMProvider
-
 
 app = typer.Typer(
     no_args_is_help=True,
@@ -222,7 +221,7 @@ def _run_directory(*, service: IngestService, path: Path, dry_run: bool) -> None
         )
     except OpentologyError as e:
         typer.echo(f"[error] {e.code}: {e.message}", err=True)
-        raise typer.Exit(code=2)
+        raise typer.Exit(code=2) from None
 
     _print_summary(
         files_total=result.files_total,
@@ -251,7 +250,7 @@ def _run_single_file(*, service: IngestService, path: Path, dry_run: bool) -> No
             result = service.ingest_file(path)
         except OpentologyError as e:
             typer.echo(f"[error] {e.code}: {e.message}", err=True)
-            raise typer.Exit(code=2)
+            raise typer.Exit(code=2) from None
     elapsed = time.perf_counter() - t0
 
     # 단일 파일 — i/n 은 1/1.

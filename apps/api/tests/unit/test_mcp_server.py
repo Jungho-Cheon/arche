@@ -23,9 +23,7 @@ from pydantic import ValidationError
 
 from opentology_api.adapters.graph import (
     EntityTypeStat,
-    EntityWithCounts,
     NeighborhoodResult,
-    PathResult,
     RelationTypeStat,
 )
 from opentology_api.domain.errors import (
@@ -43,7 +41,6 @@ from opentology_api.mcp_server import (
 )
 
 from .test_primitives import PrimitiveStubGraph
-
 
 # ---------- helpers ----------
 

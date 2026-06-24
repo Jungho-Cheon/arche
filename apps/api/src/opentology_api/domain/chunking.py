@@ -20,11 +20,10 @@ from __future__ import annotations
 
 import logging
 import re
+from collections.abc import Iterator
 from dataclasses import dataclass
-from typing import Iterator
 
 import tiktoken
-
 
 logger = logging.getLogger(__name__)
 

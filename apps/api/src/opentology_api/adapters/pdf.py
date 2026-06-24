@@ -26,7 +26,6 @@ from pathlib import Path
 
 from ..domain.errors import InvalidInputError
 
-
 logger = logging.getLogger(__name__)
 
 

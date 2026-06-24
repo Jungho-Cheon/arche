@@ -8,10 +8,8 @@ from __future__ import annotations
 
 import os
 from pathlib import Path
-from unittest.mock import MagicMock
 
 import pytest
-
 
 # WHY skip 조건: testcontainers 가 docker 데몬을 요구. CI/머신에 docker 없을 때 silently skip.
 docker_available = pytest.importorskip("testcontainers.neo4j")

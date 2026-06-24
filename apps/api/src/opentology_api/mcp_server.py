@@ -42,7 +42,6 @@ from .api.schemas import FindEntitiesRequest
 from .config import Settings
 from .domain.errors import OpentologyError
 
-
 logger = logging.getLogger(__name__)
 
 

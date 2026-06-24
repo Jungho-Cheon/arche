@@ -6,10 +6,8 @@ EMBEDDING_MATCH_THRESHOLD = 0.92 의 경계도 결정적으로 검증.
 
 from __future__ import annotations
 
-from dataclasses import dataclass
-from typing import Any
-
 import math
+from dataclasses import dataclass
 
 from opentology_api.domain.identity import (
     EMBEDDING_MATCH_THRESHOLD,
