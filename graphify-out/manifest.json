@@ -10,18 +10,18 @@
     "semantic_hash": "d41d8cd98f00b204e9800998ecf8427e"
   },
   "apps/api/src/opentology_api/adapters/embedding.py": {
-    "mtime": 1781618104.1605558,
-    "ast_hash": "6a3f94c7987efb94c4578802e4d1a239",
-    "semantic_hash": "6a3f94c7987efb94c4578802e4d1a239"
+    "mtime": 1782280098.8517306,
+    "ast_hash": "a2d1aa6ce5f1d2110667685374266478",
+    "semantic_hash": ""
   },
   "apps/api/src/opentology_api/adapters/graph.py": {
-    "mtime": 1782279333.4556038,
-    "ast_hash": "c09a463db22a3d55b3d8a87e59079371",
+    "mtime": 1782280098.852664,
+    "ast_hash": "df93589e15e1fad0f60f00abfe67eb09",
     "semantic_hash": ""
   },
   "apps/api/src/opentology_api/adapters/llm.py": {
-    "mtime": 1782279333.4596128,
-    "ast_hash": "579eaaa718fa8c3e85c5b7ef3031fa3f",
+    "mtime": 1782280098.8534787,
+    "ast_hash": "d8222009b4cd741f16b40418e3480151",
     "semantic_hash": ""
   },
   "apps/api/src/opentology_api/api/__init__.py": {
@@ -35,8 +35,8 @@
     "semantic_hash": ""
   },
   "apps/api/src/opentology_api/api/deps.py": {
-    "mtime": 1782223795.698938,
-    "ast_hash": "b63df66455bb4cabeb1198464fd5c4ef",
+    "mtime": 1782280098.8541322,
+    "ast_hash": "5d3932de9cb33aac0ff5947b7d84ade8",
     "semantic_hash": ""
   },
   "apps/api/src/opentology_api/api/responses.py": {
@@ -45,8 +45,8 @@
     "semantic_hash": ""
   },
   "apps/api/src/opentology_api/api/routers.py": {
-    "mtime": 1782279333.4687433,
-    "ast_hash": "9e9de045107966d6782c500b79876f4b",
+    "mtime": 1782280098.8549604,
+    "ast_hash": "8ed83066e20b50ed29e1d4ea54eb3334",
     "semantic_hash": ""
   },
   "apps/api/src/opentology_api/api/schemas.py": {
@@ -85,13 +85,13 @@
     "semantic_hash": "bdc75f82ad725a273da5aef283c505ba"
   },
   "apps/api/src/opentology_api/domain/identity.py": {
-    "mtime": 1782279333.4858248,
-    "ast_hash": "4da55cee002522d2c8bde9fb81211db3",
+    "mtime": 1782280098.8577764,
+    "ast_hash": "28807c42d9a0baa3352dcdf9e2fdd760",
     "semantic_hash": ""
   },
   "apps/api/src/opentology_api/domain/ingest.py": {
-    "mtime": 1782279333.4875174,
-    "ast_hash": "20370a892c953414dae6ff967c0bb5f2",
+    "mtime": 1782280098.8585699,
+    "ast_hash": "559ae5b058fdf8ca75c0d7a421865c4b",
     "semantic_hash": ""
   },
   "apps/api/src/opentology_api/domain/models.py": {
@@ -125,13 +125,13 @@
     "semantic_hash": ""
   },
   "apps/api/tests/integration/test_neo4j_repo.py": {
-    "mtime": 1782279333.5054858,
-    "ast_hash": "14c292bab3c46015688ef9302a99006a",
+    "mtime": 1782280098.8636606,
+    "ast_hash": "24cb94801253fcba2e90c1e16c9f39cc",
     "semantic_hash": ""
   },
   "apps/api/tests/integration/test_primitives_e2e.py": {
-    "mtime": 1782279333.5072,
-    "ast_hash": "9ddb430e93f481fc33b6169e7604aec2",
+    "mtime": 1782280098.86441,
+    "ast_hash": "4b1d80c3574f6fd228382a2d3fc887ec",
     "semantic_hash": ""
   },
   "apps/api/tests/live/__init__.py": {
@@ -190,9 +190,9 @@
     "semantic_hash": "516471beee146a40dc5cbecec62832f1"
   },
   "apps/api/tests/unit/test_diff_logic.py": {
-    "mtime": 1781620741.4730818,
-    "ast_hash": "a0badb0244ea84d08b9c595367c79e46",
-    "semantic_hash": "a0badb0244ea84d08b9c595367c79e46"
+    "mtime": 1782280098.8651607,
+    "ast_hash": "8d94d077c2a6f656440ef4699fd572d9",
+    "semantic_hash": ""
   },
   "apps/api/tests/unit/test_entity_matcher.py": {
     "mtime": 1782279333.5179768,
@@ -205,8 +205,8 @@
     "semantic_hash": "368383524a7d9a4725a758936f1ddccc"
   },
   "apps/api/tests/unit/test_ingest_chunking.py": {
-    "mtime": 1782279333.5219612,
-    "ast_hash": "89ab0e9802ca7a38fa06908e7d266373",
+    "mtime": 1782280098.8665645,
+    "ast_hash": "103188278586c3ec437d59d120b16b21",
     "semantic_hash": ""
   },
   "apps/api/tests/unit/test_ingest_directory.py": {
@@ -215,8 +215,8 @@
     "semantic_hash": "f9382a5f274f7fa9732faefbb50a6fa9"
   },
   "apps/api/tests/unit/test_ingest_service.py": {
-    "mtime": 1782279333.5255897,
-    "ast_hash": "699e0f984415183d53b2c8090bd9acf9",
+    "mtime": 1782280098.868034,
+    "ast_hash": "76fd166334e0a416db79e1280aa5b11a",
     "semantic_hash": ""
   },
   "apps/api/tests/unit/test_llm_adapter.py": {
@@ -240,13 +240,13 @@
     "semantic_hash": "14b5ebf017572d486b71db45ecdec88b"
   },
   "apps/api/tests/unit/test_primitives.py": {
-    "mtime": 1782279333.534073,
-    "ast_hash": "90d80bcd6a794d59bf4baa68c51139fc",
+    "mtime": 1782280098.871063,
+    "ast_hash": "6deaa5c11c851239b688d59263741810",
     "semantic_hash": ""
   },
   "apps/api/tests/unit/test_routers.py": {
-    "mtime": 1782279333.5359674,
-    "ast_hash": "e3d0362042386d7e7c58b0626dcefbd2",
+    "mtime": 1782280098.8718712,
+    "ast_hash": "f478ab0e1b83346f144c8b6962194b92",
     "semantic_hash": ""
   },
   "eval/src/opentology_eval/__init__.py": {
@@ -475,18 +475,18 @@
     "semantic_hash": ""
   },
   "apps/api/src/opentology_api/api/services.py": {
-    "mtime": 1782279333.472562,
-    "ast_hash": "75c6c6821bc7bd6d13f66749f3187953",
+    "mtime": 1782280098.8562844,
+    "ast_hash": "7a9615621f59d065e0fa24ad804bba33",
     "semantic_hash": ""
   },
   "apps/api/src/opentology_api/mcp_server.py": {
-    "mtime": 1782279333.4960096,
-    "ast_hash": "37170ca6d81cfd41126e7b1f4ce7ce7a",
+    "mtime": 1782280098.86193,
+    "ast_hash": "9ec6b153931d9ff92fe508f2cd751c60",
     "semantic_hash": ""
   },
   "apps/api/src/opentology_api/test_support.py": {
-    "mtime": 1782279333.4975522,
-    "ast_hash": "e645c2d86db0eec2d26aebd9ecd7e6b4",
+    "mtime": 1782280098.862657,
+    "ast_hash": "f9034ed730e82dc2b9f73b71833e9418",
     "semantic_hash": ""
   },
   "apps/api/tests/fixtures/__init__.py": {
@@ -510,18 +510,18 @@
     "semantic_hash": ""
   },
   "apps/api/tests/unit/test_ingest_pdf_image.py": {
-    "mtime": 1782279333.5238664,
-    "ast_hash": "daec637844d465810e90e70bc4c293a9",
+    "mtime": 1782280098.8673584,
+    "ast_hash": "090f22a05feff06ae43ce60b1dcda88e",
     "semantic_hash": ""
   },
   "apps/api/tests/unit/test_llm_multimodal.py": {
-    "mtime": 1781727291.089534,
-    "ast_hash": "68bdb9a94fe41f995e884fec54d0c0a8",
-    "semantic_hash": "68bdb9a94fe41f995e884fec54d0c0a8"
+    "mtime": 1782280098.8687685,
+    "ast_hash": "d94e82fec8f8fdf488c886db301c9461",
+    "semantic_hash": ""
   },
   "apps/api/tests/unit/test_mcp_server.py": {
-    "mtime": 1782279333.5291002,
-    "ast_hash": "4e57d275332a97044a9d74fdfbcc7797",
+    "mtime": 1782280098.8702626,
+    "ast_hash": "b9a08a850ee410278b99b49873695871",
     "semantic_hash": ""
   },
   "apps/api/tests/unit/test_pdf_extract.py": {
@@ -870,18 +870,18 @@
     "semantic_hash": ""
   },
   "apps/api/src/opentology_api/domain/extract_context.py": {
-    "mtime": 1782279333.4820843,
-    "ast_hash": "4e078a1300c8f6e21f6cd953deac8a32",
+    "mtime": 1782280098.8570547,
+    "ast_hash": "bea6b4ef630fae04ad08bdc16b4d0677",
     "semantic_hash": ""
   },
   "apps/api/src/opentology_api/domain/main_entity.py": {
-    "mtime": 1782279333.4891117,
-    "ast_hash": "01139cd543e71ec88efdffe227dd5e63",
+    "mtime": 1782280098.8595567,
+    "ast_hash": "de200cee3a5c82a7788fd070243fcacd",
     "semantic_hash": ""
   },
   "apps/api/src/opentology_api/mcp_http.py": {
-    "mtime": 1782279333.49431,
-    "ast_hash": "a299343ffd976c456258b91d8cf3a971",
+    "mtime": 1782280098.8612099,
+    "ast_hash": "093622cad11f9bf2d75d06844738f99d",
     "semantic_hash": ""
   },
   "apps/api/tests/unit/test_auth_namespace.py": {
@@ -900,8 +900,8 @@
     "semantic_hash": ""
   },
   "apps/api/tests/unit/test_extract_context.py": {
-    "mtime": 1782279333.5194764,
-    "ast_hash": "1e8acea3683fcfc291dd6a43a2d2c17d",
+    "mtime": 1782280098.8658867,
+    "ast_hash": "1dcfed8b398ffeef74dae9b3d0897f15",
     "semantic_hash": ""
   },
   "apps/api/tests/unit/test_identifier_aliases.py": {
@@ -910,8 +910,8 @@
     "semantic_hash": ""
   },
   "apps/api/tests/unit/test_main_entity.py": {
-    "mtime": 1782279333.5272224,
-    "ast_hash": "69ec05bec76dc486bc93a5c6679eb57b",
+    "mtime": 1782280098.869514,
+    "ast_hash": "e5ef866bf435adf6a777efe2372a88c8",
     "semantic_hash": ""
   },
   "apps/api/tests/unit/test_mcp_http_mount.py": {
@@ -1485,13 +1485,18 @@
     "semantic_hash": ""
   },
   "apps/api/ARCHITECTURE.md": {
-    "mtime": 1782279333.4497962,
-    "ast_hash": "677bb97825172e6427eceeaf1d78f6a0",
+    "mtime": 1782280098.8509007,
+    "ast_hash": "ed2efcc44c1458cb860112979ff1362c",
     "semantic_hash": ""
   },
   "docs/adr/0018-monorepo-and-agnostic-boundaries.md": {
-    "mtime": 1782279333.5377808,
-    "ast_hash": "9b14f379a9c8843bf53032de58245a9a",
+    "mtime": 1782280098.8725908,
+    "ast_hash": "a861060403b95654cc31030c69938f69",
+    "semantic_hash": ""
+  },
+  "apps/api/src/opentology_api/domain/ports.py": {
+    "mtime": 1782280098.860524,
+    "ast_hash": "7f3dde643167bf2eef97f66a938f625a",
     "semantic_hash": ""
   }
 }
