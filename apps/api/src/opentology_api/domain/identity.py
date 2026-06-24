@@ -118,6 +118,62 @@ _GENERIC_DEIXIS_RE = re.compile(
 )
 
 
+# ADR-0017 방향 2 — 식별자-별칭 후처리. 추출 LLM 은 약물명↔등록ID 처럼 *명시적
+# "name (ID)"* 는 별칭으로 잘 묶지만(원칙 4(a)), "serotonin P34969" 처럼 *이름 옆
+# bare ID* 나 "thymidylate synthase (P04818)" 의 괄호 안 ID 를 *별도 노드* 로 남겨
+# 사슬이 끊기는 경우가 있다(MedHop 실측). 적재 시 엔티티 이름에서 *구조적 식별자*
+# 를 결정적으로 뽑아 alias 로 추가하면, 그 ID 로 검색해도 같은 노드에 닿고 standalone
+# ID 노드와 병합된다.
+#
+# 고정밀 게이트(over-merge 방지) — *글자 1개 이상 + 숫자 3개 이상* 을 동시에 가진
+# alphanumeric 토큰만 식별자로 본다. 숫자 3개 요구가 핵심: "10-K"/"8-K"/"S-1"/"B12"
+# 같은 *generic 코드* (여러 문서에 흔해 over-merge 를 일으킬)를 배제하고, 등록번호·
+# 유전자/단백질 ID·부품번호(P34969, DB00472, Q9NQ94, 등록 12345-A) 만 통과시킨다.
+_ID_DIGITS = re.compile(r"\d")
+_ID_LETTERS = re.compile(r"[A-Za-z]")
+_ID_SHAPE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9-]{2,18}[A-Za-z0-9]$")
+_ID_SPLIT = re.compile(r"[\s,;/]+")
+
+
+def _is_identifier_token(tok: str) -> bool:
+    tok = tok.strip(".,'\"()")
+    if not (4 <= len(tok) <= 20):
+        return False
+    if _ID_SHAPE.match(tok) is None:
+        return False
+    if not _ID_LETTERS.search(tok):
+        return False
+    return len(_ID_DIGITS.findall(tok)) >= 3
+
+
+def extract_identifier_aliases(name: str) -> list[str]:
+    """엔티티 이름에서 *구조적 식별자* 를 결정적으로 추출 (중복 제거, 순서 보존).
+
+    두 형태를 잡는다.
+      1. 괄호 안 식별자 — "thymidylate synthase (P04818)" → ["P04818"].
+      2. 이름 내 bare 식별자 토큰 — "serotonin P34969" → ["P34969"].
+
+    고정밀(_is_identifier_token): 글자+숫자 3개 이상 동시 보유 토큰만. generic 코드
+    (10-K 등)는 배제 → over-merge 안전.
+    """
+    if not name:
+        return []
+    out: list[str] = []
+    seen: set[str] = set()
+
+    def _add(tok: str) -> None:
+        tok = tok.strip(".,'\"()")
+        if _is_identifier_token(tok) and tok.lower() not in seen:
+            seen.add(tok.lower())
+            out.append(tok)
+
+    for paren in re.findall(r"\(([^()]+)\)", name):
+        _add(paren.strip())
+    for tok in _ID_SPLIT.split(re.sub(r"[()]", " ", name)):
+        _add(tok)
+    return out
+
+
 def _is_non_identifying_normalized(normalized: str) -> bool:
     """*이미 정규화된* 문자열이 비-식별 generic 자기지칭인가.
 

@@ -233,11 +233,14 @@ abstract 를 신선한 neo4j 에 전량 재적재(약 2.5 시간)하고 베이�
    "경로 없음" 이 아니라 *노드조차 없음* = 그 약물의 상호작용을 추출이 처음부터 누락.
    엔티티 해소(별칭/병합)는 2/7 만 열었고 천장이 여기. 한 엔티티의 상호작용을 더
    빠짐없이 뽑는 추출(다단계/관계-집중 프롬프트 또는 재추출 패스)이 다음 레버.
-2. **name↔근접ID 후처리 바인딩** — 식별자-별칭 프롬프트(원칙 4(a))는 약물
-   (lurasidone↔DB08815)엔 성공하나 "serotonin P34969" 류 *이름 옆 bare ID* 는 미연결
-   (명시적 "name (ID)" 짝이 없어 LLM 이 안 묶음). 결정적 후처리(근접·동일문장 ID 를
-   이름 엔티티의 alias 로)로 보완. bare ID 끼리의 문서 간 병합은 이미 동작하므로 범위
-   는 name↔ID 만.
+2. **name↔근접ID 후처리 바인딩** — ✅ **구현됨 (2026-06-24)**. 식별자-별칭 프롬프트
+   (원칙 4(a))는 약물(lurasidone↔DB08815)엔 성공하나 "serotonin P34969" 류 *이름 옆
+   bare ID*, "thymidylate synthase (P04818)" 의 괄호 ID 를 별도 노드로 남겼다. 적재
+   시 `extract_identifier_aliases(name)`(identity.py)로 이름에서 *구조적 식별자* 를
+   결정적으로 뽑아 alias 로 보강 → 그 ID 로 검색·병합 가능. **고정밀 게이트**(글자 +
+   숫자 3개 이상)로 generic 코드(10-K/8-K/B12 등)를 배제해 over-merge 를 막는다.
+   `_upsert_entities` 루프 최상단에서 적용(매칭 Step 2 + 저장 alias 둘 다 반영).
+   end-to-end recall 효과는 재적재 측정 필요(시뮬레이션 예측 +2/7). 단위 6 테스트.
 3. **이웃/서브그래프 허브 인지 절단** — ✅ **구현됨 (2026-06-24)**.
    `expand_neighbors`/`expand_subgraph` 의 BFS 가 max_nodes 에서 잘릴 때, 이웃을
    `other_degree`(연결 수) 오름차순으로 처리해 *낮은 degree(구체적) 이웃을 먼저 채우고
