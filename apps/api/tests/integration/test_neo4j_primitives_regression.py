@@ -215,6 +215,43 @@ def test_find_shortest_paths_direct_edge_zero_hub_score(repo, seeded_chain):
     assert paths[0].hub_score == 0.0
 
 
+def test_expand_neighbors_truncation_keeps_specific_drops_hub(repo, seeded_hub):
+    """ADR-0017 방향 3 — max_nodes 절단 시 *낮은 degree(구체적) 이웃* 을 남기고
+    promiscuous 허브를 먼저 버린다.
+
+    진입점 A 의 1-hop 이웃은 둘: spec(degree 2) 과 hub(degree 10, decoy 8개 연결).
+    max_nodes=2(진입점 + 이웃 1) 이면 구체적 spec 이 남고 hub 가 잘려야 한다.
+    """
+    result = repo.expand_neighbors(
+        entry_id=seeded_hub["a"],
+        relation_types=None,
+        direction="both",
+        hops=1,
+        max_nodes=2,
+    )
+    node_ids = {n.id for n in result.nodes}
+    assert seeded_hub["a"] in node_ids  # 진입점은 항상 포함
+    assert seeded_hub["spec"] in node_ids, "구체적 이웃이 남아야 함"
+    assert seeded_hub["hub"] not in node_ids, "promiscuous 허브가 먼저 잘려야 함"
+    assert result.truncated is True
+
+
+def test_expand_neighbors_no_truncation_includes_both(repo, seeded_hub):
+    """절단이 없으면(max_nodes 충분) spec/hub 둘 다 포함 — 정렬이 *누락* 을 만들지
+    않음(순서만 바꿈)."""
+    result = repo.expand_neighbors(
+        entry_id=seeded_hub["a"],
+        relation_types=None,
+        direction="both",
+        hops=1,
+        max_nodes=100,
+    )
+    node_ids = {n.id for n in result.nodes}
+    assert seeded_hub["spec"] in node_ids
+    assert seeded_hub["hub"] in node_ids
+    assert result.truncated is False
+
+
 def _assert_edge_shape(edge):
     """이슈 #27 회귀 2 의 검증 포인트 — 모든 핵심 필드가 *원시 string* 으로
     채워지고, tuple 등의 자료형이 아니어야 한다."""
