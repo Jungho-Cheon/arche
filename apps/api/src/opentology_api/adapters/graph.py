@@ -1197,6 +1197,10 @@ class Neo4jGraphRepository(GraphRepository):
                     rel_types=relation_types,
                     use_rel_filter=bool(relation_types),
                 ).data()
+                # 허브 인지 절단 (ADR-0017 방향 3): max_nodes 초과 시 *낮은 degree
+                # (구체적) 이웃을 우선* 남긴다. degree 오름차순으로 처리해 절단이
+                # promiscuous 허브부터 버리도록. 같은 degree 내 순서는 안정.
+                rows = _order_rows_by_degree(rows)
                 next_frontier: list[str] = []
                 for r in rows:
                     edge = _record_to_edge(
@@ -1208,15 +1212,18 @@ class Neo4jGraphRepository(GraphRepository):
                         from_id=r["a_id"],
                         to_id=r["b_id"],
                     )
-                    if edge.id not in boundary_edges:
-                        boundary_edges[edge.id] = edge
                     other_node_data = r["other"]
                     other_id = other_node_data["id"]
                     if other_id in visited_nodes:
+                        # 이미 방문한 노드로의 엣지는 경계 엣지로 유지(절단과 무관).
+                        if edge.id not in boundary_edges:
+                            boundary_edges[edge.id] = edge
                         continue
                     if len(visited_nodes) >= max_nodes:
                         truncated = True
-                        break
+                        continue
+                    if edge.id not in boundary_edges:
+                        boundary_edges[edge.id] = edge
                     visited_nodes[other_id] = _node_to_response(other_node_data)
                     next_frontier.append(other_id)
                 if truncated:
@@ -1271,6 +1278,8 @@ class Neo4jGraphRepository(GraphRepository):
                     rel_types=relation_types,
                     use_rel_filter=bool(relation_types),
                 ).data()
+                # 허브 인지 절단 (ADR-0017 방향 3) — expand_neighbors 와 동일 원리.
+                rows = _order_rows_by_degree(rows)
                 next_frontier: list[str] = []
                 for r in rows:
                     edge = _record_to_edge(
@@ -1282,15 +1291,17 @@ class Neo4jGraphRepository(GraphRepository):
                         from_id=r["a_id"],
                         to_id=r["b_id"],
                     )
-                    if edge.id not in boundary_edges:
-                        boundary_edges[edge.id] = edge
                     other_data = r["other"]
                     other_id = other_data["id"]
                     if other_id in visited_nodes:
+                        if edge.id not in boundary_edges:
+                            boundary_edges[edge.id] = edge
                         continue
                     if len(visited_nodes) >= max_nodes:
                         truncated = True
-                        break
+                        continue
+                    if edge.id not in boundary_edges:
+                        boundary_edges[edge.id] = edge
                     visited_nodes[other_id] = _node_to_response(other_data)
                     next_frontier.append(other_id)
                 if truncated:
@@ -1521,6 +1532,17 @@ def _extract_source_refs(node: Any) -> list[SourceRef]:
     return refs
 
 
+def _order_rows_by_degree(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """이웃 확장 row 들을 `other_degree` 오름차순으로 안정 정렬.
+
+    WHY (ADR-0017 방향 3): BFS 가 max_nodes 에서 잘릴 때, *연결 수가 적은 구체적
+    이웃* 을 먼저 채우고 promiscuous 허브(수많은 노드와 연결된 노드)를 나중에 — 즉
+    절단 시 *허브부터 버린다*. find_path 의 hub_score 와 같은 원리를 이웃/서브그래프
+    확장에 적용. degree 없는 row(레거시 쿼리 호환)는 0 으로 본다(맨 앞).
+    """
+    return sorted(rows, key=lambda r: r.get("other_degree") or 0)
+
+
 def _build_neighbor_expand_cypher(direction: str) -> str:
     """frontier 노드 집합에서 한 hop 을 확장하는 cypher.
 
@@ -1548,13 +1570,19 @@ def _build_neighbor_expand_cypher(direction: str) -> str:
         "r.created_at AS rel_created_at, r.updated_at AS rel_updated_at, "
         "r.source_paths AS rel_source_paths"
     )
+    # other_degree: 확장 대상 노드의 연결 수 — max_nodes 절단 시 *낮은 degree
+    # (구체적) 이웃을 우선* 남기고 promiscuous 허브를 먼저 버리기 위한 정렬 키
+    # (ADR-0017 방향 3, hub_score 와 동일 원리). 진입점은 절단 대상이 아니므로
+    # 여기엔 등장하지 않는다(끝점 면제와 정합).
+    deg_out = f"COUNT {{ (b)-[:{RELATION_TYPE_LABEL_DEFAULT}]-() }} AS other_degree"
+    deg_in = f"COUNT {{ (a)-[:{RELATION_TYPE_LABEL_DEFAULT}]-() }} AS other_degree"
     if direction == "outgoing":
         pattern = f"(a:{ENTITY_LABEL})-[r:{RELATION_TYPE_LABEL_DEFAULT}]->(b:{ENTITY_LABEL})"
-        select = f"a.id AS a_id, b.id AS b_id, b AS other, {rel_select}"
+        select = f"a.id AS a_id, b.id AS b_id, b AS other, {rel_select}, {deg_out}"
         where_frontier = "a.id IN $frontier"
     elif direction == "incoming":
         pattern = f"(a:{ENTITY_LABEL})-[r:{RELATION_TYPE_LABEL_DEFAULT}]->(b:{ENTITY_LABEL})"
-        select = f"a.id AS a_id, b.id AS b_id, a AS other, {rel_select}"
+        select = f"a.id AS a_id, b.id AS b_id, a AS other, {rel_select}, {deg_in}"
         where_frontier = "b.id IN $frontier"
     else:
         # both — Cypher 의 한 쿼리에서 양방향을 한 번에 받으려면 UNION 또는
@@ -1563,12 +1591,12 @@ def _build_neighbor_expand_cypher(direction: str) -> str:
             f"MATCH (a:{ENTITY_LABEL})-[r:{RELATION_TYPE_LABEL_DEFAULT}]->(b:{ENTITY_LABEL}) "
             "WHERE a.id IN $frontier "
             "AND ($use_rel_filter = false OR r.type IN $rel_types) "
-            f"RETURN a.id AS a_id, b.id AS b_id, b AS other, {rel_select} "
+            f"RETURN a.id AS a_id, b.id AS b_id, b AS other, {rel_select}, {deg_out} "
             "UNION "
             f"MATCH (a:{ENTITY_LABEL})-[r:{RELATION_TYPE_LABEL_DEFAULT}]->(b:{ENTITY_LABEL}) "
             "WHERE b.id IN $frontier "
             "AND ($use_rel_filter = false OR r.type IN $rel_types) "
-            f"RETURN a.id AS a_id, b.id AS b_id, a AS other, {rel_select}"
+            f"RETURN a.id AS a_id, b.id AS b_id, a AS other, {rel_select}, {deg_in}"
         )
     return (
         f"MATCH {pattern} "

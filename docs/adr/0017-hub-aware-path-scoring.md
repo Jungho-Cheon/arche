@@ -238,9 +238,13 @@ abstract 를 신선한 neo4j 에 전량 재적재(약 2.5 시간)하고 베이�
    (명시적 "name (ID)" 짝이 없어 LLM 이 안 묶음). 결정적 후처리(근접·동일문장 ID 를
    이름 엔티티의 alias 로)로 보완. bare ID 끼리의 문서 간 병합은 이미 동작하므로 범위
    는 name↔ID 만.
-3. **이웃/서브그래프 허브 인지 절단** — `get_neighbors`/`get_subgraph` BFS 절단을
-   degree 낮은(구체적) 이웃 우선으로. 에이전트 주력 도구라 효과 클 것. hub_score 와
-   동일 원리(끝점/진입점 제외).
+3. **이웃/서브그래프 허브 인지 절단** — ✅ **구현됨 (2026-06-24)**.
+   `expand_neighbors`/`expand_subgraph` 의 BFS 가 max_nodes 에서 잘릴 때, 이웃을
+   `other_degree`(연결 수) 오름차순으로 처리해 *낮은 degree(구체적) 이웃을 먼저 채우고
+   promiscuous 허브를 먼저 버린다*. find_path 의 hub_score 와 같은 원리를 에이전트
+   주력 도구로 확장(끝점/진입점은 절단 대상이 아니라 면제). 절단이 없을 땐 순서만 바뀌고
+   *누락은 없다*. 효과는 *조밀/대형 그래프에서 큼*(MedHop 처럼 작은 그래프에선 절단이
+   드물게 발동). `_order_rows_by_degree` + 확장 cypher 에 degree 서브쿼리.
 4. **추출 버전을 short-circuit 게이트에 포함 (코드-델타)** — ✅ **구현됨
    (2026-06-23)**. 옛 short-circuit 은 *파일 내용* 해시라 프롬프트/추출 로직을 바꿔도
    "변경 없음" 으로 옛 추출을 유지했다(그래서 이번 검증엔 신선 그래프 full 재적재가
