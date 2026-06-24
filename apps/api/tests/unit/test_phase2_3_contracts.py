@@ -11,6 +11,7 @@ from __future__ import annotations
 
 from fastapi.testclient import TestClient
 
+from opentology_api.api.admin_tasks import IngestTaskRegistry
 from opentology_api.api.deps import (
     embedding_provider_dep,
     graph_repo_dep,
@@ -18,7 +19,6 @@ from opentology_api.api.deps import (
     task_registry_dep,
 )
 from opentology_api.api.error_codes import ERROR_HTTP_STATUS, ErrorCode
-from opentology_api.api.admin_tasks import IngestTaskRegistry
 from opentology_api.main import create_app
 from opentology_api.test_support import FakeEmbedder, FakeGraph
 

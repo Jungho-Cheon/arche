@@ -16,7 +16,6 @@ from pathlib import Path
 
 from ..domain.errors import InvalidInputError
 
-
 # WHY 확장자 → MIME 매핑 (magic-number 가 아닌): 디스크 파일은 사용자가 의도적으로
 # 둔 입력이라 확장자가 신뢰할 만하다. PDF 안의 임베디드 이미지처럼 *PDF 내부
 # resource 이름* 이 아니라 *사용자의 파일 시스템 이름* 이므로.

@@ -7,10 +7,12 @@ from contextlib import asynccontextmanager
 
 from dotenv import load_dotenv
 from fastapi import FastAPI, Request
+from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
 from .api.admin_tasks import IngestTaskRegistry
 from .api.deps import build_default_components
+from .api.error_codes import ErrorCode
 from .api.routers import (
     admin_router,
     entities_router,
@@ -19,12 +21,9 @@ from .api.routers import (
     schema_router,
     subgraph_router,
 )
-from .api.error_codes import ErrorCode
 from .api.schemas import ErrorBody, ErrorEnvelope
 from .config import get_settings
 from .domain.errors import OpentologyError
-from fastapi.exceptions import RequestValidationError
-
 
 logger = logging.getLogger("opentology_api")
 

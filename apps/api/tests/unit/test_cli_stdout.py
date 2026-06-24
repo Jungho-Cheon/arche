@@ -6,10 +6,6 @@
 
 from __future__ import annotations
 
-import io
-
-import typer
-
 from opentology_api.cli import _format_progress_line, _print_summary
 from opentology_api.domain.ingest import FileProgressEvent, IngestResult
 

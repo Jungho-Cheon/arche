@@ -53,7 +53,6 @@ from .schemas import (
     MatchScores,
 )
 
-
 logger = logging.getLogger(__name__)
 
 

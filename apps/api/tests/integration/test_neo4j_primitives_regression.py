@@ -16,10 +16,9 @@ unit 의 FakeGraph 와 기존 testcontainers (`find_by_keywords_scored`, identit
 from __future__ import annotations
 
 import os
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 import pytest
-
 
 docker_available = pytest.importorskip("testcontainers.neo4j")
 Neo4jContainer = docker_available.Neo4jContainer
@@ -60,7 +59,7 @@ def repo(settings):
 
 
 def _now() -> str:
-    return datetime.now(tz=timezone.utc).isoformat(timespec="seconds").replace(
+    return datetime.now(tz=UTC).isoformat(timespec="seconds").replace(
         "+00:00", "Z"
     )
 

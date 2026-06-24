@@ -17,7 +17,6 @@ from pathlib import Path
 
 from ..domain.models import ExtractedEntity, ExtractedGraph, ExtractedRelation
 
-
 logger = logging.getLogger(__name__)
 
 

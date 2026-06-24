@@ -171,7 +171,71 @@ RELATION_TYPE_LABEL_DEFAULT = "RELATES_TO"  # 폴백 — 추출 시 type 이 비
 EMITTED_IN = "EMITTED_IN"
 
 
-class GraphRepository(ABC):
+class VectorIndex(ABC):
+    """임베딩 ANN 검색 능력 (ADR-0018 능력별 포트).
+
+    WHY 그래프 순회와 분리: 모든 그래프 백엔드가 native 벡터 인덱스를 갖지는
+    않는다. 이 능력을 별도 포트로 두면 벡터 검색을 별도 store (외부 벡터 DB 등)
+    로 composition 할 여지가 생긴다. 현재 Neo4j 어댑터는 세 능력을 한 store 로
+    구현하지만, 도메인이 이 좁은 포트에 의존하면 미래의 백엔드 분리가 도메인
+    코드를 건드리지 않는다.
+    """
+
+    @abstractmethod
+    def vector_search(
+        self, *, embedding: list[float], top_k: int, type_: str
+    ) -> list[StoredEntity]:
+        """ANN top-k 후보를 *embedding 포함* 으로 반환. cosine 재계산은 도메인.
+
+        type 필터는 ANN 사전 필터가 가능하면 사전, 안 되면 사후 필터로 적용.
+        """
+
+    @abstractmethod
+    def find_entities_dense(
+        self,
+        *,
+        query_embedding: list[float],
+        matched_keyword: str,
+        limit: int,
+    ) -> list[DenseHit]:
+        """단일 query embedding 에 대한 ANN top-k 결과.
+
+        WHY keyword 단위로 호출: PRD 3 §3.4 의 `matched_keyword` 는 어느 input
+        keyword 가 노드를 surface 시켰는지 보고해야 한다. 라우터가 keyword 별로
+        본 메서드를 부르고 결과에 keyword 를 태깅한다 — fulltext 경로와 구조 동일.
+
+        raw_score = cosine similarity (0..1). Neo4j vector index 의 score 가
+        cosine 모드면 그대로 사용.
+        """
+
+
+class LexicalIndex(ABC):
+    """어휘 (fulltext) 검색 능력 (ADR-0018 능력별 포트).
+
+    WHY 별도 포트: 벡터와 마찬가지로 모든 백엔드가 native fulltext 인덱스를 갖지
+    않는다. 어휘 신호를 별도 store 로 뺄 수 있게 능력을 분리한다.
+    """
+
+    @abstractmethod
+    def find_by_keywords_scored(
+        self, *, keywords: list[str], limit_per_keyword: int
+    ) -> list[KeywordHit]:
+        """각 keyword 별로 fulltext 매칭 결과를 반환 (raw Lucene 점수 포함).
+
+        같은 노드가 여러 keyword 에서 매칭될 수 있으므로 union/dedup 은 호출자
+        책임 (PRD 3 §3.5).
+        """
+
+
+class GraphStore(ABC):
+    """순수 그래프 능력 — 노드/관계 생성·병합, N-hop 순회, k-shortest path,
+    스키마 통계, 적재 회차(IngestionRun) 기록·차분 (ADR-0018 능력별 포트).
+
+    연결 수명주기 (ensure_indexes / healthcheck / close) 도 store 가 소유한다.
+    벡터 ANN 과 어휘 fulltext 는 별도 포트 (`VectorIndex` / `LexicalIndex`) 로
+    분리했다 — 백엔드가 그 둘을 native 로 갖지 않을 수 있기 때문.
+    """
+
     @abstractmethod
     def ensure_indexes(self) -> None: ...
 
@@ -185,15 +249,6 @@ class GraphRepository(ABC):
         self, *, normalized: str, type_: str
     ) -> StoredEntity | None:
         """`normalized_name == normalized AND type == type_` 정확 일치."""
-
-    @abstractmethod
-    def vector_search(
-        self, *, embedding: list[float], top_k: int, type_: str
-    ) -> list[StoredEntity]:
-        """ANN top-k 후보를 *embedding 포함* 으로 반환. cosine 재계산은 도메인.
-
-        type 필터는 ANN 사전 필터가 가능하면 사전, 안 되면 사후 필터로 적용.
-        """
 
     @abstractmethod
     def create_entity(self, *, entity: StoredEntity) -> None:
@@ -284,36 +339,6 @@ class GraphRepository(ABC):
         반환값 — "deleted" 또는 "trimmed".
         """
 
-    # ----- 검색 (#6 와 무관, 본 PR 에서는 PR #16 코드 그대로 보존) -----
-
-    @abstractmethod
-    def find_by_keywords_scored(
-        self, *, keywords: list[str], limit_per_keyword: int
-    ) -> list[KeywordHit]:
-        """각 keyword 별로 fulltext 매칭 결과를 반환 (raw Lucene 점수 포함).
-
-        같은 노드가 여러 keyword 에서 매칭될 수 있으므로 union/dedup 은 호출자
-        책임 (PRD 3 §3.5).
-        """
-
-    @abstractmethod
-    def find_entities_dense(
-        self,
-        *,
-        query_embedding: list[float],
-        matched_keyword: str,
-        limit: int,
-    ) -> list[DenseHit]:
-        """단일 query embedding 에 대한 ANN top-k 결과.
-
-        WHY keyword 단위로 호출: PRD 3 §3.4 의 `matched_keyword` 는 어느 input
-        keyword 가 노드를 surface 시켰는지 보고해야 한다. 라우터가 keyword 별로
-        본 메서드를 부르고 결과에 keyword 를 태깅한다 — fulltext 경로와 구조 동일.
-
-        raw_score = cosine similarity (0..1). Neo4j vector index 의 score 가
-        cosine 모드면 그대로 사용.
-        """
-
     # ----- 5 primitive read 보조 (PRD 3 §2-7) -----
 
     @abstractmethod
@@ -395,6 +420,19 @@ class GraphRepository(ABC):
 
     @abstractmethod
     def close(self) -> None: ...
+
+
+class GraphRepository(GraphStore, VectorIndex, LexicalIndex):
+    """세 능력 (그래프 순회 + 벡터 ANN + 어휘 fulltext) 을 한 번에 노출하는 합성
+    포트 (ADR-0018).
+
+    WHY 합성 포트 유지: 도메인/서비스는 당장 이 합성 포트에 의존한다 — 단일
+    store (Neo4j) 가 셋을 모두 제공하는 게 현재 현실 (ADR-0004 단일 store). 미래에
+    그래프와 벡터/어휘를 다른 store 로 쪼개려면, 각 능력 포트를 따로 구현한 뒤
+    얇은 합성 어댑터로 묶기만 하면 도메인 코드는 바뀌지 않는다. 즉 능력 분리는
+    *백엔드 교체의 이음매* 를 코드로 박아 두되, 단일 store 의 단순함은 그대로
+    누린다.
+    """
 
 
 class Neo4jGraphRepository(GraphRepository):

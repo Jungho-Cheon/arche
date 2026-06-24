@@ -66,7 +66,6 @@ from .schemas import (
     NamespaceSummary,
 )
 
-
 logger = logging.getLogger(__name__)
 
 health_router = APIRouter(tags=["health"])
@@ -157,7 +156,7 @@ def get_neighbors(
     """
     if body.id is not None and body.id != entity_id:
         raise InvalidInputError(
-            f"path entity_id and body id mismatch",
+            "path entity_id and body id mismatch",
             details={"path_entity_id": entity_id, "body_id": body.id},
         )
     payload = services.get_neighbors(entity_id=entity_id, body=body, graph=graph)

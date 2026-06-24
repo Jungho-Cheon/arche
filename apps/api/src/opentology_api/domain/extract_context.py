@@ -38,7 +38,6 @@ from dataclasses import dataclass, field
 from ..adapters.embedding import EmbeddingProvider
 from ..adapters.graph import GraphRepository
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -290,10 +289,10 @@ class ExtractContextBuilder:
         ranked = sorted(by_id.values(), key=lambda v: -v[0])[: self._top_k]
         return [
             KnownEntity(
-                id=getattr(node, "id"),
-                name=getattr(node, "name"),
-                type=getattr(node, "type"),
-                aliases=list(getattr(node, "aliases") or []),
+                id=node.id,
+                name=node.name,
+                type=node.type,
+                aliases=list(node.aliases or []),
                 description_one_line=_one_line(
                     getattr(node, "description", None) or ""
                 ),

@@ -7,8 +7,6 @@ DB 의 실제 BFS / k-shortest paths 동작은 integration / live 테스트에�
 
 from __future__ import annotations
 
-from typing import Any
-
 from fastapi.testclient import TestClient
 
 from opentology_api.adapters.embedding import EmbeddingProvider
@@ -37,7 +35,6 @@ from opentology_api.domain.models import (
     now_rfc3339,
 )
 from opentology_api.main import create_app
-
 
 # ---------- 공통 stub ----------
 

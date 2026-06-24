@@ -17,15 +17,14 @@ from opentology_api.api.deps import (
     graph_repo_dep,
     llm_provider_dep,
 )
-from opentology_api.main import create_app
-
-from .test_ingest_service import FakeEmbedder, FakeGraph, FakeLLM
-from .test_routers import StubGraph, StubLLM, StubEmbedder
 from opentology_api.domain.models import (
     ExtractedEntity,
     ExtractedGraph,
     ExtractedRelation,
 )
+from opentology_api.main import create_app
+
+from .test_ingest_service import FakeEmbedder, FakeGraph, FakeLLM
 
 
 def _client(tmp_path: Path) -> tuple[TestClient, FakeGraph]:

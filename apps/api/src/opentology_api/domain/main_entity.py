@@ -15,14 +15,12 @@
 
 from __future__ import annotations
 
-import json
 import logging
 from dataclasses import dataclass
 from typing import Any
 
 from ..adapters.llm import LLMProvider
 from ..domain.errors import DependencyUnavailableError
-
 
 logger = logging.getLogger(__name__)
 

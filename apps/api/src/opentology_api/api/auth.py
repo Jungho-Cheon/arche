@@ -14,7 +14,6 @@ from dataclasses import dataclass
 
 from fastapi import HTTPException, Request
 
-
 logger = logging.getLogger(__name__)
 
 

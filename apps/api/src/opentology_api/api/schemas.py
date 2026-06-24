@@ -8,7 +8,6 @@ from pydantic import BaseModel, ConfigDict, Field
 
 from ..domain.models import Node
 
-
 T = TypeVar("T")
 
 

@@ -16,7 +16,6 @@ from __future__ import annotations
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-
 # WHY gpt-4.1: PRD 2 §4 의 extraction LLM. eval/ 의 DEFAULT_LLM_MODEL 과 동일.
 # 같은 모델을 ingest extraction + (post-MVP) answer generation 양쪽에 쓰면
 # 도메인 어휘 인식의 일관성이 유지된다.
@@ -95,9 +94,3 @@ def get_settings() -> Settings:
     if _settings is None:
         _settings = Settings()
     return _settings
-
-
-def reset_settings_for_test() -> None:
-    """테스트 격리용 — 환경 변수 패치 후 다시 로드하고 싶을 때."""
-    global _settings
-    _settings = None

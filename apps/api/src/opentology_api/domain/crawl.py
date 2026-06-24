@@ -22,7 +22,6 @@ from pathlib import Path
 
 import pathspec
 
-
 logger = logging.getLogger(__name__)
 
 

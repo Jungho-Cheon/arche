@@ -4,8 +4,6 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-import pytest
-
 from opentology_api.adapters.llm import GenericCompleteResult, LLMProvider
 from opentology_api.domain.errors import DependencyUnavailableError
 from opentology_api.domain.main_entity import (

@@ -28,6 +28,7 @@ dev = [
     "pytest-mock>=3.12",
     "testcontainers[neo4j]>=4.7.0",
     "respx>=0.21.0",
+    "ruff>=0.8.0",
 ]
 
 [project.scripts]
@@ -39,6 +40,31 @@ build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/opentology_api"]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+
+[tool.ruff.lint]
+# E/F = pyflakes + pycodestyle, I = isort, B = bugbear, UP = pyupgrade,
+# SIM = simplify. 아래 ignore 는 *의도된 관용구* 또는 *대량 churn 회피* 다.
+select = ["E", "F", "I", "B", "UP", "SIM"]
+ignore = [
+    "B008",   # FastAPI Depends()/Field() 를 기본인자에 두는 건 관용구 (의도).
+    "E501",   # 긴 한국어 WHY 주석 다수 — 줄길이 강제는 주석을 망친다.
+    "SIM117", # 중첩 with 합치기 — 가독성 트레이드오프라 강제 안 함.
+    "SIM108", # if/else → 삼항 강제 안 함 (분기 가독성 우선).
+    "SIM102", # 중첩 if 합치기 강제 안 함.
+    "SIM105", # try/except/pass → contextlib.suppress 강제 안 함.
+    "SIM103", # needless-bool 강제 안 함.
+    "UP031",  # printf 포맷 — 로그 lazy % 포맷과 충돌해 보류.
+    "UP042",  # str enum (StrEnum) 전환 — 별도 패스로.
+    "UP046",  # PEP695 generic class 전환 — 별도 패스로.
+]
+
+[tool.ruff.lint.per-file-ignores]
+# 테스트 더블/스크립트는 bugbear 완화 (의도된 단순 구조 다수).
+"tests/**" = ["B"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

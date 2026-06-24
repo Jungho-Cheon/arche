@@ -15,7 +15,6 @@ from fastapi.testclient import TestClient
 
 from opentology_api.adapters.embedding import EmbeddingProvider
 from opentology_api.adapters.graph import (
-    DenseHit,
     EntityTypeStat,
     EntityWithCounts,
     GraphRepository,

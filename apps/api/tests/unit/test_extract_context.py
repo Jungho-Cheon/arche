@@ -6,17 +6,12 @@ FakeGraph stub 으로 KNOWN_ENTITIES 후보 선정 + schema summary + context bl
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
-
 from opentology_api.adapters.graph import (
     EntityTypeStat,
-    GraphRepository,
     KeywordHit,
     RelationTypeStat,
 )
 from opentology_api.domain.extract_context import (
-    DEFAULT_KEYWORDS_PER_CHUNK,
-    DEFAULT_KNOWN_ENTITIES_TOP_K,
     ExtractContext,
     ExtractContextBuilder,
     KnownEntity,
