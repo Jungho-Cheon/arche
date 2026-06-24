@@ -11,6 +11,7 @@ from __future__ import annotations
 import math
 import re
 import unicodedata
+from collections.abc import Iterable
 from dataclasses import dataclass
 from typing import Any
 
@@ -172,6 +173,62 @@ def extract_identifier_aliases(name: str) -> list[str]:
     for tok in _ID_SPLIT.split(re.sub(r"[()]", " ", name)):
         _add(tok)
     return out
+
+
+# ADR-0017 방향 6 — 이미 망가진(over-merged) 그래프의 *탐지*. 예방(stoplist)이 앞으로의
+# 적재는 막지만, 옛 코드로 만든 기존 그래프엔 불량 노드가 남는다(예: 별칭 95개 deg-339
+# 노드). 정적·결정적 신호로 플래그한다 — (1) 별칭 수 이상치, (2) 서로 다른 구조적 식별자
+# 다수 보유(= 별개 엔티티 병합 흔적), (3) deixis/stoplist 별칭이 매칭 색인에 새어든 흔적.
+# *판단(의미)이 아니라 세기*라 LLM 불필요. 교정은 운영자 검토 후 출처 기준 분리 또는
+# alias 정리(별도)로.
+@dataclass(frozen=True)
+class OverMergeFlag:
+    entity_id: str
+    name: str
+    reasons: list[str]
+
+
+def detect_overmerged_entities(
+    entities: Iterable[tuple[str, str, list[str] | None]],
+    *,
+    max_aliases: int = 30,
+    max_distinct_ids: int = 2,
+) -> list[OverMergeFlag]:
+    """과잉 병합 의심 노드를 결정적으로 플래그.
+
+    Args:
+        entities: (entity_id, name, aliases) 튜플들.
+        max_aliases: 별칭 수가 이 값을 *초과* 하면 이상치로 본다.
+        max_distinct_ids: name+aliases 가 *서로 다른* 구조적 식별자를 이 값보다
+            많이 가지면(즉 ≥ max_distinct_ids+1) 별개 엔티티 병합으로 본다.
+
+    Returns:
+        플래그된 노드 목록 (이유 포함). 빈 목록이면 깨끗.
+    """
+    flags: list[OverMergeFlag] = []
+    for entity_id, name, aliases in entities:
+        aliases = aliases or []
+        reasons: list[str] = []
+
+        if len(aliases) > max_aliases:
+            reasons.append(f"alias_count={len(aliases)}>{max_aliases}")
+
+        distinct_ids: set[str] = set()
+        for surface in (name, *aliases):
+            for tok in extract_identifier_aliases(surface or ""):
+                distinct_ids.add(tok.lower())
+        if len(distinct_ids) > max_distinct_ids:
+            reasons.append(f"distinct_identifiers={len(distinct_ids)}")
+
+        deixis = [
+            a for a in aliases if _is_non_identifying_normalized(normalize(a))
+        ]
+        if deixis:
+            reasons.append(f"non_identifying_aliases={len(deixis)}")
+
+        if reasons:
+            flags.append(OverMergeFlag(entity_id=entity_id, name=name, reasons=reasons))
+    return flags
 
 
 def _is_non_identifying_normalized(normalized: str) -> bool:

@@ -1113,6 +1113,29 @@ class Neo4jGraphRepository(GraphRepository):
             ).data()
         return {r["ns"]: int(r["c"]) for r in rows}
 
+    def find_overmerged_entities(
+        self, *, max_aliases: int = 30, max_distinct_ids: int = 2
+    ) -> list:
+        """ADR-0017 방향 6 — 기존 그래프에서 과잉 병합 의심 노드를 탐지.
+
+        그래프의 모든 Entity 의 (id, name, aliases) 를 읽어 결정적 detector
+        (`detect_overmerged_entities`) 를 적용. 운영자 검토용 진단 메서드라 ABC 가
+        아닌 구현체에만 둔다(서비스 read 경로 아님). 반환: OverMergeFlag 리스트.
+        """
+        from ..domain.identity import detect_overmerged_entities
+
+        with self._driver.session() as s:
+            rows = s.run(
+                f"MATCH (e:{ENTITY_LABEL}) "
+                "RETURN e.id AS id, e.name AS name, "
+                "coalesce(e.aliases, []) AS aliases"
+            ).data()
+        return detect_overmerged_entities(
+            ((r["id"], r["name"] or "", list(r["aliases"] or [])) for r in rows),
+            max_aliases=max_aliases,
+            max_distinct_ids=max_distinct_ids,
+        )
+
     def get_stored_entity(self, *, entity_id: str) -> StoredEntity | None:
         with self._driver.session() as s:
             rec = s.run(
