@@ -45,6 +45,7 @@ from .identity import (
     NON_IDENTIFYING_ALIAS_STOPLIST,
     EntityMatcher,
     EntityMerger,
+    extract_identifier_aliases,
     normalize,
 )
 from .models import (
@@ -66,7 +67,9 @@ logger = logging.getLogger(__name__)
 # stoplist 등 추출 *그래프 출력* 에 영향을 주지만 프롬프트 문자열엔 안 잡히는 변경을
 # 가리킨다. 그런 변경을 내면 이 정수를 +1 한다 → 같은 파일도 재적재되어 새 로직이
 # 반영된다. (프롬프트/스키마/모델 변경은 자동 지문이 잡으므로 여기 손댈 필요 없음.)
-INGEST_PIPELINE_VERSION = 1
+# v2 (2026-06-24): ADR-0017 방향 2 — 식별자-별칭 후처리 추가. 추출 출력(별칭/병합)이
+# 달라지므로 +1 하여 같은 파일도 새 로직으로 재적재되게 한다.
+INGEST_PIPELINE_VERSION = 2
 
 
 TEXT_EXTS: frozenset[str] = frozenset({".txt", ".md"})
@@ -878,6 +881,17 @@ class IngestService:
         now = now_rfc3339()
 
         for e_new in extracted.entities:
+            # ADR-0017 방향 2 — 이름에서 구조적 식별자를 뽑아 alias 로 보강.
+            # 매칭(Step 2) + 저장 alias 둘 다 이 enriched alias 를 보게 하려고
+            # 루프 최상단에서 적용. 식별자로 검색·병합이 가능해진다.
+            id_aliases = extract_identifier_aliases(e_new.name)
+            if id_aliases:
+                merged_aliases = list(e_new.aliases or [])
+                for a in id_aliases:
+                    if a not in merged_aliases:
+                        merged_aliases.append(a)
+                e_new = replace(e_new, aliases=merged_aliases)
+
             # ADR-0009 D2 — LLM 이 matched_existing_id 를 명시했으면 Step 1-3
             # 매처를 *skip* 하고 직접 merge. id 가 실제로 존재하는지 검증해
             # *환각* (없는 id) 케이스는 fallback.
