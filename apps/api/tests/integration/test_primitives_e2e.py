@@ -13,17 +13,6 @@ from __future__ import annotations
 
 from fastapi.testclient import TestClient
 
-from opentology_api.adapters.embedding import EmbeddingProvider
-from opentology_api.adapters.graph import (
-    EntityTypeStat,
-    EntityWithCounts,
-    GraphRepository,
-    KeywordHit,
-    NeighborhoodResult,
-    PathResult,
-    RelationTypeStat,
-)
-from opentology_api.adapters.llm import LLMProvider
 from opentology_api.api.deps import (
     embedding_provider_dep,
     graph_repo_dep,
@@ -35,6 +24,17 @@ from opentology_api.domain.models import (
     Node,
     SourceRef,
     now_rfc3339,
+)
+from opentology_api.domain.ports import (
+    EmbeddingProvider,
+    EntityTypeStat,
+    EntityWithCounts,
+    GraphRepository,
+    KeywordHit,
+    LLMProvider,
+    NeighborhoodResult,
+    PathResult,
+    RelationTypeStat,
 )
 from opentology_api.main import create_app
 

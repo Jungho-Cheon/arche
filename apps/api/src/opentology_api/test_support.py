@@ -11,7 +11,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
-from .adapters.graph import (
+from opentology_api.domain.ports import (
     DenseHit,
     EntityTypeStat,
     EntityWithCounts,
@@ -21,6 +21,7 @@ from .adapters.graph import (
     PathResult,
     RelationTypeStat,
 )
+
 from .domain.models import Edge, Node, SourceRef, now_rfc3339
 
 

@@ -133,14 +133,18 @@ agnostic 하다 (특정 프레임워크 결합 없음). 후속 web-ui 도 *Pytho
 
 ## 이번에 한 것 / 후속
 
-이번 PR (행동 보존, 단위 242 + 통합 31 그린):
+1차 PR (#62, 행동 보존, 단위 242 + 통합 31 그린):
 - D2 — 능력별 포트 in-place 분리 + 합성 포트.
 - D3 — 추출 계약을 `domain/extraction_contract.py` 로 이동 (추출 지문 바이트
   동일 검증 → 기존 적재분 재추출 없음).
 - 죽은 코드 제거 (`reset_settings_for_test`) + ruff 린트 영구 설정.
 
+2차 PR (포트 재배치, 행동 보존, 단위 242 + 통합 31 그린):
+- 포트 ABC + 입출력 DTO 를 `domain/ports.py` 로 재배치 → **도메인이 어댑터를
+  import 하지 않는다** (import 방향 역전 완료). `LLMProvider` ↔ `ExtractContext`
+  순환은 `TYPE_CHECKING` 으로 끊음. 추출 지문 바이트 동일 재확인.
+
 후속 (별도 PR, 대부분 post-MVP):
-- 포트 ABC 를 `domain/ports.py` 로 재배치해 도메인→어댑터 import 역전 완전 제거.
 - 능력 포트를 다른 store 로 분리하는 합성 어댑터 (두 번째 백엔드가 생길 때).
 - `apps/docs` (Nextra) / `apps/web-ui` / `packages/api-client` 스캐폴딩.
 - 두 번째 LLM provider 어댑터 (D3 의 중립 계약 소비 입증).

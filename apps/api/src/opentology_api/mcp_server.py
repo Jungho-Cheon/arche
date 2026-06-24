@@ -30,8 +30,8 @@ import mcp.types as mcp_types
 from mcp.server.lowlevel import Server
 from pydantic import BaseModel, ValidationError
 
-from .adapters.embedding import EmbeddingProvider
-from .adapters.graph import GraphRepository
+from opentology_api.domain.ports import EmbeddingProvider, GraphRepository
+
 from .api import services
 from .api.responses import (
     FindPathRequest,

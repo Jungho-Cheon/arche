@@ -48,11 +48,11 @@ ADR (`docs/adr/`) 에 있고, 여기서는 *지금 코드가 어떻게 생겼는
 - **계약 경계** — 소비자는 REST/MCP 계약만 본다. Python 내부는 안 본다. 그래서
   어느 에이전트든(Agent-agnostic) 붙을 수 있다.
 
-> 현재 알려진 잔여 smell: 포트 ABC 가 `adapters/` 에 정의돼 있어 domain 이
-> `from ..adapters.graph import GraphRepository` 로 *어댑터 모듈* 을 import 한다.
-> 포트를 `domain/ports.py` 로 옮기면 import 방향이 완전히 역전되지만,
-> `LLMProvider` 포트 ↔ `ExtractContext` 의 순환 import 를 함께 풀어야 해 별도
-> PR 로 남겨둔다 (ADR-0018 후속).
+> 포트 위치: 모든 포트 ABC + 포트가 주고받는 DTO 는 `domain/ports.py` 에 있다.
+> 도메인이 자기 포트를 소유하므로 **도메인은 어댑터를 import 하지 않는다** (import
+> 방향이 바깥→안 으로 흐른다). `LLMProvider` 포트 ↔ `ExtractContext` 순환은
+> `ExtractContext` 를 `TYPE_CHECKING` 으로 미뤄 끊었다 (`from __future__ import
+> annotations` 로 힌트가 문자열이라 런타임 평가 없음).
 
 ---
 
@@ -75,6 +75,7 @@ ADR (`docs/adr/`) 에 있고, 여기서는 *지금 코드가 어떻게 생겼는
 |---|---|
 | `domain/ingest.py` | **적재 파이프라인** — 파일 읽기 → hash short-circuit → 청크 분할 → LLM 추출 → 4단계 동일성 매칭 → 병합/생성 → 관계 upsert → 이전 회차와 차분. |
 | `domain/identity.py` | 엔티티 동일성 — `EntityMatcher` (4단계), `EntityMerger`, 식별자-별칭 추출, 과잉병합 탐지 (ADR-0017), stoplist/deixis 가드. |
+| `domain/ports.py` | **포트 — 코어가 외부에 요구하는 추상 인터페이스 + 입출력 DTO.** `GraphStore`/`VectorIndex`/`LexicalIndex` + 합성 `GraphRepository`, `LLMProvider`, `EmbeddingProvider`, 그리고 이들이 주고받는 DTO(`KeywordHit`/`NeighborhoodResult`/`PathResult` 등). 도메인이 자기 포트를 소유 (ADR-0018). |
 | `domain/extraction_contract.py` | **provider-중립 추출 계약** — `EXTRACTION_SYSTEM_PROMPT` + 엔티티/관계 JSON 스키마. "무엇을 어떻게 추출" (ADR-0018 D3). |
 | `domain/extract_context.py` | 추출 시 동봉하는 컨텍스트 블록 (DOC_CONTEXT/KNOWN_ENTITIES/SCHEMA — ADR-0009). |
 | `domain/main_entity.py` | 문서당 1회, 자기지칭("당사")을 풀 주 엔티티 추출 (2nd pass). |
@@ -85,9 +86,9 @@ ADR (`docs/adr/`) 에 있고, 여기서는 *지금 코드가 어떻게 생겼는
 ### adapters/ — 외부 기술 구현
 | 파일 | 책임 |
 |---|---|
-| `adapters/graph.py` | 능력별 포트 ABC (`GraphStore`/`VectorIndex`/`LexicalIndex` + 합성 `GraphRepository`) + 구현 `Neo4jGraphRepository`. |
-| `adapters/llm.py` | `LLMProvider` 포트 + `OpenAILLMProvider`. 중립 계약을 OpenAI `response_format` 봉투로 번역. |
-| `adapters/embedding.py` | `EmbeddingProvider` 포트 + `OpenAIEmbeddingProvider`. |
+| `adapters/graph.py` | 구현 `Neo4jGraphRepository` (포트는 `domain/ports.py` 에서 import). Neo4j Cypher + 인덱스. |
+| `adapters/llm.py` | `OpenAILLMProvider` (포트 import). 중립 계약을 OpenAI `response_format` 봉투로 번역. |
+| `adapters/embedding.py` | `OpenAIEmbeddingProvider` (포트 import). |
 | `adapters/pdf.py` / `adapters/image_loader.py` | PDF/이미지 로딩. |
 | `adapters/extract_cache.py` | 청크별 추출 캐시 (ADR-0010). |
 

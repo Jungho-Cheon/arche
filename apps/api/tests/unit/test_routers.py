@@ -4,16 +4,6 @@ from __future__ import annotations
 
 from fastapi.testclient import TestClient
 
-from opentology_api.adapters.embedding import EmbeddingProvider
-from opentology_api.adapters.graph import (
-    DenseHit,
-    EntityWithCounts,
-    GraphRepository,
-    KeywordHit,
-    NeighborhoodResult,
-    PathResult,
-)
-from opentology_api.adapters.llm import LLMProvider
 from opentology_api.api.deps import (
     embedding_provider_dep,
     graph_repo_dep,
@@ -24,6 +14,16 @@ from opentology_api.domain.models import (
     Node,
     SourceRef,
     now_rfc3339,
+)
+from opentology_api.domain.ports import (
+    DenseHit,
+    EmbeddingProvider,
+    EntityWithCounts,
+    GraphRepository,
+    KeywordHit,
+    LLMProvider,
+    NeighborhoodResult,
+    PathResult,
 )
 from opentology_api.main import create_app
 

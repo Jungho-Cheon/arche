@@ -6,11 +6,6 @@ FakeGraph stub 으로 KNOWN_ENTITIES 후보 선정 + schema summary + context bl
 
 from __future__ import annotations
 
-from opentology_api.adapters.graph import (
-    EntityTypeStat,
-    KeywordHit,
-    RelationTypeStat,
-)
 from opentology_api.domain.extract_context import (
     ExtractContext,
     ExtractContextBuilder,
@@ -20,6 +15,7 @@ from opentology_api.domain.extract_context import (
     render_context_block,
 )
 from opentology_api.domain.models import Node, SourceRef, now_rfc3339
+from opentology_api.domain.ports import EntityTypeStat, KeywordHit, RelationTypeStat
 from opentology_api.test_support import FakeGraph
 
 

@@ -35,8 +35,7 @@ import logging
 import re
 from dataclasses import dataclass, field
 
-from ..adapters.embedding import EmbeddingProvider
-from ..adapters.graph import GraphRepository
+from opentology_api.domain.ports import EmbeddingProvider, GraphRepository
 
 logger = logging.getLogger(__name__)
 

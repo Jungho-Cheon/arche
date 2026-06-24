@@ -21,16 +21,12 @@ import mcp.types as mcp_types
 import pytest
 from pydantic import ValidationError
 
-from opentology_api.adapters.graph import (
-    EntityTypeStat,
-    NeighborhoodResult,
-    RelationTypeStat,
-)
 from opentology_api.domain.errors import (
     DependencyUnavailableError,
     EntityNotFoundError,
 )
 from opentology_api.domain.models import Edge, Node, SourceRef, now_rfc3339
+from opentology_api.domain.ports import EntityTypeStat, NeighborhoodResult, RelationTypeStat
 from opentology_api.mcp_server import (
     WRITE_TOOL_NAMES_EXCLUDED,
     _build_tools,

@@ -20,8 +20,8 @@ from __future__ import annotations
 
 import logging
 
-from ..adapters.embedding import EmbeddingProvider
-from ..adapters.graph import DenseHit, GraphRepository, KeywordHit
+from opentology_api.domain.ports import DenseHit, EmbeddingProvider, GraphRepository, KeywordHit
+
 from ..config import Settings
 from ..domain.errors import (
     DependencyUnavailableError,

@@ -11,9 +11,6 @@ from pathlib import Path
 
 import pytest
 
-from opentology_api.adapters.embedding import EmbeddingProvider
-from opentology_api.adapters.graph import GraphRepository, IngestionRunRecord
-from opentology_api.adapters.llm import ImageInput, LLMProvider
 from opentology_api.domain.errors import (
     InvalidInputError,
     UnsupportedFileTypeError,
@@ -26,6 +23,13 @@ from opentology_api.domain.models import (
     ExtractedRelation,
     MergeMutation,
     StoredEntity,
+)
+from opentology_api.domain.ports import (
+    EmbeddingProvider,
+    GraphRepository,
+    ImageInput,
+    IngestionRunRecord,
+    LLMProvider,
 )
 
 
@@ -285,7 +289,7 @@ class FakeGraph(GraphRepository):
         hops,
         max_nodes,
     ):
-        from opentology_api.adapters.graph import NeighborhoodResult
+        from opentology_api.domain.ports import NeighborhoodResult
 
         return NeighborhoodResult(nodes=[], edges=[], truncated=False)
 
@@ -297,7 +301,7 @@ class FakeGraph(GraphRepository):
         hops,
         max_nodes,
     ):
-        from opentology_api.adapters.graph import NeighborhoodResult
+        from opentology_api.domain.ports import NeighborhoodResult
 
         return NeighborhoodResult(nodes=[], edges=[], truncated=False)
 

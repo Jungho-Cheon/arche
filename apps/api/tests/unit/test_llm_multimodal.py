@@ -15,13 +15,9 @@ from typing import Any
 
 import pytest
 
-from opentology_api.adapters.llm import (
-    EXTRACTION_RESPONSE_FORMAT,
-    SYSTEM_PROMPT,
-    ImageInput,
-    OpenAILLMProvider,
-)
+from opentology_api.adapters.llm import EXTRACTION_RESPONSE_FORMAT, SYSTEM_PROMPT, OpenAILLMProvider
 from opentology_api.domain.errors import UnsupportedFileTypeError
+from opentology_api.domain.ports import ImageInput
 
 
 class _FakeChoice:

@@ -8,12 +8,12 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from opentology_api.adapters.llm import ImageInput
 from opentology_api.domain.ingest import IngestService
 from opentology_api.domain.models import (
     ExtractedEntity,
     ExtractedGraph,
 )
+from opentology_api.domain.ports import ImageInput
 
 from ..fixtures._pdf_builder import write_text_pdf
 from .test_ingest_service import FakeEmbedder, FakeGraph, FakeLLM

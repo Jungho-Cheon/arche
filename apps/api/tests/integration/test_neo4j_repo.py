@@ -56,14 +56,13 @@ def test_healthcheck(repo):
 
 def test_ingest_and_find_by_keyword(repo, tmp_path: Path):
     """E2E: ingest 픽스처 → fulltext 검색 → 응답 노드 확인."""
-    from opentology_api.adapters.embedding import EmbeddingProvider
-    from opentology_api.adapters.llm import LLMProvider
     from opentology_api.domain.ingest import IngestService
     from opentology_api.domain.models import (
         ExtractedEntity,
         ExtractedGraph,
         ExtractedRelation,
     )
+    from opentology_api.domain.ports import EmbeddingProvider, LLMProvider
 
     class _LLM(LLMProvider):
         def extract(self, *, text=None, images=None, source_path, context=None) -> ExtractedGraph:

@@ -19,7 +19,8 @@ import logging
 from dataclasses import dataclass
 from typing import Any
 
-from ..adapters.llm import LLMProvider
+from opentology_api.domain.ports import LLMProvider
+
 from ..domain.errors import DependencyUnavailableError
 
 logger = logging.getLogger(__name__)

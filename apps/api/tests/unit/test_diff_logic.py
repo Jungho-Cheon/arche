@@ -8,8 +8,8 @@ WHY 별도 파일: 차분 로직은 IngestService._apply_diff 안에 있지만, 
 
 from __future__ import annotations
 
-from opentology_api.adapters.graph import IngestionRunRecord
 from opentology_api.domain.ingest import IngestService
+from opentology_api.domain.ports import IngestionRunRecord
 
 
 class _CallRecorder:
