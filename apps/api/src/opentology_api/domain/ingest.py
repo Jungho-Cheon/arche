@@ -60,6 +60,15 @@ from .models import (
 logger = logging.getLogger(__name__)
 
 
+# WHY INGEST_PIPELINE_VERSION (ADR-0017 코드-델타): extractor_version 은 두 조각의
+# 결합이다 — (1) LLM 지문(프롬프트+스키마+모델, `llm.extraction_fingerprint()` 가
+# 자동 산출), (2) *LLM 밖 파이프라인 로직* 의 수동 버전. 후자는 entity 매칭/정규화/
+# stoplist 등 추출 *그래프 출력* 에 영향을 주지만 프롬프트 문자열엔 안 잡히는 변경을
+# 가리킨다. 그런 변경을 내면 이 정수를 +1 한다 → 같은 파일도 재적재되어 새 로직이
+# 반영된다. (프롬프트/스키마/모델 변경은 자동 지문이 잡으므로 여기 손댈 필요 없음.)
+INGEST_PIPELINE_VERSION = 1
+
+
 TEXT_EXTS: frozenset[str] = frozenset({".txt", ".md"})
 PDF_EXTS: frozenset[str] = frozenset({".pdf"})
 # 이미지 확장자는 image_loader 의 단일 source 와 동기화 — 한 곳에서만 정의.
@@ -202,6 +211,12 @@ class IngestService:
         self._extraction_cache = extraction_cache
         self._extract_batch_size = max(1, extract_batch_size)
         self._llm_model_id = llm_model_id
+        # ADR-0017 코드-델타 — short-circuit 게이트에 들어갈 추출기 버전.
+        # 파이프라인 버전 + LLM 지문(프롬프트/스키마/모델)의 결합. 프롬프트를
+        # 바꾸면 지문이 바뀌어 같은 파일도 재적재된다.
+        self._extractor_version = (
+            f"p{INGEST_PIPELINE_VERSION}:{llm.extraction_fingerprint()}"
+        )
 
     def ingest_directory(
         self,
@@ -431,10 +446,13 @@ class IngestService:
         raw_bytes = path.read_bytes()
         source_hash = hashlib.sha256(raw_bytes).hexdigest()
 
-        # Short-circuit — 같은 (path, hash) 의 성공 회차가 이미 있다면 LLM/임베딩
-        # 호출 자체를 건너뛴다. PRD 2 §5.4 의 1 번 조건.
+        # Short-circuit — 같은 (path, hash, extractor_version) 의 성공 회차가 이미
+        # 있다면 LLM/임베딩 호출 자체를 건너뛴다. PRD 2 §5.4 의 1 번 조건 +
+        # ADR-0017 코드-델타(추출기 버전이 다르면 재추출).
         prior_success = self._graph.find_succeeded_run_by_hash(
-            source_path=source_path, source_hash=source_hash
+            source_path=source_path,
+            source_hash=source_hash,
+            extractor_version=self._extractor_version,
         )
         if prior_success is not None:
             logger.info(
@@ -461,6 +479,7 @@ class IngestService:
             source_path=source_path,
             source_hash=source_hash,
             started_at=started_at,
+            extractor_version=self._extractor_version,
         )
 
         # 이전 성공 회차 (hash 가 다른) 를 차분 비교 대상으로 캐싱.

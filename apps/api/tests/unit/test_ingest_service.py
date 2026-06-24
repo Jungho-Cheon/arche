@@ -32,8 +32,9 @@ from opentology_api.domain.models import (
 
 
 class FakeLLM(LLMProvider):
-    def __init__(self, graph: ExtractedGraph) -> None:
+    def __init__(self, graph: ExtractedGraph, *, fingerprint: str = "") -> None:
         self._graph = graph
+        self._fingerprint = fingerprint
         self.calls = 0
         # WHY 호출 인자 캡처: PR #23 (이슈 #5) 이후 ingest_file 이 모달별로 다른
         # 키워드 (text / images) 를 넘긴다. 어떤 모달이 어떻게 호출됐는지 테스트에서
@@ -58,6 +59,9 @@ class FakeLLM(LLMProvider):
             }
         )
         return self._graph
+
+    def extraction_fingerprint(self) -> str:
+        return self._fingerprint
 
 
 class FakeEmbedder(EmbeddingProvider):
@@ -155,12 +159,13 @@ class FakeGraph(GraphRepository):
 
     # -- IngestionRun --
     def find_succeeded_run_by_hash(
-        self, *, source_path: str, source_hash: str
+        self, *, source_path: str, source_hash: str, extractor_version: str = ""
     ) -> IngestionRunRecord | None:
         for run in self._runs.values():
             if (
                 run["source_path"] == source_path
                 and run["source_hash"] == source_hash
+                and run.get("extractor_version", "") == extractor_version
                 and run["status"] == "succeeded"
             ):
                 return _record(run)
@@ -180,12 +185,13 @@ class FakeGraph(GraphRepository):
         return _record(succeeded[0])
 
     def create_ingestion_run(
-        self, *, run_id, source_path, source_hash, started_at
+        self, *, run_id, source_path, source_hash, started_at, extractor_version=""
     ) -> None:
         self._runs[run_id] = {
             "id": run_id,
             "source_path": source_path,
             "source_hash": source_hash,
+            "extractor_version": extractor_version,
             "started_at": started_at,
             "completed_at": None,
             "status": "running",
@@ -453,6 +459,40 @@ def test_short_circuit_on_unchanged_file(tmp_path: Path, fake_graph: FakeGraph):
     assert second.short_circuited is True
     assert second.entities_created == 0
     assert second.entities_updated == 2  # 이전 회차의 emitted 수 그대로 보고
+
+
+def test_no_short_circuit_when_extractor_version_changes(
+    tmp_path: Path, fake_graph: FakeGraph
+):
+    """ADR-0017 코드-델타 — 파일은 그대로지만 추출기 버전(프롬프트/모델)이 바뀌면
+    short-circuit 이 풀려 *재추출* 된다. 내용 해시만으로는 코드 변경을 못 잡던 공백을
+    메운다."""
+    p = tmp_path / "sample.md"
+    p.write_text("dummy", encoding="utf-8")
+    extracted = ExtractedGraph(
+        entities=[ExtractedEntity(name="A", type="t")],
+        relations=[],
+    )
+
+    # 회차 1 — 추출기 지문 "v1".
+    llm_v1 = FakeLLM(extracted, fingerprint="v1")
+    svc_v1 = IngestService(llm=llm_v1, embedder=FakeEmbedder(), graph=fake_graph)
+    svc_v1.ingest_file(p)
+    assert llm_v1.calls == 1
+
+    # 같은 파일·같은 그래프지만 추출기 지문이 "v2" — 재추출되어야 한다.
+    llm_v2 = FakeLLM(extracted, fingerprint="v2")
+    svc_v2 = IngestService(llm=llm_v2, embedder=FakeEmbedder(), graph=fake_graph)
+    result = svc_v2.ingest_file(p)
+    assert result.short_circuited is False, "추출기 버전이 바뀌면 short-circuit 금지"
+    assert llm_v2.calls == 1, "새 추출기로 실제 재추출"
+
+    # 같은 지문 "v2" 로 다시 한 번 — 이제는 short-circuit.
+    llm_v2b = FakeLLM(extracted, fingerprint="v2")
+    svc_v2b = IngestService(llm=llm_v2b, embedder=FakeEmbedder(), graph=fake_graph)
+    again = svc_v2b.ingest_file(p)
+    assert again.short_circuited is True
+    assert llm_v2b.calls == 0
 
 
 def test_step1_normalized_match_merges_into_existing(

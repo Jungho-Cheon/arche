@@ -15,6 +15,7 @@ WHY 텍스트 + 이미지 단일 메서드 (`extract`): 호출자 (IngestService
 
 from __future__ import annotations
 
+import hashlib
 import json
 import logging
 from abc import ABC, abstractmethod
@@ -232,6 +233,20 @@ class LLMProvider(ABC):
         """
         raise NotImplementedError
 
+    def extraction_fingerprint(self) -> str:
+        """추출 *출력에 영향을 주는* 요소들의 결정적 지문 (ADR-0017 코드-델타).
+
+        IngestService 가 이 값을 파이프라인 버전과 결합해 IngestionRun 의
+        extractor_version 으로 쓴다. 같은 파일이라도 이 지문이 바뀌면(=프롬프트/
+        스키마/모델 변경) short-circuit 이 풀려 재추출된다.
+
+        기본 구현은 빈 문자열 — 지문에 기여하지 않음. 실 어댑터(OpenAI)가
+        프롬프트+스키마+모델로 override 한다. 빈 값이면 파이프라인 버전만으로
+        델타가 결정되므로 *프롬프트 변경을 못 잡는다* — 실 적재 경로는 반드시
+        override 된 구현을 쓴다 (FakeLLM 등 테스트 더블만 기본값 사용).
+        """
+        return ""
+
 
 class OpenAILLMProvider(LLMProvider):
     def __init__(self, *, model_id: str, api_key: str | None) -> None:
@@ -240,6 +255,22 @@ class OpenAILLMProvider(LLMProvider):
         self.model_id = model_id
         # WHY 클라이언트 인스턴스 보존: 매 호출 신규 생성은 connection pool 손실.
         self._client = OpenAI(api_key=api_key)
+
+    def extraction_fingerprint(self) -> str:
+        """SYSTEM_PROMPT + 추출 스키마 + model_id 의 sha256 앞 16 자.
+
+        이 셋이 추출 LLM 출력을 좌우하는 통제 변수다 (프롬프트 한 줄, 스키마 한
+        필드, 모델 한 버전이 바뀌면 추출 결과가 달라진다). 결정적 직렬화를 위해
+        스키마는 sort_keys 로 직렬화한다.
+        """
+        material = (
+            SYSTEM_PROMPT
+            + "\x00"
+            + json.dumps(EXTRACTION_RESPONSE_FORMAT, sort_keys=True, ensure_ascii=False)
+            + "\x00"
+            + self.model_id
+        )
+        return hashlib.sha256(material.encode("utf-8")).hexdigest()[:16]
 
     def extract(
         self,

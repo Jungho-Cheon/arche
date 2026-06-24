@@ -54,6 +54,12 @@ class IngestionRunRecord:
     status: str  # "running" | "succeeded" | "failed"
     emitted_entity_ids: list[str]
     emitted_relation_ids: list[str]
+    # 이 회차를 만든 *추출기 버전* (프롬프트+스키마+모델 fingerprint + 파이프라인
+    # 버전). short-circuit 은 (path, hash, extractor_version) 3 자가 모두 같을 때만
+    # 성립 — 추출 *코드/프롬프트* 가 바뀌면 같은 파일도 재추출된다 (ADR-0017
+    # "발견한 개선 방향 4: 코드-델타"). 옛 회차는 이 속성이 없어(default "") 새
+    # 버전과 불일치 → 1 회 재적재 (의도된 동작).
+    extractor_version: str = ""
 
 
 @dataclass(frozen=True)
@@ -213,9 +219,11 @@ class GraphRepository(ABC):
 
     @abstractmethod
     def find_succeeded_run_by_hash(
-        self, *, source_path: str, source_hash: str
+        self, *, source_path: str, source_hash: str, extractor_version: str
     ) -> IngestionRunRecord | None:
-        """같은 (path, hash) 의 성공 run 이 이미 있는지 — short-circuit 판정."""
+        """같은 (path, hash, extractor_version) 의 성공 run 이 이미 있는지 —
+        short-circuit 판정. 추출기 버전이 다르면(=프롬프트/코드 변경) 같은 파일도
+        재추출하도록 extractor_version 까지 일치해야 한다."""
 
     @abstractmethod
     def find_latest_succeeded_run(
@@ -225,7 +233,13 @@ class GraphRepository(ABC):
 
     @abstractmethod
     def create_ingestion_run(
-        self, *, run_id: str, source_path: str, source_hash: str, started_at: str
+        self,
+        *,
+        run_id: str,
+        source_path: str,
+        source_hash: str,
+        started_at: str,
+        extractor_version: str,
     ) -> None:
         """status='running' 으로 새 회차 노드 생성."""
 
@@ -716,16 +730,22 @@ class Neo4jGraphRepository(GraphRepository):
     # ---------- IngestionRun + 차분 ----------
 
     def find_succeeded_run_by_hash(
-        self, *, source_path: str, source_hash: str
+        self, *, source_path: str, source_hash: str, extractor_version: str
     ) -> IngestionRunRecord | None:
         with self._driver.session() as s:
+            # WHY extractor_version 일치 요구: 같은 파일 내용이라도 추출 프롬프트/
+            # 스키마/모델/파이프라인이 바뀌면 *그래프 출력이 달라진다*. 옛 회차는
+            # 이 속성이 없어(null) `r.extractor_version = $v` (v 비어있지 않음) 가
+            # null=string → 불일치 → 재추출 (의도). 빈 버전끼리는 일치 가능(테스트).
             rec = s.run(
                 f"MATCH (r:{INGESTION_RUN_LABEL}) "
                 "WHERE r.source_path = $p AND r.source_hash = $h "
+                "  AND coalesce(r.extractor_version, '') = $v "
                 "  AND r.status = 'succeeded' "
                 "RETURN r ORDER BY r.completed_at DESC LIMIT 1",
                 p=source_path,
                 h=source_hash,
+                v=extractor_version,
             ).single()
         return _to_run_record(rec["r"]) if rec else None
 
@@ -748,12 +768,14 @@ class Neo4jGraphRepository(GraphRepository):
         source_path: str,
         source_hash: str,
         started_at: str,
+        extractor_version: str,
     ) -> None:
         with self._driver.session() as s:
             s.run(
                 f"""
                 CREATE (r:{INGESTION_RUN_LABEL} {{
                     id: $id, source_path: $p, source_hash: $h,
+                    extractor_version: $v,
                     started_at: $started, status: 'running',
                     emitted_entity_ids: [], emitted_relation_ids: []
                 }})
@@ -761,6 +783,7 @@ class Neo4jGraphRepository(GraphRepository):
                 id=run_id,
                 p=source_path,
                 h=source_hash,
+                v=extractor_version,
                 started=started_at,
             ).consume()
 
@@ -1442,6 +1465,7 @@ def _to_run_record(node: Any) -> IngestionRunRecord:
         status=node["status"],
         emitted_entity_ids=list(node.get("emitted_entity_ids") or []),
         emitted_relation_ids=list(node.get("emitted_relation_ids") or []),
+        extractor_version=node.get("extractor_version") or "",
     )
 
 

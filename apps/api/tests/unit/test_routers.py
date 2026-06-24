@@ -70,14 +70,16 @@ class StubGraph(GraphRepository):
     def upsert_relation(self, *, from_id, to_id, rel_type, source_ref):  # noqa: D401
         return "rel", True
 
-    def find_succeeded_run_by_hash(self, *, source_path, source_hash):  # noqa: D401
+    def find_succeeded_run_by_hash(
+        self, *, source_path, source_hash, extractor_version=""
+    ):  # noqa: D401
         return None
 
     def find_latest_succeeded_run(self, *, source_path):  # noqa: D401
         return None
 
     def create_ingestion_run(
-        self, *, run_id, source_path, source_hash, started_at
+        self, *, run_id, source_path, source_hash, started_at, extractor_version=""
     ):  # noqa: D401
         return None
 
