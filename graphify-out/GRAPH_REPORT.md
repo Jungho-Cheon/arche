@@ -1,15 +1,16 @@
-# Graph Report - .  (2026-06-18)
+# Graph Report - opentology  (2026-06-24)
 
 ## Corpus Check
-- cluster-only mode — file stats not available
+- 255 files · ~1,081,211 words
+- Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 2244 nodes · 5914 edges · 123 communities (111 shown, 12 thin omitted)
-- Extraction: 67% EXTRACTED · 33% INFERRED · 0% AMBIGUOUS · INFERRED: 1928 edges (avg confidence: 0.54)
+- 3735 nodes · 8373 edges · 238 communities (206 shown, 32 thin omitted)
+- Extraction: 68% EXTRACTED · 32% INFERRED · 0% AMBIGUOUS · INFERRED: 2704 edges (avg confidence: 0.53)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `49225606`
+- Built from commit: `3bd0dde0`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -123,210 +124,319 @@
 - [[_COMMUNITY_Community 106|Community 106]]
 - [[_COMMUNITY_Community 107|Community 107]]
 - [[_COMMUNITY_Community 108|Community 108]]
+- [[_COMMUNITY_Community 109|Community 109]]
+- [[_COMMUNITY_Community 110|Community 110]]
+- [[_COMMUNITY_Community 111|Community 111]]
+- [[_COMMUNITY_Community 112|Community 112]]
+- [[_COMMUNITY_Community 113|Community 113]]
 - [[_COMMUNITY_Community 114|Community 114]]
+- [[_COMMUNITY_Community 115|Community 115]]
 - [[_COMMUNITY_Community 116|Community 116]]
+- [[_COMMUNITY_Community 117|Community 117]]
+- [[_COMMUNITY_Community 118|Community 118]]
+- [[_COMMUNITY_Community 119|Community 119]]
 - [[_COMMUNITY_Community 120|Community 120]]
+- [[_COMMUNITY_Community 121|Community 121]]
 - [[_COMMUNITY_Community 122|Community 122]]
+- [[_COMMUNITY_Community 123|Community 123]]
+- [[_COMMUNITY_Community 124|Community 124]]
+- [[_COMMUNITY_Community 125|Community 125]]
+- [[_COMMUNITY_Community 126|Community 126]]
+- [[_COMMUNITY_Community 127|Community 127]]
+- [[_COMMUNITY_Community 128|Community 128]]
+- [[_COMMUNITY_Community 129|Community 129]]
+- [[_COMMUNITY_Community 130|Community 130]]
+- [[_COMMUNITY_Community 131|Community 131]]
+- [[_COMMUNITY_Community 132|Community 132]]
+- [[_COMMUNITY_Community 133|Community 133]]
+- [[_COMMUNITY_Community 134|Community 134]]
+- [[_COMMUNITY_Community 135|Community 135]]
+- [[_COMMUNITY_Community 136|Community 136]]
+- [[_COMMUNITY_Community 137|Community 137]]
+- [[_COMMUNITY_Community 138|Community 138]]
+- [[_COMMUNITY_Community 139|Community 139]]
+- [[_COMMUNITY_Community 140|Community 140]]
+- [[_COMMUNITY_Community 141|Community 141]]
+- [[_COMMUNITY_Community 142|Community 142]]
+- [[_COMMUNITY_Community 143|Community 143]]
+- [[_COMMUNITY_Community 144|Community 144]]
+- [[_COMMUNITY_Community 145|Community 145]]
+- [[_COMMUNITY_Community 146|Community 146]]
+- [[_COMMUNITY_Community 147|Community 147]]
+- [[_COMMUNITY_Community 148|Community 148]]
+- [[_COMMUNITY_Community 149|Community 149]]
+- [[_COMMUNITY_Community 150|Community 150]]
+- [[_COMMUNITY_Community 151|Community 151]]
+- [[_COMMUNITY_Community 152|Community 152]]
+- [[_COMMUNITY_Community 153|Community 153]]
+- [[_COMMUNITY_Community 154|Community 154]]
+- [[_COMMUNITY_Community 155|Community 155]]
+- [[_COMMUNITY_Community 156|Community 156]]
+- [[_COMMUNITY_Community 157|Community 157]]
+- [[_COMMUNITY_Community 158|Community 158]]
+- [[_COMMUNITY_Community 159|Community 159]]
+- [[_COMMUNITY_Community 160|Community 160]]
+- [[_COMMUNITY_Community 161|Community 161]]
+- [[_COMMUNITY_Community 162|Community 162]]
+- [[_COMMUNITY_Community 163|Community 163]]
+- [[_COMMUNITY_Community 164|Community 164]]
+- [[_COMMUNITY_Community 165|Community 165]]
+- [[_COMMUNITY_Community 166|Community 166]]
+- [[_COMMUNITY_Community 167|Community 167]]
+- [[_COMMUNITY_Community 168|Community 168]]
+- [[_COMMUNITY_Community 169|Community 169]]
+- [[_COMMUNITY_Community 170|Community 170]]
+- [[_COMMUNITY_Community 171|Community 171]]
+- [[_COMMUNITY_Community 172|Community 172]]
+- [[_COMMUNITY_Community 173|Community 173]]
+- [[_COMMUNITY_Community 174|Community 174]]
+- [[_COMMUNITY_Community 175|Community 175]]
+- [[_COMMUNITY_Community 176|Community 176]]
+- [[_COMMUNITY_Community 177|Community 177]]
+- [[_COMMUNITY_Community 178|Community 178]]
+- [[_COMMUNITY_Community 179|Community 179]]
+- [[_COMMUNITY_Community 180|Community 180]]
+- [[_COMMUNITY_Community 181|Community 181]]
+- [[_COMMUNITY_Community 182|Community 182]]
+- [[_COMMUNITY_Community 183|Community 183]]
+- [[_COMMUNITY_Community 184|Community 184]]
+- [[_COMMUNITY_Community 185|Community 185]]
+- [[_COMMUNITY_Community 186|Community 186]]
+- [[_COMMUNITY_Community 187|Community 187]]
+- [[_COMMUNITY_Community 188|Community 188]]
+- [[_COMMUNITY_Community 189|Community 189]]
+- [[_COMMUNITY_Community 190|Community 190]]
+- [[_COMMUNITY_Community 191|Community 191]]
+- [[_COMMUNITY_Community 192|Community 192]]
+- [[_COMMUNITY_Community 193|Community 193]]
+- [[_COMMUNITY_Community 194|Community 194]]
+- [[_COMMUNITY_Community 195|Community 195]]
+- [[_COMMUNITY_Community 196|Community 196]]
+- [[_COMMUNITY_Community 197|Community 197]]
+- [[_COMMUNITY_Community 198|Community 198]]
+- [[_COMMUNITY_Community 199|Community 199]]
+- [[_COMMUNITY_Community 200|Community 200]]
+- [[_COMMUNITY_Community 201|Community 201]]
+- [[_COMMUNITY_Community 202|Community 202]]
+- [[_COMMUNITY_Community 203|Community 203]]
+- [[_COMMUNITY_Community 204|Community 204]]
+- [[_COMMUNITY_Community 205|Community 205]]
+- [[_COMMUNITY_Community 206|Community 206]]
+- [[_COMMUNITY_Community 207|Community 207]]
+- [[_COMMUNITY_Community 208|Community 208]]
+- [[_COMMUNITY_Community 209|Community 209]]
+- [[_COMMUNITY_Community 210|Community 210]]
+- [[_COMMUNITY_Community 211|Community 211]]
+- [[_COMMUNITY_Community 212|Community 212]]
+- [[_COMMUNITY_Community 213|Community 213]]
+- [[_COMMUNITY_Community 214|Community 214]]
+- [[_COMMUNITY_Community 215|Community 215]]
+- [[_COMMUNITY_Community 216|Community 216]]
+- [[_COMMUNITY_Community 217|Community 217]]
+- [[_COMMUNITY_Community 218|Community 218]]
+- [[_COMMUNITY_Community 219|Community 219]]
+- [[_COMMUNITY_Community 220|Community 220]]
+- [[_COMMUNITY_Community 221|Community 221]]
+- [[_COMMUNITY_Community 222|Community 222]]
+- [[_COMMUNITY_Community 223|Community 223]]
+- [[_COMMUNITY_Community 224|Community 224]]
+- [[_COMMUNITY_Community 225|Community 225]]
 
 ## God Nodes (most connected - your core abstractions)
-1. `FakeGraph` - 83 edges
-2. `GraphRepository` - 81 edges
-3. `PrimitiveStubGraph` - 71 edges
-4. `FileLoader` - 70 edges
-5. `SourceRef` - 68 edges
-6. `ExtractedGraph` - 67 edges
-7. `ExtractedEntity` - 61 edges
-8. `NeighborhoodResult` - 56 edges
-9. `FakeEmbedder` - 54 edges
-10. `StubGraph` - 54 edges
+1. `SourceRef` - 101 edges
+2. `ExtractedGraph` - 98 edges
+3. `GraphRepository` - 89 edges
+4. `FakeGraph` - 85 edges
+5. `ExtractedEntity` - 74 edges
+6. `FileLoader` - 73 edges
+7. `PrimitiveStubGraph` - 72 edges
+8. `ExtractedRelation` - 67 edges
+9. `Node` - 64 edges
+10. `EmbeddingProvider` - 63 edges
 
 ## Surprising Connections (you probably didn't know these)
-- `Corpus Tiny: Coupon Policy (Coupon X/Y, aliases)` --semantically_similar_to--> `skeleton_sample.md (test fixture: 여름 환영 쿠폰 entities)`  [INFERRED] [semantically similar]
-  eval/tests/fixtures/corpus_tiny/coupon.md → /Users/jungho1000/workspace/private/opentology/apps/api/tests/fixtures/skeleton_sample.md
-- `Entry-point reading order (PRD -> ADR -> STATUS -> specs)` --references--> `ADR Index README`  [INFERRED]
-  CLAUDE.md → docs/adr/README.md
-- `PRD 4: Evaluation Harness (3-way)` --implements--> `3-way Measurement (Full-context vs Chunk RAG vs Opentology)`  [EXTRACTED]
-  docs/prd/4_evaluation_harness.md → /Users/jungho1000/workspace/private/opentology/docs/adr/0001-project-identity-and-mvp-validation-hypothesis.md
-- `ADR-0001: Project Identity and MVP Validation Hypothesis` --references--> `Commerce Business Rules as Validation Domain`  [EXTRACTED]
-  docs/adr/0001-project-identity-and-mvp-validation-hypothesis.md → /Users/jungho1000/workspace/private/opentology/docs/adr/0001-project-identity-and-mvp-validation-hypothesis.md
-- `ADR-0001: Project Identity and MVP Validation Hypothesis` --references--> `Idempotent Ingestion (D6)`  [EXTRACTED]
-  docs/adr/0001-project-identity-and-mvp-validation-hypothesis.md → /Users/jungho1000/workspace/private/opentology/docs/adr/0001-project-identity-and-mvp-validation-hypothesis.md
+- `FakeGraph` --uses--> `EmbeddingProvider`  [INFERRED]
+  eval/tests/test_opentology_integration.py → apps/api/src/opentology_api/adapters/embedding.py
+- `FakeGraph` --uses--> `KeywordHit`  [INFERRED]
+  eval/tests/test_opentology_integration.py → apps/api/src/opentology_api/adapters/graph.py
+- `FakeGraph` --uses--> `EntityTypeStat`  [INFERRED]
+  eval/tests/test_opentology_integration.py → apps/api/src/opentology_api/adapters/graph.py
+- `FakeGraph` --uses--> `RelationTypeStat`  [INFERRED]
+  eval/tests/test_opentology_integration.py → apps/api/src/opentology_api/adapters/graph.py
+- `FakeGraph` --uses--> `EntityWithCounts`  [INFERRED]
+  eval/tests/test_opentology_integration.py → apps/api/src/opentology_api/adapters/graph.py
 
 ## Import Cycles
+- 1-file cycle: `apps/api/src/opentology_api/mcp_http.py -> apps/api/src/opentology_api/mcp_http.py`
 - 1-file cycle: `apps/api/src/opentology_api/main.py -> apps/api/src/opentology_api/main.py`
 - 1-file cycle: `eval/src/opentology_eval/runlog.py -> eval/src/opentology_eval/runlog.py`
-- 2-file cycle: `apps/api/src/opentology_api/api/deps.py -> apps/api/src/opentology_api/main.py -> apps/api/src/opentology_api/api/deps.py`
-- 2-file cycle: `apps/api/src/opentology_api/api/routers.py -> apps/api/src/opentology_api/main.py -> apps/api/src/opentology_api/api/routers.py`
+- 1-file cycle: `apps/api/tests/unit/test_mcp_http_mount.py -> apps/api/tests/unit/test_mcp_http_mount.py`
 
-## Communities (123 total, 12 thin omitted)
+## Communities (238 total, 32 thin omitted)
 
 ### Community 0 - "API Layer & DI Wiring"
-Cohesion: 0.08
-Nodes (124): AdminIngestRequest, AdminIngestResponse, AdminIngestStatusResponse, EdgeCounts, EmbeddingInfo, EntityTypeExample, EntityTypeSummary, FindPathRequest (+116 more)
+Cohesion: 0.07
+Nodes (172): AdminIngestRequest, AdminIngestResponse, AdminIngestStatusResponse, AdminNamespacesResponse, IngestTaskRegistry, IngestTaskState, _on_progress(), worker thread 진입점 — 동기 ingest 흐름 + state 종결.      error code 명명: exception 타입 이름 (+164 more)
 
 ### Community 1 - "Identity E2E Tests"
-Cohesion: 0.05
-Nodes (59): Opentology 코어 호출 클라이언트 — REST (MVP). MCP 어댑터는 #7 의존., OpentologyClient, OpentologyClientError, OpentologyUnavailableError, PrimitiveCall, Opentology 코어 REST 클라이언트 — PRD 3 의 6 primitive + admin ingest.  격리 원칙 (ADR-0006, PRD 3 §3-7 의 6 primitive + admin ingest 의 thin HTTP wrapper.      동일 인스턴스에서 여러 질, HTTP 호출 + envelope 해제. 반환 = (data, latency_ms).          에러 envelope → Opentolog (+51 more)
+Cohesion: 0.15
+Nodes (12): OpentologyClient, PrimitiveCall, Opentology 코어 REST 클라이언트 — PRD 3 의 6 primitive + admin ingest.  격리 원칙 (ADR-0006, PRD 3 §3-7 의 6 primitive + admin ingest 의 thin HTTP wrapper.      동일 인스턴스에서 여러 질, HTTP 호출 + envelope 해제. 반환 = (data, latency_ms).          에러 envelope → Opentolog, primitive 호출 + 로그 한 줄 누적., ingest task 완료 대기 — running → succeeded/failed 까지 polling.          실패 시 Opentol, primitive 호출 한 건의 로그 (PRD 4 §3.6 의 primitives_called 항목 한 줄).      WHY result_si (+4 more)
 
 ### Community 2 - "Live Integration Tests"
-Cohesion: 0.12
-Nodes (55): LLM provider 어댑터 — 추출 결과를 ExtractedGraph 로 반환.  WHY 추상 + 단일 구현: PRD 2 §4 의 *교체 가, _to_extracted_graph(), Admin ingest 의 비동기 작업 registry — PRD 2 §1.2 + §1.3.  구조:   POST /admin/ingest →, Any, EmbeddingProvider, GraphRepository, MergeMutation, SourceRef (+47 more)
+Cohesion: 0.09
+Nodes (66): load_image_as_b64(), 이미지 파일을 base64 문자열 + MIME 타입으로 반환.      Returns:         (b64_data, mime_type) —, _detect_image_mime(), extract_pdf(), PDF 텍스트 + 이미지 추출 — pypdf 사용. 페이지 단위로 분리.  WHY pypdf: - 순수 Python, 라이센스 BSD-3 호환., PDF 를 페이지 단위로 분해.      WHY pypdf.PdfReader 직접: 스트리밍이 아니라 메모리 적재 후 페이지 인덱스     접근, Admin ingest 의 비동기 작업 registry — PRD 2 §1.2 + §1.3.  구조:   POST /admin/ingest →, FastAPI 의존성 — singleton service / repository 구성.  WHY 모듈 전역 + lazy: 부팅 시 호출되는 st (+58 more)
 
 ### Community 3 - "Routers PRD-3 Tests"
-Cohesion: 0.08
-Nodes (48): Any, Path, Path, QuestionSet, JudgeLLM, build_faithfulness_user(), build_mapping(), build_reasoning_quality_user() (+40 more)
+Cohesion: 0.06
+Nodes (51): Any, Path, Path, QuestionSet, JudgeLLM, Live: 실제 Anthropic API 로 judge 1 호출 — `RUN_LIVE_TESTS=1` + `ANTHROPIC_API_KEY`., 실제 Anthropic 호출 — 정수 score + rationale 텍스트가 돌아온다., test_anthropic_judge_returns_valid_score() (+43 more)
 
 ### Community 4 - "Adapter Protocols"
-Cohesion: 0.07
+Cohesion: 0.06
 Nodes (26): _client_with(), _make_node(), FastAPI 라우터 응답 envelope + Node 스키마 형태., PRD 3 §0.3 envelope + §3.4 matches[].node/score/matched_keyword., PRD 3 §3.5: 같은 노드가 여러 keyword 에서 surface 됐다면 가장 높은     raw 점수의 keyword 가 matched, PRD 3 §3.3: types 필터는 결과 노드의 type 이 리스트에 포함된 것만 남긴다., PRD 3 §3.3: limit 적용 (기본 10, max 50)., find_by_keywords_scored 가 KeywordHit 리스트를 반환하도록 stub.      `hits_by_keyword` 가 비 (+18 more)
 
 ### Community 5 - "Chunk RAG Index"
 Cohesion: 0.06
-Nodes (22): ExtractedGraph, Path, StoredEntity, IngestionRunRecord, LLMProvider, _build_large_doc(), ChunkAwareFakeLLM, IngestService 가 본문을 청크 분할해서 LLM 을 *청크 단위로* 호출하는지 검증.  작은 model_context_tokens 를 (+14 more)
+Nodes (39): IngestionRunRecord, 동일 source_path 의 가장 최근 성공 run — 차분 비교의 기준., `(:IngestionRun)` 노드의 슬림 표현 — 차분 알고리즘이 다루는 필드만.      `emitted_entity_ids` 는 *해당, ExtractedGraph, IngestService, Path, StoredEntity, IngestionRunRecord (+31 more)
 
 ### Community 6 - "Eval Baseline Columns"
-Cohesion: 0.12
-Nodes (37): AnthropicProvider, OpenAIProvider, Path, AnthropicProvider, OpenAIProvider, help, LintReport, ask() (+29 more)
+Cohesion: 0.08
+Nodes (57): CombinedRunner, chunk RAG retrieval + opentology subgraph 를 단일 호출에 묶음.      Attributes:, chunk RAG 인덱스 구축. (opentology setup 은 별도 ingest 로 미리 끝나 있다 가정), datetime, AnthropicProvider, help, OpenAIProvider, Option (+49 more)
 
 ### Community 7 - "Entity Matcher Core"
-Cohesion: 0.10
-Nodes (33): Any, Path, Any, Path, QuestionSet, ResponseMetrics, load_questions(), Question (+25 more)
+Cohesion: 0.14
+Nodes (25): Any, Path, QuestionSet, ResponseMetrics, 한 응답 (=  question × column × run) 의 canonical 메트릭.      Fields:         question, ResponseMetrics, apply_overrides_file(), _build_manual_case() (+17 more)
 
 ### Community 8 - "Ingest Service Tests"
-Cohesion: 0.11
-Nodes (32): datetime, Any, Path, Any, Path, Path, Path, hash_directory() (+24 more)
+Cohesion: 0.20
+Nodes (15): Any, Path, Path, 실행 디렉토리 레이아웃 — PRD 4 §7., init_run_dir(), `runs/<ts>/` 디렉토리 초기화 — PRD 4 §7.  본 모듈은 *실제 컬럼 호출을 시작하기 전에* run 디렉토리를 만들고 meta., `runs/<ts>/` 생성 + meta.yaml + corpus_hash.txt + questions.yaml 사본.      Args:, _make_corpus() (+7 more)
 
 ### Community 9 - "Test Graph Fakes"
-Cohesion: 0.12
-Nodes (34): Path, Path, Path, Path, Path, build_text_pdf 결과를 디스크에 쓴다 — 테스트의 tmp_path 사용 케이스., write_text_pdf(), 테스트용 최소 PNG 생성기 — 외부 의존 (Pillow 등) 회피.  1×1 빨간 픽셀 PNG 의 바이트 시퀀스를 미리 인코딩해 둔 상수로 둔 (+26 more)
+Cohesion: 0.10
+Nodes (28): Path, Path, Path, 테스트용 최소 PNG 생성기 — 외부 의존 (Pillow 등) 회피.  1×1 빨간 픽셀 PNG 의 바이트 시퀀스를 미리 인코딩해 둔 상수로 둔, 1×1 빨간 픽셀 PNG 를 path 에 쓴다.      PNG 의 정확한 CRC 가 어긋나도 본 테스트의 검증 대상 (확장자 분류 + base, write_red_pixel_png(), PDF 의 텍스트 페이지만 청크화 소스에 들어간다., read() 는 텍스트만. PDF 는 명시 메시지로 다른 메서드 안내. (+20 more)
 
 ### Community 10 - "Eval CLI & Runlog"
 Cohesion: 0.12
-Nodes (31): ColumnMetrics, Path, RunAggregate, ColumnMetrics, Path, RunAggregate, ColumnMetrics, run_dir 한 회의 컬럼별 메트릭 묶음 — report 가 그대로 소비. (+23 more)
+Nodes (30): ColumnMetrics, Path, RunAggregate, ColumnMetrics, Path, RunAggregate, ColumnMetrics, run_dir 한 회의 컬럼별 메트릭 묶음 — report 가 그대로 소비. (+22 more)
 
 ### Community 11 - "Ingest Service Domain"
-Cohesion: 0.10
-Nodes (30): normalize(), 엔티티 이름 정규화 — *측정 통제 변수* .      동작:       1. `strip()` — 양 끝 공백 제거.       2. Unic, _entity(), FakeEmbedder, FakeRepo, 4 단계 매처 — 각 step 의 hit / miss 동작.  테스트는 repo / embedder 를 mock 으로 주입해 step 별 분기를, 0.92 임계점 — 정확히 cosine 0.92 인 후보가 hit., 0.91999 — threshold 미만 → step 3 miss → step 4. (+22 more)
+Cohesion: 0.15
+Nodes (22): _entity(), FakeEmbedder, FakeRepo, 4 단계 매처 — 각 step 의 hit / miss 동작.  테스트는 repo / embedder 를 mock 으로 주입해 step 별 분기를, 0.92 임계점 — 정확히 cosine 0.92 인 후보가 hit., 0.91999 — threshold 미만 → step 3 miss → step 4., 이름은 같아도 type 이 다르면 matching 되면 안 된다., generic 자기지칭 ("the Company") alias 는 cross-doc Step 2 lookup 에서 제외.      M6.5 Fi (+14 more)
 
 ### Community 12 - "Eval Columns Setup"
-Cohesion: 0.13
-Nodes (23): ABC, DenseHit, EntityTypeStat, EntityWithCounts, KeywordHit, 그래프 저장소 어댑터 — Neo4j 5.15+ 내장 인덱스 사용 (ADR-0004 D1).  핵심 책임: - ensure_indexes() —, 단일 keyword 의 fulltext 매치 한 건.      WHY dataclass: 라우터 레이어가 keyword 별 raw Lucene, 단일 query embedding 의 vector ANN 매치 한 건.      WHY 별도 타입: KeywordHit 와 의미가 다르다. ra (+15 more)
+Cohesion: 0.08
+Nodes (80): ABC, EmbeddingProvider, 텍스트 배치 → 임베딩 벡터 배치. 순서 보존., DenseHit, EntityTypeStat, EntityWithCounts, GraphRepository, KeywordHit (+72 more)
 
 ### Community 13 - "Entity Matcher Tests"
-Cohesion: 0.15
-Nodes (27): ChunkRAGRunner, EmbeddingResult, Any, Any, LLMResult, Path, Any, LLMResult (+19 more)
+Cohesion: 0.12
+Nodes (31): ChunkRAGRunner, EmbeddingResult, Any, Any, LLMResult, Path, LLMResult, Path (+23 more)
 
 ### Community 14 - "Eval Config"
 Cohesion: 0.12
 Nodes (31): Path, Path, crawl(), CrawlSummary, _is_excluded_dir(), _load_ignore_spec(), 디렉토리 재귀 수집 — PRD 2 §2.  흐름:   crawl(root) → root 아래 .txt / .md 파일을 정렬된 순서로 yield, 디렉토리를 재귀 탐색하며 자동 제외 + spec 매칭을 즉시 적용.      WHY Path.rglob 가 아닌 수동 재귀: rglob 은 디렉 (+23 more)
 
 ### Community 15 - "Eval File Loader"
-Cohesion: 0.12
-Nodes (31): Any, Path, Question, QuestionSet, ResponseMetrics, PriceTable, aggregate_column(), aggregate_run() (+23 more)
-
-### Community 16 - "Name Normalization"
-Cohesion: 0.06
-Nodes (15): GraphRepository, status='running' 으로 새 회차 노드 생성., `(:Entity)-[:EMITTED_IN]->(:IngestionRun)` 보장 (MERGE)., relation 의 `emitted_in_run_ids` 배열에 run_id 추가 (dedupe)., run 의 종결 — status + completed_at + 이번에 손댄 id 목록 기록., 이전 회차의 emitted entity 중 이번 회차가 touch 하지 않은 것 처리.          반환값 — "deleted" 또는 "tr, 이전 회차의 emitted relation 중 이번 회차가 touch 하지 않은 것 처리.          반환값 — "deleted" 또는 ", 각 keyword 별로 fulltext 매칭 결과를 반환 (raw Lucene 점수 포함).          같은 노드가 여러 keyword 에 (+7 more)
+Cohesion: 0.10
+Nodes (23): Any, Path, Question, ResponseMetrics, Path, _classify_failure_mode(), _load_judge_scores(), _load_overrides() (+15 more)
 
 ### Community 17 - "Eval CLI Commands"
-Cohesion: 0.13
-Nodes (25): Path, _EmbDeterministic, _entities_in_graph(), _LLMScripted, _make_extracted(), _make_service(), 4 단계 동일성 + 차분 — 실 Neo4j 위에서 끝에서 끝까지.  WHY testcontainers: Cypher 쿼리 형태와 인덱스 동작은, 이름별로 서로 멀어지는 벡터 — Step 3 매칭 의도적 회피. (+17 more)
+Cohesion: 0.14
+Nodes (23): Path, _entities_in_graph(), _LLMScripted, _make_extracted(), _make_service(), 4 단계 동일성 + 차분 — 실 Neo4j 위에서 끝에서 끝까지.  WHY testcontainers: Cypher 쿼리 형태와 인덱스 동작은, 공백 변형 — 두 번째 추출이 같은 노드로 병합., 새 엔티티의 alias 가 기존 정규명을 가리키면 Step 2 매칭. (+15 more)
 
 ### Community 18 - "Neo4j Repository"
-Cohesion: 0.26
-Nodes (28): EmbeddingProvider, NeighborhoodResult, PathResult, 확장 결과 — 진입점 포함 노드 + 이번 확장 경계 내 엣지.      truncated 는 max_nodes 초과 여부. 어댑터가 *진입점에서, RelationTypeStat, LLMProvider, 추출 LLM 의 추상 인터페이스.      `text` 와 `images` 둘 다 선택 — 적어도 하나는 제공되어야 한다. 텍스트만     제공, Node (+20 more)
+Cohesion: 0.10
+Nodes (31): Node, EntityTypeStat, KeywordHit, RelationTypeStat, DocContext, extract_keywords(), KnownEntity, _one_line() (+23 more)
 
 ### Community 19 - "Entity Merger Rules"
 Cohesion: 0.07
-Nodes (7): DenseHit, KeywordHit, NeighborhoodResult, PathResult, GraphRepository, FakeGraph, 결정적 in-memory 그래프 — 2 노드 + 1 엣지.      WHY 최소 fixture: e2e 테스트는 *프로토콜 핸드셰이크* 와 *6
+Nodes (6): DenseHit, KeywordHit, NeighborhoodResult, PathResult, FakeGraph, 결정적 in-memory 그래프 — 2 노드 + 1 엣지.      WHY 최소 fixture: e2e 테스트는 *프로토콜 핸드셰이크* 와 *6
 
 ### Community 20 - "Graph Repo Lookups"
-Cohesion: 0.14
-Nodes (24): ExtractedGraph, FakeGraph, FakeLLM, IngestService, Path, DirectoryIngestResult, 디렉토리 모드 — 파일별 IngestResult 묶음 + 집계 (PRD 2 §7.2 의 메트릭).      `pending_skipped` /, _build() (+16 more)
+Cohesion: 0.24
+Nodes (19): ExtractedGraph, Path, _build(), IngestService.ingest_directory — 디렉토리 모드 + 진행 콜백 + dry-run.  청크 분할은 별도 test_inge, dry-run — LLM 호출은 일어나지만 그래프에 노드가 생성되지 않는다., PR #23 (이슈 #5) 으로 PDF/이미지가 SUPPORTED 가 되어 PENDING 이 비었다.      crawl 결과의 `files_p, `.opentologyignore` 의 패턴이 파일을 제외한다., 디렉토리 안의 .md + .txt 가 모두 처리된다. (+11 more)
 
 ### Community 21 - "Relation & Node Model"
-Cohesion: 0.13
-Nodes (29): _client_with(), _make_edge(), _make_node(), 5 primitive 라우터 + RRF + 에러 envelope — PRD 3 §2-7, §9.  본 파일은 *단위 테스트* — 실제 Neo4j, 단일 keyword + lexical-only 1 hit → score 1.0 (max-normalize)., 동일 노드가 lexical + dense 양쪽에서 surface 되면 contrib 합산., RRF 의 핵심: 결합 점수는 *각 신호의 rank* 만 의존.      A — lexical rank 1 (raw 0.01) 만. contri, PRD 3 §9: entity_not_found 404 + envelope `error.code`. (+21 more)
+Cohesion: 0.12
+Nodes (31): _client_with(), _make_edge(), _make_node(), 5 primitive 라우터 + RRF + 에러 envelope — PRD 3 §2-7, §9.  본 파일은 *단위 테스트* — 실제 Neo4j, 단일 keyword + lexical-only 1 hit → score 1.0 (max-normalize)., 동일 노드가 lexical + dense 양쪽에서 surface 되면 contrib 합산., RRF 의 핵심: 결합 점수는 *각 신호의 rank* 만 의존.      A — lexical rank 1 (raw 0.01) 만. contri, PRD 3 §2.3 응답 형태 + embedding_info 노출. (+23 more)
 
 ### Community 22 - "Adapters Doc Index"
-Cohesion: 0.12
-Nodes (19): load_image_as_b64(), 이미지 파일 → base64 인코딩 + MIME 타입 결정 (PRD 2 §2.1 + §4.1).  이미지 파일은 *분할 없이* 한 LLM 호출에, 이미지 파일을 base64 문자열 + MIME 타입으로 반환.      Returns:         (b64_data, mime_type) —, _detect_image_mime(), extract_pdf(), PDF 텍스트 + 이미지 추출 — pypdf 사용. 페이지 단위로 분리.  WHY pypdf: - 순수 Python, 라이센스 BSD-3 호환., PDF 를 페이지 단위로 분해.      WHY pypdf.PdfReader 직접: 스트리밍이 아니라 메모리 적재 후 페이지 인덱스     접근, Path (+11 more)
+Cohesion: 0.06
+Nodes (36): 0. 책임 분리, 10. Out of scope (MVP 에서 안 만드는 ingest 기능), 1.1 CLI, 1.2 Admin REST 엔드포인트, 1.3 작업 상태 조회, 1. 입력 인터페이스, 2.1 지원 파일 포맷 (MVP), 2.2 재귀 규칙 (+28 more)
 
 ### Community 23 - "LLM Adapter & Models"
-Cohesion: 0.16
-Nodes (27): ImageInput, 멀티모달 LLM 입력의 이미지 한 장 (PRD 2 §2.1 + §4.1).      - `b64_data` : dataURI 헤더 없는 순수 b, PdfPage, 한 페이지의 추출 결과.      - `page_index` : 0-based.     - `total_pages` : PDF 전체 페이지 수., ExtractedGraph, FakeGraph, FakeLLM, IngestService (+19 more)
+Cohesion: 0.07
+Nodes (64): ExtractionCache, _from_json(), Extraction 결과 캐시 — ADR-0010 D2.  sha256 키 기반 디스크 캐시. 같은 (청크 본문 + 호출 컨텍스트 + syste, JSON 파일 기반 디스크 캐시. ExtractedGraph ↔ JSON 직렬화., ImageInput, LLM provider 어댑터 — 추출 결과를 ExtractedGraph 로 반환.  WHY 추상 + 단일 구현: PRD 2 §4 의 *교체 가, 멀티모달 LLM 입력의 이미지 한 장 (PRD 2 §2.1 + §4.1).      - `b64_data` : dataURI 헤더 없는 순수 b, _to_extracted_graph() (+56 more)
 
 ### Community 24 - "ADR-3/4 Vector Strategy"
-Cohesion: 0.10
-Nodes (27): IngestTaskRegistry, IngestTaskState, _on_progress(), worker thread 진입점 — 동기 ingest 흐름 + state 종결.      error code 명명: exception 타입 이름, state 생성 + worker thread 시작 + registry 에 thread 핸들 보관.      WHY daemon=True: API, GET /admin/ingest/{task_id}/status 의 응답 본문 (PRD 2 §1.3 형태)., 단일 ingest 작업의 가변 상태.      WHY dataclass + 가변: 한 라이프타임 (작업 생성 → 진행 → 종료) 안에서 동일, In-process registry — task_id → IngestTaskState.      WHY 단일 dict + thread 참조 별도 (+19 more)
+Cohesion: 0.07
+Nodes (29): §0. 전제 — 측정 결과 한 줄, §1.1 API 표면 — 그래프 primitive 에서 *retrieval orchestrator* 로, §1.2 Provenance — 어떤 신호가 답을 결정했나, §1.3 비용/품질 노브 — 사용자 손에 닿는 다이얼, §1.4 측정 모드 — 평가 하니스의 서비스화, §1.5 문서화 — 정체성 변경의 명시화, §1. Combined 를 Opentology 의 정체성으로 — 필요한 것, §2.1 카테고리 매핑 (+21 more)
 
 ### Community 25 - "API Skeleton Notes"
-Cohesion: 0.08
-Nodes (12): Neo4jGraphRepository, Neo4j 5.15+ 어댑터.      WHY driver 1 개 보존: bolt 커넥션 풀은 driver 내부에서 관리된다. 매 요청, 부팅 시 idempotent 하게 인덱스 + 백필 보장.          인덱스 구성:         - fulltext (name + alia, 이번 회차가 손대지 않은 이전 emitted entity 처리.          - 노드의 source_paths 가 *오직 source_pat, 관계의 차분 — 같은 규칙. source_paths 가 단일이면 삭제, 아니면 trim., Path, repo(), main() (+4 more)
+Cohesion: 0.09
+Nodes (8): Neo4jGraphRepository, Neo4j 5.15+ 어댑터.      WHY driver 1 개 보존: bolt 커넥션 풀은 driver 내부에서 관리된다. 매 요청, 부팅 시 idempotent 하게 인덱스 + 백필 보장.          인덱스 구성:         - fulltext (name + alia, 이번 회차가 손대지 않은 이전 emitted entity 처리.          - 노드의 source_paths 가 *오직 source_pat, 관계의 차분 — 같은 규칙. source_paths 가 단일이면 삭제, 아니면 trim., _to_run_record(), main(), PR 본문용 proof — 컨테이너화된 Neo4j + 실제 OpenAI 위에서 alias 병합과 삭제 차분의 결과를 stdout 으로 찍는다.
 
 ### Community 26 - "Questions YAML Loader"
-Cohesion: 0.11
-Nodes (25): Any, EmbeddingProvider, GraphRepository, Settings, BaseSettings, 앱 전역 설정. uvicorn 부팅 시 한 번 로드., provider 접두사 제거한 실제 API 모델 식별자., Settings (+17 more)
+Cohesion: 0.13
+Nodes (22): EmbeddingProvider, FastAPI, GraphRepository, Settings, EmbeddingProvider, GraphRepository, Settings, BaseSettings (+14 more)
 
 ### Community 27 - "ADR-6 MCP Primitives"
-Cohesion: 0.11
-Nodes (16): 컬럼 (2) 청크 벡터 RAG — PRD 4 §2., 컬럼 (1) Full-context LLM — PRD 4 §1.  corpus 가 텍스트만이면 user 는 단일 문자열, PDF/이미지를 포함하, Path, _live_or_skip(), Full-context 멀티모달 호출 live 테스트 — 실제 OpenAI vision 1 회.  RUN_LIVE_TESTS=1 일 때만 실행., test_full_context_multimodal_live(), Live: 실제 Anthropic API 로 judge 1 호출 — `RUN_LIVE_TESTS=1` + `ANTHROPIC_API_KEY`., 실제 Anthropic 호출 — 정수 score + rationale 텍스트가 돌아온다. (+8 more)
+Cohesion: 0.09
+Nodes (39): OpentologyClientError, OpentologyUnavailableError, 코어가 에러 envelope (PRD 3 §0.3) 을 돌려준 경우.      HTTP 상태와 코드를 함께 보존해 호출 단에서 분류 가능., 네트워크 / 타임아웃 / 비-JSON 응답 — 코어가 *말이 통하지 않는* 상태.      측정 컬럼은 이 예외를 catch 해 "error", 컬럼 (4) Combined — chunk RAG 발췌 + Opentology 서브그래프를 단일 LLM 호출로 합침.  설계 의도 (95K 본, OpentologyRunner._extract_anchors 와 동일 동작 (1 회 재시도)., _AnchorResult, 컬럼 (5) Opentology Augmented — graph-guided chunk retrieval (PoC).  배경:   M6.5 sm (+31 more)
 
 ### Community 28 - "PRD-3 Primitives"
 Cohesion: 0.16
-Nodes (26): Any, _disambiguate_names(), _format_edge_block(), _format_node_block(), _format_path_oneline(), _format_properties(), _format_source_refs(), 서브그래프 텍스트 직렬화 — PRD 4 §3.3.  LLM 컨텍스트에 들어갈 텍스트 형식을 결정적으로 생성한다. 동일 입력 → 동일 출력 (측정 (+18 more)
+Nodes (27): Any, _disambiguate_names(), _format_edge_block(), _format_node_block(), _format_path_oneline(), _format_properties(), _format_source_refs(), 서브그래프 텍스트 직렬화 — PRD 4 §3.3.  LLM 컨텍스트에 들어갈 텍스트 형식을 결정적으로 생성한다. 동일 입력 → 동일 출력 (측정 (+19 more)
 
 ### Community 29 - "OpenAI LLM Adapter"
-Cohesion: 0.18
-Nodes (24): ExtractedGraph, IngestService, Path, _build_service(), FakeLLM, Ingest 파이프라인 — 어댑터 mocking 으로 4 단계 동일성 + 차분 흐름 검증.  WHY in-memory fake repo: Ing, 같은 파일 두 번 — 두 번째는 short-circuit (LLM 호출 0)., 공백/대소문자 흔들림 — normalize 후 같으면 Step 1 매칭. (+16 more)
+Cohesion: 0.07
+Nodes (28): ADR-0005: MVP 측정 방법론 — 정확도, 토큰, 지연, Consequences, Considered Options, Context — 왜 이 결정이 필요했나, D10. 보고서 형식 — 한 장, D1. 질문 형식 — MCQ + 이유 서술, D2. 시스템 응답 형식 — 강제 JSON, D3. 정확도 채점 — 3 차원, 총 0-4 점 (+20 more)
 
 ### Community 30 - "ADR-1 Pareto Hypothesis"
-Cohesion: 0.11
-Nodes (19): Any, OpenAILLMProvider, _FakeChat, _FakeChatCompletions, _FakeChoice, _FakeClient, _FakeCompletion, _make_provider() (+11 more)
+Cohesion: 0.14
+Nodes (16): OpenAILLMProvider, _FakeChat, _FakeChatCompletions, _FakeClient, _make_provider(), LLM adapter multimodal 분기 (PRD 2 §4.1 / §4.3).  본 파일은 `OpenAILLMProvider._call`, 텍스트 없이 이미지만이면 텍스트 block 이 없어야 한다 (이미지 페이지 폴백)., 같은 페이지의 이미지 N 개가 한 호출에 전부 들어간다. (+8 more)
 
 ### Community 31 - "Ingestion Run Records"
-Cohesion: 0.22
-Nodes (25): Option, Question, 한 질문에 "정보 부족 / 알 수 없음" 옵션이 1 개 이상 존재 (PRD 5 §3.2)., rule_info_insufficient_option_present(), QuestionSet, _make_option(), _make_question(), lint 규칙 단위 테스트 — PRD 5 §6 의 hard fail / warn 규칙.  각 규칙별 fixture 로 (1) 위반 케이스, (2 (+17 more)
+Cohesion: 0.23
+Nodes (24): Option, 한 질문에 "정보 부족 / 알 수 없음" 옵션이 1 개 이상 존재 (PRD 5 §3.2)., rule_info_insufficient_option_present(), QuestionSet, _make_option(), _make_question(), lint 규칙 단위 테스트 — PRD 5 §6 의 hard fail / warn 규칙.  각 규칙별 fixture 로 (1) 위반 케이스, (2, test_rule_domain_pattern_balanced() (+16 more)
 
 ### Community 33 - "ADR-5 Measurement"
-Cohesion: 0.11
-Nodes (18): Option, Path, Path, failure_mode_tested 카탈로그 + domain_pattern enum (PRD 5 §4 / §3.1).  WHY 단일 상수 파일:, DryRunEstimate, corpus 전체의 ingest 비용 추정.      - `total_files` — corpus 안의 *지원 포맷* 파일 수.     - `b, 검증 데이터셋 lint — PRD 5 §6.  `opentology-eval lint --dataset <path>` 의 구현 패키지. hard, _is_info_insufficient_option() (+10 more)
+Cohesion: 0.13
+Nodes (12): Path, failure_mode_tested 카탈로그 + domain_pattern enum (PRD 5 §4 / §3.1).  WHY 단일 상수 파일:, DryRunEstimate, --dry-run-ingest — corpus 전체를 *읽고* 청크 분할 + 토큰 추정 + 비용 추정.  실 LLM 호출은 하지 않는다. 텍스트, corpus 전체의 ingest 비용 추정.      - `total_files` — corpus 안의 *지원 포맷* 파일 수.     - `b, 검증 데이터셋 lint — PRD 5 §6.  `opentology-eval lint --dataset <path>` 의 구현 패키지. hard, LintReport, 모든 lint 규칙 + (옵션) dry-run 호출 + 결과 집계 — PRD 5 §6.  WHY 단일 진입점: 호출자 (cli.py) 는 데이터 (+4 more)
 
-### Community 35 - "LLM Adapter Tests"
-Cohesion: 0.09
-Nodes (3): NeighborhoodResult, FakeGraph, 단순 in-memory 그래프 — 노드 + 엣지 + 사전 정의된 lexical/dense hits.
+### Community 34 - "Corpus Tiny Domain"
+Cohesion: 0.08
+Nodes (3): GraphRepository, FakeGraph, 3 노드: 쿠폰 X → 프로모션 P → 상품 A (multi-hop 시나리오).
 
 ### Community 36 - "Graph Repo Helpers"
-Cohesion: 0.15
-Nodes (12): Path, NotImplementedError, CorpusFile, 텍스트 파일 본문을 그대로 반환. PDF/이미지 는 별도 메서드.          WHY 분리: PDF/이미지 는 `str` 단일 반환으로 표현, PDF 파일을 페이지 시퀀스로. 호출자는 텍스트 / 이미지 페이지를 분기., 이미지 파일 → 멀티모달 LLM 입력 형태., PRD 4 §1.2 형식으로 텍스트 블록 + 이미지 리스트 분리.          규칙:           - 텍스트 파일 → `=== FILE, PDF 한 파일을 텍스트 블록으로 직렬화 + 이미지 페이지를 images_out 에 추가.          WHY images_out 인자 (r (+4 more)
+Cohesion: 0.10
+Nodes (18): 컬럼 (1) Full-context LLM — PRD 4 §1.  corpus 가 텍스트만이면 user 는 단일 문자열, PDF/이미지를 포함하, ImageInput, Path, PdfPage, NotImplementedError, CorpusFile, 파일 로더 — 텍스트 (`.txt` / `.md`) + PDF + 이미지 (PRD 2 §2.1 / §3.4).  WHY 멀티모달 분기:   베이, 텍스트 파일 본문을 그대로 반환. PDF/이미지 는 별도 메서드.          WHY 분리: PDF/이미지 는 `str` 단일 반환으로 표현 (+10 more)
 
 ### Community 37 - "PRD-2 Ingest Spec"
-Cohesion: 0.11
-Nodes (18): 3-튜플 유일성 (PRD 2 §5.5) — MERGE on (from_id, type, to_id).          WHY 동적 라벨이 아닌, _assert_edge_shape(), _make_entity(), _now(), 실 Neo4j 위에서 primitive 의 cypher 응답 직렬화를 검증.  WHY 본 모듈: 이슈 #27 회귀 2 — `s.run(...)., 이슈 #27 회귀 2 의 검증 포인트 — 모든 핵심 필드가 *원시 string* 으로     채워지고, tuple 등의 자료형이 아니어야 한다., 회귀 2 의 핵심 — UNION 양방향 쿼리에서 relationship 직렬화 정상., direction='outgoing' 도 같은 properties-only select 경로를 타는지. (+10 more)
+Cohesion: 0.09
+Nodes (25): _assert_edge_shape(), _make_entity(), _now(), 실 Neo4j 위에서 primitive 의 cypher 응답 직렬화를 검증.  WHY 본 모듈: 이슈 #27 회귀 2 — `s.run(...)., ADR-0017 — 같은 길이의 두 경로 중 promiscuous 허브를 *경유하지 않는*     구체적 경로가 먼저 와야 하고, hub_sco, 1-hop 직접 경로는 중간 노드가 없어 hub_score = 0.0 (가장 구체적)., ADR-0017 방향 3 — max_nodes 절단 시 *낮은 degree(구체적) 이웃* 을 남기고     promiscuous 허브를 먼저, 절단이 없으면(max_nodes 충분) spec/hub 둘 다 포함 — 정렬이 *누락* 을 만들지     않음(순서만 바꿈). (+17 more)
 
 ### Community 38 - "ADR-2 Scope Boundaries"
-Cohesion: 0.14
-Nodes (14): IngestionRunRecord, 같은 (path, hash) 의 성공 run 이 이미 있는지 — short-circuit 판정., 동일 source_path 의 가장 최근 성공 run — 차분 비교의 기준., `(:IngestionRun)` 노드의 슬림 표현 — 차분 알고리즘이 다루는 필드만.      `emitted_entity_ids` 는 *해당, _to_run_record(), IngestService, _CallRecorder, _make_prior() (+6 more)
+Cohesion: 0.27
+Nodes (9): IngestService, _CallRecorder, _make_prior(), _make_service_with(), 차분 적용 — 이전 회차 emitted set 과 새 회차 emitted set 의 차이가 어떻게 delete / trim / no-op 로 매, 이번 회차에서 다시 emit 된 엔티티/관계는 차분 콜백을 건드리지 않는다., test_diff_kept_entities_are_not_passed_to_repo(), test_diff_no_prior_run_is_noop() (+1 more)
 
 ### Community 39 - "API CLI Entrypoint"
-Cohesion: 0.13
-Nodes (18): ErrorBody, ErrorEnvelope, FastAPI, 5 primitive + find_entities 의 라이브 흐름 — 실제 Neo4j + OpenAI.  본 라이브 테스트는 다음 흐름을 한 번, find_entities → get_subgraph → find_path 연속., ingest 한 도메인에서 키워드로 매칭이 나온다., setup_world(), test_find_entities_hybrid_rrf_returns_matches() (+10 more)
+Cohesion: 0.11
+Nodes (21): build_default_components(), 프로덕션 부팅 경로에서 사용. 테스트는 별도 구성., settings_dep(), ErrorCode, 표준 에러 코드 enum — ADR-0013 D2.  agent 가 *enum 기반 분기* 가능하도록 closed set. 추가 코드 도입 시, Settings, FastAPI, Enum (+13 more)
 
 ### Community 40 - "PRD-4 Eval Harness"
-Cohesion: 0.13
+Cohesion: 0.11
 Nodes (18): Path, Path, ImageInput, 멀티모달 LLM 입력의 이미지 한 장 — `apps/api/adapters/llm.py` 의 ImageInput 복제.  WHY 복제:   PR, provider 간 동일 형태로 전달하기 위한 경량 DTO., load_image_as_b64(), 이미지 파일 → base64 + MIME — `apps/api/adapters/image_loader.py` 복제.  WHY 복제:   PRD, 이미지 파일을 base64 문자열 + MIME 타입으로 반환.      Returns:         (b64_data, mime_type) — (+10 more)
 
 ### Community 41 - "OpenAI Embedding Provider"
-Cohesion: 0.12
-Nodes (19): Path, build_empty_image_only_pdf(), build_text_pdf(), 테스트 전용 minimal PDF 생성기 — 외부 의존 회피 (reportlab 등).  WHY hand-built: `reportlab` 은, 페이지별 latin-1 텍스트로 최소 PDF 바이트 생성., 페이지별 텍스트로 최소 PDF 바이트를 생성.      Args:         pages: 각 페이지에 들어갈 latin-1 호환 텍스트 (영, 텍스트가 없는 1 페이지 PDF — 이미지 페이지 폴백 검증용.      실제 이미지는 임베드하지 않고 *contents 가 비어 있는 페이지*, 텍스트가 *전혀 없는* 1 페이지 PDF — 이미지 페이지 폴백 검증용.      실제로는 진짜 이미지를 임베드하지 않고 *contents 가 (+11 more)
+Cohesion: 0.11
+Nodes (20): build_empty_image_only_pdf(), build_text_pdf(), 테스트 전용 minimal PDF 생성기 — 외부 의존 회피 (reportlab 등).  WHY hand-built: `reportlab` 은, write_text_pdf(), Path, Path, 페이지별 텍스트로 최소 PDF 바이트를 생성.      Args:         pages: 각 페이지에 들어갈 latin-1 호환 텍스트 (영, build_text_pdf 결과를 디스크에 쓴다 — 테스트의 tmp_path 사용 케이스. (+12 more)
 
 ### Community 42 - "Merge Mutation Apply"
-Cohesion: 0.19
-Nodes (13): FullContextRunner, corpus 디스커버 + 직렬화 → 텍스트 블록 + 이미지 리스트.          WHY 메서드 이름 변경 (setup_corpus_text, Any, Question, Path, FakeLLM, mixed_corpus(), Full-context 컬럼이 PDF + 이미지 + 텍스트 corpus 를 한 멀티모달 호출로 보내는지.  본 테스트는 *FakeLLMProvi (+5 more)
+Cohesion: 0.29
+Nodes (5): corpus 디스커버 + 직렬화 → 텍스트 블록 + 이미지 리스트.          WHY 메서드 이름 변경 (setup_corpus_text, Any, Question, build_full_context_user(), SerializedCorpus
 
 ### Community 43 - "Dense Search Stub"
-Cohesion: 0.26
-Nodes (19): _dispatch_tool(), 단일 tool 호출을 services 로 위임. 입력 검증 실패는 ValidationError 로 전파., _make_node(), MCP stdio 어댑터 단위 테스트 — PRD 3 §8.  검증 항목: 1. `build_mcp_server` 가 6 tool 을 등록 (wr, call_tool 핸들러가 services 결과를 JSON text 로 직렬화., 도메인 예외 → CallToolResult(isError=True) + text 안 JSON 의 error.code.      WHY isErr, _StubEmbedder, _StubSettings (+11 more)
+Cohesion: 0.23
+Nodes (21): 스키마는 맞지만 의미상 처리 불가 — 예: find_path 의 from_id == to_id., UnprocessableError, _dispatch_tool(), 단일 tool 호출을 services 로 위임. 입력 검증 실패는 ValidationError 로 전파., _make_node(), MCP stdio 어댑터 단위 테스트 — PRD 3 §8.  검증 항목: 1. `build_mcp_server` 가 6 tool 을 등록 (wr, call_tool 핸들러가 services 결과를 JSON text 로 직렬화., 도메인 예외 → CallToolResult(isError=True) + text 안 JSON 의 error.code.      WHY isErr (+13 more)
 
 ### Community 44 - "API CLI Ingest"
 Cohesion: 0.10
@@ -334,75 +444,75 @@ Nodes (19): Chunking 모듈 — PRD 2 §3.  70% 컷 / heading→paragraph→sent
 
 ### Community 45 - "Live Tests Conftest"
 Cohesion: 0.15
-Nodes (12): OpenAIEmbeddingProvider, 임베딩 어댑터 — 노드 임베딩 생성.  WHY 모델 식별자를 config 에서: ADR-0001 통제 변수 + ADR-0003 D2. 청크 벡터, OpenAILLMProvider, 본문 → 엔티티/관계 추출. 실패 시 DependencyUnavailableError., OpenAI chat completion 으로 한 번 시도, 파싱 실패 시 1 회 재시도.          PRD 2 §4.3 의 재시도 정책, build_default_components(), FastAPI 의존성 — singleton service / repository 구성.  WHY 모듈 전역 + lazy: 부팅 시 호출되는 st, 프로덕션 부팅 경로에서 사용. 테스트는 별도 구성. (+4 more)
+Nodes (9): OpenAILLMProvider, 본문 → 엔티티/관계 추출. 실패 시 DependencyUnavailableError.          context 가 주어지면 ADR-000, SYSTEM_PROMPT + 추출 스키마 + model_id 의 sha256 앞 16 자.          이 셋이 추출 LLM 출력을 좌우하는, OpenAI chat completion 으로 한 번 시도, 파싱 실패 시 1 회 재시도.          PRD 2 §4.3 의 재시도 정책, ExtractContext, ExtractedGraph, Any, _FakeChoice (+1 more)
 
 ### Community 46 - "Eval Tests Conftest"
-Cohesion: 0.21
-Nodes (17): help, IngestService, Option, Path, Argument, ingest(), mcp_serve(), `opentology` CLI — 디렉토리 / 단일 파일 ingest 진입점.  WHY in-process (HTTP 가 아닌): 사용자 셋업 (+9 more)
+Cohesion: 0.14
+Nodes (22): OpenAIEmbeddingProvider, 임베딩 어댑터 — 노드 임베딩 생성.  WHY 모델 식별자를 config 에서: ADR-0001 통제 변수 + ADR-0003 D2. 청크 벡터, help, IngestService, Option, Path, Argument, ingest() (+14 more)
 
 ### Community 47 - "API Package Init"
-Cohesion: 0.17
-Nodes (19): Encoding, _apply_overlap(), chunk_text(), count_tokens(), _encoder(), _force_split_by_tokens(), _pack_into_budget(), LLM 컨텍스트 초과 시 텍스트를 청크로 분할 — PRD 2 §3.  흐름:   count_tokens(text) → 컨텍스트의 70% 이하면 (+11 more)
+Cohesion: 0.11
+Nodes (32): Encoding, _apply_overlap(), _apply_sentence_overlap(), chunk_for_retrieval(), chunk_text(), count_tokens(), _encoder(), _force_split_by_tokens() (+24 more)
 
 ### Community 48 - "Columns Init"
-Cohesion: 0.15
-Nodes (19): Path, median_int(), p95(), nearest-rank p95. 표본이 작으면 max 와 같아질 수 있다 (의도된 동작).      nearest-rank 의 이유: numpy, 정수 메트릭 (reasoning_quality 0/1/2) 의 중간값.      N 이 짝수면 중간 두 값의 평균이 0.5 단위가 될 수 있는데, _make_fixture_run(), aggregate.py — median / p95 / N=3 중간값 / override 우선 / failure_modes., `spotcheck/overrides.jsonl` 의 human_* 값이 judge 점수를 대체. (+11 more)
+Cohesion: 0.10
+Nodes (31): QuestionSet, Path, PriceTable, aggregate_column(), aggregate_run(), mean(), median(), median_int() (+23 more)
 
 ### Community 49 - "Eval Package Init"
 Cohesion: 0.15
 Nodes (19): MCP stdio e2e — 본 서버를 subprocess 로 spawn 해 핸드셰이크 + 6 tool 호출.  검증 흐름: 1. stdio_c, from == to → isError + unprocessable (PRD 3 §9, §6)., 간단 lexical 매칭 — '쿠폰' 키워드로 node_a 가 surface 되어야 함., SDK 가 inputSchema 로 입력을 검증 — 빈 keywords 는 minItems 위반., 본 서버를 fake graph 모드로 spawn 하는 파라미터.      WHY `sys.executable -m opentology_api.c, initialize 핸드셰이크 + 6 tool list., 없는 ID → isError=True + body.error.code = entity_not_found (PRD 3 §9)., _server_params() (+11 more)
 
 ### Community 50 - "Init Stub 50"
-Cohesion: 0.15
-Nodes (14): Path, EvalConfig, load_config(), _normalize(), 런타임 설정 — 모델 식별자는 환경 변수로 오버라이드 가능, 기본값은 코드에 고정.  WHY: PRD 4 §2.7 통제 변수 — 컬럼 (1)(2, provider 접두사 제거한 실제 API 모델 식별자., provider 접두사가 없으면 openai/ 를 붙여 canonical 형태로.      WHY: 본 베이스라인은 OpenAI 단일 provi, 환경 변수에서 설정 로드. .env 는 호출자가 미리 로드한다. (+6 more)
+Cohesion: 0.10
+Nodes (18): Path, EvalConfig, load_config(), _normalize(), 런타임 설정 — 모델 식별자는 환경 변수로 오버라이드 가능, 기본값은 코드에 고정.  WHY: PRD 4 §2.7 통제 변수 — 컬럼 (1)(2, provider 접두사 제거한 실제 API 모델 식별자., provider 접두사가 없으면 openai/ 를 붙여 canonical 형태로.      WHY: 본 베이스라인은 OpenAI 단일 provi, 환경 변수에서 설정 로드. .env 는 호출자가 미리 로드한다. (+10 more)
 
 ### Community 51 - "Init Stub 51"
-Cohesion: 0.13
-Nodes (13): _build_neighbor_expand_cypher(), _node_to_response(), 단일 노드 + outgoing/incoming relation type 카운트.          WHY 한 트랜잭션 / 세 쿼리: pydanti, N-hop BFS — 진입점에서 거리 가까운 순으로 max_nodes 절단.          WHY variable-length match 가, multi-source BFS — 여러 진입점에서 동시에 확장.          잘림 정책: *진입점 집합으로부터의 최단 거리* 기준 가까운 순, k-shortest paths — Cypher `allShortestPaths` + 길이 정렬.          WHY allShortestPa, neo4j Node → 응답 Node (embedding 제외)., frontier 노드 집합에서 한 hop 을 확장하는 cypher.      WHY pattern 을 direction 별로 분기: Cypher (+5 more)
+Cohesion: 0.09
+Nodes (24): _build_neighbor_expand_cypher(), _clamp(), _node_to_response(), _order_rows_by_degree(), 단일 노드 + outgoing/incoming relation type 카운트.          WHY 한 트랜잭션 / 세 쿼리: pydanti, N-hop BFS — 진입점에서 거리 가까운 순으로 max_nodes 절단.          WHY variable-length match 가, multi-source BFS — 여러 진입점에서 동시에 확장.          잘림 정책: *진입점 집합으로부터의 최단 거리* 기준 가까운 순, k-shortest paths — Cypher `allShortestPaths` + 길이 정렬.          WHY allShortestPa (+16 more)
 
 ### Community 52 - "Community 52"
-Cohesion: 0.22
-Nodes (15): Encoding, _apply_overlap(), Chunk, chunk_text(), count_tokens(), _encoder(), _force_split_by_tokens(), _pack_into_budget() (+7 more)
+Cohesion: 0.30
+Nodes (13): Encoding, _apply_overlap(), Chunk, chunk_text(), count_tokens(), _encoder(), _force_split_by_tokens(), _pack_into_budget() (+5 more)
 
 ### Community 53 - "Community 53"
-Cohesion: 0.16
-Nodes (15): Client, E2E: ingest 픽스처 → fulltext 검색 → 응답 노드 확인., test_ingest_and_find_by_keyword(), _CoreEmb, _e(), _eval_llm_anchor_and_answer(), httpx_client_against_api(), _n() (+7 more)
+Cohesion: 0.22
+Nodes (11): Path, _eval_llm_anchor_and_answer(), _question(), 통합: Opentology 컬럼 ↔ apps/api FastAPI app (FakeGraph 어댑터) e2e.  FastAPI 코어를 httpx, 질문 1 개 — anchor → find_entities → get_subgraph → 답변 까지 한 번에., setup_corpus 를 호출하지 않은 채로도 흐름이 정상 종료된다 (skip-setup 케이스).      WHY 이 케이스가 중요한가: 측, test_one_question_e2e_through_fastapi(), test_setup_corpus_skipped_in_integration() (+3 more)
 
 ### Community 54 - "Community 54"
-Cohesion: 0.14
-Nodes (11): _extract_source_refs(), _node_to_stored(), neo4j Node → StoredEntity (내부)., `normalized_name == normalized AND type == type_` 정확 일치., ANN top-k 후보를 *embedding 포함* 으로 반환. cosine 재계산은 도메인.          type 필터는 ANN 사전 필터, 새 엔티티 노드 생성. id 는 호출자가 생성 (ULID)., 정규화 키 lookup — 노드의 정규명 OR 정규화된 alias 중 한 곳이라도 hit.          WHY OR alias 까지: PRD, ANN top-k 후보. type 사후 필터.          WHY 사후 필터: Neo4j 5.15 의 `db.index.vector.quer (+3 more)
+Cohesion: 0.13
+Nodes (10): _node_to_stored(), neo4j Node → StoredEntity (내부)., `normalized_name == normalized AND type == type_` 정확 일치., ANN top-k 후보를 *embedding 포함* 으로 반환. cosine 재계산은 도메인.          type 필터는 ANN 사전 필터, 새 엔티티 노드 생성. id 는 호출자가 생성 (ULID)., 단일 id → StoredEntity (embedding 포함). ADR-0009 의 matched_existing_id         흐름에서, 정규화 키 lookup — 노드의 정규명 OR 정규화된 alias 중 한 곳이라도 hit.          WHY OR alias 까지: PRD, ANN top-k 후보. type 사후 필터.          WHY 사후 필터: Neo4j 5.15 의 `db.index.vector.quer (+2 more)
 
 ### Community 55 - "Community 55"
-Cohesion: 0.17
-Nodes (16): FileProgressEvent, FileProgressEvent, _format_progress_line(), _print_summary(), PRD 2 §7.3 형식: `[i/n] path (k chunks) ... Xe Yr in Zs`.      단일 청크면 `(1 chunks)`, 마지막 요약 블록 — PRD 2 §7.3., _make_event(), CLI stdout 형식 — PRD 2 §7.3 의 진행 표시 + 요약 블록.  진짜 Neo4j / OpenAI 호출 없이 IngestServi (+8 more)
+Cohesion: 0.21
+Nodes (13): FileProgressEvent, FileProgressEvent, _format_progress_line(), PRD 2 §7.3 형식: `[i/n] path (k chunks) ... Xe Yr in Zs`.      단일 청크면 `(1 chunks)`, _make_event(), CLI stdout 형식 — PRD 2 §7.3 의 진행 표시 + 요약 블록.  진짜 Neo4j / OpenAI 호출 없이 IngestServi, 단일 청크면 `(N chunks)` 표기 생략 — 가독성., 청크가 여러 개면 `(N chunks)` 표기 포함 — PRD 2 §7.3 의 chunk 노출. (+5 more)
 
 ### Community 56 - "Community 56"
-Cohesion: 0.25
-Nodes (15): FakeGraph, Path, TestClient, _client(), Admin ingest 비동기 응답 — PRD 2 §1.2 + §1.3.  POST /admin/ingest → 202 + { task_id,, 라이브 ingest 흐름을 fake adapter 위에 띄운다., GET status 를 폴링해 target state 에 도달할 때까지 대기., PRD 2 §1.2 — 202 + { task_id, status_url } 응답. (+7 more)
+Cohesion: 0.28
+Nodes (14): Path, TestClient, _client(), Admin ingest 비동기 응답 — PRD 2 §1.2 + §1.3.  POST /admin/ingest → 202 + { task_id,, 라이브 ingest 흐름을 fake adapter 위에 띄운다., GET status 를 폴링해 target state 에 도달할 때까지 대기., PRD 2 §1.2 — 202 + { task_id, status_url } 응답., test_dry_run_does_not_persist_to_graph() (+6 more)
 
 ### Community 57 - "Community 57"
-Cohesion: 0.21
+Cohesion: 0.20
 Nodes (14): Path, Chunk, chunk_corpus(), _count_tokens(), 청크 분할 — PRD 4 §2.2.  규칙: 800 토큰, overlap 100, paragraph → sentence 분할. *Opentolo, 파일 리스트 → 모든 청크. files: (path, content) 의 튜플 리스트., 텍스트 → 청크 본문 리스트. 토큰 기준 800/overlap 100.      알고리즘 (paragraph → sentence):     1., _split_paragraphs() (+6 more)
 
 ### Community 58 - "Community 58"
-Cohesion: 0.17
-Nodes (16): Any, Path, Path, expected_sources 의 모든 경로가 corpus_root 안에 실존 + 상대경로., corpus 디렉토리의 모든 파일이 ingest 지원 포맷 (PRD 5 §6 표).      숨김 파일 (`.opentologyignore` 등, questions.yaml / meta.yaml 파싱.      Returns:         (findings, parsed_data 또는 N, rule_corpus_files_supported(), rule_expected_sources_exist() (+8 more)
+Cohesion: 0.22
+Nodes (13): Any, Path, corpus 디렉토리의 모든 파일이 ingest 지원 포맷 (PRD 5 §6 표).      숨김 파일 (`.opentologyignore` 등, questions.yaml / meta.yaml 파싱.      Returns:         (findings, parsed_data 또는 N, rule_corpus_files_supported(), rule_yaml_parsable(), test_rule_corpus_hidden_files_ignored(), test_rule_corpus_supported_only() (+5 more)
 
 ### Community 59 - "Community 59"
-Cohesion: 0.20
-Nodes (12): TestClient, _client(), _edge(), _Emb, _LLM, _node(), 5 primitive + find_entities 의 통합 흐름 — Neo4j 없이 FakeGraph 위에서.  본 통합 테스트는 *FastAP, find_entities → get_entity → get_neighbors → get_subgraph → find_path. (+4 more)
+Cohesion: 0.39
+Nodes (7): _client(), 5 primitive + find_entities 의 통합 흐름 — Neo4j 없이 FakeGraph 위에서.  본 통합 테스트는 *FastAP, find_entities → get_entity → get_neighbors → get_subgraph → find_path., test_error_envelope_for_unknown_entity(), test_full_primitive_chain(), test_get_schema_chain(), test_openapi_six_primitives_present()
 
 ### Community 60 - "Community 60"
-Cohesion: 0.18
-Nodes (14): Path, extract_metrics(), 컬럼별 응답 페이로드 → canonical 메트릭.      `full_context` (PRD 4 §1.5):       input_token, scoring.io — 응답 로더 + 컬럼별 canonical 메트릭 추출., anchor 가 실패하고 answer parsed 도 None 인 경우 parse_error 가 anchor 사유를 담는다., PRD 4 §3.6 명세 — `responses/<column>.jsonl` 한 줄 = 한 응답., 기존 컬럼 PR (#15, #20) 의 출력 — `responses/<column>/Q*_run*.json`., test_extract_metrics_chunk_rag_uses_total_tokens_field() (+6 more)
+Cohesion: 0.13
+Nodes (22): Any, Path, Path, append_jsonl(), extract_metrics(), 응답 jsonl / json 로더 + 컬럼별 *canonical 메트릭* 추출 — aggregate / judge / spotcheck / re, jsonl 읽기. 존재하지 않으면 빈 리스트., 컬럼별 응답 로드. 두 가지 디렉토리 레이아웃 지원.      1) PRD 4 §3.6 명세 — `responses/<column>.jsonl` (+14 more)
 
 ### Community 61 - "Community 61"
-Cohesion: 0.13
-Nodes (15): _build_tools(), 6 tool 의 등록 manifest — PRD 3 §0.1 의 1:1 매핑 표., _assert_no_refs(), PRD 3 §2.2 / §3.2 / §4.2 / §5.2 / §6.2 / §7.2 원문 — 측정 통제 변수., `$defs` 참조가 inline 평탄화되어야 한다 (Claude Desktop 호환)., PRD 3 §4.3 — get_entity 의 MCP 입력 = { id: ULID }., PRD 3 §5.3 — MCP body 에 id 가 끼어 있어야 함 (REST path 와 다름)., PRD 3 §0.1 의 6 primitive. (+7 more)
+Cohesion: 0.67
+Nodes (3): _assert_no_refs(), `$defs` 참조가 inline 평탄화되어야 한다 (Claude Desktop 호환)., test_input_schemas_have_no_defs_references()
 
 ### Community 62 - "Community 62"
 Cohesion: 0.15
-Nodes (13): Commerce Business Rules as Validation Domain, Latency Measurement (median + p95, controlled conditions) (D7), LLM-as-Judge with Anonymized Order (D4), MCQ + Forced Reasoning Format (D1), ADR-0005: Measurement Methodology (Accuracy, Tokens, Latency), N=3 Repetition for Reproducibility (D8), Rationale: MCQ + anonymization mitigates LLM judge position/length/self-preference bias, Spot-Check by Author for Suspicious Cases (D5) (+5 more)
+Nodes (12): Commerce Business Rules as Validation Domain, Latency Measurement (median + p95, controlled conditions) (D7), LLM-as-Judge with Anonymized Order (D4), MCQ + Forced Reasoning Format (D1), ADR-0005: Measurement Methodology (Accuracy, Tokens, Latency), N=3 Repetition for Reproducibility (D8), Rationale: MCQ + anonymization mitigates LLM judge position/length/self-preference bias, Spot-Check by Author for Suspicious Cases (D5) (+4 more)
 
 ### Community 63 - "Community 63"
 Cohesion: 0.27
@@ -413,24 +523,24 @@ Cohesion: 0.28
 Nodes (12): Path, spotcheck.py — 트리거 매칭 / write_override / apply_overrides_file / 대화형 시뮬레이션., 스크립트된 입력으로 대화형 spotcheck 가 1 건 처리 후 종료하는지., 공통 fixture — 1 질문 × 3 컬럼 × 1 run, judge 점수 다양., add Q01 opentology 0' 으로 큐에 수동 추가 후 처리., _seed_fixture(), test_apply_overrides_file_batch(), test_build_queue_matches_both_triggers() (+4 more)
 
 ### Community 65 - "Community 65"
-Cohesion: 0.20
-Nodes (12): Dual Alias Normalization (ingest-time + query-time) (D3), ADR-0003: Graph Entry Point Strategy (Hybrid Lexical + Dense), Node-level Embedding (not chunk-level) (D2), Embedded Vector Index in Graph DB (D1), Embedding Model as Pluggable Adapter (D2), No Separate Vector DB Service (Pinecone/Qdrant/etc rejected), Rationale: Avoid container/sync/backup overhead during hypothesis validation; modern DBs ship production-grade vector indexes, Separation Principle: Vector Search != Separate Vector DB (D3) (+4 more)
+Cohesion: 0.07
+Nodes (30): Idempotent Ingestion (D6), One-page Report as MVP Exit Condition (D7), Opentology Project Identity (Graph KB tool for LLMs), Pareto Superiority Hypothesis (accuracy = full-context, tokens > chunk RAG), Rationale: Long-context LLMs make efficiency the differentiator, 3-way Measurement (Full-context vs Chunk RAG vs Opentology), Caller-side Anchor Extraction (LLM responsibility offloaded to caller), Dual Alias Normalization (ingest-time + query-time) (D3) (+22 more)
 
 ### Community 66 - "Community 66"
 Cohesion: 0.32
 Nodes (11): Path, Path, dry_run_ingest(), corpus 전체를 *읽고* (LLM 호출 없이) 비용을 추정.      WHY 모든 모델 비교: `estimated_cost_usd` 에 *모, dry_run_ingest 단위 테스트 — PRD 5 §6.1., test_dry_run_empty_corpus(), test_dry_run_image_and_pdf(), test_dry_run_includes_known_models() (+3 more)
 
 ### Community 67 - "Community 67"
-Cohesion: 0.21
-Nodes (12): QuestionSet, Finding, 한 질문에 정답 옵션이 정확히 1 개 (PRD 5 §3.2)., failure_mode_tested 가 None 또는 PRD 5 §4 카탈로그 안 값., reference_reasoning 분량이 50-500 자 (PRD 5 §5.2)., 단일 lint 발견.      - `level` — hard 면 exit 1, warn 이면 exit 0.     - `code` — 규칙 식별, domain_pattern 분포에서 한 값이 60% 초과면 warn (PRD 5 §6 표)., rule_domain_pattern_distribution() (+4 more)
+Cohesion: 0.14
+Nodes (20): Path, QuestionSet, Finding, lint 규칙 — PRD 5 §6 의 hard fail / warn 항목.  규칙 함수는 모두 `list[Finding]` 반환. runner., meta.yaml 의 최소 골격 검증 (PRD 5 §2)., 한 질문에 정답 옵션이 정확히 1 개 (PRD 5 §3.2)., failure_mode_tested 가 None 또는 PRD 5 §4 카탈로그 안 값., expected_sources 의 모든 경로가 corpus_root 안에 실존 + 상대경로. (+12 more)
 
 ### Community 68 - "Community 68"
-Cohesion: 0.18
-Nodes (11): Any, meta.yaml 의 최소 골격 검증 (PRD 5 §2)., rule_meta_schema(), _format_path(), questions.yaml + meta.yaml JSON Schema 상수 + 검증 함수 — PRD 5 §3.1.  WHY 스키마를 *코드 상수, jsonschema error 의 path 를 사람이 읽는 dotted 경로로., 주어진 JSON Schema 로 검증. (path, message) 리스트 반환.      WHY tuple list: Finding 구성은 호, validate_against_schema() (+3 more)
+Cohesion: 0.17
+Nodes (14): Any, PRD 5 §3.1 JSON Schema 검증., rule_questions_schema(), _format_path(), questions.yaml + meta.yaml JSON Schema 상수 + 검증 함수 — PRD 5 §3.1.  WHY 스키마를 *코드 상수, jsonschema error 의 path 를 사람이 읽는 dotted 경로로., 주어진 JSON Schema 로 검증. (path, message) 리스트 반환.      WHY tuple list: Finding 구성은 호, validate_against_schema() (+6 more)
 
 ### Community 69 - "Community 69"
-Cohesion: 0.24
-Nodes (10): 자동 0/1 채점 — PRD 4 §4.1.  정의:   choice == is_correct  → 1   choice != is_correct, 답변 JSON 의 choice 가 정답 옵션 id 와 일치하면 1, 아니면 0.      Args:         parsed: 컬럼 응답 JS, score_correctness(), correctness.score_correctness 의 happy / parse_error 경로., test_case_insensitive(), test_correct_choice_returns_one(), test_missing_choice_returns_zero(), test_non_dict_returns_zero() (+2 more)
+Cohesion: 0.31
+Nodes (9): 답변 JSON 의 choice 가 정답 옵션 id 와 일치하면 1, 아니면 0.      Args:         parsed: 컬럼 응답 JS, score_correctness(), correctness.score_correctness 의 happy / parse_error 경로., test_case_insensitive(), test_correct_choice_returns_one(), test_missing_choice_returns_zero(), test_non_dict_returns_zero(), test_parse_error_returns_zero() (+1 more)
 
 ### Community 70 - "Community 70"
 Cohesion: 0.29
@@ -442,7 +552,7 @@ Nodes (11): _make_anthropic_provider(), _make_openai_provider(), _mock_openai_re
 
 ### Community 72 - "Community 72"
 Cohesion: 0.24
-Nodes (11): Hybrid Entry-Point Matching (BM25 + Dense via RRF), Rationale: Identifier-centric domains (commerce) reward BM25, but dense absorbs alias/paraphrase for portability, find_entities Primitive (lexical + dense RRF fusion), find_path Primitive (two-node path search), get_entity Primitive (single node detail), get_neighbors Primitive (N-hop expansion), get_schema Primitive (entity/relation type introspection), get_subgraph Primitive (multi-entry-point traversal) (+3 more)
+Nodes (10): Hybrid Entry-Point Matching (BM25 + Dense via RRF), Rationale: Identifier-centric domains (commerce) reward BM25, but dense absorbs alias/paraphrase for portability, find_entities Primitive (lexical + dense RRF fusion), find_path Primitive (two-node path search), get_entity Primitive (single node detail), get_neighbors Primitive (N-hop expansion), get_schema Primitive (entity/relation type introspection), get_subgraph Primitive (multi-entry-point traversal) (+2 more)
 
 ### Community 73 - "Community 73"
 Cohesion: 0.25
@@ -453,44 +563,44 @@ Cohesion: 0.42
 Nodes (10): Path, _copy_fixture(), lint CLI 통합 — Typer CliRunner 로 exit 코드 + 출력 검증., test_lint_dataset_not_exist(), test_lint_dry_run_outputs_estimate(), test_lint_missing_correct_answer_exit_one(), test_lint_missing_expected_source_exit_one(), test_lint_unknown_failure_mode_exit_one() (+2 more)
 
 ### Community 75 - "Community 75"
-Cohesion: 0.44
-Nodes (10): Path, _fake_embedder(), _fake_llm_result(), 컬럼 단위 unit 테스트 — provider 를 mock 으로 갈아끼움., test_chunk_rag_amortizes_setup_embedding_tokens(), test_chunk_rag_payload_has_required_keys(), test_chunk_rag_retrieved_chunks_in_user_prompt(), test_full_context_corpus_text_passed_in_user_prompt() (+2 more)
+Cohesion: 0.12
+Nodes (35): FullContextRunner, Any, LLMResult, Path, Path, Path, Path, Path (+27 more)
 
 ### Community 76 - "Community 76"
-Cohesion: 0.27
-Nodes (8): _lucene_escape(), Lucene 특수 문자 escape — fulltext 쿼리 안전성.      WHY: keyword 에 콜론 / 따옴표가 섞이면 fulltex, fulltext 인덱스를 *keyword 별로* 따로 호출.          WHY keyword 별 분리: PRD 3 §3.4 의 `match, Lucene escape — fulltext 쿼리 안전성., test_empty_yields_wildcard(), test_multi_token_wrapped_in_parens(), test_simple_keyword_unchanged(), test_special_chars_escaped()
+Cohesion: 0.24
+Nodes (10): _lucene_escape(), Lucene 특수 문자 escape — fulltext 쿼리 안전성.      WHY: keyword 에 콜론 / 따옴표가 섞이면 fulltex, fulltext 인덱스를 *keyword 별로* 따로 호출.          WHY keyword 별 분리: PRD 3 §3.4 의 `match, Lucene escape — fulltext 쿼리 안전성., test_empty_yields_wildcard(), test_multi_token_wrapped_in_parens(), test_reserved_operator_AND_neutralized(), test_reserved_operator_standalone() (+2 more)
 
 ### Community 77 - "Community 77"
 Cohesion: 0.29
 Nodes (9): Path, _make_run(), _r(), judge_runner — mock LLM 으로 run_dir 전체 처리., parse_error 로 reasoning 이 빈 응답은 judge 호출 안 함, None 기록., JSON {score, rationale} 응답 stub., 1 질문 × 3 컬럼 × 1 run 의 run_dir., test_judge_skips_when_student_reasoning_empty() (+1 more)
 
 ### Community 78 - "Community 78"
-Cohesion: 0.22
-Nodes (9): Caller-side Anchor Extraction (LLM responsibility offloaded to caller), Caller Responsibility (Anchor extraction + Synthesis) (D4), Post-MVP Chat Layer as Thin Wrapper above Core (D5), Graph Primitives Only (no natural language endpoint) (D1), ADR-0006: MCP/REST Primitives Surface, Coexistence with Neo4j MCP (D6), Primitives Set: get_schema, find_entities, get_entity, get_neighbors, find_path, get_subgraph (D2), Rationale: MCP ecosystem standard pattern exposes primitives, not NL; core avoids query-time LLM dependency (+1 more)
+Cohesion: 0.07
+Nodes (27): 2026-06-21 1M 검증 evidence, ADR-0009: Context-aware extraction — *추출 단계* 에 문서 메타 + 기존 graph KB 동봉, Consequences, Considered Options, Context — 왜 이 결정이 필요했나, D1. 추출 단계 LLM 호출에 *4 종 컨텍스트* 를 동봉, D2. `ExtractedEntity` 에 `matched_existing_id` 필드 추가, D3. *문서 주 entity* 식별을 위한 2nd pass (+19 more)
 
 ### Community 79 - "Community 79"
-Cohesion: 0.25
-Nodes (7): Edge, Node, _FakeData, _make_edge(), _make_node(), 테스트 전용 FakeGraph 어댑터 — MCP stdio e2e 테스트가 외부 Neo4j 없이 동작.  WHY 별도 모듈 + productio, e2e 테스트의 고정 fixture — 2 노드 + 1 엣지.
+Cohesion: 0.40
+Nodes (4): Edge, _FakeData, _make_edge(), e2e 테스트의 고정 fixture — 2 노드 + 1 엣지.
 
 ### Community 80 - "Community 80"
 Cohesion: 0.22
 Nodes (9): BaseException, ErrorData, 도메인 / 검증 예외 → MCP 표준 에러 (data.code 에 Opentology code).      분기:     - Opentology, _to_mcp_error(), PRD 3 §9 의 도메인 code 가 MCP 에러 data.code 에 노출., pydantic 검증 실패 → invalid_input., test_to_mcp_error_dependency_unavailable_carries_code(), test_to_mcp_error_entity_not_found_carries_code() (+1 more)
 
 ### Community 81 - "Community 81"
-Cohesion: 0.31
-Nodes (9): Corpus Tiny: Catalog (Product A/B, Category C/D), Corpus Tiny: Coupon Policy (Coupon X/Y, aliases), Domain Entity: Category C (contains Product A), Domain Entity: Coupon X (with aliases), Domain Entity: Product A, Domain Entity: Promotion P (applies to Category C only), Corpus Tiny: Promotion Policy (Promotion P/Q, Category C/D), questions.yaml Schema (Question + Option with failure_mode_tested) (+1 more)
+Cohesion: 0.21
+Nodes (9): 상품 카탈로그, 쿠폰 정책, Domain Entity: Category C (contains Product A), Domain Entity: Coupon X (with aliases), Domain Entity: Product A, Domain Entity: Promotion P (applies to Category C only), 프로모션 정책, questions.yaml Schema (Question + Option with failure_mode_tested) (+1 more)
 
 ### Community 82 - "Community 82"
-Cohesion: 0.25
-Nodes (4): Path, ModelPrice, 모델 식별자에 대한 단가. 등록되지 않은 모델은 None.          provider 접두사 (예: 'openai/gpt-4o') 와 접두, 모델 단가 × 토큰 수 → USD. 단가가 없으면 0 (= 보고서에서 unknown 으로 표기).
+Cohesion: 0.07
+Nodes (26): (a) 어휘 매칭 (BM25 / 희소 검색), ADR-0003: 그래프 진입점 선정 전략 — 어휘 매칭 + dense 임베딩 하이브리드, (b) 밀집 벡터 (dense 단독), (c) 하이브리드 (BM25 + 밀집), Consequences, Considered Options, Context — 왜 이 결정이 필요했나, D1. 진입점 선정 = (caller 의 anchor 추출) + (Opentology 의 하이브리드 매칭) (+18 more)
 
 ### Community 83 - "Community 83"
-Cohesion: 0.25
-Nodes (8): One-page Report as MVP Exit Condition (D7), Opentology Project Identity (Graph KB tool for LLMs), Pareto Superiority Hypothesis (accuracy = full-context, tokens > chunk RAG), ADR-0001: Project Identity and MVP Validation Hypothesis, Rationale: Long-context LLMs make efficiency the differentiator, 3-way Measurement (Full-context vs Chunk RAG vs Opentology), PRD 1: MVP Spec, MVP In-Scope Items (ingest, graph load, hybrid index, primitives, deliverables)
+Cohesion: 0.10
+Nodes (19): 3-way 비교 절차, MVP In-Scope Items (ingest, graph load, hybrid index, primitives, deliverables), In scope (이번에 만든다), MVP 범위, MVP가 검증하려는 가설 — Pareto 우월, Out of scope (이번에는 안 만든다 — post-MVP로 이월), Q&A 셋 — MCQ + 이유 서술 형식, 개요 (+11 more)
 
 ### Community 84 - "Community 84"
-Cohesion: 0.36
-Nodes (7): OpenAILLMProvider, _make_provider_with_responses(), LLM 어댑터의 파싱 / 재시도 동작., OpenAI 클라이언트 초기화를 우회하기 위해 __new__ 로 객체 생성.      WHY __new__ + 수동 attribute 주입: _, test_extract_parses_strict_json(), test_extract_raises_after_two_failures(), test_extract_retries_once_on_parse_failure()
+Cohesion: 0.22
+Nodes (13): OpenAILLMProvider, _make_provider_with_responses(), _provider_with_model(), LLM 어댑터의 파싱 / 재시도 동작., OpenAI 클라이언트 초기화를 우회하기 위해 __new__ 로 객체 생성.      WHY __new__ + 수동 attribute 주입: _, 모델이 바뀌면 지문이 바뀐다 → short-circuit 이 풀려 재추출., SYSTEM_PROMPT 가 바뀌면 지문이 바뀐다 (프롬프트 변경 = 코드-델타 트리거).      monkeypatch 없이, 지문 산출 재료, test_extract_parses_strict_json() (+5 more)
 
 ### Community 85 - "Community 85"
 Cohesion: 0.25
@@ -505,44 +615,44 @@ Cohesion: 0.32
 Nodes (5): _count_entities(), _count_relations(), Live idempotency — 실제 OpenAI + 실제 Neo4j (compose 스택) 위에서.  RUN_LIVE_TESTS=1 일 때만, 두 번 ingest — entity/relation 카운트 불변., test_reingest_same_file_keeps_counts_constant()
 
 ### Community 88 - "Community 88"
-Cohesion: 0.29
-Nodes (7): Idempotent Ingestion (D6), Chunk Only When Context Window Exceeded (§3), Diff-Apply Re-ingest for Idempotency (§5.4), Entity Identity Algorithm (4-step: normalized name -> alias -> embedding sim -> new), Entity/Relation Extraction JSON Schema (§4.3), PRD 2: Ingest Specification, skeleton_sample.md (test fixture: 여름 환영 쿠폰 entities)
+Cohesion: 0.09
+Nodes (18): _adaptive_top_k(), build_aug_user(), _ChunkEntry, _collect_source_paths(), _cos(), OpentologyAugRunner, source_path → list[_ChunkEntry] 로 그룹핑된 인덱스.      chunk_rag 의 _MemoryIndex 와 달리 전, 주어진 source_path 들의 chunks 중 cosine top-k.          WHY 절대 경로 우선 + basename fallb (+10 more)
 
 ### Community 89 - "Community 89"
 Cohesion: 0.33
-Nodes (7): Entity/Relation Audit Log deferred (D5), Auth/Access Control/Multi-tenant deferred (D2, post-MVP rank 1), Chat / Multi-turn Sessions deferred (D3), Eval Gate / CI Integration deferred (D6), Frontend (Web UI) entirely out of scope (D1), ADR-0002: MVP Scope Boundaries, Rationale: Each in-scope item adds direct + indirect cognitive cost to hypothesis verification
+Nodes (6): Entity/Relation Audit Log deferred (D5), Auth/Access Control/Multi-tenant deferred (D2, post-MVP rank 1), Chat / Multi-turn Sessions deferred (D3), Eval Gate / CI Integration deferred (D6), Frontend (Web UI) entirely out of scope (D1), Rationale: Each in-scope item adds direct + indirect cognitive cost to hypothesis verification
 
 ### Community 90 - "Community 90"
 Cohesion: 0.29
 Nodes (7): Opentology API, Model Pricing (2026-06), Graph Primitives MCP Server, Graph Primitives REST API, Ingest Pipeline, LLM Multimodal Entity/Relation Extraction, Opentology
 
 ### Community 91 - "Community 91"
-Cohesion: 0.38
-Nodes (6): now_rfc3339(), RFC 3339 (UTC) timestamp — PRD 3 §1.1 의 `format: date-time` 충족., PRD 3 §1.1 의 Node 스키마 형태 검증., test_node_minimal_serializes_per_prd(), test_node_rejects_bad_ulid(), test_now_rfc3339_is_utc_zulu()
+Cohesion: 0.17
+Nodes (12): now_rfc3339(), RFC 3339 (UTC) timestamp — PRD 3 §1.1 의 `format: date-time` 충족., E2E: ingest 픽스처 → fulltext 검색 → 응답 노드 확인., test_ingest_and_find_by_keyword(), _edge(), _node(), _e(), _n() (+4 more)
 
 ### Community 92 - "Community 92"
-Cohesion: 0.38
-Nodes (7): OpenAI gpt-4.1 chosen for 1M context, Eval Package README (baseline columns 1+2), text-embedding-3-small (1536-dim) as shared embedding, Column 2: Chunk Vector RAG Baseline, PRD 4: Evaluation Harness (3-way), Column 1: Full-context LLM Harness, Judge Anonymization (A/B/C, randomized order)
+Cohesion: 0.22
+Nodes (9): OpenAI gpt-4.1 chosen for 1M context, Opentology MVP — 평가 하니스 (베이스라인 두 컬럼), 실행 방법, 왜 이 provider / 모델인가, 응답 JSON 스키마, text-embedding-3-small (1536-dim) as shared embedding, Column 2: Chunk Vector RAG Baseline, Column 1: Full-context LLM Harness (+1 more)
 
 ### Community 93 - "Community 93"
-Cohesion: 0.43
-Nodes (6): Path, _build_run_dir(), _r(), End-to-end: 컬럼 응답 → judge (mock) → spotcheck (non-interactive) → report., 3 컬럼 × 3 질문 × 3 run = 27 응답., test_judge_then_spotcheck_then_report()
+Cohesion: 0.08
+Nodes (24): ADR-0013: Agent 친화적 API contract — 응답 envelope · 에러 코드 · OpenAPI · idempotency · latency budget · next-action hints, Agent 가 본 API 를 호출할 때 겪는 문제, Consequences, Considered Options, Context — 왜 이 결정이 필요했나, D1. DataEnvelope[T] / ErrorEnvelope 통일 적용, D2. 표준 에러 코드 세트 (closed enum), D3. OpenAPI 3.1 + agent 사용 가능 깊이 (+16 more)
 
 ### Community 94 - "Community 94"
-Cohesion: 0.43
-Nodes (7): PRD 5 §3.1 JSON Schema 검증., rule_questions_schema(), test_rule_questions_schema_invalid_id_pattern(), test_rule_questions_schema_min_options(), test_rule_questions_schema_missing_required(), test_rule_questions_schema_valid(), _valid_questions_yaml()
+Cohesion: 0.08
+Nodes (24): 1. .env 준비, 2. 인프라 + API 기동, 3. 단일 파일 ingest, 4. find_entities 호출, 4 단계 동일성, apps/api — Opentology Walking Skeleton, Claude Desktop 등록 예시, MCP stdio 어댑터 (PRD 3 §8) (+16 more)
 
 ### Community 95 - "Community 95"
 Cohesion: 0.29
 Nodes (7): Repo entry-point CLAUDE.md, Entry-point reading order (PRD -> ADR -> STATUS -> specs), legacy-opentology reference policy (do not consult), Public artifact accessibility rule (self-contained issues/ADRs), Session role modes (orchestrator vs worker), Worker mode end-of-task checklist (PR + Closes #N), Writing tone policy (no jargon, no colloquial verbs)
 
 ### Community 96 - "Community 96"
-Cohesion: 0.33
-Nodes (5): OpentologyError, RateLimitedError, 공통 베이스 — code, message, details 셋이 envelope 의 error 로 직렬화된다., post-MVP. MVP 에서는 사용 안 함 — 코드 카탈로그 형태만 미리 정의.      WHY 미리 정의: PRD 3 §9 의 카탈로그를 *, Exception
+Cohesion: 0.22
+Nodes (7): 이미지 파일 → base64 인코딩 + MIME 타입 결정 (PRD 2 §2.1 + §4.1).  이미지 파일은 *분할 없이* 한 LLM 호출에, OpentologyError, RateLimitedError, 도메인 예외 — PRD 3 §9 의 에러 코드 카탈로그와 매핑.  코드 표 (PRD 3 §9):  | HTTP | code, 공통 베이스 — code, message, details 셋이 envelope 의 error 로 직렬화된다., post-MVP. MVP 에서는 사용 안 함 — 코드 카탈로그 형태만 미리 정의.      WHY 미리 정의: PRD 3 §9 의 카탈로그를 *, Exception
 
 ### Community 97 - "Community 97"
-Cohesion: 0.53
-Nodes (5): Path, _live_or_skip(), End-to-end: 실제 OpenAI API 호출. RUN_LIVE_TESTS=1 일 때만 실행., test_chunk_rag_live(), test_full_context_live()
+Cohesion: 0.08
+Nodes (24): ADR-0006: MCP/REST 표면 — Graph Primitives, 자연어 미수용, Consequences, Considered Options, Context — 왜 이 결정이 필요했나, D1. MCP 와 REST 모두 graph primitives 만 노출, D2. Primitives 집합 (MVP), D3. Write 작업은 MCP 에 노출하지 않음, D4. Caller 의 책임 — 의도 해석과 합성 (+16 more)
 
 ### Community 98 - "Community 98"
 Cohesion: 0.40
@@ -556,33 +666,409 @@ Nodes (5): Product Catalog, Coupon Policy, Promotion Policy, Refund Policy, Vali
 Cohesion: 0.67
 Nodes (3): Path, corpus_dir(), questions_path()
 
+### Community 102 - "Community 102"
+Cohesion: 0.08
+Nodes (23): 1 차 가설과 그 기각, 2 차 진단 — 진짜 원인: catastrophic EntityMatcher over-merge, ADR-0008: M6.5 1M 측정 결과 + EntityConsolidator 를 M7 gating 으로 격상, Combined 가 chunk 와 같은 정확도인 이유, Consequences, Considered Options, Context — 왜 이 결정이 필요했나, D1. ADR-0007 D2 의 결정은 *현 시점 보류* (+15 more)
+
 ### Community 103 - "Community 103"
 Cohesion: 0.67
 Nodes (3): Control variables — same LLM, same embedding model across columns, Pareto hypothesis (accuracy vs token cost), README — Opentology overview & hypothesis
 
+### Community 104 - "Community 104"
+Cohesion: 0.08
+Nodes (23): 2026-06-21 실측 evidence, ADR-0010: Multi-agent parallel dispatch + 청크 결과 캐싱 — graphify Part B 패턴 채택, Consequences, Considered Options, Context — 왜 이 결정이 필요했나, D1. 청크 추출 호출을 batch parallel — default batch=8, D2. 청크 결과 캐시 — sha256 기반, D3. 인크리멘탈 ingest — 파일 + 청크 두 단계 (+15 more)
+
+### Community 109 - "Community 109"
+Cohesion: 0.08
+Nodes (23): 2026-06-21 실측 evidence — Phase 2 진입 정당화, ADR-0009 가 만드는 변화, ADR-0011: Step 3 cosine 매칭의 옵션화 + STOPLIST/Consolidator deprecation 경로, Consequences, Considered Options, Consolidator 의 한계, Context — 왜 이 결정이 필요했나, D1. Step 3 cosine 매칭을 *opt-in* (+15 more)
+
+### Community 110 - "Community 110"
+Cohesion: 0.13
+Nodes (19): EmbeddingProvider, GraphRepository, MergeMutation, SourceRef, StoredEntity, _cosine(), _is_identifier_token(), MatchResult (+11 more)
+
+### Community 111 - "Community 111"
+Cohesion: 0.08
+Nodes (23): 1. 주류 배송과 연령 검증 매크로, 2. 반품/환불 매크로 (V 회원/명품, 신선식품), 3. 정산/분쟁 트리거 매크로, 4. 배송 운영 매크로, 5. 결제/쿠폰 매크로, 6. 개인정보/공통 매크로, CS-MCRO-101 — 5 개국 외 배송지 주류 주문 차단, CS-MCRO-102 — 연령 검증 실패 자동 취소 안내 (+15 more)
+
+### Community 112 - "Community 112"
+Cohesion: 0.08
+Nodes (23): 1. 등급 체계 개요, 2.1 실버 (Silver) = Standard, 2.2 골드 (Gold) = VIP, 2.3 이너 서클 (Inner Circle, INNER) = VVIP, 2.4 비활성 (Inactive) = Dormant, 2.5 등급 제한 (Restricted) = 블랙리스트, 2. 등급 정의 (Definitions), 3.1 등급 점수 (Tier Score) (+15 more)
+
+### Community 113 - "Community 113"
+Cohesion: 0.09
+Nodes (22): ADR-0007: Combined RAG 채택 — Opentology 의 정체성 변경, Alternatives considered — 거절된 대안, Combined RAG 의 검증 (2026-06-20, run 0923), Consequences — 이 결정의 결과, Context — 왜 이 결정이 필요했나, D1. Opentology 의 정체성 변경, D2. Pareto 비교 기준 갱신 (ADR-0001 D2 갱신), D3. Graph 와 chunk 모두 유지 (chunk-only / graph-only 명시 거절) (+14 more)
+
+### Community 115 - "Community 115"
+Cohesion: 0.09
+Nodes (22): ADR-0015: 공유 KB 운영 모델 — namespace 기반 부분 공유 + 사내 인프라 배치, Consequences, Considered Options, Context — 왜 이 결정이 필요했나, D1. 단일 그래프 + namespace property, D2. namespace 결정 — source-tree 우선, 명시 override 가능, D3. cross-namespace 공유 — opt-in 명시, D4. 다회사 개인 KB 의 동작 (+14 more)
+
+### Community 117 - "Community 117"
+Cohesion: 0.09
+Nodes (21): ADR-0004: 벡터 인프라 — 그래프 DB 내장 벡터 인덱스, 별도 벡터 DB 서비스 미도입, Consequences, Considered Options, Context — 왜 이 결정이 필요했나, D1. dense 임베딩은 그래프 DB 내장 벡터 인덱스에 저장, D2. 임베딩 모델은 *외부 서비스* (라이브러리/API), DB 와 분리, D3. "벡터 검색 ≠ 별도 벡터 DB" 의 분리 원칙, D4. 도메인 확장 시의 진화 경로 (+13 more)
+
+### Community 118 - "Community 118"
+Cohesion: 0.09
+Nodes (21): ADR-0014: MCP HTTP+SSE transport — 사내 인프라 / 외부 agent 양쪽 노출, Consequences, Considered Options, Context — 왜 이 결정이 필요했나, D1. Streamable HTTP 가 default — HTTP+SSE 도 호환, D2. stdio + HTTP 코드 공유, D3. 인증 / 권한, D4. namespace 격리 (ADR-0015 와 정합) (+13 more)
+
+### Community 119 - "Community 119"
+Cohesion: 0.10
+Nodes (21): ADR-0002: MVP 범위 경계 — 무엇을 의도적으로 미루는가, Consequences, Considered Options, Context — 왜 이 결정이 필요했나, D1. 웹 화면 (FE) 전부, D2. 인증 · 접근제어 · 멀티 테넌트, D3. 채팅 · 멀티턴 세션, D4. 다국어 처리 (+13 more)
+
+### Community 121 - "Community 121"
+Cohesion: 0.10
+Nodes (20): 30% 의 분해 — 재현율이 아니라 정밀도, ADR-0017: 허브 인지 경로 점수 — promiscuous 허브 down-weighting + RELATES_TO 경로 제한, Consequences, Context — 측정 사실 (라이브 그래프 실측, 2026-06-23), D1. find_path — 허브 인지 정렬 + hub_score 노출 (끝점 제외), D2. 경로 탐색을 RELATES_TO 로 제한, D3. ADR-0016 D4 교정 — 다음 레버는 "병합 강화" 가 아니라 "경로 정밀도", Decision (+12 more)
+
 ### Community 122 - "Community 122"
+Cohesion: 0.15
+Nodes (9): _IndexEntry, _MemoryIndex, 컬럼 (2) 청크 벡터 RAG — PRD 4 §2., chromadb 의존을 피하기 위한 in-process 인덱스. cosine 유사도 top-k.      WHY in-memory: 측정 하니스, corpus 를 청크화하고 모든 청크를 임베딩해 인덱스에 적재.          WHY 이미지 무시: PRD 4 §2 의 chunk RAG 대조, Any, Chunk, Question (+1 more)
+
+### Community 123 - "Community 123"
+Cohesion: 0.22
+Nodes (19): OpentologyRunner, Opentology 컬럼 — 외부 코어를 HTTP 로 호출.      Attributes:         client:      Opentolo, Any, _fake_llm(), _mock_opentology_client(), _node(), _question(), Opentology 컬럼 단위 — provider + client 모두 mock 처리.  primitives 호출 흐름 (PRD 4 §3.5 조 (+11 more)
+
+### Community 124 - "Community 124"
+Cohesion: 0.10
+Nodes (21): 0. 책임, 1.1 같은 corpus 의 변형, 1. 디렉토리 구조, 2. `meta.yaml`, 3.1 완전한 JSON Schema (YAML 으로 표현되지만 스키마는 동일), 3.2 제약 (스키마로는 표현 어려운 비즈니스 룰), 3.3 한 질문의 완전한 예, 3. `questions.yaml` — 30 MCQ 세트 (+13 more)
+
+### Community 125 - "Community 125"
+Cohesion: 0.10
+Nodes (20): Q10. 미국 블랙프라이데이(BFM2026)에서 추가 5% 할인을 받는다던데 제 정산엔 어떻게 반영되나요?, Q11. 제가 MP 셀러인데 명품을 팔면 BFM2026 추가 할인이 들어가나요?, Q12. 한국 블랙프라이데이의 휴면 회원 부활 쿠폰은 제 정산과 관련이 있나요?, Q13. MP 신선식품 사고가 반복되면 어떻게 되나요?, Q14. 정산 주기나 보류 일수가 바뀌면 어떻게 통지되나요?, Q15. VVIP 명품 14일 보류가 분쟁 없이 끝났는데도 해제가 안 됩니다. 어떻게 푸나요?, Q16. 콜드체인 사고 증빙은 어떤 양식으로, 어디에 제출하나요?, Q17. MP 신선식품 사고가 보증보험 한도를 넘으면 정산은 어떻게 처리되나요? (+12 more)
+
+### Community 126 - "Community 126"
+Cohesion: 0.10
+Nodes (19): 1 차 가설 — anchor extraction 의 언어 mismatch, 2 차 진단 — catastrophic EntityMatcher over-merge (진짜 원인), 95K 결과와의 비교 (참고), ADR-0007 D2 결정 기준 매핑, chunk_rag setup 의 embedding API 한도 초과 (수정 포함), Combined 가 chunk 와 같은 정확도인 이유, M6.5 — FinanceBench 1M 3-way 검증 보고서, TL;DR (+11 more)
+
+### Community 127 - "Community 127"
+Cohesion: 0.16
+Nodes (17): parse_authorization_header(), Authorization header → AuthContext.      시제품 default — 헤더가 없으면 default namespace, FastAPI, Auth + namespace 미들웨어 — ADR-0014 D3 + ADR-0015 D1/D2 단위 테스트., test_bearer_token_with_ns_prefix_extracts_namespace(), test_bearer_token_with_ns_prefix_falls_back_to_default_when_empty(), test_bearer_with_uppercase_scheme_accepted(), test_empty_header_returns_default_namespace() (+9 more)
+
+### Community 128 - "Community 128"
 Cohesion: 0.18
-Nodes (7): Chunk, _IndexEntry, _MemoryIndex, chromadb 의존을 피하기 위한 in-process 인덱스. cosine 유사도 top-k.      WHY in-memory: 측정 하니스, corpus 를 청크화하고 모든 청크를 임베딩해 인덱스에 적재.          WHY 이미지 무시: PRD 4 §2 의 chunk RAG 대조, Any, Question
+Nodes (12): ExtractionCacheKey, make_key(), _to_json(), ExtractedGraph, Path, _graph(), Extraction 캐시 — ADR-0010 D2 PR D 단위 테스트., test_cache_handles_corrupted_file_as_miss() (+4 more)
+
+### Community 129 - "Community 129"
+Cohesion: 0.18
+Nodes (16): normalize(), 엔티티 이름 정규화 — *측정 통제 변수* .      동작:       1. `strip()` — 양 끝 공백 제거.       2. Unic, normalize 가 ingest 흐름 안에서 호출되는지 확인 (스모크)., test_normalize_smoke(), `normalize()` — PRD 2 §5.1 의 control variable.  WHY 케이스 분리: normalize 출력 형태가 바뀌면, # WHY: 조사/접미사 제거는 false positive 가 많아 의도적으로 안 한다., test_empty_and_whitespace_only_return_empty(), test_internal_punctuation_preserved() (+8 more)
+
+### Community 130 - "Community 130"
+Cohesion: 0.12
+Nodes (15): 4-way 정확도 / 비용 매트릭스 (최종), A — 코드 robust 가드 (즉시, 본 PR 안), B — Neo4j 활용 보강 (별도 PR, M8 / M9 묶음), C — 측정 보강, F — ingest description 강화 (정량 수치 / 시계열 보존 강제), G — Triple-merge (combined ⊕ aug, 청크 16 개 / dedup 후 8 개), Q07 후퇴 분석 (D), Robust 측정 — 의외의 발견 (★) (+7 more)
+
+### Community 131 - "Community 131"
+Cohesion: 0.12
+Nodes (15): ADR-0016: 제품 방향 — 에이전트 반복 graph-only + 정량-aware 추출, 다음 레버는 문서 간 엔티티 동일성 해소, Context — 측정 사실 (재현 포함), D1. 에이전트 반복 graph-only 를 제품 기본 소비 방식으로 채택, D2. 정량-aware 추출을 ingest 의 정식 동작으로 유지, D3. get_subgraph 견고성 — 읽기 경계 clamp 유지, D4. 다음 ingest 레버 = 문서 간 엔티티 동일성 해소 (별도 작업으로 분리), Decision, FinanceBench 33-MCQ (정량 도메인) (+7 more)
+
+### Community 132 - "Community 132"
+Cohesion: 0.13
+Nodes (14): 1. 적재적소 — 잘 활용 중, 2. 안티패턴 / 비효율 — 개선 후보, 3. 우선순위 권장, 4. 본 검토 한계, A. UNIQUE constraint 부재 (★ 즉시 보강 권장), B. Fulltext 가 keyword 별 N 번 호출 (★ 즉시 보강 권장), C. Unmanaged transactions — execute_write / execute_read 누락, D. BFS 가 Python side 구현 (hop 마다 round-trip) (+6 more)
+
+### Community 133 - "Community 133"
+Cohesion: 0.13
+Nodes (14): (a) ingest 시간 — ADR-0010 parallel + cache 의 직접 효과, ADR-0007 D2 분기 결정, aliases ≥ 5 entity 8 개의 내용, (b) over-merge — ADR-0009 root-cause 해법의 직접 evidence, (c) matched_existing_id 작동 — ADR-0009 D2 의 직접 evidence, (d) Consolidator deprecation 정당화 — ADR-0011 의 evidence, (e) schema 일관성 — ADR-0009 D1 (c) 효과, M7-D 1M 검증 — ADR-0009/0010 적용 결과 (2026-06-21) (+6 more)
+
+### Community 134 - "Community 134"
+Cohesion: 0.13
+Nodes (15): ADR-0001: 프로젝트 정체성과 MVP 검증 가설, Consequences, Considered Options, Context — 왜 이 결정이 필요했나, Related, TL;DR, 옵션 1-B — 정확도 단일 메트릭만 측정 (토큰·지연 제외), 옵션 1 — Full-context reference 없이 청크 RAG vs Opentology 만 비교 (+7 more)
+
+### Community 135 - "Community 135"
+Cohesion: 0.20
+Nodes (10): TestClient, _client_namespaces(), Phase 2 + Phase 3 본격 contracts — ADR-0013/0014/0015 의 코드 evidence.  - /v1/ prefi, _StubLLM, test_admin_namespaces_available_under_v1_prefix(), test_admin_namespaces_empty_graph_returns_empty_list(), test_admin_namespaces_returns_summary_sorted_by_count(), test_v1_alias_is_mounted_for_healthz() (+2 more)
+
+### Community 136 - "Community 136"
+Cohesion: 0.13
+Nodes (14): 0. 이 문서를 읽는 사람에게, 1. 캠페인 명명 컨벤션, 2. 쿠폰 stacking (중복 적용) 규칙 — 마케팅 운영 기준, 3.1 CMP-KR-BFM2026 — 블랙프라이데이 코리아, 3. 2026 연간 캠페인 라인업, 3.2 CMP-US-BFM2026 — 블랙프라이데이 USA, 3.3 CMP-VN-TET2026 — 베트남 뗏 (구정) 페스티벌, 3.4 CMP-KR-WINEFEST2026 — 주류 기획전 (와인 페스티벌) (+6 more)
+
+### Community 137 - "Community 137"
+Cohesion: 0.14
+Nodes (13): chunk_rag 와 비교 — chunk-only wrong 회복, combined vs aug — 비슷한 정확도, 다른 신호, graph 단독 → aug 의 회복 (47.7pp), PoC — Graph-guided Chunk Retrieval (opentology_aug) 가 chunk RAG parity 초과, TL;DR, 다음 액션, 닫는 것, 데이터 산출물 (+5 more)
+
+### Community 138 - "Community 138"
+Cohesion: 0.14
+Nodes (13): 1M 부패 측정과 비교, ADR-0007 D2 결정 기준 매핑, Smoke 측정 — NON_IDENTIFYING_ALIAS_STOPLIST 적용 후 graph 회복 + Combined 유의미성 검증, TL;DR, 검증 한계 (사전 기록), 다음 액션, 닫는 것, 데이터 산출물 (+5 more)
+
+### Community 139 - "Community 139"
+Cohesion: 0.16
+Nodes (8): GenericCompleteResult, ADR-0013 D7 — generic chat completion 결과. main_entity / answer 등에서     재사용. 기존 i, generic chat completion (ADR-0013 D7). 기본 구현은 NotImplementedError —         Open, generic JSON-schema chat completion. main_entity / answer 가 사용., Settings, Any, LLMProvider, DependencyUnavailableError
+
+### Community 140 - "Community 140"
+Cohesion: 0.15
+Nodes (12): Chunk RAG 만 선택하지 않는 이유, Combined RAG 검증 결과 + MVP 피벗 방향, Graph RAG 만 선택하지 않는 이유, MVP 피벗 방향: **Combined RAG (Chunk + Graph in single LLM call)**, Pivot 후 Opentology 의 정체성, Post-MVP 우선순위 재정렬, TL;DR, 가설 정합 (+4 more)
+
+### Community 141 - "Community 141"
+Cohesion: 0.15
+Nodes (12): Amcor 개념 증명 (graph-only, Q01-Q04), Neo4j 공식 스킬 교차 검증 (github.com/neo4j-contrib/neo4j-skills), 검증: truncation 가설 확정 (max_nodes 80 → 300), 결론, 교훈 — 병목이 추출에서 검색으로 이동, 남은 병목 (정밀 진단), 다음 단계 (목표 "graph-only >> 57.6%" 완수까지), 원인 (응답·primitive 진단) (+4 more)
+
+### Community 142 - "Community 142"
+Cohesion: 0.15
+Nodes (12): API Deployment, Manifest 골격, Neo4j StatefulSet, PVC + ConfigMap + Service + Ingress, Secret, 검증 시나리오 (사용자 사내 배치 후), 사내 인프라 배치 가이드 — Kubernetes (ADR-0015 D5), 사전 조건 (+4 more)
+
+### Community 143 - "Community 143"
+Cohesion: 0.15
+Nodes (12): 0. 공통 (모든 카테고리), 1. 주류 (wine / 증류주 / 맥주) — 최고 위험군, 2. 디지털콘텐츠 — 결제 결합 위험, 3. 명품 — 정산 hold 및 반품 한도, 4. 식품과 신선 — 환불 원칙 불가, 5. 가전과 디지털 — JP 인증, 6. 패션 / 뷰티 / 도서 — 표준 위험군, 7. 쿠폰 / 프로모션 스태킹 — R5 (+4 more)
+
+### Community 144 - "Community 144"
+Cohesion: 0.15
+Nodes (12): Phase 1 — Destructive rebuild (graphify parity 회복), Phase 1 의 ADR 묶음, Phase 1 의 PR 분할, PR A — ADR 묶음 + spec (본 PR, 머지 시 RFC 종료), PR B — Extraction context builder + KNOWN_ENTITIES 동봉 (ADR-0009 D1, D4), PR C — 2nd pass 주 entity 식별 (ADR-0009 D3), PR D — Multi-agent parallel + 청크 캐시 (ADR-0010), PR E — vs graphify 벤치마크 + ADR 종료 조건 (ADR-0009/10/11 종료) (+4 more)
+
+### Community 145 - "Community 145"
+Cohesion: 0.17
+Nodes (11): 1. 그래프 > grep 는 관계 도메인에서도 성립 (명제 입증), 2. 그래프의 *절대* 성능은 finance 만큼 일반화 안 됨 — 추출 천장, opentology 가 graphify 를 3배 이긴 이유 (정량 근거), 결과 (3자 비교 — 동일 코퍼스, 동일 gpt-4.1, 동일 agentic 조건), 동기, 두 결론 (둘 다 중요), 부산물 — 상용화 결함 (ingest 처리량), 설계 (+3 more)
+
+### Community 146 - "Community 146"
+Cohesion: 0.32
+Nodes (10): 파일 첫 n 줄 — 비어 있는 줄도 그대로 보존., take_head_lines(), _FakeLLM, MainEntityExtractor — ADR-0009 D3 PR C 단위 테스트., test_extract_returns_main_entity_from_llm_parsed(), test_extract_returns_none_on_dependency_error(), test_extract_returns_none_on_empty_text(), test_extract_returns_none_on_parse_error() (+2 more)
+
+### Community 147 - "Community 147"
+Cohesion: 0.17
+Nodes (11): 10. 정책 적용 책임 부서 요약, 1. 회원 등급 정식 명칭과 정의 범위, 2. 등급 × 카테고리 환불과 반품 매트릭스, 3. VIP 명품 30 일 연장 정의와 휴면 복귀 예외 (R2), 4. 신선식품 환불 원칙 (R3 — 원칙만 기록), 5. 쿠폰 중복 (스태킹) 원칙과 예외 (R5), 6. 디지털콘텐츠 BNPL 결합 금지 (R4), 7. 블랙프라이데이 2026 캠페인 승인 (R10) (+3 more)
+
+### Community 148 - "Community 148"
+Cohesion: 0.18
+Nodes (10): domain_pattern 별, opentology vs graphify — 그래프 단독 + 제품 비교 (FinanceBench 1M, 2026-06-22), 결과, 공통 한계 (양쪽 그래프 모두), 비교 설계 (3-way, 통제 변수 동일), 비용 경고 (가치 제안 "최소 토큰" 과 충돌), 왜 opentology 그래프 단독이 이렇게 낮은가 (응답 원문 진단), 재현 / 부속 자료 (+2 more)
+
+### Community 149 - "Community 149"
+Cohesion: 0.25
+Nodes (9): ADR-0017 방향 6 — 기존 그래프에서 과잉 병합 의심 노드를 탐지.          그래프의 모든 Entity 의 (id, name, a, detect_overmerged_entities(), 과잉 병합 의심 노드를 결정적으로 플래그.      Args:         entities: (entity_id, name, aliases), ADR-0017 방향 6 — detect_overmerged_entities 의 결정적 과잉병합 탐지., test_clean_entities_not_flagged(), test_flags_alias_count_outlier(), test_flags_deixis_aliases_leaked(), test_flags_multiple_distinct_identifiers() (+1 more)
+
+### Community 150 - "Community 150"
+Cohesion: 0.18
+Nodes (10): Working with this repo, 공개 아티팩트 접근성 규칙, 관련 저장소, 세션 역할 모드, 시작 시 진입점 (순서), 이 저장소는 어디서 시작하나, 작성 톤, 작업이 끝났을 때 (워커 모드) (+2 more)
+
+### Community 151 - "Community 151"
+Cohesion: 0.18
+Nodes (10): 0. 한눈 매트릭스, 1. 통화, 2. 주류 연령 (R1), 3. 가전과 디지털 규제 — JP JIS (R8), 4. 디지털상품권 (R9), 5. BNPL — 후불결제 (R9, R4 연계), 6. BFM 2026 캠페인 참여 / 비참여 (R10), 7. GDPR 과 회원 탈퇴 처리 — DE (R6) (+2 more)
+
+### Community 152 - "Community 152"
+Cohesion: 0.18
+Nodes (10): 2026-06-21 1M 검증 핵심, STATUS — Opentology 현재 상태, 갱신 정책, 검증 흐름 헬스, 다음 액션 (M6.5 결과 반영) — M6.5b → M7 → M8 → M9, 마일스톤 진행도, 알려진 stub 표, 이전 상태 — M6.5 종료, M6.5b (EntityConsolidator) 신설 gating + smoke 로 Combined 유의미성 1 차 확인 (+2 more)
+
+### Community 153 - "Community 153"
+Cohesion: 0.20
+Nodes (10): ADR 이 무엇인가, ADR 작성 규칙, Architecture Decision Records (ADR), Retrieval / 인덱싱, 가설과 범위, 메타: ADR 톤과 분량, 외부 표면 (API / MCP), 처음 들어왔다면 — 0001 부터 순서대로 (+2 more)
+
+### Community 154 - "Community 154"
+Cohesion: 0.22
+Nodes (6): build_triple_user(), OpentologyTripleRunner, combined ⊕ aug 합본 (PoC).      Attributes:         loader: corpus loader., _AnchorResult, Any, Question
+
+### Community 155 - "Community 155"
+Cohesion: 0.20
+Nodes (9): 0. 진입 전 공통 확인, 1. 카테고리 분기 (최상위 갈림길), 2. 신선식품 가지 (환불 불가가 원칙), 3. 명품 가지 (등급별 반품 한도가 갈린다), 4. 주류 가지 (반품보다 취소/환불 자동화가 핵심), 5. 일반 카테고리 가지 (패션/뷰티/가전과 디지털/도서/디지털콘텐츠), 6. 환불 실행 공통 분기 (어느 가지든 "환불"로 떨어진 뒤), 반품/환불 결정 트리 (CS 1선 기준) (+1 more)
+
+### Community 156 - "Community 156"
+Cohesion: 0.31
+Nodes (9): extract_identifier_aliases(), 엔티티 이름에서 *구조적 식별자* 를 결정적으로 추출 (중복 제거, 순서 보존).      두 형태를 잡는다.       1. 괄호 안 식별자, ADR-0017 방향 2 — extract_identifier_aliases 의 고정밀 식별자 추출., test_bare_adjacent_id_extracted(), test_generic_short_codes_excluded(), test_multiple_ids_deduped_in_order(), test_non_id_names_yield_nothing(), test_parenthetical_id_extracted() (+1 more)
+
+### Community 157 - "Community 157"
+Cohesion: 0.20
+Nodes (9): AMERICANEXPRESS_2022_10K, Denotes a variance of 100 percent or more, Denotes a variance of 100 percent or more, Denotes a variance of 100 percent or more, Denotes a variance of 100 percent or more, Denotes a variance of 100 percent or more, Denotes a variance of 100 percent or more, Denotes a variance of 100 percent or more (+1 more)
+
+### Community 158 - "Community 158"
+Cohesion: 0.20
+Nodes (9): AMERICANEXPRESS_2022_10K, Denotes a variance of 100 percent or more, Denotes a variance of 100 percent or more, Denotes a variance of 100 percent or more, Denotes a variance of 100 percent or more, Denotes a variance of 100 percent or more, Denotes a variance of 100 percent or more, Denotes a variance of 100 percent or more (+1 more)
+
+### Community 159 - "Community 159"
+Cohesion: 0.27
+Nodes (8): Path, collect(), extract_choice(), extract_metrics(), main(), Combined 컬럼 정답률 집계 + chunk_rag / opentology 와 비교.  본 측정 종료 본 (2126) 의 chunk_rag, returns (total_tokens, latency_ms)., returns (choices_per_q, tokens_per_q, latency_per_q).
+
+### Community 160 - "Community 160"
+Cohesion: 0.20
+Nodes (9): PDM-2026-Q1-001 — VIP 명품 반품 30 일 연장의 휴면 복귀 예외 신설, PDM-2026-Q1-002 — 디지털콘텐츠 BNPL 결합 전면 금지 확정, PDM-2026-Q2-001 — DE GDPR 와 회계법 충돌의 비식별화 절충 확정, PDM-2026-Q2-002 — 쿠폰 스태킹 예외 (웰컴 + 카트) 승인, PDM-2026-Q3-001 — 신선식품 환불 원칙과 VVIP 콜드체인 예외 재확인, PDM-2026-Q3-002 — 블랙프라이데이 2026 국가별 차등 설계 승인, PDM-2026-Q4-001 — 정산 주기 기준선과 VVIP 명품 hold 원칙 기록, PDM-2026-Q4-002 — 4 차 정책 매트릭스 개정 정합성 검토 (+1 more)
+
+### Community 161 - "Community 161"
+Cohesion: 0.20
+Nodes (10): 4.1 자동 채점 — Correctness, 4.2 LLM judge — Reasoning quality, 4.3 LLM judge — Faithfulness, 4.4 Judge 모델 선택, 4.5 Judge 호출 시 컬럼 익명화, 4. 채점 (ADR-0005), 사용자 프롬프트, 사용자 프롬프트 (+2 more)
+
+### Community 162 - "Community 162"
+Cohesion: 0.22
+Nodes (8): MVP 종료 결론 — 2026-06-19, Post-MVP 1순위, 가설 (ADR-0001), 결과 한 줄, 수치, 측정 데이터 소재, 측정 제원 요약, 해석
+
+### Community 163 - "Community 163"
+Cohesion: 0.22
+Nodes (8): 돌파 — 에이전트 반복 graph-only 가 graphify 를 압도 (2026-06-22), 무엇이 graphify 와 우리를 가르나 (상용 차별점), 산출물 (이 결과를 낸 코드), 왜 이게 진짜인가 (귀속 + 검증), 이전 "scale 이 변수다 / 그래프 기여 0" 결론의 교정, 정직한 단서 (상용화 전 해소 대상), 측정, 한 줄 결론
+
+### Community 164 - "Community 164"
+Cohesion: 0.22
+Nodes (8): 1. 왜 별도 쿠폰 체계인가, 2. 핵심 규칙 (단일 진실), 3. 가공 쿠폰 예시 와 적용, 4. 운영 주의, B2B 엔터프라이즈 쿠폰 정책, 적용 예시 A (허용), 적용 예시 B (자동 차단), 적용 예시 C (B2C 결합 금지)
+
+### Community 165 - "Community 165"
+Cohesion: 0.22
+Nodes (8): 1. Account 온보딩, 2. 인보이스 후불 (Net 30 / Net 60), 3. 주류 카테고리 와 사업자 면허 (R1), 4. 환불 의 B2B 예외 (R3 연계), 5. 정산 주기 의 B2B 예외 (R7 연계), 6. 캠페인 비참여 와 전략 계정 캠페인 (R10 연계), 7. 쿠폰 적용 요약 (R5 연계), B2B 엔터프라이즈 운영 가이드
+
+### Community 166 - "Community 166"
+Cohesion: 0.22
+Nodes (8): 0. 왜 이 문서가 따로 있는가, 1. 마케팅이 다루는 쿠폰 타입, 2.1 단 하나의 자유 결합 — WELCOME + CART, 2.2 절대 결합 불가 — REVIVE, 2. stacking 매트릭스 (핵심), 3. 실제 성과 — ROAS / CTR 비교, 4. 실무 체크리스트, 쿠폰 stacking 운영 가이드 — 마케팅 본부 기준
+
+### Community 167 - "Community 167"
+Cohesion: 0.25
+Nodes (8): D1. 프로젝트 정체성, D2. MVP 가 검증하려는 가설 — Pareto 우월, D3. 비교 실험 — 3-way 측정 (정확도 + 토큰 + 지연 3 메트릭), D4. 검증 도메인 — 상거래 비즈니스 규칙, D5. 소스 셋 구성 원칙, D6. Idempotent ingestion — 검증의 재현성, D7. 종료 조건, Decision — 무엇을 결정했나
+
+### Community 168 - "Community 168"
+Cohesion: 0.25
+Nodes (8): is_identifying_alias(), _is_non_identifying_normalized(), *이미 정규화된* 문자열이 비-식별 generic 자기지칭인가.      명시 stoplist 멤버십 OR 결정적 deixis 패턴 중 하나라도, 이 alias 가 *식별성* 을 가지는가 (= 인덱스에 들어가도 되는가).      Returns:         False 이면 stoplis, 결정적 패턴이 명시 목록에 없는 변형도 비-식별로 판정., 담론 단어가 들어가도 *순수 deixis 형태가 아니면* 식별성 유지 (병합 가능).      안전 방향은 under-merge 지만, 명백한, test_deixis_pattern_does_not_eat_real_entities(), test_generic_deixis_pattern_catches_unseen_variants()
+
+### Community 169 - "Community 169"
+Cohesion: 0.32
+Nodes (7): build_empty_image_only_pdf(), build_text_pdf(), eval 테스트 전용 minimal PDF 생성기 — apps/api 의 동일 헬퍼 복제.  원본 `apps/api/tests/fixtures/, write_text_pdf(), Path, 페이지별 latin-1 텍스트로 최소 PDF 바이트 생성., 텍스트가 없는 1 페이지 PDF — 이미지 페이지 폴백 검증용.      실제 이미지는 임베드하지 않고 *contents 가 비어 있는 페이지*
+
+### Community 170 - "Community 170"
+Cohesion: 0.25
+Nodes (7): ID 규칙 참고, ISO 국가코드 (본 부서 적극 사용), 본 부서 내부 약어 (가공), 본사 약어 (다국가 규제 맥락), 셀러 유형 — 영문 정식 ↔ 타 부서 별칭, 용어집 — 글로벌 확장 PM (Global Expansion PM), 회원 등급 — 영문 정식 ↔ 타 부서 별칭
+
+### Community 171 - "Community 171"
+Cohesion: 0.25
+Nodes (8): 0. 위치와 책임, 10. Out of scope (MVP 측정 하니스가 안 다루는 것), 7.1 meta.yaml 예시, 7. 로그 저장 구조, 8. 보고서 형식 (한 장), 9. 미정 결정 (구현 설계 단계), PRD 4 — 평가 하니스 (3-way 측정), 참조 ADR
+
+### Community 172 - "Community 172"
+Cohesion: 0.25
+Nodes (8): 2.1 흐름, 2.2 청크 분할 알고리즘, 2.3 벡터 인덱스 (측정 한정), 2.4 검색, 2.5 시스템 프롬프트, 2.6 사용자 프롬프트 패턴, 2.7 토큰 카운트 규칙, 2. 컬럼 2 — 청크 벡터 RAG (대조)
+
+### Community 173 - "Community 173"
+Cohesion: 0.25
+Nodes (8): 3.1 흐름, 3.3 서브그래프 직렬화 형식 (Step 5), 3.4 답변 생성 LLM 호출 (Step 6), 3.5 Primitive 호출 시퀀스 — 기본 형태, 3.6 토큰 카운트 규칙, 3. 컬럼 3 — Opentology (그래프 노드 RAG + 탐색), 사용자 프롬프트 패턴, 시스템 프롬프트
+
+### Community 174 - "Community 174"
+Cohesion: 0.29
+Nodes (6): density 질문에 대한 답 (데이터), 검증 — 외부 에이전트 반복 + graph-guided source 근거 (2026-06-22), 결과 (동일 33문항), 다음 (그래프가 제 값을 하는지 분리하려면), 정직한 단서 — 이 97% 에서 "그래프" 의 몫은 작다, 측정 설계
+
+### Community 175 - "Community 175"
+Cohesion: 0.29
+Nodes (6): 결론, 그래프가 이기는 조건 (다음 평가 설계의 두 축), 두 ablation 의 결론 — 6문서 코퍼스로는 그래프 가치를 증명할 수 없다 (2026-06-22), 왜 그래프가 못 이기나 — scale 이 빠진 변수다, 측정 요약, 프로젝트 함의 (불편하지만 중요)
+
+### Community 176 - "Community 176"
+Cohesion: 0.33
+Nodes (5): Failure mode breakdown, Opentology MVP 측정 보고서 — 2026-06-19-2126, Pareto 우월 판정, 메트릭 표, 한 단락 해석
+
+### Community 177 - "Community 177"
+Cohesion: 0.33
+Nodes (3): Path, Live E2E — 실제 OpenAI + 실제 Neo4j (docker compose 스택).  RUN_LIVE_TESTS=1 환경 변수가 켜져, test_live_ingest_and_find()
+
+### Community 178 - "Community 178"
+Cohesion: 0.33
+Nodes (5): CS/물류 약어, CS/물류 용어 사전 (별칭 → 정식 명칭 매핑), 매크로/코드 접두, 셀러 유형 별칭, 회원 등급 별칭
+
+### Community 179 - "Community 179"
+Cohesion: 0.40
+Nodes (4): Question, Option, Question, questions.yaml 로더 — PRD 5 §3.1 스키마.
+
+### Community 180 - "Community 180"
+Cohesion: 0.33
+Nodes (5): 결제수단 표기, 법무/리스크 용어집 (Legal & Risk Glossary), 법무 약어 및 가공 용어, 셀러 유형 표기, 회원 등급 표기 (법무 정본)
+
+### Community 181 - "Community 181"
+Cohesion: 0.33
+Nodes (5): 마케팅 본부 용어집 (_GLOSSARY), 마케팅 약어, 셀러 유형 매핑, 쿠폰 타입 약어, 회원 등급 매핑
+
+### Community 182 - "Community 182"
+Cohesion: 0.33
+Nodes (6): 0.1 두 통로의 1:1 매핑, 0.2 인증 / 격리, 0.3 응답 공통 envelope (REST), 0.4 MCP 응답, 0.5 ID 형식, 0. 표면 일반
+
+### Community 183 - "Community 183"
+Cohesion: 0.33
+Nodes (6): 3.1 REST, 3.2 MCP tool, 3.3 입력, 3.4 출력, 3.5 매칭 알고리즘 (ADR-0003 D1), 3. `find_entities`
+
+### Community 184 - "Community 184"
+Cohesion: 0.33
+Nodes (6): 1.1 흐름, 1.2 corpus 직렬화 형식, 1.3 시스템 프롬프트, 1.4 사용자 프롬프트 패턴, 1.5 토큰/지연 기록, 1. 컬럼 1 — Full-context LLM (cost ceiling reference)
+
+### Community 185 - "Community 185"
+Cohesion: 0.33
+Nodes (5): 셀러 유형 (영업 약칭 → 정식), 셀러운영 용어집 (Glossary) — seller-ops, 정산/분쟁 약어, 캠페인 식별 (본 부서 정산 가산 대상), 회원 등급 (정산 보류 판정 관련만)
+
+### Community 186 - "Community 186"
+Cohesion: 0.40
+Nodes (3): _extract_source_refs(), 3-튜플 유일성 (PRD 2 §5.5) — MERGE on (from_id, type, to_id).          WHY 동적 라벨이 아닌, SourceRef
+
+### Community 187 - "Community 187"
+Cohesion: 0.40
+Nodes (4): B2B 엔터프라이즈 약어 와 호칭 매핑, 계약 약어, 쿠폰 약어, 호칭 매핑 (월드 공통 대상 → 우리 본부 용어)
+
+### Community 188 - "Community 188"
+Cohesion: 0.40
+Nodes (4): 본사 내부 약어, 본사 정책팀 용어집 (_GLOSSARY), 셀러 유형 — 정식 명칭 ↔ 부서 별칭, 회원 등급 — 정식 명칭 ↔ 부서 별칭
+
+### Community 189 - "Community 189"
+Cohesion: 0.40
+Nodes (5): 11. 미정 결정 (구현 설계 단계), 12. Out of scope (MVP 에서 노출 안 함), 9. 에러 코드 카탈로그, PRD 3 — Graph Primitives (REST + MCP), 참조 ADR
+
+### Community 190 - "Community 190"
+Cohesion: 0.40
+Nodes (5): 4.1 REST, 4.2 MCP tool, 4.3 입력 (MCP), 4.4 출력, 4. `get_entity`
+
+### Community 191 - "Community 191"
+Cohesion: 0.40
+Nodes (5): 5.1 REST, 5.2 MCP tool, 5.3 입력, 5.4 출력, 5. `get_neighbors`
+
+### Community 192 - "Community 192"
+Cohesion: 0.40
+Nodes (5): 6.1 REST, 6.2 MCP tool, 6.3 입력, 6.4 출력, 6. `find_path`
+
+### Community 193 - "Community 193"
+Cohesion: 0.40
+Nodes (5): 7.1 REST, 7.2 MCP tool, 7.3 입력, 7.4 출력, 7. `get_subgraph`
+
+### Community 194 - "Community 194"
+Cohesion: 0.40
+Nodes (4): Opentology, 검증 가설 한 줄, 이 저장소 이전의 작업, 진입점
+
+### Community 195 - "Community 195"
+Cohesion: 0.50
+Nodes (3): 등급 별칭 매핑, 로열티/등급팀 용어집 (_GLOSSARY), 지표 약어
+
+### Community 196 - "Community 196"
+Cohesion: 0.50
+Nodes (3): 런타임 설정 — 환경 변수로 오버라이드, 기본값은 코드에 고정.  WHY 환경 변수 prefix `OPENTOLOGY_API_*`: `OPENT, 테스트 격리용 — 환경 변수 패치 후 다시 로드하고 싶을 때., reset_settings_for_test()
+
+### Community 197 - "Community 197"
+Cohesion: 0.50
+Nodes (4): 10.1 일관성 모델, 10.2 동시성, 10.3 응답 크기 상한, 10. 동작 가정과 한계
+
+### Community 198 - "Community 198"
+Cohesion: 0.50
+Nodes (4): 1.1 Node, 1.2 Edge, 1.3 SourceRef, 1. 공통 메타데이터 스키마
+
+### Community 199 - "Community 199"
+Cohesion: 0.50
+Nodes (4): 2.1 REST, 2.2 MCP tool, 2.3 응답, 2. `get_schema`
+
+### Community 200 - "Community 200"
+Cohesion: 0.50
+Nodes (4): 8.1 두 transport, 8.2 stdio 어댑터, 8.3 tool 등록 manifest, 8. MCP 어댑터
+
+### Community 201 - "Community 201"
+Cohesion: 0.50
+Nodes (4): 3.2 Anchor 추출 LLM 호출 (Step 2), 결과 → keywords, 시스템 프롬프트, 입력 (사용자 프롬프트)
+
+### Community 202 - "Community 202"
+Cohesion: 0.50
+Nodes (4): 5.1 트리거 조건 (ADR-0005 D5), 5.2 검토 UI, 5.3 덮어쓴 점수 기록, 5. Spot-check 흐름
+
+### Community 203 - "Community 203"
+Cohesion: 0.50
+Nodes (4): 6.1 측정 전체 실행, 6.2 단계별 실행 (디버깅용), 6.3 환경 변수, 6. 실행 절차 (CLI)
+
+### Community 206 - "Community 206"
+Cohesion: 0.67
+Nodes (3): Option, _is_info_insufficient_option(), PRD 5 §3.2 의 "정보 부족" 옵션 판정.      판정 기준 (PRD 5 §3.2 명시 + §3.3 예시 + §4 카탈로그 종합):
 
 ## Knowledge Gaps
-- **88 isolated node(s):** `README — Opentology overview & hypothesis`, `STATUS.md — milestone & stub table`, `Opentology Project Identity (Graph KB tool for LLMs)`, `One-page Report as MVP Exit Condition (D7)`, `Auth/Access Control/Multi-tenant deferred (D2, post-MVP rank 1)` (+83 more)
+- **949 isolated node(s):** `Settings`, `Node`, `Edge`, `Path`, `Path` (+944 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **12 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **32 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `datetime` connect `Ingest Service Tests` to `Live Integration Tests`, `PRD-2 Ingest Spec`, `Eval Baseline Columns`, `Entity Matcher Core`?**
-  _High betweenness centrality (0.093) - this node is a cross-community bridge._
-- **Why does `GraphRepository` connect `Name Normalization` to `API Layer & DI Wiring`, `Live Integration Tests`, `Adapter Protocols`, `Chunk RAG Index`, `Eval Columns Setup`, `Neo4j Repository`, `LLM Adapter & Models`, `API Skeleton Notes`, `Questions YAML Loader`, `OpenAI LLM Adapter`, `Lucene Escape`, `Corpus Tiny Domain`, `LLM Adapter Tests`, `PRD-2 Ingest Spec`, `ADR-2 Scope Boundaries`, `Live Tests Conftest`, `Community 53`, `Community 54`, `Community 59`, `Community 79`, `Community 98`?**
-  _High betweenness centrality (0.091) - this node is a cross-community bridge._
-- **Why does `LLMResult` connect `Entity Matcher Tests` to `Identity E2E Tests`, `Corpus Tiny Domain`, `Merge Mutation Apply`, `Community 75`, `Community 77`, `Neo4j Repository`, `Community 53`, `ADR-6 MCP Primitives`, `Community 93`?**
+- **Why does `datetime` connect `Eval Baseline Columns` to `Ingest Service Tests`, `PRD-2 Ingest Spec`, `Community 110`, `Entity Matcher Core`?**
   _High betweenness centrality (0.064) - this node is a cross-community bridge._
+- **Why does `GraphRepository` connect `Eval Columns Setup` to `API Layer & DI Wiring`, `Lucene Escape`, `Community 98`, `Live Integration Tests`, `LLM Adapter Tests`, `Chunk RAG Index`, `Questions YAML Loader`, `Corpus Tiny Domain`, `Adapter Protocols`, `Community 110`, `Name Normalization`, `Neo4j Repository`, `Community 54`, `LLM Adapter & Models`, `API Skeleton Notes`, `Community 186`?**
+  _High betweenness centrality (0.042) - this node is a cross-community bridge._
+- **Why does `FileLoader` connect `Community 75` to `Graph Repo Helpers`, `Eval Baseline Columns`, `Test Graph Fakes`, `Entity Matcher Tests`, `Init Stub 50`, `ADR-6 MCP Primitives`?**
+  _High betweenness centrality (0.039) - this node is a cross-community bridge._
+- **Are the 87 inferred relationships involving `SourceRef` (e.g. with `EmbeddingProvider` and `GraphRepository`) actually correct?**
+  _`SourceRef` has 87 INFERRED edges - model-reasoned connections that need verification._
+- **Are the 90 inferred relationships involving `ExtractedGraph` (e.g. with `EmbeddingProvider` and `ExtractContext`) actually correct?**
+  _`ExtractedGraph` has 90 INFERRED edges - model-reasoned connections that need verification._
+- **Are the 50 inferred relationships involving `GraphRepository` (e.g. with `ExtractedGraph` and `NeighborhoodResult`) actually correct?**
+  _`GraphRepository` has 50 INFERRED edges - model-reasoned connections that need verification._
 - **Are the 32 inferred relationships involving `FakeGraph` (e.g. with `FakeGraph` and `Path`) actually correct?**
   _`FakeGraph` has 32 INFERRED edges - model-reasoned connections that need verification._
-- **Are the 46 inferred relationships involving `GraphRepository` (e.g. with `ExtractedGraph` and `NeighborhoodResult`) actually correct?**
-  _`GraphRepository` has 46 INFERRED edges - model-reasoned connections that need verification._
-- **Are the 17 inferred relationships involving `PrimitiveStubGraph` (e.g. with `Node` and `_StubEmbedder`) actually correct?**
-  _`PrimitiveStubGraph` has 17 INFERRED edges - model-reasoned connections that need verification._
-- **Are the 23 inferred relationships involving `FileLoader` (e.g. with `EmbeddingResult` and `AnthropicProvider`) actually correct?**
-  _`FileLoader` has 23 INFERRED edges - model-reasoned connections that need verification._
