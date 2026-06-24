@@ -20,8 +20,8 @@ from mcp.server.sse import SseServerTransport
 from mcp.server.streamable_http import StreamableHTTPServerTransport
 from starlette.responses import Response
 
-from .adapters.embedding import EmbeddingProvider
-from .adapters.graph import GraphRepository
+from opentology_api.domain.ports import EmbeddingProvider, GraphRepository
+
 from .api.auth import parse_authorization_header
 from .config import Settings
 from .mcp_server import build_mcp_server

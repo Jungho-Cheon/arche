@@ -8,15 +8,8 @@ WHY 모델 식별자를 config 에서: ADR-0001 통제 변수 + ADR-0003 D2. 청
 
 from __future__ import annotations
 
-from abc import ABC, abstractmethod
-
 from ..domain.errors import DependencyUnavailableError
-
-
-class EmbeddingProvider(ABC):
-    @abstractmethod
-    def embed(self, texts: list[str]) -> list[list[float]]:
-        """텍스트 배치 → 임베딩 벡터 배치. 순서 보존."""
+from ..domain.ports import EmbeddingProvider
 
 
 class OpenAIEmbeddingProvider(EmbeddingProvider):

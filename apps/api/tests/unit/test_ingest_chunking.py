@@ -8,13 +8,13 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from opentology_api.adapters.llm import LLMProvider
 from opentology_api.domain.ingest import IngestService
 from opentology_api.domain.models import (
     ExtractedEntity,
     ExtractedGraph,
     ExtractedRelation,
 )
+from opentology_api.domain.ports import LLMProvider
 
 from .test_ingest_service import FakeEmbedder, FakeGraph
 

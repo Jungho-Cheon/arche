@@ -21,8 +21,8 @@ from pathlib import Path
 
 from fastapi import APIRouter, Depends, HTTPException, Response
 
-from ..adapters.embedding import EmbeddingProvider
-from ..adapters.graph import GraphRepository
+from opentology_api.domain.ports import EmbeddingProvider, GraphRepository
+
 from ..domain.errors import InvalidInputError
 from ..domain.ingest import IngestService
 from . import services

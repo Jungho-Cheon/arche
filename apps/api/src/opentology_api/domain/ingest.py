@@ -30,11 +30,10 @@ from pathlib import Path
 
 from ulid import ULID
 
-from ..adapters.embedding import EmbeddingProvider
+from opentology_api.domain.ports import EmbeddingProvider, GraphRepository, ImageInput, LLMProvider
+
 from ..adapters.extract_cache import ExtractionCache, make_key
-from ..adapters.graph import GraphRepository
 from ..adapters.image_loader import IMAGE_EXTS, load_image_as_b64
-from ..adapters.llm import ImageInput, LLMProvider
 from ..adapters.pdf import PdfPage, extract_pdf
 from .chunking import chunk_text
 from .crawl import crawl

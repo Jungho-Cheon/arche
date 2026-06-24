@@ -8,10 +8,12 @@ from __future__ import annotations
 
 from fastapi import Depends, Request
 
-from ..adapters.embedding import EmbeddingProvider, OpenAIEmbeddingProvider
+from opentology_api.domain.ports import EmbeddingProvider, GraphRepository, LLMProvider
+
+from ..adapters.embedding import OpenAIEmbeddingProvider
 from ..adapters.extract_cache import DEFAULT_CACHE_DIR, ExtractionCache
-from ..adapters.graph import GraphRepository, Neo4jGraphRepository
-from ..adapters.llm import LLMProvider, OpenAILLMProvider
+from ..adapters.graph import Neo4jGraphRepository
+from ..adapters.llm import OpenAILLMProvider
 from ..config import Settings, get_settings
 from ..domain.ingest import IngestService
 from ..domain.main_entity import MainEntityExtractor

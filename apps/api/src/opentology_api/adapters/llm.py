@@ -18,8 +18,6 @@ from __future__ import annotations
 import hashlib
 import json
 import logging
-from abc import ABC, abstractmethod
-from dataclasses import dataclass
 from typing import Any
 
 from ..domain.errors import DependencyUnavailableError, UnsupportedFileTypeError
@@ -29,6 +27,7 @@ from ..domain.extraction_contract import (
     EXTRACTION_SYSTEM_PROMPT,
 )
 from ..domain.models import ExtractedEntity, ExtractedGraph, ExtractedRelation
+from ..domain.ports import GenericCompleteResult, ImageInput, LLMProvider
 
 logger = logging.getLogger(__name__)
 
@@ -53,77 +52,10 @@ EXTRACTION_RESPONSE_FORMAT: dict[str, Any] = {
 }
 
 
-@dataclass(frozen=True)
-class ImageInput:
-    """멀티모달 LLM 입력의 이미지 한 장 (PRD 2 §2.1 + §4.1).
-
-    - `b64_data` : dataURI 헤더 없는 순수 base64 문자열.
-    - `mime_type` : `image/jpeg` / `image/png` / `image/webp` 등.
-
-    WHY dataclass: provider 간 동일 형태로 전달하기 위한 *경량 DTO* . pydantic
-    모델로 만들 만큼 검증 로직이 없고, 어댑터 경계에서만 잠깐 살다 사라진다.
-    """
-
-    b64_data: str
-    mime_type: str
 
 
-@dataclass(frozen=True)
-class GenericCompleteResult:
-    """ADR-0013 D7 — generic chat completion 결과. main_entity / answer 등에서
-    재사용. 기존 ingest 의 extract 와는 다른 *임의 system + user + schema* 경로.
-    """
-
-    raw: str
-    parsed: dict[str, Any] | None
-    parse_error: str | None
 
 
-class LLMProvider(ABC):
-    """추출 LLM 의 추상 인터페이스.
-
-    `text` 와 `images` 둘 다 선택 — 적어도 하나는 제공되어야 한다. 텍스트만
-    제공되면 텍스트 모달, 이미지만 제공되면 이미지 모달, 둘 다 제공되면 동일
-    프롬프트에 두 모달을 함께 전달 (PRD 2 §4.1 의 "주어진 텍스트나 이미지에서").
-    """
-
-    @abstractmethod
-    def extract(
-        self,
-        *,
-        text: str | None = None,
-        images: list[ImageInput] | None = None,
-        source_path: str,
-        context: ExtractContext | None = None,
-    ) -> ExtractedGraph:
-        """본문 → 엔티티/관계 추출. 실패 시 DependencyUnavailableError.
-
-        context 가 주어지면 ADR-0009 의 4 종 컨텍스트 블록이 user message 앞부분
-        에 prepend 된다. context=None 이면 기존 동작 (legacy) — 점진 도입.
-        """
-
-    def complete(
-        self, *, system: str, user: str, response_format: dict[str, Any]
-    ) -> GenericCompleteResult:
-        """generic chat completion (ADR-0013 D7). 기본 구현은 NotImplementedError —
-        OpenAI 같은 실 어댑터에서 override. 본 메서드는 main_entity (PR C),
-        answer/retrieve (Phase 2) 등 *임의 schema 호출* 의 단일 진입점.
-        """
-        raise NotImplementedError
-
-    def extraction_fingerprint(self) -> str:
-        """추출 *출력에 영향을 주는* 요소들의 결정적 지문 (ADR-0017 코드-델타).
-
-        IngestService 가 이 값을 파이프라인 버전과 결합해 IngestionRun 의
-        extractor_version 으로 쓴다. 같은 파일이라도 이 지문이 바뀌면(=프롬프트/
-        스키마/모델 변경) short-circuit 이 풀려 재추출된다.
-
-        기본 구현은 빈 문자열 — 지문에 기여하지 않음. 실 어댑터(OpenAI)가
-        프롬프트+스키마+모델로 override 한다. 빈 값이면 파이프라인 버전만으로
-        델타가 결정되므로 *프롬프트 변경을 못 잡는다* — 실 적재 경로는 반드시
-        override 된 구현을 쓴다 (FakeLLM 등 테스트 더블만 기본값 사용).
-        """
-        return ""
 
 
 class OpenAILLMProvider(LLMProvider):

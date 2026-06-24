@@ -15,8 +15,8 @@ from collections.abc import Iterable
 from dataclasses import dataclass
 from typing import Any
 
-from ..adapters.embedding import EmbeddingProvider
-from ..adapters.graph import GraphRepository
+from opentology_api.domain.ports import EmbeddingProvider, GraphRepository
+
 from .models import ExtractedEntity, MergeMutation, SourceRef, StoredEntity
 
 # WHY 단일 상수 + WHY 코멘트: 측정 통제 변수. 변경 시 모든 측정 회차의 그래프가

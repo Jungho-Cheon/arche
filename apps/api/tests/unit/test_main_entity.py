@@ -4,7 +4,6 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from opentology_api.adapters.llm import GenericCompleteResult, LLMProvider
 from opentology_api.domain.errors import DependencyUnavailableError
 from opentology_api.domain.main_entity import (
     MAIN_ENTITY_SYSTEM,
@@ -12,6 +11,7 @@ from opentology_api.domain.main_entity import (
     MainEntityExtractor,
     take_head_lines,
 )
+from opentology_api.domain.ports import GenericCompleteResult, LLMProvider
 
 
 def test_take_head_lines_returns_first_n():
