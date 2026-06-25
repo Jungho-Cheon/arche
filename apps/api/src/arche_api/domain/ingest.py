@@ -50,6 +50,7 @@ from .identity import (
 from .main_entity import MainEntity, MainEntityExtractor
 from .models import (
     ExtractedGraph,
+    ExtractedRelation,
     SourceRef,
     StoredEntity,
     now_rfc3339,
@@ -524,9 +525,12 @@ class IngestService:
             agg_created = 0
             agg_updated = 0
             agg_by_step: dict[int, int] = {0: 0, 1: 0, 2: 0, 3: 0}
-            all_rel_ids: list[str] = []
-            agg_rel_created = 0
-            agg_rel_dangling = 0
+            # issue #28 — 관계는 청크별 즉시 해소하지 않고 (relation, source_ref)
+            # 로 모았다가 *모든 청크의 엔티티 적재 후* 한 번에 해소한다. WHY: 한
+            # 청크의 관계가 가리키는 엔티티가 *다른 청크/파일* 에서 적재될 수 있어,
+            # 청크별 즉시 해소는 그 관계를 dangling 으로 떨어뜨려 cross-chunk/doc
+            # multi-hop 사슬을 끊었다 (issue #28 의 근본 원인).
+            pending_relations: list[tuple[ExtractedRelation, SourceRef]] = []
             total_chunks = len(llm_inputs)
 
             # ADR-0010 D1 — 청크 묶음을 batch parallel 로 *추출만* 동시 실행.
@@ -567,12 +571,6 @@ class IngestService:
                     run_id=run_id,
                     namespace_id=namespace_id,
                 )
-                rel_created, rel_dangling, rel_ids = self._upsert_relations(
-                    extracted=extracted,
-                    name_to_id=name_to_id,
-                    source_ref=source_ref,
-                    run_id=run_id,
-                )
 
                 # 청크 사이 누적. name_to_id 는 *이번 청크* 의 이름→id 매핑이므로
                 # 다음 청크에서 같은 이름이 나오면 EntityMatcher (Step 1) 가 다시
@@ -583,9 +581,21 @@ class IngestService:
                 agg_updated += entity_metrics["updated"]
                 for step in (0, 1, 2, 3):
                     agg_by_step[step] += entity_metrics["by_step"].get(step, 0)
-                agg_rel_created += rel_created
-                agg_rel_dangling += rel_dangling
-                all_rel_ids.extend(rel_ids)
+                # issue #28 — 관계는 모았다가 루프 뒤에서 일괄 해소.
+                for r in extracted.relations:
+                    pending_relations.append((r, source_ref))
+
+            # issue #28 — 파일의 모든 엔티티가 적재된 뒤 관계를 해소한다. 엔드포인트는
+            # (1) 이번 파일의 name_to_id (정확/정규화), (2) 그래프 정규명(이전 파일
+            # 포함) 순으로 찾는다 → cross-chunk 정방향/역방향 + cross-doc 역방향 참조
+            # 가 모두 이어진다.
+            agg_rel_created, agg_rel_dangling, all_rel_ids = (
+                self._upsert_relations_deferred(
+                    pending=pending_relations,
+                    name_to_id=all_name_to_id,
+                    run_id=run_id,
+                )
+            )
 
             # 차분 — 이전 회차가 emit 했는데 이번엔 안 한 것 처리.
             diff_metrics = self._apply_diff(
@@ -1000,20 +1010,34 @@ class IngestService:
             "by_step": by_step,
         }
 
-    def _upsert_relations(
+    def _upsert_relations_deferred(
         self,
         *,
-        extracted: ExtractedGraph,
+        pending: list[tuple[ExtractedRelation, SourceRef]],
         name_to_id: dict[str, str],
-        source_ref: SourceRef,
         run_id: str,
     ) -> tuple[int, int, list[str]]:
+        """모아 둔 관계를 *파일 전체 엔티티 + 그래프* 기준으로 한 번에 해소 (issue #28).
+
+        엔드포인트 해소 우선순위 (`_resolve_endpoint`):
+          1. 이번 파일 name_to_id 의 *정확* 이름 일치.
+          2. 이번 파일 name_to_id 의 *정규화* 일치 (표기 흔들림 흡수).
+          3. 그래프 정규명 lookup (이전 파일 노드 — cross-doc 역방향 참조).
+        셋 다 miss 면 dangling.
+        """
         created = 0
         dangling = 0
         rel_ids: list[str] = []
-        for r in extracted.relations:
-            from_id = name_to_id.get(r.from_name)
-            to_id = name_to_id.get(r.to_name)
+        # 이번 파일 엔티티의 정규화 인덱스 — 정확 일치 miss 시 표기 흔들림 흡수.
+        norm_index: dict[str, str] = {}
+        for name, eid in name_to_id.items():
+            nkey = normalize(name)
+            if nkey and nkey not in norm_index:
+                norm_index[nkey] = eid
+
+        for r, source_ref in pending:
+            from_id = self._resolve_endpoint(r.from_name, name_to_id, norm_index)
+            to_id = self._resolve_endpoint(r.to_name, name_to_id, norm_index)
             if not from_id or not to_id:
                 dangling += 1
                 logger.warning(
@@ -1039,6 +1063,28 @@ class IngestService:
             if was_created:
                 created += 1
         return created, dangling, rel_ids
+
+    def _resolve_endpoint(
+        self,
+        name: str,
+        name_to_id: dict[str, str],
+        norm_index: dict[str, str],
+    ) -> str | None:
+        """관계 엔드포인트 이름 → 엔티티 id (issue #28). 못 찾으면 None."""
+        # 1. 이번 파일의 정확 이름 일치.
+        hit = name_to_id.get(name)
+        if hit:
+            return hit
+        nkey = normalize(name)
+        if not nkey:
+            return None
+        # 2. 이번 파일의 정규화 일치 (표기 흔들림: "카테고리 C" vs "카테고리  C").
+        hit = norm_index.get(nkey)
+        if hit:
+            return hit
+        # 3. 그래프 정규명 lookup — 이전 파일에서 적재된 노드(cross-doc 역방향 참조).
+        #    단일 store 는 유일 매치만 돌려주고, 그 외(기본 포트)는 None.
+        return self._graph.find_entity_id_by_normalized_name(normalized=nkey)
 
     def _apply_diff(
         self,

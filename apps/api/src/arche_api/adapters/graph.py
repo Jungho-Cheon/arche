@@ -249,6 +249,27 @@ class Neo4jGraphRepository(GraphRepository):
             return None
         return _node_to_stored(rec["e"])
 
+    def find_entity_id_by_normalized_name(self, *, normalized: str) -> str | None:
+        """타입 무관 정규명 lookup — 관계 엔드포인트 cross-chunk/doc 해소 (issue #28).
+
+        정규명 OR 정규화된 alias 가 일치하는 엔티티를 찾되, *유일* 할 때만 id 를
+        돌려준다. 두 개 이상이면 모호 → None (잘못된 노드 연결 방지). LIMIT 2 로
+        유일성만 판정하고 더 받지 않는다.
+        """
+        if not normalized:
+            return None
+        with self._driver.session() as s:
+            rows = s.run(
+                f"MATCH (e:{ENTITY_LABEL}) "
+                "WHERE e.normalized_name = $n "
+                "   OR $n IN coalesce(e.normalized_aliases, []) "
+                "RETURN e.id AS id LIMIT 2",
+                n=normalized,
+            ).data()
+        if len(rows) == 1:
+            return rows[0]["id"]
+        return None
+
     def vector_search(
         self, *, embedding: list[float], top_k: int, type_: str
     ) -> list[StoredEntity]:
