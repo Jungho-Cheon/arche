@@ -50,7 +50,7 @@ services:
     # 같은 경로가 있어야 디렉토리를 본다. 호스트 경로 == 컨테이너 경로 로 묶어
     # 경로 변환 로직을 제거. 측정 한정의 read-only 마운트.
     volumes:
-      - ./eval/datasets:/Users/jungho1000/workspace/private/opentology/eval/datasets:ro
+      - ./eval/datasets:/Users/jungho1000/workspace/private/arche/eval/datasets:ro
     healthcheck:
       test: ["CMD-SHELL", "python -c \"import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://localhost:8000/healthz', timeout=2).status==200 else 1)\""]
       interval: 5s
