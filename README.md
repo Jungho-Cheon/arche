@@ -77,13 +77,13 @@ Arche 는 문서를 미리 **관계 지도(그래프)** 로 바꿔 두고, 에�
 
 ## 직접 해보기
 
-> 준비물: **Docker** 와 **OpenAI API 키**. (문서에서 점과 선을 뽑을 때 OpenAI 모델을 쓴다. 처음엔 파일 몇 개짜리 작은 폴더로 시작하길 권한다.)
+> 준비물: **Docker** 와 **AI 모델 API 키**. 기본값은 OpenAI 키 하나로 추출과 임베딩을 모두 쓴다. OpenAI 대신 Claude(Anthropic) + Voyage 로도 돌릴 수 있다 (모델 접두사만 변경, [ADR-0019](./docs/adr/0019-multi-provider-factory.md)). 처음엔 파일 몇 개짜리 작은 폴더로 시작하길 권한다.
 
 ```bash
 # 1) 내려받고 환경 변수 채우기
 git clone https://github.com/Jungho-Cheon/arche.git
 cd arche
-cp .env.example .env          # .env 를 열어 OPENAI_API_KEY 를 채운다 (필수)
+cp .env.example .env          # .env 를 열어 OPENAI_API_KEY 를 채운다 (기본 경로 필수)
 
 # 2) 그래프 DB(Neo4j) + API 를 한 번에 띄운다 (첫 실행은 이미지 빌드로 몇 분)
 docker compose up -d
@@ -135,7 +135,7 @@ REST 와 MCP 는 *같은* 6가지 동작을 노출한다 (Pydantic 단일 스키
 
 - **어떤 소비 에이전트든** — REST + MCP 두 표준 통로로 노출 (Claude, GPT, 자체 에이전트).
 - **어떤 그래프 DB 든** — 저장소를 능력별 인터페이스 뒤에 두어 교체 가능.
-- **어떤 추출 LLM 이든** — 문서에서 점과 선을 뽑는 모델도 인터페이스로 분리.
+- **어떤 추출 LLM/임베딩이든** — 추출은 OpenAI/Anthropic, 임베딩은 OpenAI/Voyage 가 들어 있고, 모델 이름 접두사(`openai/`, `anthropic/`, `voyage/`)만 바꾸면 코드 수정 없이 교체된다. OpenAI 없이 Claude + Voyage 만으로도 돌릴 수 있다 ([ADR-0019](./docs/adr/0019-multi-provider-factory.md)).
 
 ## 관련 저장소
 

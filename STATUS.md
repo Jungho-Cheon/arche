@@ -2,7 +2,24 @@
 
 > 이 파일의 위치: 본 저장소에 기여하는 모두를 위한 **단일 진입점**. 마일스톤 진행도 / 다음 액션 / 알려진 stub 표가 한 페이지에 모인다.
 
-## 현재 상태 — M7-D Phase 1 RFC 시작 (파괴적 재구성, 2026-06-21)
+## 현재 상태 — 측정 기반 방향 확정 + 구조 정리 (2026-06-25)
+
+ADR-0016 측정으로 제품 방향이 확정됐다: **에이전트 반복 graph-only 가 graphify 를 압도** (FinanceBench 94-97% vs 57.6%, MedHop 30% vs 10%). 정확도의 레버는 모델/규모가 아니라 *추출 완전성* 이다. 이에 따라 답변 LLM 을 Arche 외부로 빼고 (graph primitive 만 노출), 정량 (수치·표) 인지 추출을 채택. ADR-0017 이 경로 *정밀도* (허브 인지 점수) 로 보강 — promiscuous 허브를 다리로 쓰는 가짜 경로 제거.
+
+검증이 안정화되자 구조를 확정했다.
+
+| ADR | 결정 | 코드 반영 |
+|---|---|---|
+| [0016](./docs/adr/0016-agentic-graphonly-and-quantitative-extraction.md) | graph-only + 정량 추출, 답변 LLM 외부화 | 적용 |
+| [0017](./docs/adr/0017-hub-aware-path-scoring.md) | 허브 인지 경로 점수 (find_path 정밀도 + hub_score 노출) | 적용 |
+| [0018](./docs/adr/0018-monorepo-and-agnostic-boundaries.md) | monorepo + 능력별 포트 (GraphStore/VectorIndex/LexicalIndex) + 추출 계약 도메인화 | 적용 (`apps/api`) |
+| [0019](./docs/adr/0019-multi-provider-factory.md) | 모델 provider 팩토리 + Anthropic/Voyage 어댑터 (설정만으로 교체, OpenAI-free 경로) | 적용 (`apps/api/adapters`) |
+
+> 도구 메모: 코드 네비게이션용 graphify (`graphify-out/`) 는 2026-06-25 사용 중단 + 저장소에서 제거. 단 graphify 를 *외부 벤치마크 baseline* 으로 인용한 측정 기록 (아래 블록들) 은 Arche 가 측정으로 이긴 상대로서 정체성 근거이므로 *보존* 한다.
+
+아래 "이전 상태" 블록과 마일스톤 표는 ADR-0016 피벗 *이전* 기준이다. 0016~0019 와 충돌하는 셀은 위 결정이 우선하며, 표 전면 재구성은 구현 계획서 확정 시점에 한 번 수행한다 (아래 "갱신 정책" 참조).
+
+## 이전 상태 — M7-D Phase 1 RFC 시작 (파괴적 재구성, 2026-06-21)
 
 PR #54 의 EntityConsolidator 1M 적용 결과 (Combined 78.8% > chunk 72.7%) 로 ADR-0007 D2 분기는 "D1 유지 + M7 unblock" 으로 결정. 그러나 *graphify 와의 비교 평가* (2026-06-21 합의) 에서 다음이 드러남:
 

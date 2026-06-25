@@ -17,9 +17,8 @@ from typing import Annotated
 import typer
 from dotenv import load_dotenv
 
-from .adapters.embedding import OpenAIEmbeddingProvider
 from .adapters.graph import Neo4jGraphRepository
-from .adapters.llm import OpenAILLMProvider
+from .adapters.providers import build_embedding_provider, build_llm_provider
 from .config import get_settings
 from .domain.errors import ArcheError
 from .domain.ingest import FileProgressEvent, IngestService
@@ -59,8 +58,8 @@ def mcp_serve(
     """6 graph primitive 를 MCP 표준 tool 로 노출 (PRD 3 §8).
 
     동작:
-    1. `.env` 로드 + Settings / Neo4jGraphRepository / OpenAIEmbeddingProvider
-       구성.
+    1. `.env` 로드 + Settings / Neo4jGraphRepository / 임베딩 provider
+       (팩토리가 모델 접두사로 선택, ADR-0019) 구성.
     2. `build_mcp_server` 로 6 tool 등록.
     3. stdio transport 에서 JSON-RPC 핸드셰이크 (initialize / list_tools /
        call_tool) 를 처리.
@@ -100,9 +99,7 @@ def mcp_serve(
     settings = get_settings()
 
     graph = Neo4jGraphRepository(settings)
-    embedder = OpenAIEmbeddingProvider(
-        model_id=settings.embedding_model_id, api_key=settings.openai_api_key
-    )
+    embedder = build_embedding_provider(settings)
     try:
         # 인덱스 idempotent 보장 — REST 의 lifespan 과 같은 책임.
         try:
@@ -147,12 +144,9 @@ def ingest(
     graph = Neo4jGraphRepository(settings)
     try:
         graph.ensure_indexes()
-        llm = OpenAILLMProvider(
-            model_id=settings.llm_model_id, api_key=settings.openai_api_key
-        )
-        embedder = OpenAIEmbeddingProvider(
-            model_id=settings.embedding_model_id, api_key=settings.openai_api_key
-        )
+        # LLM/임베딩 provider 는 모델 식별자 접두사로 팩토리가 고른다 (ADR-0019).
+        llm = build_llm_provider(settings)
+        embedder = build_embedding_provider(settings)
         service = IngestService(
             llm=llm,
             embedder=embedder,

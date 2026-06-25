@@ -52,12 +52,6 @@ EXTRACTION_RESPONSE_FORMAT: dict[str, Any] = {
 }
 
 
-
-
-
-
-
-
 class OpenAILLMProvider(LLMProvider):
     def __init__(self, *, model_id: str, api_key: str | None) -> None:
         from openai import OpenAI
@@ -206,6 +200,209 @@ class OpenAILLMProvider(LLMProvider):
             response_format=EXTRACTION_RESPONSE_FORMAT,
         )
         return resp.choices[0].message.content or ""
+
+
+class AnthropicLLMProvider(LLMProvider):
+    """Anthropic (Claude) 추출 어댑터 — 중립 추출 계약을 tool-use 로 번역 (ADR-0019).
+
+    WHY tool-use: Anthropic 은 OpenAI 의 strict `json_schema` response_format 이
+    없다. 대신 *도구(tool)* 의 `input_schema` 에 중립 엔티티/관계 스키마
+    (`EXTRACTION_ENTITY_RELATION_SCHEMA`) 를 그대로 넣고 `tool_choice` 로 그 도구
+    호출을 강제하면, 모델이 스키마에 맞는 JSON 을 `tool_use` 블록의 `input` 으로
+    돌려준다 — 파싱 실패율을 OpenAI 경로처럼 사실상 0 으로. 같은 *중립 계약*
+    (`SYSTEM_PROMPT` + 스키마) 을 쓰므로 ADR-0018 D3 의 provider-중립 추출이
+    실제로 입증된다.
+    """
+
+    _TOOL_NAME = "extracted_graph"
+
+    def __init__(
+        self, *, model_id: str, api_key: str | None, max_tokens: int = 8192
+    ) -> None:
+        from anthropic import Anthropic
+
+        self.model_id = model_id
+        # WHY max_tokens 명시: Anthropic Messages API 는 max_tokens 필수. 추출 결과
+        # (표·수치 다수 문서) 가 길 수 있어 넉넉히 잡는다. 모델 한도 초과 시 호출자
+        # 가 청크를 더 잘게 쪼개야 한다 (chunking 책임).
+        self._max_tokens = max_tokens
+        self._client = Anthropic(api_key=api_key)
+
+    def extraction_fingerprint(self) -> str:
+        """SYSTEM_PROMPT + 중립 스키마 + "anthropic" + model_id 의 sha256 앞 16 자.
+
+        provider 토큰("anthropic")을 재료에 넣어 같은 모델명이라도 OpenAI 지문과
+        구분된다 — provider 교체는 추출 결과를 바꾸므로 재추출이 맞다 (코드-델타).
+        """
+        material = (
+            SYSTEM_PROMPT
+            + "\x00"
+            + json.dumps(
+                EXTRACTION_ENTITY_RELATION_SCHEMA, sort_keys=True, ensure_ascii=False
+            )
+            + "\x00anthropic\x00"
+            + self.model_id
+        )
+        return hashlib.sha256(material.encode("utf-8")).hexdigest()[:16]
+
+    def extract(
+        self,
+        *,
+        text: str | None = None,
+        images: list[ImageInput] | None = None,
+        source_path: str,
+        context: ExtractContext | None = None,
+    ) -> ExtractedGraph:
+        if not text and not images:
+            raise UnsupportedFileTypeError(
+                "extract requires at least one of text/images"
+            )
+        last_err: Exception | None = None
+        for attempt in (1, 2):
+            try:
+                parsed = self._call_tool(text=text, images=images, context=context)
+                return _to_extracted_graph(parsed)
+            except (ValueError, KeyError, TypeError) as e:
+                last_err = e
+                logger.warning(
+                    "anthropic_extract parse failed attempt=%d source=%s err=%s",
+                    attempt,
+                    source_path,
+                    e,
+                )
+                continue
+            except Exception as e:  # noqa: BLE001 — provider 에러는 502/503 으로 변환
+                raise DependencyUnavailableError(
+                    f"LLM provider call failed: {e}"
+                ) from e
+        raise DependencyUnavailableError(
+            f"LLM extraction failed after 2 attempts: {last_err}"
+        )
+
+    def complete(
+        self, *, system: str, user: str, response_format: dict[str, Any]
+    ) -> GenericCompleteResult:
+        """generic JSON-schema 호출 (main_entity 등). response_format 은 OpenAI
+        json_schema 형태로 들어오므로, 안쪽 중립 스키마를 꺼내 tool-use 로 강제한다.
+        스키마를 못 찾으면 평문 응답을 받아 JSON 파싱한다.
+        """
+        schema: dict[str, Any] | None = None
+        if isinstance(response_format, dict):
+            schema = (response_format.get("json_schema") or {}).get("schema")
+        try:
+            if schema:
+                parsed = self._call_tool_generic(
+                    system=system, user=user, schema=schema, tool_name="result"
+                )
+                return GenericCompleteResult(
+                    raw=json.dumps(parsed, ensure_ascii=False),
+                    parsed=parsed,
+                    parse_error=None,
+                )
+            resp = self._client.messages.create(
+                model=self.model_id,
+                max_tokens=self._max_tokens,
+                system=system,
+                messages=[{"role": "user", "content": user}],
+            )
+        except Exception as e:  # noqa: BLE001
+            raise DependencyUnavailableError(
+                f"LLM provider call failed: {e}"
+            ) from e
+        raw = _anthropic_text(resp)
+        parsed_text: dict[str, Any] | None = None
+        parse_error: str | None = None
+        try:
+            parsed_text = json.loads(raw)
+        except (json.JSONDecodeError, ValueError) as e:
+            parse_error = f"json decode failed: {e}"
+        return GenericCompleteResult(raw=raw, parsed=parsed_text, parse_error=parse_error)
+
+    def _call_tool(
+        self,
+        *,
+        text: str | None,
+        images: list[ImageInput] | None,
+        context: ExtractContext | None,
+    ) -> dict[str, Any]:
+        ctx_block = render_context_block(context) if context else ""
+        content = _anthropic_user_content(
+            text=text, images=images, ctx_block=ctx_block
+        )
+        resp = self._client.messages.create(
+            model=self.model_id,
+            max_tokens=self._max_tokens,
+            system=SYSTEM_PROMPT,
+            messages=[{"role": "user", "content": content}],
+            tools=[
+                {
+                    "name": self._TOOL_NAME,
+                    "description": "본문에서 추출한 엔티티와 관계 그래프",
+                    "input_schema": EXTRACTION_ENTITY_RELATION_SCHEMA,
+                }
+            ],
+            tool_choice={"type": "tool", "name": self._TOOL_NAME},
+        )
+        return _anthropic_tool_input(resp, self._TOOL_NAME)
+
+    def _call_tool_generic(
+        self, *, system: str, user: str, schema: dict[str, Any], tool_name: str
+    ) -> dict[str, Any]:
+        resp = self._client.messages.create(
+            model=self.model_id,
+            max_tokens=self._max_tokens,
+            system=system,
+            messages=[{"role": "user", "content": user}],
+            tools=[{"name": tool_name, "input_schema": schema}],
+            tool_choice={"type": "tool", "name": tool_name},
+        )
+        return _anthropic_tool_input(resp, tool_name)
+
+
+def _anthropic_user_content(
+    *, text: str | None, images: list[ImageInput] | None, ctx_block: str
+) -> list[dict[str, Any]]:
+    """Anthropic Messages content block 리스트. 텍스트 + 이미지(base64) 혼합."""
+    blocks: list[dict[str, Any]] = []
+    if ctx_block:
+        blocks.append({"type": "text", "text": ctx_block})
+        blocks.append({"type": "text", "text": "[CHUNK]"})
+    if text:
+        blocks.append({"type": "text", "text": text})
+    for img in images or []:
+        blocks.append(
+            {
+                "type": "image",
+                "source": {
+                    "type": "base64",
+                    "media_type": img.mime_type,
+                    "data": img.b64_data,
+                },
+            }
+        )
+    return blocks
+
+
+def _anthropic_tool_input(resp: Any, tool_name: str) -> dict[str, Any]:
+    """Anthropic 응답에서 강제된 tool_use 블록의 input(이미 dict)을 꺼낸다."""
+    for block in getattr(resp, "content", []) or []:
+        if getattr(block, "type", None) == "tool_use" and (
+            getattr(block, "name", None) == tool_name
+        ):
+            data = getattr(block, "input", None)
+            if isinstance(data, dict):
+                return data
+    raise ValueError(f"anthropic response had no '{tool_name}' tool_use block")
+
+
+def _anthropic_text(resp: Any) -> str:
+    """Anthropic 응답의 text 블록들을 이어붙인다."""
+    parts = [
+        getattr(b, "text", "")
+        for b in getattr(resp, "content", []) or []
+        if getattr(b, "type", None) == "text"
+    ]
+    return "".join(parts)
 
 
 def _to_extracted_graph(parsed: dict[str, Any]) -> ExtractedGraph:

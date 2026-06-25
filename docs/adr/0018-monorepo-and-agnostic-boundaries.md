@@ -1,5 +1,11 @@
 # ADR-0018: monorepo 구조 + Agent/DB/LLM agnostic 경계
 
+> **Amendment (ADR-0019, 2026-06-25)**: 아래 후속 목록의 "두 번째 LLM provider
+> 어댑터 (D3 의 중립 계약 소비 입증)" 가 [ADR-0019](./0019-multi-provider-factory.md)
+> 로 구현됐다. provider 팩토리 + Anthropic(추출) / Voyage(임베딩) 어댑터로 D3 의
+> LLM-agnostic 이음매가 실증됐다 — 같은 중립 추출 계약이 OpenAI 의 response_format
+> 과 Anthropic 의 tool-use 두 형식으로 번역된다.
+
 Status: accepted
 Date: 2026-06-24
 Phase: 검증 안정화 후 구조 정리 (후속 apps — docs/web-ui — 대비)
@@ -147,7 +153,8 @@ agnostic 하다 (특정 프레임워크 결합 없음). 후속 web-ui 도 *Pytho
 후속 (별도 PR, 대부분 post-MVP):
 - 능력 포트를 다른 store 로 분리하는 합성 어댑터 (두 번째 백엔드가 생길 때).
 - `apps/docs` (Nextra) / `apps/web-ui` / `packages/api-client` 스캐폴딩.
-- 두 번째 LLM provider 어댑터 (D3 의 중립 계약 소비 입증).
+- ~~두 번째 LLM provider 어댑터 (D3 의 중립 계약 소비 입증).~~ → **완료**:
+  [ADR-0019](./0019-multi-provider-factory.md) (provider 팩토리 + Anthropic/Voyage).
 
 ## 결과 (consequences)
 

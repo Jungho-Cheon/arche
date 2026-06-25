@@ -103,7 +103,11 @@ Arche 는 문서를 미리 **관계 지도(그래프)** 로 바꿔 둔다. 그�
 - **어떤 소비 에이전트든** — 두 표준 통로(아래 4절의 REST, MCP)로 노출하므로 Claude,
   GPT, 자체 에이전트 누구나 붙는다.
 - **어떤 그래프 DB 든** — 저장소를 능력별 인터페이스 뒤에 두어 교체 가능.
-- **어떤 추출 LLM 이든** — 문서에서 점과 선을 뽑는 AI 모델도 인터페이스로 분리.
+- **어떤 추출 LLM/임베딩이든** — 문서에서 점과 선을 뽑는 AI 모델, 노드를 임베딩하는
+  모델 모두 인터페이스로 분리했다. 지금은 추출에 OpenAI 와 Anthropic(Claude),
+  임베딩에 OpenAI 와 Voyage 두 갈래가 들어 있고, 환경 변수의 모델 이름 접두사만
+  바꾸면(`openai/...`, `anthropic/...`, `voyage/...`) 코드 수정 없이 갈아끼운다 —
+  OpenAI 없이 Claude + Voyage 만으로도 돌릴 수 있다 (ADR-0019).
 
 ---
 
@@ -153,15 +157,20 @@ Arche 는 문서를 미리 **관계 지도(그래프)** 로 바꿔 둔다. 그�
 
 ## 6. 직접 해보기 (약 5-10분)
 
-> 준비물 두 가지: **Docker** 와 **OpenAI API 키** 하나. (문서에서 점과 선을 뽑을 때
-> OpenAI 모델을 쓴다. 처음엔 파일 몇 개짜리 작은 폴더로 시작하길 권한다 — 적재할 때
-> 문서마다 OpenAI 호출이 일어나 비용이 든다.)
+> 준비물 두 가지: **Docker** 와 **AI 모델 API 키** 하나. (문서에서 점과 선을 뽑고
+> 노드를 임베딩할 때 AI 모델을 쓴다.) 기본값은 OpenAI 키 하나로 추출과 임베딩을
+> 모두 처리한다. OpenAI 대신 Claude(Anthropic) + Voyage 조합으로도 돌릴 수 있다 —
+> 환경 변수의 모델 접두사만 바꾸면 된다 (아래 .env 주석 참고, ADR-0019). 처음엔
+> 파일 몇 개짜리 작은 폴더로 시작하길 권한다 — 적재할 때 문서마다 모델 호출이
+> 일어나 비용이 든다.
 
 ```bash
 # 1) 내려받고 환경 변수 채우기
 git clone https://github.com/Jungho-Cheon/arche.git
 cd arche
-cp .env.example .env          # .env 를 열어 OPENAI_API_KEY 를 채운다 (필수)
+cp .env.example .env          # .env 를 열어 OPENAI_API_KEY 를 채운다 (기본 경로 필수)
+                              # OpenAI 없이 쓰려면 ANTHROPIC_API_KEY + VOYAGE_API_KEY 를
+                              # 채우고 ARCHE_API_LLM_MODEL/EMBEDDING_MODEL 접두사를 바꾼다
 
 # 2) 그래프 DB(Neo4j) + API 를 한 번에 띄운다 (첫 실행은 이미지 빌드로 몇 분 걸린다)
 docker compose up -d

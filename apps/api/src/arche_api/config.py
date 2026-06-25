@@ -44,10 +44,13 @@ class Settings(BaseSettings):
         extra="ignore",
     )
 
-    # OpenAI
+    # Provider API 키 — 모델 식별자의 provider 접두사로 어느 키를 쓸지 결정한다
+    # (ADR-0019 multi-provider). 미사용 provider 의 키는 비어 있어도 된다.
     openai_api_key: str | None = Field(default=None, alias="OPENAI_API_KEY")
+    anthropic_api_key: str | None = Field(default=None, alias="ANTHROPIC_API_KEY")
+    voyage_api_key: str | None = Field(default=None, alias="VOYAGE_API_KEY")
 
-    # 모델 식별자 — provider 접두사 포함 (예: openai/gpt-4.1).
+    # 모델 식별자 — provider 접두사 포함 (예: openai/gpt-4.1, anthropic/claude-...).
     llm_model: str = Field(
         default=DEFAULT_LLM_MODEL, alias="ARCHE_API_LLM_MODEL"
     )
@@ -82,6 +85,24 @@ class Settings(BaseSettings):
             self.embedding_model.split("/", 1)[1]
             if "/" in self.embedding_model
             else self.embedding_model
+        )
+
+    @property
+    def llm_provider(self) -> str:
+        """모델 식별자의 provider 접두사 (예: openai/gpt-4.1 → "openai").
+
+        접두사가 없으면 "openai" 로 본다 (하위 호환). 팩토리가 이 값으로 어느
+        LLMProvider 어댑터를 만들지 고른다 (ADR-0019).
+        """
+        return self.llm_model.split("/", 1)[0] if "/" in self.llm_model else "openai"
+
+    @property
+    def embedding_provider(self) -> str:
+        """임베딩 모델 식별자의 provider 접두사 (예: voyage/voyage-3 → "voyage")."""
+        return (
+            self.embedding_model.split("/", 1)[0]
+            if "/" in self.embedding_model
+            else "openai"
         )
 
 
