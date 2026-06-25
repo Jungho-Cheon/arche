@@ -18,6 +18,7 @@ from __future__ import annotations
 import hashlib
 import json
 import logging
+import subprocess
 from typing import Any
 
 from ..domain.errors import DependencyUnavailableError, UnsupportedFileTypeError
@@ -357,6 +358,202 @@ class AnthropicLLMProvider(LLMProvider):
             tool_choice={"type": "tool", "name": tool_name},
         )
         return _anthropic_tool_input(resp, tool_name)
+
+
+# Claude Code (`claude -p`) 경유 추출 어댑터에서 쓰는 상수.
+# WHY JSON 지시문: Anthropic API 의 tool-use 처럼 스키마를 강제하는 수단이 CLI 에는
+# 없다. 그래서 시스템 프롬프트 끝에 "JSON 한 덩어리만, 코드펜스 금지" 를 명시하고,
+# 그래도 모델이 ```json 펜스를 두르는 경우가 있어 파싱 단계에서 펜스를 벗긴다.
+_CLAUDE_CODE_JSON_DIRECTIVE = (
+    "\n\n[출력 형식] 위 스키마에 맞는 JSON 객체 하나만 출력하라. 설명 문장, "
+    "마크다운 코드펜스(```), 그 외 어떤 텍스트도 덧붙이지 마라."
+)
+# 추출은 *순수 1-shot 완성* 이어야 한다 — Claude Code 의 에이전트 도구가 끼어들면
+# 결정성/비용이 망가진다. 주요 도구를 모두 비활성화해 turn 이 1 로 고정되게 한다.
+_CLAUDE_CODE_DISALLOWED_TOOLS = [
+    "Bash",
+    "Read",
+    "Edit",
+    "Write",
+    "WebFetch",
+    "WebSearch",
+    "Glob",
+    "Grep",
+    "Task",
+    "NotebookEdit",
+]
+
+
+def _loads_lenient(raw: str) -> dict[str, Any]:
+    """모델이 ```json 펜스로 감싸 줘도 벗겨서 dict 로 파싱한다.
+
+    Claude Code CLI 는 strict JSON 출력을 강제할 수 없어 (tool-use 부재) 모델이
+    펜스나 약간의 잡음을 덧붙이는 경우가 있다. 펜스를 벗긴 뒤 json.loads.
+    """
+    t = raw.strip()
+    if t.startswith("```"):
+        inner = t[3:]
+        if inner[:4].lower() == "json":
+            inner = inner[4:]
+        if "```" in inner:
+            inner = inner[: inner.rindex("```")]
+        t = inner.strip()
+    return json.loads(t)
+
+
+class ClaudeCodeLLMProvider(LLMProvider):
+    """Claude Code (`claude -p`) 경유 추출 어댑터 — 구독 인증 사용, 별도 키 불필요 (ADR-0019).
+
+    WHY: Anthropic API 어댑터는 OpenAI 키를 Anthropic 키로 바꿀 뿐 *종량 과금 키* 가
+    여전히 필요하다. 사용자가 이미 구독료를 내는 Claude Code 를 통해 추출을 돌리면
+    추가 키 없이 "OpenAI 도 Anthropic API 키도 없이" 경로가 성립한다 — 로컬 직접
+    사용(dogfooding)에 적합하다.
+
+    구현: `claude -p --output-format json --model <m> --system-prompt <s>` 를 서브
+    프로세스로 부르고, 사용자 본문은 stdin 으로 넘긴다(큰 청크가 arg 길이 한도를
+    넘지 않도록). 응답은 `{... "result": "<모델 텍스트>" ...}` 봉투라 `result` 를
+    꺼내 파싱한다.
+
+    한계 (의도된 trade-off):
+    - **텍스트 전용** — `claude -p` 는 base64 이미지 블록을 깔끔히 못 받는다.
+      이미지/PDF 페이지가 오면 UnsupportedFileTypeError. 멀티모달은 openai/ 또는
+      anthropic/ provider 를 쓴다.
+    - **스키마 강제 부재** — tool-use 가 없어 "JSON 만 출력" 지시 + 펜스 제거 +
+      재시도 1 회로 대신한다.
+    - **호출 오버헤드** — Claude Code 가 자체 시스템 프롬프트를 매 호출 주입(캐시)
+      하므로 raw API 보다 무겁다. 고throughput 적재보다 로컬 검증용.
+    """
+
+    def __init__(
+        self, *, model_id: str, binary: str = "claude", timeout: float = 300.0
+    ) -> None:
+        # WHY API 키 없음: Claude Code 가 머신의 구독/인증을 그대로 쓴다.
+        self.model_id = model_id
+        self._binary = binary
+        self._timeout = timeout
+
+    def extraction_fingerprint(self) -> str:
+        """SYSTEM_PROMPT + 중립 스키마 + "claude-code" + model_id 의 sha256 앞 16 자.
+
+        "claude-code" 토큰으로 같은 모델명이라도 OpenAI/Anthropic-API 지문과 구분된다 —
+        호출 경로(tool-use vs 텍스트-JSON)가 달라 추출 결과가 달라질 수 있으므로
+        경로 교체 시 재추출이 맞다.
+        """
+        material = (
+            SYSTEM_PROMPT
+            + "\x00"
+            + json.dumps(
+                EXTRACTION_ENTITY_RELATION_SCHEMA, sort_keys=True, ensure_ascii=False
+            )
+            + "\x00claude-code\x00"
+            + self.model_id
+        )
+        return hashlib.sha256(material.encode("utf-8")).hexdigest()[:16]
+
+    def extract(
+        self,
+        *,
+        text: str | None = None,
+        images: list[ImageInput] | None = None,
+        source_path: str,
+        context: ExtractContext | None = None,
+    ) -> ExtractedGraph:
+        if images:
+            raise UnsupportedFileTypeError(
+                "ClaudeCodeLLMProvider 는 텍스트 전용 — 이미지/PDF 페이지 입력 미지원 "
+                "(claude -p CLI 한계). 멀티모달은 openai/ 또는 anthropic/ provider 사용."
+            )
+        if not text:
+            raise UnsupportedFileTypeError("extract requires text")
+
+        ctx_block = render_context_block(context) if context else ""
+        user = f"{ctx_block}\n\n[CHUNK]\n{text}" if ctx_block else text
+        system = SYSTEM_PROMPT + _CLAUDE_CODE_JSON_DIRECTIVE
+
+        last_err: Exception | None = None
+        for attempt in (1, 2):
+            # CLI/인프라 실패(DependencyUnavailableError)는 _run 에서 즉시 raise —
+            # 여기 루프는 *파싱 실패* 만 1 회 재시도한다 (PRD 2 §4.3).
+            raw = self._run(system=system, user=user)
+            try:
+                parsed = _loads_lenient(raw)
+                return _to_extracted_graph(parsed)
+            except (json.JSONDecodeError, ValueError, KeyError) as e:
+                last_err = e
+                logger.warning(
+                    "claude_code_extract parse failed attempt=%d source=%s err=%s",
+                    attempt,
+                    source_path,
+                    e,
+                )
+                continue
+        raise DependencyUnavailableError(
+            f"LLM extraction failed after 2 attempts: {last_err}"
+        )
+
+    def complete(
+        self, *, system: str, user: str, response_format: dict[str, Any]
+    ) -> GenericCompleteResult:
+        """generic JSON 호출 (main_entity 등). response_format 의 안쪽 스키마를 꺼내
+        시스템 프롬프트에 동봉해 JSON 출력을 유도한다 (CLI 엔 강제 수단 없음)."""
+        schema: dict[str, Any] | None = None
+        if isinstance(response_format, dict):
+            schema = (response_format.get("json_schema") or {}).get("schema")
+        sys_prompt = system + _CLAUDE_CODE_JSON_DIRECTIVE
+        if schema:
+            sys_prompt += "\n\nJSON 스키마:\n" + json.dumps(schema, ensure_ascii=False)
+        raw = self._run(system=sys_prompt, user=user)
+        parsed: dict[str, Any] | None = None
+        parse_error: str | None = None
+        try:
+            parsed = _loads_lenient(raw)
+        except (json.JSONDecodeError, ValueError) as e:
+            parse_error = f"json decode failed: {e}"
+        return GenericCompleteResult(raw=raw, parsed=parsed, parse_error=parse_error)
+
+    def _run(self, *, system: str, user: str) -> str:
+        """`claude -p` 를 서브프로세스로 호출하고 봉투의 result 텍스트를 돌려준다."""
+        cmd = [
+            self._binary,
+            "-p",
+            "--output-format",
+            "json",
+            "--model",
+            self.model_id,
+            "--system-prompt",
+            system,
+            "--disallowedTools",
+            *_CLAUDE_CODE_DISALLOWED_TOOLS,
+        ]
+        try:
+            proc = subprocess.run(
+                cmd,
+                input=user,
+                capture_output=True,
+                text=True,
+                timeout=self._timeout,
+            )
+        except FileNotFoundError as e:
+            raise DependencyUnavailableError(
+                f"claude CLI not found (binary={self._binary!r}): {e}"
+            ) from e
+        except subprocess.TimeoutExpired as e:
+            raise DependencyUnavailableError(f"claude CLI timed out: {e}") from e
+        if proc.returncode != 0:
+            raise DependencyUnavailableError(
+                f"claude CLI exited {proc.returncode}: {(proc.stderr or '')[:500]}"
+            )
+        try:
+            envelope = json.loads(proc.stdout)
+        except (json.JSONDecodeError, ValueError) as e:
+            raise DependencyUnavailableError(
+                f"claude CLI returned non-JSON envelope: {e}"
+            ) from e
+        if envelope.get("is_error"):
+            raise DependencyUnavailableError(
+                f"claude CLI reported error: {envelope.get('result')}"
+            )
+        return envelope.get("result") or ""
 
 
 def _anthropic_user_content(

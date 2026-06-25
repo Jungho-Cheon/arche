@@ -17,7 +17,7 @@ from collections.abc import Callable
 from ..config import Settings
 from ..domain.ports import EmbeddingProvider, LLMProvider
 from .embedding import OpenAIEmbeddingProvider, VoyageEmbeddingProvider
-from .llm import AnthropicLLMProvider, OpenAILLMProvider
+from .llm import AnthropicLLMProvider, ClaudeCodeLLMProvider, OpenAILLMProvider
 
 # provider 이름 → (settings) → LLMProvider. 한 줄 추가로 새 provider 등록.
 _LLM_BUILDERS: dict[str, Callable[[Settings], LLMProvider]] = {
@@ -27,6 +27,8 @@ _LLM_BUILDERS: dict[str, Callable[[Settings], LLMProvider]] = {
     "anthropic": lambda s: AnthropicLLMProvider(
         model_id=s.llm_model_id, api_key=s.anthropic_api_key
     ),
+    # claude-code: 머신의 Claude Code 구독 인증을 그대로 쓰므로 API 키 불필요.
+    "claude-code": lambda s: ClaudeCodeLLMProvider(model_id=s.llm_model_id),
 }
 
 _EMBED_BUILDERS: dict[str, Callable[[Settings], EmbeddingProvider]] = {

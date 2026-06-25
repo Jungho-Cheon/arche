@@ -104,10 +104,12 @@ Arche 는 문서를 미리 **관계 지도(그래프)** 로 바꿔 둔다. 그�
   GPT, 자체 에이전트 누구나 붙는다.
 - **어떤 그래프 DB 든** — 저장소를 능력별 인터페이스 뒤에 두어 교체 가능.
 - **어떤 추출 LLM/임베딩이든** — 문서에서 점과 선을 뽑는 AI 모델, 노드를 임베딩하는
-  모델 모두 인터페이스로 분리했다. 지금은 추출에 OpenAI 와 Anthropic(Claude),
-  임베딩에 OpenAI 와 Voyage 두 갈래가 들어 있고, 환경 변수의 모델 이름 접두사만
-  바꾸면(`openai/...`, `anthropic/...`, `voyage/...`) 코드 수정 없이 갈아끼운다 —
-  OpenAI 없이 Claude + Voyage 만으로도 돌릴 수 있다 (ADR-0019).
+  모델 모두 인터페이스로 분리했다. 지금은 추출에 OpenAI, Anthropic(Claude),
+  Claude Code(`claude -p`), 임베딩에 OpenAI 와 Voyage 가 들어 있고, 환경 변수의 모델
+  이름 접두사만 바꾸면(`openai/...`, `anthropic/...`, `claude-code/...`, `voyage/...`)
+  코드 수정 없이 갈아끼운다 — OpenAI 없이 Claude + Voyage 로, 또는 설치된 Claude Code
+  구독 인증을 쓰는 `claude-code/...`(별도 API 키 불필요, 텍스트 전용)로도 돌릴 수 있다
+  (ADR-0019).
 
 ---
 

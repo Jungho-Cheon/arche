@@ -135,7 +135,7 @@ REST 와 MCP 는 *같은* 6가지 동작을 노출한다 (Pydantic 단일 스키
 
 - **어떤 소비 에이전트든** — REST + MCP 두 표준 통로로 노출 (Claude, GPT, 자체 에이전트).
 - **어떤 그래프 DB 든** — 저장소를 능력별 인터페이스 뒤에 두어 교체 가능.
-- **어떤 추출 LLM/임베딩이든** — 추출은 OpenAI/Anthropic, 임베딩은 OpenAI/Voyage 가 들어 있고, 모델 이름 접두사(`openai/`, `anthropic/`, `voyage/`)만 바꾸면 코드 수정 없이 교체된다. OpenAI 없이 Claude + Voyage 만으로도 돌릴 수 있다 ([ADR-0019](./docs/adr/0019-multi-provider-factory.md)).
+- **어떤 추출 LLM/임베딩이든** — 추출은 OpenAI/Anthropic/Claude Code, 임베딩은 OpenAI/Voyage 가 들어 있고, 모델 이름 접두사(`openai/`, `anthropic/`, `claude-code/`, `voyage/`)만 바꾸면 코드 수정 없이 교체된다. OpenAI 없이 Claude + Voyage 로, 또는 `claude-code/`(설치된 Claude Code 구독 인증)로 **별도 API 키 없이** 추출까지 돌릴 수 있다 ([ADR-0019](./docs/adr/0019-multi-provider-factory.md)).
 
 ## 관련 저장소
 
