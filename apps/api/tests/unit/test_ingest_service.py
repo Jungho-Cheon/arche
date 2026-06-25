@@ -705,6 +705,72 @@ def test_ingest_skips_dangling_relation(tmp_path: Path, fake_graph: FakeGraph):
     assert result.relations_created == 0
 
 
+def test_cross_chunk_forward_relation_resolves(
+    tmp_path: Path, fake_graph: FakeGraph, monkeypatch
+):
+    """issue #28 — 한 청크의 관계가 *다음 청크* 의 엔티티를 가리켜도 이어진다.
+
+    청크별 즉시 해소(옛 동작)였다면 chunk0 의 PromP→CatC 는 CatC 가 아직 없어
+    dangling 으로 drop 된다. 관계 해소를 청크 루프 *뒤로* 미루는 현재 동작에서는
+    CatC(chunk1)가 적재된 뒤 해소되어 사슬이 끊기지 않는다.
+    """
+    from arche_api.domain import ingest as ingest_mod
+    from arche_api.domain.chunking import Chunk
+    from arche_api.domain.ports import LLMProvider
+
+    # chunk_text 를 2 청크로 고정. 추출 LLM 은 청크별로 다른 그래프를 돌려준다.
+    monkeypatch.setattr(
+        ingest_mod,
+        "chunk_text",
+        lambda text, **kw: [
+            Chunk(text="c0", chunk_index=0, total_chunks=2),
+            Chunk(text="c1", chunk_index=1, total_chunks=2),
+        ],
+    )
+
+    scripts = [
+        ExtractedGraph(
+            entities=[ExtractedEntity(name="PromP", type="promotion")],
+            relations=[
+                ExtractedRelation(
+                    from_name="PromP", to_name="CatC", type="applies_to"
+                )
+            ],
+        ),
+        ExtractedGraph(
+            entities=[ExtractedEntity(name="CatC", type="category")],
+            relations=[],
+        ),
+    ]
+
+    class _Scripted(LLMProvider):
+        def __init__(self) -> None:
+            self.i = 0
+
+        def extract(self, *, text=None, images=None, source_path, context=None):
+            g = scripts[self.i]
+            self.i += 1
+            return g
+
+        def extraction_fingerprint(self) -> str:
+            return ""
+
+    # extract_batch_size=1 → 직렬 추출 (스크립트 인덱스 순서 보장).
+    service = IngestService(
+        llm=_Scripted(),
+        embedder=FakeEmbedder(),
+        graph=fake_graph,
+        enable_context_aware_extraction=False,
+        extract_batch_size=1,
+    )
+    p = tmp_path / "f.md"
+    p.write_text("dummy", encoding="utf-8")
+    result = service.ingest_file(p)
+
+    assert result.relations_skipped_dangling == 0
+    assert result.relations_created == 1
+
+
 def test_normalize_smoke():
     """normalize 가 ingest 흐름 안에서 호출되는지 확인 (스모크)."""
     assert normalize("  쿠폰 X  ") == "쿠폰 x"

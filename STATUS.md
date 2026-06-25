@@ -133,9 +133,11 @@ ADR-0016 측정이 제품 방향을 바꾸면서 (에이전트 반복 graph-only
 
 | 우선순위 | 작업 | 종료 조건 | 이슈 |
 |---|---|---|---|
-| 1 | 문서 간 엔티티 동일성 해소 강화 (추출 단계) | cross-doc 병합률 ↑ + 관계-사슬 도메인(MedHop류) 천장 상승 evidence | #28 |
-| 2 | API 에러 계약 정규화 | Pydantic 422 → PRD 3 §0.3 envelope, 회귀 테스트 | #26 |
-| 3 | 결정적 측정 하니스 컬럼 (에이전트 반복 graph-only 고정) | 재현 가능한 컬럼으로 94-97% 재측정 | (신규 필요) |
+| ✅ 완료 | cross-chunk/cross-doc 관계 엔드포인트 해소 (#28 의 multi-hop 사슬 끊김) | 관계 해소를 청크 루프 뒤로 미루고 그래프 정규명 fallback 추가. find_path 4-hop 사슬 복원 (단위+통합 테스트) | #28 |
+| 1 | 문서 간 엔티티 동일성 해소 강화 (추출 단계 cross-doc 병합) | cross-doc 병합률 ↑ + 관계-사슬 도메인(MedHop류) 천장 상승 evidence. ADR-0009 LLM 매칭 강화 축 | (신규 필요) |
+| 2 | cross-file *정방향* 관계 해소 (디렉토리 2-pass) | 나중 적재 파일의 엔티티를 가리키는 관계도 해소. idempotent diff/run 모델과 함께 설계 | (신규 — #28 후속) |
+| 3 | API 에러 계약 정규화 | Pydantic 422 → PRD 3 §0.3 envelope, 회귀 테스트 | #26 |
+| 4 | 결정적 측정 하니스 컬럼 (에이전트 반복 graph-only 고정) | 재현 가능한 컬럼으로 94-97% 재측정 | (신규 필요) |
 | 후순위 | Scale·다도메인·외부 비교 (옛 M9) | 1M 한국어 corpus + 외부 도구 비교 | TBD |
 
 상세 측정 근거 — `eval/reports/2026-06-22-graphify-mcq-baseline/` (BREAKTHROUGH-AGENTIC-GRAPHONLY / GENERALIZATION-MEDHOP / SCALE-IS-THE-VARIABLE) + ADR-0016/0017.

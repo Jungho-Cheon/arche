@@ -301,6 +301,26 @@ class GraphStore(ABC):
     ) -> StoredEntity | None:
         """`normalized_name == normalized AND type == type_` 정확 일치."""
 
+    def find_entity_id_by_normalized_name(self, *, normalized: str) -> str | None:
+        """*타입 무관* 정규명 lookup — 관계 엔드포인트 해소용 (issue #28).
+
+        WHY 타입 무관: `ExtractedRelation` 의 엔드포인트는 *이름만* 갖고 타입을
+        모른다. 관계가 가리키는 엔티티가 *다른 청크/파일에서* 이미 적재됐을 때
+        (현재 청크의 name_to_id 에는 없음), 정규명으로 그래프에서 찾아 dangling
+        drop 을 막는다. cross-chunk/cross-document multi-hop 사슬이 끊기던 결함의
+        해소(#28).
+
+        WHY 유일 매치만: 같은 정규명이 *여러 타입/노드* 로 존재하면(예: 과거
+        over-merge 잔재) 어느 것에 이어야 할지 모호하므로 None 을 돌려 *안전하게*
+        dangling 으로 둔다 — 잘못된 노드를 잇는 것보다 안 잇는 게 낫다(ADR-0008 의
+        over-merge 경계와 같은 방향의 보수성).
+
+        WHY 기본 구현 None: 능력 포트의 *선택적* 확장점. 단일 store(Neo4j) 만
+        오버라이드하면 되고, 다른 store/테스트 더블은 기본 None 으로 동작이 깨지지
+        않는다(within-file 해소는 name_to_id 로 이미 충분, graph fallback 만 미적용).
+        """
+        return None
+
     @abstractmethod
     def create_entity(self, *, entity: StoredEntity) -> None:
         """새 엔티티 노드 생성. id 는 호출자가 생성 (ULID)."""
