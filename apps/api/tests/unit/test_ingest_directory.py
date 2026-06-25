@@ -21,6 +21,7 @@ from arche_api.domain.models import (
     ExtractedGraph,
     ExtractedRelation,
 )
+from arche_api.domain.ports import LLMProvider
 
 from .test_ingest_service import FakeEmbedder, FakeGraph, FakeLLM
 
@@ -30,6 +31,43 @@ def _build(extracted: ExtractedGraph) -> tuple[IngestService, FakeGraph, FakeLLM
     llm = FakeLLM(extracted)
     service = IngestService(llm=llm, embedder=FakeEmbedder(), graph=graph)
     return service, graph, llm
+
+
+class _ScriptedByPath(LLMProvider):
+    """파일 basename → ExtractedGraph 매핑으로 답한다.
+
+    디렉토리 모드는 파일을 알파벳 순으로 직렬 처리하므로, 파일별로 *다른* 추출
+    결과를 돌려줘야 cross-file 시나리오를 단위에서 재현할 수 있다. 호출 순서가
+    아니라 source_path 로 매칭해 일부 파일이 short-circuit 되는 재적재에도 안정적.
+    """
+
+    def __init__(self, by_name: dict[str, ExtractedGraph]) -> None:
+        self._by_name = by_name
+        self.calls = 0
+
+    def extract(self, *, text=None, images=None, source_path, context=None):
+        self.calls += 1
+        return self._by_name[Path(source_path).name]
+
+    def extraction_fingerprint(self) -> str:
+        return ""
+
+
+def _id_by_name(graph: FakeGraph, name: str) -> str:
+    for e in graph._entities.values():
+        if e.name == name:
+            return e.id
+    return ""
+
+
+def _has_relation(graph: FakeGraph, from_name: str, to_name: str) -> bool:
+    fid = _id_by_name(graph, from_name)
+    tid = _id_by_name(graph, to_name)
+    if not fid or not tid:
+        return False
+    return any(
+        key[0] == fid and key[2] == tid for key in graph._relations.values()
+    )
 
 
 def test_ingest_directory_processes_all_md_and_txt(tmp_path: Path):
@@ -178,3 +216,129 @@ def test_ingest_directory_honors_archeignore(tmp_path: Path):
     result = service.ingest_directory(tmp_path)
     assert result.files_total == 1
     assert llm.calls == 1
+
+
+# ---------- issue #78 — cross-file 정방향 관계 (디렉토리 2-pass) ----------
+#
+# 시나리오: `a_coupon.md` (알파벳 먼저) 가 추출한 관계 `프로모션 P → 카테고리 C`
+# 의 `카테고리 C` 는 *나중에 처리되는* `b_catalog.md` 에서만 정의된다 (정방향
+# 참조). 1-pass 에서는 C 가 아직 그래프에 없어 dangling 으로 떨어진다. 디렉토리
+# 전체 적재가 끝난 뒤 결정적 2-pass 가 그 관계를 재해소해야 한다.
+
+_COUPON_GRAPH = ExtractedGraph(
+    entities=[
+        ExtractedEntity(name="쿠폰 X", type="coupon"),
+        ExtractedEntity(name="프로모션 P", type="promotion"),
+    ],
+    relations=[
+        ExtractedRelation(from_name="쿠폰 X", to_name="프로모션 P", type="belongs_to"),
+        # 정방향 참조 — 카테고리 C 는 b_catalog.md 에서만 정의.
+        ExtractedRelation(from_name="프로모션 P", to_name="카테고리 C", type="applies_to"),
+    ],
+)
+_CATALOG_GRAPH = ExtractedGraph(
+    entities=[
+        ExtractedEntity(name="상품 A", type="product"),
+        ExtractedEntity(name="카테고리 C", type="category"),
+    ],
+    relations=[
+        ExtractedRelation(from_name="상품 A", to_name="카테고리 C", type="belongs_to"),
+    ],
+)
+
+
+def _build_scripted(
+    by_name: dict[str, ExtractedGraph],
+) -> tuple[IngestService, FakeGraph, _ScriptedByPath]:
+    graph = FakeGraph()
+    llm = _ScriptedByPath(by_name)
+    service = IngestService(
+        llm=llm,
+        embedder=FakeEmbedder(),
+        graph=graph,
+        enable_context_aware_extraction=False,
+        extract_batch_size=1,
+    )
+    return service, graph, llm
+
+
+def test_forward_cross_file_relation_resolves(tmp_path: Path):
+    """정방향 참조 — 먼저 처리되는 파일의 관계가 나중 파일의 엔티티를 가리켜도 이어진다.
+
+    완료 조건(issue #78):
+      - `프로모션 P → 카테고리 C` 관계가 그래프에 존재 (dangling 아님).
+      - 디렉토리 수준 dangling 0 (2-pass 가 회수).
+    """
+    (tmp_path / "a_coupon.md").write_text("쿠폰", encoding="utf-8")
+    (tmp_path / "b_catalog.md").write_text("카탈로그", encoding="utf-8")
+
+    service, graph, _ = _build_scripted(
+        {"a_coupon.md": _COUPON_GRAPH, "b_catalog.md": _CATALOG_GRAPH}
+    )
+    result = service.ingest_directory(tmp_path)
+
+    assert _has_relation(graph, "프로모션 P", "카테고리 C"), (
+        "정방향 cross-file 관계가 2-pass 로 해소되어야 한다"
+    )
+    # 1-pass 에서 떨어진 dangling 을 2-pass 가 회수 → 순 dangling 0.
+    assert result.relations_skipped_dangling == 0
+    assert result.relations_recovered_cross_file == 1
+
+
+def test_relation_resolution_independent_of_file_order(tmp_path: Path):
+    """find_path 사슬이 파일 처리 순서와 무관 — 정방향이든 역방향이든 같은 그래프.
+
+    같은 코퍼스를 두 배치로 적재한다:
+      - 정방향: coupon(C 참조) 이 알파벳 먼저 → issue #78 2-pass 가 책임.
+      - 역방향: catalog(C 정의) 가 알파벳 먼저 → PR #77 1-pass fallback 이 책임.
+    두 경우 모두 `프로모션 P → 카테고리 C` 관계가 존재해야 한다 (순서 비의존).
+    """
+    # 정방향 배치 — coupon 이 알파벳 먼저.
+    fwd = tmp_path / "fwd"
+    fwd.mkdir()
+    (fwd / "a_coupon.md").write_text("쿠폰", encoding="utf-8")
+    (fwd / "b_catalog.md").write_text("카탈로그", encoding="utf-8")
+    svc_fwd, g_fwd, _ = _build_scripted(
+        {"a_coupon.md": _COUPON_GRAPH, "b_catalog.md": _CATALOG_GRAPH}
+    )
+    svc_fwd.ingest_directory(fwd)
+
+    # 역방향 배치 — catalog 가 알파벳 먼저 (C 가 먼저 정의됨).
+    bwd = tmp_path / "bwd"
+    bwd.mkdir()
+    (bwd / "a_catalog.md").write_text("카탈로그", encoding="utf-8")
+    (bwd / "b_coupon.md").write_text("쿠폰", encoding="utf-8")
+    svc_bwd, g_bwd, _ = _build_scripted(
+        {"a_catalog.md": _CATALOG_GRAPH, "b_coupon.md": _COUPON_GRAPH}
+    )
+    svc_bwd.ingest_directory(bwd)
+
+    # 순서와 무관하게 같은 사슬 — 두 그래프 모두 P → C 관계 존재.
+    assert _has_relation(g_fwd, "프로모션 P", "카테고리 C")
+    assert _has_relation(g_bwd, "프로모션 P", "카테고리 C")
+
+
+def test_reingest_directory_idempotent_no_loss_or_duplicate(tmp_path: Path):
+    """재적재 회귀 가드 — 같은 디렉토리 두 번 ingest 시 2-pass 관계가 보존된다.
+
+    이슈가 경고한 위험: finalize 이후 추가한 관계가 다음 재적재 diff 에서 '이번
+    run 에서 emit 안 됨' 으로 삭제되는 것. 2-pass 가 관계를 *원 파일 run* 의
+    emitted_relation_ids 에 귀속시켜 막는다 — 두 번째 ingest 후에도 관계가
+    살아 있고 중복 생성도 없어야 한다.
+    """
+    (tmp_path / "a_coupon.md").write_text("쿠폰", encoding="utf-8")
+    (tmp_path / "b_catalog.md").write_text("카탈로그", encoding="utf-8")
+
+    service, graph, _ = _build_scripted(
+        {"a_coupon.md": _COUPON_GRAPH, "b_catalog.md": _CATALOG_GRAPH}
+    )
+    service.ingest_directory(tmp_path)
+    rel_count_first = len(graph._relations)
+    assert _has_relation(graph, "프로모션 P", "카테고리 C")
+
+    # 두 번째 ingest — 파일 내용 동일 → 전부 short-circuit. 2-pass 관계 보존.
+    service.ingest_directory(tmp_path)
+    assert _has_relation(graph, "프로모션 P", "카테고리 C"), (
+        "재적재 후에도 정방향 관계가 삭제되지 않아야 한다"
+    )
+    assert len(graph._relations) == rel_count_first, "관계 중복 생성 없음"

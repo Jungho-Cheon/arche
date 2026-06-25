@@ -122,6 +122,23 @@ class FakeGraph(GraphRepository):
         # 매처 Step 3 미사용 케이스 — 빈 후보로 무력화.
         return []
 
+    def find_entity_id_by_normalized_name(self, *, normalized: str) -> str | None:
+        """타입 무관 정규명 lookup — 실 Neo4j 어댑터(issue #28) 동작을 단위에서 재현.
+
+        정규명 또는 정규화 alias 가 일치하는 노드를 찾되 *유일* 할 때만 id 를
+        돌려준다. 둘 이상이면 모호 → None. cross-doc 역방향(PR #77) + cross-file
+        정방향(issue #78) 2-pass 해소가 단위 테스트에서도 실제처럼 동작하게 한다.
+        """
+        if not normalized:
+            return None
+        matches = [
+            e.id
+            for e in self._entities.values()
+            if e.normalized_name == normalized
+            or normalized in (e.normalized_aliases or [])
+        ]
+        return matches[0] if len(matches) == 1 else None
+
     # -- write --
     def create_entity(self, *, entity: StoredEntity) -> None:
         self._entities[entity.id] = entity
@@ -221,6 +238,22 @@ class FakeGraph(GraphRepository):
         run["completed_at"] = completed_at
         run["emitted_entity_ids"] = list(emitted_entity_ids)
         run["emitted_relation_ids"] = list(emitted_relation_ids)
+
+    def append_emitted_relations(
+        self, *, run_id: str, relation_ids: list[str]
+    ) -> None:
+        """이미 finalize 된 run 의 emitted_relation_ids 에 dedup append (issue #78).
+
+        디렉토리 2-pass 가 정방향 cross-file 관계를 *원래 그 관계를 추출한 파일의
+        run* 에 귀속시킨다. 실 Neo4j 어댑터의 같은 메서드 동작을 단위에서 재현.
+        """
+        run = self._runs.get(run_id)
+        if run is None:
+            return
+        existing = run["emitted_relation_ids"]
+        for rid in relation_ids:
+            if rid not in existing:
+                existing.append(rid)
 
     def apply_entity_diff(
         self, *, entity_id: str, source_path: str, run_id: str

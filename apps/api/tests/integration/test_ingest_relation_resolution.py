@@ -251,3 +251,113 @@ def test_consistent_type_chain_merges_and_connects(repo, tmp_path: Path):
         relation_types=None,
     )
     assert len(paths) >= 1
+
+
+# ---------- issue #78 — cross-file 정방향 참조 (디렉토리 2-pass) ----------
+
+
+def _forward_scripts() -> list:
+    """정방향 코퍼스 스크립트 — 알파벳 순으로 *먼저* 처리되는 a_coupon 의 관계가
+    *나중에* 처리되는 b_catalog 의 `카테고리 C` 를 가리킨다 (정방향 참조).
+    """
+    return [
+        # a_coupon — 카테고리 C 를 관계로만 참조 (엔티티로 추출 안 함). 1-pass 에선
+        # C 가 아직 그래프에 없어 dangling 으로 떨어진다.
+        _make_extracted(
+            [
+                {"name": "쿠폰 X", "type": "coupon"},
+                {"name": "프로모션 P", "type": "promotion"},
+            ],
+            relations=[
+                {"from_name": "쿠폰 X", "to_name": "프로모션 P", "type": "belongs_to"},
+                {"from_name": "프로모션 P", "to_name": "카테고리 C", "type": "applies_to"},
+            ],
+        ),
+        # b_catalog — 카테고리 C 를 정의.
+        _make_extracted(
+            [
+                {"name": "상품 A", "type": "product"},
+                {"name": "카테고리 C", "type": "category"},
+            ],
+            relations=[
+                {"from_name": "상품 A", "to_name": "카테고리 C", "type": "belongs_to"}
+            ],
+        ),
+    ]
+
+
+def _relation_count(repo, from_name: str, to_name: str, rel_type: str) -> int:
+    with repo._driver.session() as s:
+        rec = s.run(
+            "MATCH (a:Entity {name: $f})-[r:RELATES_TO {type: $t}]->(b:Entity {name: $g}) "
+            "RETURN count(r) AS n",
+            f=from_name,
+            g=to_name,
+            t=rel_type,
+        ).single()
+    return int(rec["n"]) if rec else 0
+
+
+def test_cross_file_forward_relation_resolves(repo, tmp_path: Path):
+    """정방향 — 먼저 처리되는 파일의 관계가 나중 파일의 엔티티를 가리켜도 이어진다.
+
+    완료 조건(issue #78):
+      - `프로모션 P → 카테고리 C` 관계가 그래프에 존재 (1-pass dangling 을 2-pass 회수).
+      - find_path 가 파일 처리 순서와 무관하게 4-hop 사슬 반환.
+    """
+    (tmp_path / "a_coupon.md").write_text(
+        "쿠폰 X 는 프로모션 P 에 속한다. 프로모션 P 는 카테고리 C 에 적용된다.",
+        encoding="utf-8",
+    )
+    (tmp_path / "b_catalog.md").write_text(
+        "상품 A 는 카테고리 C 에 속한다.", encoding="utf-8"
+    )
+
+    llm = _LLMScripted(_forward_scripts())
+    result = _make_service(repo, llm, _EmbDeterministic()).ingest_directory(tmp_path)
+
+    assert _entities_named(repo, "카테고리 C") == 1
+    # 2-pass 가 정방향 관계를 회수 → 디렉토리 순 dangling 0, 회수 1.
+    assert result.relations_skipped_dangling == 0
+    assert result.relations_recovered_cross_file == 1
+    assert _relation_count(repo, "프로모션 P", "카테고리 C", "applies_to") == 1
+
+    paths = repo.find_shortest_paths(
+        from_id=_id_by_name(repo, "쿠폰 X"),
+        to_id=_id_by_name(repo, "상품 A"),
+        max_hops=4,
+        max_paths=5,
+        relation_types=None,
+    )
+    assert len(paths) >= 1
+
+
+def test_directory_reingest_preserves_forward_relation(repo, tmp_path: Path):
+    """재적재 회귀 가드 — 2-pass 가 회수한 정방향 관계가 두 번째 ingest 에서 보존된다.
+
+    이슈 경고: 2-pass 가 만든 관계를 *원 파일 run* 의 emitted_relation_ids 에
+    귀속시키지 않으면, 그 파일의 다음 재적재 차분이 "이번 run 에서 emit 안 됨" 으로
+    오인해 삭제한다. 본 테스트는 같은 디렉토리를 두 번 ingest 해 관계가 살아 있고
+    중복 생성도 없음을 확인한다.
+    """
+    (tmp_path / "a_coupon.md").write_text(
+        "쿠폰 X 는 프로모션 P 에 속한다. 프로모션 P 는 카테고리 C 에 적용된다.",
+        encoding="utf-8",
+    )
+    (tmp_path / "b_catalog.md").write_text(
+        "상품 A 는 카테고리 C 에 속한다.", encoding="utf-8"
+    )
+
+    # 1 차 — 2-pass 가 정방향 관계 회수.
+    llm1 = _LLMScripted(_forward_scripts())
+    _make_service(repo, llm1, _EmbDeterministic()).ingest_directory(tmp_path)
+    assert _relation_count(repo, "프로모션 P", "카테고리 C", "applies_to") == 1
+
+    # 2 차 — 파일 내용 동일 → 전부 short-circuit. LLM 재호출 0, 관계 보존.
+    llm2 = _LLMScripted(_forward_scripts())
+    result2 = _make_service(repo, llm2, _EmbDeterministic()).ingest_directory(tmp_path)
+    assert llm2.calls == 0, "내용 불변이면 short-circuit (재추출 없음)"
+    assert result2.files_skipped == 2
+    assert _relation_count(repo, "프로모션 P", "카테고리 C", "applies_to") == 1, (
+        "재적재 후에도 정방향 관계가 삭제/중복되지 않아야 한다"
+    )

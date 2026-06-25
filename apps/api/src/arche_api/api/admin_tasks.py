@@ -129,6 +129,12 @@ def run_ingest_task(
         state.files_total = result.files_total
         state.files_pending_skipped = result.files_pending_skipped
         state.files_unsupported_skipped = result.files_unsupported_skipped
+        # issue #78 — 디렉토리 2-pass 관계 보정 반영. `_on_progress` 는 파일별
+        # 진행 이벤트(2-pass *이전* 카운터)를 누적하므로, 2-pass 가 정방향 cross-file
+        # 관계를 회수하면 streamed dangling 이 과대·created 가 과소가 된다. 최종
+        # 집계 property(per_file 제자리 보정 반영)로 두 카운터를 덮어 정직하게 보고.
+        state.relations_created = result.relations_created
+        state.relations_skipped_dangling = result.relations_skipped_dangling
         state.state = "succeeded"
     except Exception as e:  # noqa: BLE001
         logger.exception("ingest task failed task_id=%s", state.task_id)
