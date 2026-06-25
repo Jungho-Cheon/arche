@@ -31,15 +31,15 @@ ADR 은 *불변에 가깝게* 다룬다. 결정이 바뀌면 *기존 ADR 을 수
 | 4 | [ADR-0004 — 벡터 인프라 결정](./0004-vector-infra-graph-db-internal-index.md) | 별도 벡터 DB 서비스 미도입, 그래프 DB 내장 인덱스 |
 | 5 | [ADR-0005 — 측정 방법론](./0005-measurement-methodology-accuracy-tokens-latency.md) | MCQ + 이유 서술, 정확도/토큰/지연 3 메트릭, 하이브리드 judge |
 | 6 | [ADR-0006 — MCP/REST 표면](./0006-mcp-rest-primitives-surface.md) | graph primitives 만 노출, 자연어 미수용, Neo4j MCP 와 공존 |
-| 7 | [ADR-0007 — Combined RAG 채택 (정체성 피벗)](./0007-combined-rag-pivot.md) | MVP 가설 미달 후 chunk + graph 결합으로 100% 달성, 정체성을 retrieval orchestrator 로 |
-| 8 | [ADR-0008 — EntityConsolidator gating (M6.5 1M 결과)](./0008-entity-consolidator-gating.md) | 1M 측정에서 catastrophic over-merge 발견 → ADR-0007 D2 결정 보류, EntityConsolidator 를 M7 gating 으로 격상 |
+| 7 | [ADR-0007 — Combined RAG 채택 (정체성 피벗)](./0007-combined-rag-pivot.md) | ~~chunk + graph 결합 100%, 정체성을 retrieval orchestrator 로~~ **superseded by ADR-0016** — 에이전트 반복 graph-only 가 압도, 정체성은 그래프 KB 로 회귀 |
+| 8 | [ADR-0008 — EntityConsolidator gating (M6.5 1M 결과)](./0008-entity-consolidator-gating.md) | ~~over-merge 발견 → EntityConsolidator 를 M7 gating~~ **superseded by ADR-0016/0017** — Combined 분기·Consolidator gating 폐기, 동일성은 추출단계+정밀도로 |
 | 9 | [ADR-0009 — Context-aware extraction (RFC)](./0009-context-aware-extraction.md) | 추출 단계에 문서 메타 + 기존 graph 동봉, `matched_existing_id` 로 매칭을 *예방* 으로 전환. ADR-0008 의 증상 가림을 root-cause 해법으로. |
 | 10 | [ADR-0010 — Multi-agent parallel + cache (RFC)](./0010-multi-agent-parallel-and-cache.md) | 청크 호출 batch parallel + sha256 캐시. graphify Part B 패턴 채택. 1M ingest 30 분 → 8 분 목표. |
 | 11 | [ADR-0011 — Step 3 cosine opt-in (RFC)](./0011-step3-cosine-opt-in.md) | Step 3 cosine 매칭 default off. STOPLIST + Consolidator 의 단계별 deprecation 경로. |
 | 13 | [ADR-0013 — Agent 친화 API contract (RFC)](./0013-agent-friendly-api-contract.md) | DataEnvelope 통일, 표준 에러 코드, OpenAPI 깊이, idempotency, latency budget, next-action hints. *MVP 조건 (2)*. |
 | 14 | [ADR-0014 — MCP HTTP transport (RFC)](./0014-mcp-http-transport.md) | Streamable HTTP transport 추가 + stdio 코드 공유. 사내 인프라 + 외부 agent 양쪽 노출. *MVP 조건 (3)*. |
 | 15 | [ADR-0015 — 공유 KB 운영 모델 (RFC)](./0015-shared-kb-operating-model.md) | 단일 KB + namespace 부분 공유. 다회사 개인 KB 시나리오 자연 흡수. *MVP 조건 (4)*. |
-| 16 | [ADR-0016 — 에이전트 반복 graph-only + 정량 추출 (RFC)](./0016-agentic-graphonly-and-quantitative-extraction.md) | 측정으로 제품 방향 확정. graph-only 가 graphify 를 압도(FinanceBench 94-97% vs 57.6%, MedHop 30% vs 10%). 답변 LLM 외부화 + 정량-aware 추출 채택. 다음 레버 = 문서 간 엔티티 동일성 해소 (ADR-0017 이 정밀도로 교정). *MVP 조건 (1)*. |
+| 16 | [ADR-0016 — 에이전트 반복 graph-only + 정량 추출 (accepted)](./0016-agentic-graphonly-and-quantitative-extraction.md) | 측정으로 제품 방향 확정. graph-only 가 graphify 를 압도(FinanceBench 94-97% vs 57.6%, MedHop 30% vs 10%). 답변 LLM 외부화 + 정량-aware 추출 채택. 다음 레버 = 문서 간 엔티티 동일성 해소 (ADR-0017 이 정밀도로 교정). *MVP 조건 (1)*. |
 | 17 | [ADR-0017 — 허브 인지 경로 점수](./0017-hub-aware-path-scoring.md) | MedHop 30% 천장의 다수는 병합 부족이 아니라 *정밀도* — promiscuous 허브를 다리로 쓴 가짜 경로. find_path 가 같은 길이면 허브를 덜 거치는 구체적 경로를 우선하고 hub_score 를 노출(끝점 제외 → 금융 무회귀). RELATES_TO 경로 제한으로 출처 노드 경유 크래시/가짜 다리 제거. ADR-0016 D4 교정. |
 | 18 | [ADR-0018 — monorepo 구조 + agnostic 경계](./0018-monorepo-and-agnostic-boundaries.md) | 검증 안정화 후 구조 확정. monorepo (apps/api·docs·web-ui + packages 공유 클라이언트), 기업 web-ui 는 OSS/상용 경계 구체화 시 분리. apps/api 의 agnostic 이음매를 코드로: GraphRepository 를 능력별 포트(GraphStore/VectorIndex/LexicalIndex)로 분리, 추출 계약을 도메인으로 끌어올림. 소비 표면은 이미 Agent-agnostic(REST+MCP), 워크스페이스=namespace, auth seam=SSO 대비. |
 | 19 | [ADR-0019 — 모델 provider 팩토리 + Anthropic/Voyage 어댑터](./0019-multi-provider-factory.md) | ADR-0018 D3 의 LLM-agnostic 이음매를 두 번째 구현으로 실증. 모델 식별자 접두사(openai/anthropic/voyage)로 어댑터를 고르는 팩토리. Anthropic 추출(중립 계약을 tool-use 로 번역) + Voyage 임베딩(Anthropic 은 임베딩 API 없음). 설정만으로 provider 교체 = OpenAI-free 경로. SDK 는 선택적 의존성 + 지연 import. |
@@ -52,8 +52,9 @@ ADR 은 *불변에 가깝게* 다룬다. 결정이 바뀌면 *기존 ADR 을 수
 
 - [ADR-0001 — 프로젝트 정체성과 MVP 검증 가설](./0001-project-identity-and-mvp-validation-hypothesis.md)
 - [ADR-0002 — MVP 범위 경계](./0002-mvp-scope-boundaries.md)
-- [ADR-0007 — Combined RAG 채택 (정체성 피벗)](./0007-combined-rag-pivot.md) — ADR-0001 의 가설 미달 후 정체성 갱신 (ADR-0008 로 amend)
-- [ADR-0008 — EntityConsolidator gating (M6.5 1M 결과)](./0008-entity-consolidator-gating.md) — ADR-0007 D2 의 결정 시점 지연, EntityConsolidator 를 M7 gating 으로 격상
+- [ADR-0007 — Combined RAG 채택 (정체성 피벗)](./0007-combined-rag-pivot.md) — **superseded by ADR-0016**. 역사적 기록 (chunk·graph 오답 비중첩 측정)
+- [ADR-0008 — EntityConsolidator gating (M6.5 1M 결과)](./0008-entity-consolidator-gating.md) — **superseded by ADR-0016/0017**. 역사적 기록 (1M over-merge 진단)
+- [ADR-0016 — 에이전트 반복 graph-only + 정량 추출](./0016-agentic-graphonly-and-quantitative-extraction.md) — **현재 제품 방향 (accepted)**. graph-only 가 graphify 압도, 답변 LLM 외부화, 정체성=그래프 KB
 
 ### Retrieval / 인덱싱
 

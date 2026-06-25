@@ -1,8 +1,15 @@
 # ADR-0008: M6.5 1M 측정 결과 + EntityConsolidator 를 M7 gating 으로 격상
 
-Status: accepted
+Status: superseded by [ADR-0016](./0016-agentic-graphonly-and-quantitative-extraction.md) / [ADR-0017](./0017-hub-aware-path-scoring.md) (2026-06-25)
 Date: 2026-06-20
 Amends: [ADR-0007](./0007-combined-rag-pivot.md)
+
+> **Superseded (ADR-0016/0017, 2026-06-25)**: 본 ADR 은 EntityConsolidator(post-ingest
+> dedup)를 M7 gating 으로 격상하고 ADR-0007 D2 분기 결정을 지연했다. 두 전제가 모두
+> 무너졌다 — (1) ADR-0007 D2(Combined 분기) 자체가 ADR-0016 으로 superseded, (2) 문서 간
+> 동일성 해소는 post-ingest Consolidator 가 아니라 ADR-0009(추출 단계 매칭) +
+> ADR-0017(허브 인지 정밀도)로 해결하기로 재정렬(ADR-0011 이 Consolidator deprecation
+> 경로 명시). 1M over-merge 진단 사실은 역사적 기록으로 유효.
 
 ## TL;DR
 
