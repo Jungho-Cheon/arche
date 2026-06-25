@@ -1,8 +1,13 @@
 # ADR-0016: 제품 방향 — 에이전트 반복 graph-only + 정량-aware 추출, 다음 레버는 문서 간 엔티티 동일성 해소
 
-Status: proposed (RFC)
+Status: accepted (2026-06-25 승격)
 Date: 2026-06-23
 Phase: 측정 기반 방향 확정 (M7-D 직후)
+
+> **Ratified (2026-06-25)**: RFC 에서 accepted 로 승격. 후속 ADR-0017(본 ADR amend) /
+> 0018 / 0019 와 코드가 이미 본 피벗을 기정사실로 빌드했고(내재화 `/answer` 미구현 =
+> graph primitive + MCP 만 노출), 이 피벗이 Combined RAG 를 전제한 옛 마일스톤
+> (M6.5b/M7/M8)을 superseded 처리한 근거다. 현재 상태가 최종 판단 기준.
 Requires: [ADR-0009](./0009-context-aware-extraction.md), [ADR-0013](./0013-agent-friendly-api-contract.md), [ADR-0014](./0014-mcp-http-transport.md)
 
 > **Amendment (ADR-0017, 2026-06-23)**: 본 ADR 의 D4("다음 레버 = 문서 간 엔티티

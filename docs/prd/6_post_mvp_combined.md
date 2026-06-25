@@ -1,5 +1,12 @@
 # PRD 6 — post-MVP Combined RAG 청사진
 
+> ⛔ **SUPERSEDED (2026-06-25, [ADR-0016](../adr/0016-agentic-graphonly-and-quantitative-extraction.md))**
+> — 본 PRD 가 전제한 "Combined RAG 를 Arche 의 새 정체성으로" 방향은 폐기됐다.
+> 2026-06-22 측정에서 **에이전트 반복 graph-only 가 94-97% 로 Combined/graphify 를 압도**
+> 하면서, Arche 정체성은 *그래프 지식 베이스* 로 회귀했고 답변 LLM 은 코어 밖(MCP/REST)
+> 으로 외부화됐다. 본 문서는 *역사적 기록* 으로만 남긴다 — 현재 방향은 ADR-0016/0017/0018/0019
+> 와 STATUS.md "마일스톤 재정렬" 을 따른다. 아래 내용을 현재 계획으로 읽지 말 것.
+
 > 본 문서는 2026-06-20 Combined RAG 검증 (정확도 100%, full-context 의 1/5 비용) 결과를 받아 Arche 의 정체성과 다음 마일스톤을 정한다. MVP 의 가설 (그래프 단독 Pareto 우월) 은 미달이었지만, *두 retrieval 의 보완재 결합* 이라는 새 가설이 한 번의 측정에서 강하게 입증되었다.
 >
 > 본 PRD 가 답해야 하는 4 가지 질문:
