@@ -1,5 +1,11 @@
 # Phase 1 — Destructive rebuild (graphify parity 회복)
 
+> ✅ **완료 · 역사적 기록 (2026-06-25)** — 본 spec 의 작업(ADR-0009/0010/0011, 5 PR)은
+> 완료됐다(STATUS.md "이전 상태" Phase 1 ★완료). 이후 2026-06-22 측정으로 방향이 더
+> 나아갔다 — 에이전트 반복 graph-only 가 graphify 를 단순 parity 가 아니라 *압도*
+> (94-97% vs 57.6%, ADR-0016). 본 문서는 그 시점 계획으로 남기며, 현재 방향은
+> ADR-0016/0017/0018/0019 + STATUS.md 를 따른다.
+
 > Goal: arche 의 *그래프 생성 자체* 를 graphify 와 동등 이상으로 만들고, ADR-0008 의 증상 가림 가드 (STOPLIST + Consolidator) 의 deprecation 경로를 시작한다.
 
 ## Phase 1 의 ADR 묶음
