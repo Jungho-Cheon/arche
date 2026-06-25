@@ -11,7 +11,7 @@ from pathlib import Path
 import pytest
 import yaml
 
-from opentology_eval.lint.rules import (
+from arche_eval.lint.rules import (
     Finding,
     rule_corpus_files_supported,
     rule_domain_pattern_distribution,
@@ -24,7 +24,7 @@ from opentology_eval.lint.rules import (
     rule_reference_reasoning_length,
     rule_yaml_parsable,
 )
-from opentology_eval.questions import Option, Question, QuestionSet
+from arche_eval.questions import Option, Question, QuestionSet
 
 
 FIXTURE_ROOT = Path(__file__).resolve().parents[1] / "fixtures" / "datasets" / "valid_minimal"
@@ -402,7 +402,7 @@ def test_rule_corpus_unsupported(tmp_path: Path) -> None:
 def test_rule_corpus_hidden_files_ignored(tmp_path: Path) -> None:
     corpus = tmp_path / "corpus"
     corpus.mkdir()
-    (corpus / ".opentologyignore").write_text("x", encoding="utf-8")
+    (corpus / ".archeignore").write_text("x", encoding="utf-8")
     (corpus / "a.md").write_text("x", encoding="utf-8")
     assert rule_corpus_files_supported(corpus) == []
 

@@ -8,7 +8,7 @@ Ingest 흐름은 두 계층으로 나뉜다.
 
 | 계층 | 책임 | 호출 시점 |
 |---|---|---|
-| **Opentology Ingest Service** | 소스 → 엔티티/관계 추출 → 그래프 적재 → 노드 임베딩 생성 | 사용자가 명령으로 트리거 |
+| **Arche Ingest Service** | 소스 → 엔티티/관계 추출 → 그래프 적재 → 노드 임베딩 생성 | 사용자가 명령으로 트리거 |
 | **사용자** | 소스 디렉토리 준비, ingestion 명령 호출, 결과 확인 | CLI 또는 admin REST |
 
 Ingest 는 *MVP 단계에서 단일 사용자가 자신의 환경에서 운영* 한다 (ADR-0002 D2). 다중 사용자·권한·테넌트 분리 없음.
@@ -22,7 +22,7 @@ Ingest 는 *MVP 단계에서 단일 사용자가 자신의 환경에서 운영* 
 사용자가 가장 자주 쓰는 진입점.
 
 ```
-opentology ingest <directory_path> [--watch] [--dry-run]
+arche ingest <directory_path> [--watch] [--dry-run]
 ```
 
 | 옵션 | 의미 | MVP 기본 |
@@ -86,7 +86,7 @@ GET /admin/ingest/{task_id}/status
 - 자동 제외 패턴:
   - 도트 디렉토리 (`.git/`, `.cache/`, `.DS_Store` 등)
   - `node_modules/`, `__pycache__/`, `venv/`, `.venv/`
-- 사용자 정의 제외 — `.opentologyignore` 파일이 디렉토리 루트에 있으면 gitignore 문법으로 적용.
+- 사용자 정의 제외 — `.archeignore` 파일이 디렉토리 루트에 있으면 gitignore 문법으로 적용.
 
 ### 2.3 파일 변경 감지
 
@@ -421,7 +421,7 @@ ingest summary:
 본 PRD 가 *명시적으로 미루는* 결정. 구현 시점에 본 PRD 또는 별도 ADR 로 채워진다.
 
 1. **PDF 추출 라이브러리** — `pypdf` / `pdfplumber` / `pymupdf` 중 선택. 이미지 추출 품질로 결정.
-2. **`opentology` CLI 의 패키징** — 별도 binary / `uvx` / Docker subcommand 중. 사용자 셋업 편의로 결정.
+2. **`arche` CLI 의 패키징** — 별도 binary / `uvx` / Docker subcommand 중. 사용자 셋업 편의로 결정.
 3. **그래프 DB 벤더 선택** — Neo4j 5.13+ / ArangoDB / pgvector+AGE 등 (ADR-0004 D1). 셋업 무게 + 운영 친화도로 결정.
 4. **임베딩 어댑터 구현 형태** — `LiteLLM` 같은 통합 라이브러리 / provider 별 직접 호출 중. 측정 통제 변수의 명료성으로 결정.
 5. **task queue** — Ingestion 작업의 background 실행 방식 (in-process / arq / celery 등). MVP 동시성 요구가 낮으므로 *in-process asyncio* 가 첫 시도.

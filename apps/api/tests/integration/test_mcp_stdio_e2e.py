@@ -1,7 +1,7 @@
 """MCP stdio e2e — 본 서버를 subprocess 로 spawn 해 핸드셰이크 + 6 tool 호출.
 
 검증 흐름:
-1. stdio_client 가 `opentology mcp serve --stdio` 를 subprocess 로 띄움.
+1. stdio_client 가 `arche mcp serve --stdio` 를 subprocess 로 띄움.
 2. ClientSession.initialize() → JSON-RPC 핸드셰이크 성공.
 3. list_tools() → 6 tool 확인.
 4. call_tool(get_schema / find_entities / get_entity / get_neighbors / find_path
@@ -35,16 +35,16 @@ _ENT_B = "01HZX0G7M8N0RT0V0EXAMPLE02"
 def _server_params() -> StdioServerParameters:
     """본 서버를 fake graph 모드로 spawn 하는 파라미터.
 
-    WHY `sys.executable -m opentology_api.cli`: pytest 가 띄운 가상환경의 Python
+    WHY `sys.executable -m arche_api.cli`: pytest 가 띄운 가상환경의 Python
     을 그대로 재사용해 *같은 site-packages* 로 서버를 띄운다. shell PATH 의
-    `opentology` 가 다른 환경을 가리킬 위험을 회피.
+    `arche` 가 다른 환경을 가리킬 위험을 회피.
     """
     return StdioServerParameters(
         command=sys.executable,
-        args=["-m", "opentology_api.cli", "mcp", "serve", "--stdio"],
+        args=["-m", "arche_api.cli", "mcp", "serve", "--stdio"],
         env={
             **os.environ,
-            "OPENTOLOGY_TEST_FAKE_GRAPH": "1",
+            "ARCHE_TEST_FAKE_GRAPH": "1",
         },
     )
 

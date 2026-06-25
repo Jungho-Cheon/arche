@@ -5,7 +5,7 @@
 정답률이 높다." 옛 발견 (max_nodes 80 → 30%, 300 으로 올려 부분 회복) 과 충돌하는
 가설이라 직접 측정.
 
-같은 33 문항, 같은 조밀 그래프 (5.6K 노드), 단발 opentology 컬럼.
+같은 33 문항, 같은 조밀 그래프 (5.6K 노드), 단발 arche 컬럼.
 변수: subgraph_max_nodes ∈ argv. 그 외 전부 고정.
 """
 
@@ -17,11 +17,11 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
-from opentology_eval.clients import OpentologyClient
-from opentology_eval.columns.opentology import OpentologyRunner
-from opentology_eval.config import load_config
-from opentology_eval.providers import OpenAIProvider
-from opentology_eval.questions import load_questions
+from arche_eval.clients import ArcheClient
+from arche_eval.columns.arche import ArcheRunner
+from arche_eval.config import load_config
+from arche_eval.providers import OpenAIProvider
+from arche_eval.questions import load_questions
 
 EVAL_ROOT = Path(__file__).resolve().parents[1]
 DATASET = EVAL_ROOT / "datasets" / "financebench-2026-06-20"
@@ -39,8 +39,8 @@ def run_condition(max_nodes: int, out_dir: Path) -> dict:
     total = 0
     chars_sum = 0
     rows = []
-    with OpentologyClient(base_url=API_URL) as client:
-        runner = OpentologyRunner(
+    with ArcheClient(base_url=API_URL) as client:
+        runner = ArcheRunner(
             client=client, answer_llm=llm, subgraph_max_nodes=max_nodes
         )
         for q in qset.questions:

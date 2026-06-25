@@ -1,10 +1,10 @@
-# Opentology API — 아키텍처 (코드 파악용)
+# Arche API — 아키텍처 (코드 파악용)
 
 이 문서는 `apps/api` 를 처음 보는 사람이 **전체 구조 → 계층 책임 → 데이터 모델
 (ERD) → 요청 흐름** 순으로 코드를 따라갈 수 있게 한다. 결정의 *근거* 는 각
 ADR (`docs/adr/`) 에 있고, 여기서는 *지금 코드가 어떻게 생겼는지* 를 설명한다.
 
-> 한 줄 정의: Opentology API 는 AI 에이전트와 그래프 데이터베이스(Neo4j) 사이에
+> 한 줄 정의: Arche API 는 AI 에이전트와 그래프 데이터베이스(Neo4j) 사이에
 > 앉아, 문서를 그래프로 **적재(ingest)** 하고 그래프를 **질의(query)** 하는
 > 프리미티브를 REST + MCP 두 통로로 노출하는 백엔드다.
 
@@ -232,7 +232,7 @@ uv run pytest tests/unit -q
 # 통합 테스트 (Docker 필요 — testcontainers 가 Neo4j 기동)
 uv run pytest tests/integration -q
 # 로컬 기동
-uv run uvicorn opentology_api.main:app --reload
+uv run uvicorn arche_api.main:app --reload
 ```
 
 코드 의존성/호출 관계를 그래프로 탐색하려면 저장소 루트의 `graphify-out/`

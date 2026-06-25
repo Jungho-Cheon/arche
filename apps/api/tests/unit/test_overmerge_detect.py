@@ -1,7 +1,7 @@
 """ADR-0017 방향 6 — detect_overmerged_entities 의 결정적 과잉병합 탐지."""
 from __future__ import annotations
 
-from opentology_api.domain.identity import detect_overmerged_entities
+from arche_api.domain.identity import detect_overmerged_entities
 
 
 def test_clean_entities_not_flagged():

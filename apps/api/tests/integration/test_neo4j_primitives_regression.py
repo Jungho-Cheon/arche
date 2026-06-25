@@ -36,21 +36,21 @@ def neo4j_container():
 
 @pytest.fixture(scope="module")
 def settings(neo4j_container):
-    from opentology_api.config import Settings
+    from arche_api.config import Settings
 
     return Settings(
         OPENAI_API_KEY="test",
         NEO4J_URI=neo4j_container.get_connection_url(),
         NEO4J_USER="neo4j",
         NEO4J_PASSWORD=neo4j_container.password,
-        OPENTOLOGY_API_LLM_MODEL="openai/gpt-4.1",
-        OPENTOLOGY_API_EMBEDDING_MODEL="openai/text-embedding-3-small",
+        ARCHE_API_LLM_MODEL="openai/gpt-4.1",
+        ARCHE_API_EMBEDDING_MODEL="openai/text-embedding-3-small",
     )
 
 
 @pytest.fixture(scope="module")
 def repo(settings):
-    from opentology_api.adapters.graph import Neo4jGraphRepository
+    from arche_api.adapters.graph import Neo4jGraphRepository
 
     r = Neo4jGraphRepository(settings)
     r.ensure_indexes()
@@ -65,7 +65,7 @@ def _now() -> str:
 
 
 def _make_entity(*, id_: str, name: str, type_: str = "thing"):
-    from opentology_api.domain.models import SourceRef, StoredEntity
+    from arche_api.domain.models import SourceRef, StoredEntity
 
     now = _now()
     return StoredEntity(
@@ -98,7 +98,7 @@ def seeded_chain(repo):
     이 픽스처는 module scope — 세 회귀 테스트가 같은 그래프를 재사용한다.
     각 테스트는 *읽기 전용* 이므로 상호 간섭 없음.
     """
-    from opentology_api.domain.models import SourceRef
+    from arche_api.domain.models import SourceRef
 
     coupon = _make_entity(id_=COUPON_ID, name="쿠폰 X", type_="coupon")
     promo = _make_entity(id_=PROMO_ID, name="프로모션 P", type_="promotion")
@@ -146,7 +146,7 @@ HUB_DECOYS = [f"01HZXHUB0000000000000000E{i}" for i in range(8)]
 
 @pytest.fixture(scope="module")
 def seeded_hub(repo):
-    from opentology_api.domain.models import SourceRef
+    from arche_api.domain.models import SourceRef
 
     src = SourceRef(source_path="/tmp/hub.md")
     nodes = {

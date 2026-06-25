@@ -6,8 +6,8 @@ import os
 
 import pytest
 
-from opentology_eval.providers import AnthropicProvider
-from opentology_eval.scoring.judge import (
+from arche_eval.providers import AnthropicProvider
+from arche_eval.scoring.judge import (
     DEFAULT_JUDGE_MODEL,
     score_reasoning_quality,
 )

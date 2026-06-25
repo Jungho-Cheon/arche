@@ -1,17 +1,17 @@
 # PRD 4 — 평가 하니스 (3-way 측정)
 
-> 본 문서는 *측정 하니스* (Opentology 코어와 분리된 비교 측정 도구) 의 동작 명세를 담는다. 결정의 근거는 ADR-0001 D2/D3, ADR-0005. 본 문서는 *동작 명세* 만 다룬다.
+> 본 문서는 *측정 하니스* (Arche 코어와 분리된 비교 측정 도구) 의 동작 명세를 담는다. 결정의 근거는 ADR-0001 D2/D3, ADR-0005. 본 문서는 *동작 명세* 만 다룬다.
 
 ## 0. 위치와 책임
 
-하니스는 *Opentology 본체와 분리된 도구* 다.
+하니스는 *Arche 본체와 분리된 도구* 다.
 
 | 디렉토리 | 책임 |
 |---|---|
-| `apps/api` (또는 동등) | Opentology 코어. 그래프 primitives 노출. |
+| `apps/api` (또는 동등) | Arche 코어. 그래프 primitives 노출. |
 | **`eval/` (본 PRD 의 대상)** | 측정 하니스. 위 코어를 외부 시스템처럼 호출. |
 
-하니스는 Opentology 본체와 동일 리포에 있지만 *별도 패키지* 로 격리. 측정 코드가 코어로 흘러들거나 코어가 측정 코드에 의존하지 않도록.
+하니스는 Arche 본체와 동일 리포에 있지만 *별도 패키지* 로 격리. 측정 코드가 코어로 흘러들거나 코어가 측정 코드에 의존하지 않도록.
 
 ---
 
@@ -124,12 +124,12 @@ e) {options[4].text}   (있는 경우만)
 
 ### 2.3 벡터 인덱스 (측정 한정)
 
-측정 하니스는 *자체적인 별도 인덱스* 를 사용한다 — Opentology 의 그래프 DB 내장 인덱스와 *공유하지 않음* . 이유:
+측정 하니스는 *자체적인 별도 인덱스* 를 사용한다 — Arche 의 그래프 DB 내장 인덱스와 *공유하지 않음* . 이유:
 
-- 대조군의 retrieval 단위는 *청크* 이고, Opentology 의 단위는 *노드* . 인덱스를 공유하면 의미가 섞임.
+- 대조군의 retrieval 단위는 *청크* 이고, Arche 의 단위는 *노드* . 인덱스를 공유하면 의미가 섞임.
 - 청크 인덱스는 *측정 직전 일회성으로 생성*, *측정 후 폐기*.
 
-구현 선택지 — `chromadb` / `faiss` / 또는 *Opentology 의 그래프 DB 의 별도 collection* . 측정 일관성만 보장되면 무엇을 써도 됨. ADR-0001 D3 통제 변수 — *임베딩 모델은 Opentology 의 노드 임베딩과 동일* .
+구현 선택지 — `chromadb` / `faiss` / 또는 *Arche 의 그래프 DB 의 별도 collection* . 측정 일관성만 보장되면 무엇을 써도 됨. ADR-0001 D3 통제 변수 — *임베딩 모델은 Arche 의 노드 임베딩과 동일* .
 
 ### 2.4 검색
 
@@ -181,16 +181,16 @@ b) ...
 
 ---
 
-## 3. 컬럼 3 — Opentology (그래프 노드 RAG + 탐색)
+## 3. 컬럼 3 — Arche (그래프 노드 RAG + 탐색)
 
 ### 3.1 흐름
 
 ```
 [Setup, 측정 전 1 회]
-1. corpus 디렉토리를 Opentology 에 ingest (PRD 2 의 흐름)
+1. corpus 디렉토리를 Arche 에 ingest (PRD 2 의 흐름)
 
 [질문마다]
-2. 질문에서 anchor 키워드 추출 (Opentology 외부 LLM 호출) → JSON { entities: [...], aliases: [...] }
+2. 질문에서 anchor 키워드 추출 (Arche 외부 LLM 호출) → JSON { entities: [...], aliases: [...] }
 3. find_entities(keywords) → 진입점 노드 목록
 4. get_subgraph(entry_ids=...) → 서브그래프 (또는 find_path 등 조합)
 5. 서브그래프를 텍스트로 직렬화
@@ -306,7 +306,7 @@ primitive 조합은 *질문 유형에 따라 caller (= 하니스) 가 결정* . 
 
 ### 3.6 토큰 카운트 규칙
 
-(3) Opentology 컬럼의 질문당 토큰 = Σ (각 LLM 호출의 input + output).
+(3) Arche 컬럼의 질문당 토큰 = Σ (각 LLM 호출의 input + output).
 
 | 호출 | 비고 |
 |---|---|
@@ -407,7 +407,7 @@ Judge 모델은 *측정 회차 안에서 고정* . 변경 시 회차 새로 시�
 
 ### 4.5 Judge 호출 시 컬럼 익명화
 
-Judge 에게 컬럼 라벨 ((1) full-context / (2) chunk RAG / (3) Opentology) 을 *숨김* . 컬럼은 *"답변 A / B / C"* 로 익명화되고 *질문마다 순서를 무작위* 로 섞음.
+Judge 에게 컬럼 라벨 ((1) full-context / (2) chunk RAG / (3) Arche) 을 *숨김* . 컬럼은 *"답변 A / B / C"* 로 익명화되고 *질문마다 순서를 무작위* 로 섞음.
 
 ---
 
@@ -452,11 +452,11 @@ LLM judge 점수: Reasoning=0, Faithfulness=1
 ### 6.1 측정 전체 실행
 
 ```
-opentology eval run \
+arche eval run \
   --corpus <path/to/corpus> \
   --questions <path/to/questions.yaml> \
   --runs 3 \
-  --columns full_context,chunk_rag,opentology \
+  --columns full_context,chunk_rag,arche \
   --output eval/runs/<timestamp>/
 ```
 
@@ -464,20 +464,20 @@ opentology eval run \
 
 | 명령 | 동작 |
 |---|---|
-| `opentology eval setup --corpus ...` | 모든 컬럼의 setup 만 (Opentology ingest + chunk RAG 인덱스). |
-| `opentology eval ask --question Q15 --column opentology` | 단일 질문 × 단일 컬럼 호출. |
-| `opentology eval judge --run-dir <path>` | 채점만 (raw 응답 이미 있는 경우). |
-| `opentology eval spotcheck --run-dir <path>` | spot-check 큐 진행. |
-| `opentology eval report --run-dir <path>` | 보고서 생성. |
+| `arche eval setup --corpus ...` | 모든 컬럼의 setup 만 (Arche ingest + chunk RAG 인덱스). |
+| `arche eval ask --question Q15 --column arche` | 단일 질문 × 단일 컬럼 호출. |
+| `arche eval judge --run-dir <path>` | 채점만 (raw 응답 이미 있는 경우). |
+| `arche eval spotcheck --run-dir <path>` | spot-check 큐 진행. |
+| `arche eval report --run-dir <path>` | 보고서 생성. |
 
 ### 6.3 환경 변수
 
 | 변수 | 의미 |
 |---|---|
-| `OPENTOLOGY_EVAL_LLM_MODEL` | 시스템 답변 생성 모델 (3 컬럼 공통) |
-| `OPENTOLOGY_EVAL_EMBEDDING_MODEL` | 임베딩 모델 (chunk RAG + Opentology 노드 공통) |
-| `OPENTOLOGY_EVAL_JUDGE_MODEL` | Judge 모델 |
-| `OPENTOLOGY_API_KEY` 등 | provider 별 API 키 (구현 단계 확정) |
+| `ARCHE_EVAL_LLM_MODEL` | 시스템 답변 생성 모델 (3 컬럼 공통) |
+| `ARCHE_EVAL_EMBEDDING_MODEL` | 임베딩 모델 (chunk RAG + Arche 노드 공통) |
+| `ARCHE_EVAL_JUDGE_MODEL` | Judge 모델 |
+| `ARCHE_API_KEY` 등 | provider 별 API 키 (구현 단계 확정) |
 
 ---
 
@@ -496,7 +496,7 @@ eval/runs/2026-MM-DD-HHMM/
 │   │   ├── Q02_run0.json
 │   │   └── ...
 │   ├── chunk_rag/...
-│   └── opentology/...
+│   └── arche/...
 ├── judge/
 │   ├── reasoning_quality/Q01_run0_full_context.json
 │   ├── faithfulness/Q01_run0_full_context.json
@@ -514,7 +514,7 @@ eval/runs/2026-MM-DD-HHMM/
 measurement_id: 2026-MM-DD-HHMM
 timestamp: "2026-MM-DDTHH:MM:SS+09:00"
 runs: 3
-columns: [full_context, chunk_rag, opentology]
+columns: [full_context, chunk_rag, arche]
 models:
   llm: "openai/gpt-4.x-202?-MM-DD"
   embedding: "openai/text-embedding-3-small"
@@ -538,7 +538,7 @@ questions_hash: "sha256:..."
 ADR-0005 D10 의 템플릿을 따른다.
 
 ```markdown
-# Opentology MVP 측정 보고서
+# Arche MVP 측정 보고서
 
 Date: 2026-MM-DD | Domain: 상거래 비즈니스 규칙 | N: 30 questions × 3 runs
 
@@ -548,17 +548,17 @@ Date: 2026-MM-DD | Domain: 상거래 비즈니스 규칙 | N: 30 questions × 3 
 |--------------------|---------------:|------------------:|------------------------:|
 | Full-context LLM   |  X.XX ± SD     |       X,XXX,XXX   |   XX,XXX ms / XX,XXX ms |
 | Chunk vector RAG   |  X.XX ± SD     |         X,XXX     |    X,XXX ms /  X,XXX ms |
-| Opentology         |  X.XX ± SD     |         X,XXX     |    X,XXX ms /  X,XXX ms |
+| Arche         |  X.XX ± SD     |         X,XXX     |    X,XXX ms /  X,XXX ms |
 
 Ingestion cost (one-time):
   Full-context: 0
   Chunk RAG:    XX,XXX tokens (embedding only)
-  Opentology:   XX,XXX tokens (LLM extract + embedding)
+  Arche:   XX,XXX tokens (LLM extract + embedding)
 
 ## Pareto 우월 검증
 
-- vs Full-context (가설 가): 정확도 ΔX.XX (Opentology — Full-context), 토큰 비율 1:XX. → [Pass / Fail / Partial]
-- vs Chunk RAG (가설 나): 정확도 ΔX.XX (Opentology — Chunk RAG), 토큰 비율 ~1:1. → [Pass / Fail / Partial]
+- vs Full-context (가설 가): 정확도 ΔX.XX (Arche — Full-context), 토큰 비율 1:XX. → [Pass / Fail / Partial]
+- vs Chunk RAG (가설 나): 정확도 ΔX.XX (Arche — Chunk RAG), 토큰 비율 ~1:1. → [Pass / Fail / Partial]
 
 ## Failure mode breakdown
 
@@ -566,7 +566,7 @@ Ingestion cost (one-time):
 |--------------------|-----------:|---------------:|---------------:|------:|
 | Full-context LLM   |     X      |        X       |        X       |   X   |
 | Chunk vector RAG   |     X      |        X       |        X       |   X   |
-| Opentology         |     X      |        X       |        X       |   X   |
+| Arche         |     X      |        X       |        X       |   X   |
 
 ## 한 단락 해석
 
@@ -584,7 +584,7 @@ Ingestion cost (one-time):
 ## 9. 미정 결정 (구현 설계 단계)
 
 1. **벡터 인덱스 라이브러리 (chunk RAG 측)** — chromadb / faiss / 그래프 DB 의 별도 collection 중.
-2. **하니스 패키징** — `opentology` CLI 의 서브커맨드 vs 별도 패키지 (`opentology-eval`). 사용자 편의로 결정.
+2. **하니스 패키징** — `arche` CLI 의 서브커맨드 vs 별도 패키지 (`arche-eval`). 사용자 편의로 결정.
 3. **Judge 호출 비용 절감 — batch API** — provider 별 batch endpoint 활용 여부. 결과 지연 허용도와 트레이드오프.
 4. **실패 모드 분류기 (`missed_hop` 등 자동 분류)** — LLM judge 가 분류하게 할지, 본인 spot-check 에서만 라벨링할지.
 5. **temperature 0 의 비결정성 잔여 처리** — provider 가 *제로 보장* 을 안 하는 경우, N=3 외 추가 통계 처리.
@@ -596,7 +596,7 @@ Ingestion cost (one-time):
 - **자동 회귀 평가 / CI 통합** — ADR-0002 D6. 본 하니스는 *1 회 측정* 도구.
 - **다른 도메인 일반화 측정** — MVP 는 상거래 단일 도메인 (ADR-0001 D4).
 - **하이퍼파라미터 자동 sweep** — chunk_size, top_k, hops 등의 자동 grid search 없음. 측정 회차 안에서 고정값.
-- **두 판본 비교 (A/B)** — 본 하니스는 *한 회차 = 한 시스템 구성* . 두 Opentology 판본을 비교하려면 *두 번 측정* .
+- **두 판본 비교 (A/B)** — 본 하니스는 *한 회차 = 한 시스템 구성* . 두 Arche 판본을 비교하려면 *두 번 측정* .
 
 ---
 

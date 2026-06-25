@@ -55,8 +55,8 @@ Requires: [ADR-0009](./0009-context-aware-extraction.md), [ADR-0013](./0013-agen
 | 방식 | 정답률 |
 |---|---|
 | graphify graph-only (에이전트 반복) | 57.6% |
-| opentology graph-only (단발 내재화) | 45.5% |
-| **opentology graph-only (에이전트 반복, source 미사용)** | **94-97%** (독립 2회: 97.0%, 93.9%) |
+| arche graph-only (단발 내재화) | 45.5% |
+| **arche graph-only (에이전트 반복, source 미사용)** | **94-97%** (독립 2회: 97.0%, 93.9%) |
 
 - 인용 수치가 그래프 노드에 실재함을 직접 질의로 확인 (환각 아님).
 - 두 run 의 오답은 *추출 공백* (대차대조표 합계 미추출 등) — retrieval 실패 아님.
@@ -65,22 +65,22 @@ Requires: [ADR-0009](./0009-context-aware-extraction.md), [ADR-0013](./0013-agen
 
 | 도구 | 정답률 |
 |---|---|
-| **opentology graph-only** | **30%** |
+| **arche graph-only** | **30%** |
 | graphify graph-only | 10% |
 | grep | 0% |
 
 동일 코퍼스(289 PubMed abstract), 동일 gpt-4.1, 동일 에이전트 조건. 순위 일관
-(opentology > graphify > grep). grep 0% 는 "공동출현 ≠ 명시 관계" — lexical 검색이
+(arche > graphify > grep). grep 0% 는 "공동출현 ≠ 명시 관계" — lexical 검색이
 관계 사슬에서 구조적으로 실패함을 입증.
 
-### 왜 opentology 가 graphify 를 이기나 (정량 근거)
+### 왜 arche 가 graphify 를 이기나 (정량 근거)
 
 | | 문서 간 엔티티 연결 |
 |---|---|
 | graphify | cross-abstract 엣지 3 / 1,414 (0.2%) — 문서마다 고립된 섬 |
-| opentology | 423 엔티티(3,508 중 12%)가 여러 문서에 걸쳐 병합 (ADR-0009 context-aware 매칭) |
+| arche | 423 엔티티(3,508 중 12%)가 여러 문서에 걸쳐 병합 (ADR-0009 context-aware 매칭) |
 
-graphify 는 abstract 를 잇지 못해 multi-hop 사슬이 끊긴다. opentology 는 ADR-0009 으로
+graphify 는 abstract 를 잇지 못해 multi-hop 사슬이 끊긴다. arche 는 ADR-0009 으로
 일부 병합해 사슬을 잇는다. **이 cross-doc 병합 유무가 우열을 가른다.**
 
 ## Decision

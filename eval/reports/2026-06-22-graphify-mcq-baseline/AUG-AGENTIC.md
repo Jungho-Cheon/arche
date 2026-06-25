@@ -7,7 +7,7 @@
 ## 측정 설계
 
 새 컨텍스트 서브에이전트 3개(배치 11문항씩, 정답 키 없음)에게:
-1. opentology 프리미티브(REST `/entities/find`, `/subgraph`, `/neighbors`)를 **반복**
+1. arche 프리미티브(REST `/entities/find`, `/subgraph`, `/neighbors`)를 **반복**
    호출해 관련 엔티티 + 그 노드의 `source_path`(어느 회사 문서인지)를 찾고,
 2. 그 source 파일을 **grep 으로 좁혀** 정확한 수치/사실을 확인,
 3. 빗나가면 재질의(파생 지표는 구성 항목으로 분해)하도록 허용.
@@ -16,9 +16,9 @@
 
 | 방식 | 정답률 |
 | --- | --- |
-| opentology graph-only (단발, 옛 그래프) | 21.2% |
-| opentology graph-only + 프롬프트 개선 | 33.3% |
-| opentology graph-only (조밀 그래프, 300노드) | 30.3% |
+| arche graph-only (단발, 옛 그래프) | 21.2% |
+| arche graph-only + 프롬프트 개선 | 33.3% |
+| arche graph-only (조밀 그래프, 300노드) | 30.3% |
 | graphify (graph-only, 에이전트 반복) | 57.6% |
 | combined (chunk+graph 단발 내재화) | 75.8% |
 | **AUG-AGENTIC (graph navigation + source 근거 + 반복)** | **97.0% (32/33)** |

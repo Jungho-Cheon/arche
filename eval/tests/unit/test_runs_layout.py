@@ -6,7 +6,7 @@ from pathlib import Path
 
 import yaml
 
-from opentology_eval.runs.layout import init_run_dir
+from arche_eval.runs.layout import init_run_dir
 
 
 def _make_corpus(tmp_path: Path) -> tuple[Path, Path]:
@@ -51,7 +51,7 @@ def test_init_run_dir_creates_layout(tmp_path: Path) -> None:
         columns_meta={
             "full_context": {"llm_model": "openai/gpt-4.1"},
             "chunk_rag": {"llm_model": "openai/gpt-4.1", "embedding_model": "openai/text-embedding-3-small"},
-            "opentology": {"llm_model": "openai/gpt-4.1"},
+            "arche": {"llm_model": "openai/gpt-4.1"},
         },
         judge_meta={"model": "anthropic/claude-sonnet-4-6"},
         runs_count=3,
@@ -63,7 +63,7 @@ def test_init_run_dir_creates_layout(tmp_path: Path) -> None:
     # responses/ 하위 디렉토리도 만들어졌는지.
     assert (run_dir / "responses" / "full_context").is_dir()
     assert (run_dir / "responses" / "chunk_rag").is_dir()
-    assert (run_dir / "responses" / "opentology").is_dir()
+    assert (run_dir / "responses" / "arche").is_dir()
 
 
 def test_meta_yaml_has_required_keys(tmp_path: Path) -> None:
@@ -75,7 +75,7 @@ def test_meta_yaml_has_required_keys(tmp_path: Path) -> None:
         corpus_path=corpus,
         questions_path=questions,
         columns_meta={
-            "opentology": {"llm_model": "openai/gpt-4.1"},
+            "arche": {"llm_model": "openai/gpt-4.1"},
         },
         judge_meta={"model": "anthropic/claude-sonnet-4-6"},
         runs_count=3,
@@ -86,7 +86,7 @@ def test_meta_yaml_has_required_keys(tmp_path: Path) -> None:
     assert meta["runs"]["count"] == 3
     assert meta["corpus_hash"].startswith("sha256:")
     assert meta["questions_hash"].startswith("sha256:")
-    assert "opentology" in meta["columns"]
+    assert "arche" in meta["columns"]
 
 
 def test_corpus_hash_deterministic(tmp_path: Path) -> None:

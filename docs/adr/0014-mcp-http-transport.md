@@ -7,7 +7,7 @@ Phase: 2 of M7-D
 
 ## TL;DR
 
-현 MCP 어댑터는 *stdio transport 만* (`opentology mcp serve --stdio`). 이는 *로컬 agent (Claude Code CLI 등)* 에서는 작동하지만, MVP 성공 조건 (사용자 goal 2026-06-21) 의 (3) MCP 제공 + (4) 사내 인프라 활용을 위해서는 **HTTP+SSE transport** 또는 **Streamable HTTP** 가 필요하다.
+현 MCP 어댑터는 *stdio transport 만* (`arche mcp serve --stdio`). 이는 *로컬 agent (Claude Code CLI 등)* 에서는 작동하지만, MVP 성공 조건 (사용자 goal 2026-06-21) 의 (3) MCP 제공 + (4) 사내 인프라 활용을 위해서는 **HTTP+SSE transport** 또는 **Streamable HTTP** 가 필요하다.
 
 본 ADR 은:
 
@@ -18,7 +18,7 @@ Phase: 2 of M7-D
 
 ## 이 ADR 을 읽는 이유
 
-- 외부 agent (Claude Desktop / Cursor / 자체 LLM) 가 *사내 opentology 서비스* 를 도구로 등록하려면 어떤 transport 가 필요한가.
+- 외부 agent (Claude Desktop / Cursor / 자체 LLM) 가 *사내 arche 서비스* 를 도구로 등록하려면 어떤 transport 가 필요한가.
 - MCP stdio 가 *로컬 한정* 인 제약을 어떻게 푸는가.
 - ADR-0006 의 *MCP 표면 결정* 위에서 *transport 만 추가* 하는 형태.
 
@@ -41,7 +41,7 @@ stdio 만 있을 때 한계:
 
 사용자 goal 의 (4) "사내 인프라를 활용한 공유 KB 구축" 이 필요. 가정:
 
-- opentology API 서비스가 사내 Kubernetes 또는 docker host 에 배치.
+- arche API 서비스가 사내 Kubernetes 또는 docker host 에 배치.
 - 사용자의 LLM agent (claude.ai 또는 사내 LLM) 가 *원격* HTTP 호출.
 - 인증은 사내 SSO 또는 API key.
 
@@ -72,14 +72,14 @@ legacy HTTP+SSE 클라이언트 호환:
 ### D2. stdio + HTTP 코드 공유
 
 ```
-opentology_api/mcp/
+arche_api/mcp/
 ├── handlers.py        # tool 호출 핸들러 — transport 무관
 ├── tool_registry.py   # 6 primitive + /answer 도구 정의
 ├── transports/
 │   ├── stdio.py       # 현 코드 이동
 │   ├── http.py        # 신규 (Streamable HTTP)
 │   └── sse.py         # legacy 호환
-└── cli.py             # `opentology mcp serve --stdio|--http`
+└── cli.py             # `arche mcp serve --stdio|--http`
 ```
 
 핸들러는 *transport 와 무관* — 같은 dependency injection (graph repo / answer service).
@@ -107,7 +107,7 @@ cross-namespace 접근은 *별도 권한* 필요. ADR-0015 의 namespace 모델 
 
 본 ADR 은 *어떤 인프라에 배치하라* 를 정하지 않는다 (사용자 결정). 대신 *배치 가능성* 보장:
 
-- 단일 binary (`opentology mcp serve --http --port 8080`) 가 컨테이너 한 개에 들어감.
+- 단일 binary (`arche mcp serve --http --port 8080`) 가 컨테이너 한 개에 들어감.
 - 헬스체크 endpoint `/healthz` 가 LB 와 호환.
 - 12-factor app 원칙 — 설정은 env var.
 - ADR-0010 의 캐시 디렉토리는 *공유 volume* 으로 마운트 가능.
@@ -159,7 +159,7 @@ agent 가 REST 만 호출.
 
 | 측정 | 목표 |
 |---|---|
-| Claude Desktop / Cursor 에서 *원격* opentology MCP 등록 성공 | ★ |
+| Claude Desktop / Cursor 에서 *원격* arche MCP 등록 성공 | ★ |
 | HTTP transport 호출 / stdio 호출 결과 일치 | 100% |
 | 인증 실패 시 not_authorized 응답 | 100% |
 | ADR-0013 D7 의 *MCP = REST 결과* 정합 | 100% |

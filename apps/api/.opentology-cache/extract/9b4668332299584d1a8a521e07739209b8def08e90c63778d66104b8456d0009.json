@@ -1,0 +1,1 @@
+{"entities": [{"name": "A", "type": "t", "aliases": [], "description": null, "properties": {}, "matched_existing_id": null}, {"name": "B", "type": "t", "aliases": [], "description": null, "properties": {}, "matched_existing_id": null}], "relations": [{"from_name": "A", "to_name": "B", "type": "rel", "properties": {}}]}

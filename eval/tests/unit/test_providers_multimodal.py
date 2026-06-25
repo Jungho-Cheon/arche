@@ -7,7 +7,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from opentology_eval.providers import (
+from arche_eval.providers import (
     AnthropicProvider,
     OpenAIProvider,
 )

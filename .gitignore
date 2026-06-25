@@ -69,7 +69,7 @@ graphify-out/.graphify_python
 graphify-out/.graphify_root
 
 # ADR-0010 extraction cache
-.opentology-cache/
+.arche-cache/
 
 # poc-amcor 코퍼스는 financebench-2026-06-20 의 중복본 (재현 가능)
 eval/datasets/poc-amcor/

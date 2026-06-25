@@ -23,7 +23,7 @@ def live_enabled() -> bool:
 def settings(live_enabled):
     if not live_enabled:
         pytest.skip("RUN_LIVE_TESTS!=1")
-    from opentology_api.config import Settings
+    from arche_api.config import Settings
 
     s = Settings()
     if not s.openai_api_key:
@@ -32,10 +32,10 @@ def settings(live_enabled):
 
 
 def test_live_ingest_and_find(settings, tmp_path: Path):
-    from opentology_api.adapters.embedding import OpenAIEmbeddingProvider
-    from opentology_api.adapters.graph import Neo4jGraphRepository
-    from opentology_api.adapters.llm import OpenAILLMProvider
-    from opentology_api.domain.ingest import IngestService
+    from arche_api.adapters.embedding import OpenAIEmbeddingProvider
+    from arche_api.adapters.graph import Neo4jGraphRepository
+    from arche_api.adapters.llm import OpenAILLMProvider
+    from arche_api.domain.ingest import IngestService
 
     fixture = (
         Path(__file__).resolve().parents[1] / "fixtures" / "skeleton_sample.md"

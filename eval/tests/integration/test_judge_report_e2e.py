@@ -9,10 +9,10 @@ from unittest.mock import MagicMock
 
 import yaml
 
-from opentology_eval.providers import LLMResult, LLMUsage
-from opentology_eval.scoring import aggregate_run, write_report
-from opentology_eval.scoring.judge_runner import run_judge_on_run_dir
-from opentology_eval.scoring.spotcheck import apply_overrides_file
+from arche_eval.providers import LLMResult, LLMUsage
+from arche_eval.scoring import aggregate_run, write_report
+from arche_eval.scoring.judge_runner import run_judge_on_run_dir
+from arche_eval.scoring.spotcheck import apply_overrides_file
 
 
 def _r(score: int) -> LLMResult:
@@ -106,8 +106,8 @@ def _build_run_dir(tmp_path: Path) -> Path:
                 encoding="utf-8",
             )
 
-    # opentology — 토큰 더 작고 latency 더 작고 정확도 더 높음 (Pareto 통과 시뮬레이션).
-    (run_dir / "responses" / "opentology").mkdir(parents=True)
+    # arche — 토큰 더 작고 latency 더 작고 정확도 더 높음 (Pareto 통과 시뮬레이션).
+    (run_dir / "responses" / "arche").mkdir(parents=True)
     correctness_pattern_op = {
         "Q01": ["a", "a", "a"],
         "Q02": ["a", "a", "a"],
@@ -116,10 +116,10 @@ def _build_run_dir(tmp_path: Path) -> Path:
     for q in (1, 2, 3):
         for r in range(3):
             choice = correctness_pattern_op[f"Q0{q}"][r]
-            (run_dir / "responses" / "opentology" / f"Q0{q}_run{r}.json").write_text(
+            (run_dir / "responses" / "arche" / f"Q0{q}_run{r}.json").write_text(
                 json.dumps(
                     {
-                        "column": "opentology",
+                        "column": "arche",
                         "question_id": f"Q0{q}",
                         "run_index": r,
                         "anchor_extraction": {
@@ -199,11 +199,11 @@ def test_judge_then_spotcheck_then_report(tmp_path: Path) -> None:
     # 보고서 데이터 JSON 의 Pareto 평가.
     data = json.loads(data_path.read_text(encoding="utf-8"))
     pareto = data["pareto"]
-    # Opentology 가 토큰 / latency 우월, 정확도도 full_context 이상.
+    # Arche 가 토큰 / latency 우월, 정확도도 full_context 이상.
     assert pareto["tokens_ok"] is True
     assert pareto["latency_ok"] is True
 
-    # full_context 정확도 1.0, opentology 정확도 7/9 → accuracy_ok = False.
+    # full_context 정확도 1.0, arche 정확도 7/9 → accuracy_ok = False.
     assert pareto["accuracy_ok"] is False
 
     # override count 가 보고서에 반영.

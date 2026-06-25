@@ -6,7 +6,7 @@
 - `eval/reports/2026-06-20-financebench-1M/CONCLUSION.md` (M6.5 1M 측정 — graph 부패)
 - `eval/reports/2026-06-20-combined-pivot/CONCLUSION.md` (95K Combined 채택)
 관련 ADR: ADR-0007 / ADR-0008
-관련 코드 변경: `apps/api/src/opentology_api/domain/identity.py` 의 `NON_IDENTIFYING_ALIAS_STOPLIST`
+관련 코드 변경: `apps/api/src/arche_api/domain/identity.py` 의 `NON_IDENTIFYING_ALIAS_STOPLIST`
 
 ## TL;DR
 
@@ -19,7 +19,7 @@ ADR-0008 의 M6.5 진단 (graph catastrophic over-merge) 을 *임시 patch* (NON
 | 컬럼 | 정확도 | 오답 (qid) | 토큰 중앙값 | 지연 중앙값 | 비용 (63 호출) |
 |---|---|---|---|---|---|
 | chunk_rag | 71.4% | Q01, Q07, Q08, Q09, Q13, Q17 | 27.5K | 2.18s | $0.97 |
-| opentology (graph) | 33.3% | Q01, Q05, Q06, Q07, Q08, Q09, Q12, Q14-16, Q19-21 | 10.7K | 3.71s | $1.27 |
+| arche (graph) | 33.3% | Q01, Q05, Q06, Q07, Q08, Q09, Q12, Q14-16, Q19-21 | 10.7K | 3.71s | $1.27 |
 | **combined** | **81.0%** | Q01, Q09, Q17, Q21 | 37.7K | 5.20s | $2.17 |
 
 ## 1M 부패 측정과 비교
@@ -27,7 +27,7 @@ ADR-0008 의 M6.5 진단 (graph catastrophic over-merge) 을 *임시 patch* (NON
 | 컬럼 | 1M 부패 (M6.5) | smoke (fix 후) | 변화 |
 |---|---|---|---|
 | chunk_rag | 72.7% | 71.4% | ≈ |
-| opentology | **6.1%** | **33.3%** | **+27.2pp** (×5.5) |
+| arche | **6.1%** | **33.3%** | **+27.2pp** (×5.5) |
 | combined | 72.7% | **81.0%** | **+8.3pp** |
 
 **fix 가 정확히 의도한 변화를 만들었다**: graph 가 부패 상태에서 baseline 으로 회복 + combined 가 chunk 대비 우위로 분리.
@@ -95,7 +95,7 @@ ADR-0008 의 M6.5 진단 (graph catastrophic over-merge) 을 *임시 patch* (NON
 ## 데이터 산출물
 
 - `eval/datasets/financebench-smoke/` — 3 사 / 21 MCQ / lint green
-- `eval/runs/2026-06-20-1532/responses/{chunk_rag,opentology,combined}/` — 189 raw 응답
+- `eval/runs/2026-06-20-1532/responses/{chunk_rag,arche,combined}/` — 189 raw 응답
 - `eval/reports/2026-06-20-smoke-stoplist-fix/score_output.txt` — 본 보고서 표 재생산
 
 ## 검증 한계 (사전 기록)

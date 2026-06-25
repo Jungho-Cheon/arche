@@ -9,12 +9,12 @@ from __future__ import annotations
 import math
 from dataclasses import dataclass
 
-from opentology_api.domain.identity import (
+from arche_api.domain.identity import (
     EMBEDDING_MATCH_THRESHOLD,
     EntityMatcher,
     normalize,
 )
-from opentology_api.domain.models import (
+from arche_api.domain.models import (
     ExtractedEntity,
     SourceRef,
     StoredEntity,
@@ -221,7 +221,7 @@ def test_step2_skips_scientific_discourse_aliases():
 
 def test_generic_deixis_pattern_catches_unseen_variants():
     """결정적 패턴이 명시 목록에 없는 변형도 비-식별로 판정."""
-    from opentology_api.domain.identity import is_identifying_alias
+    from arche_api.domain.identity import is_identifying_alias
 
     for phrase in [
         "the present study",
@@ -239,7 +239,7 @@ def test_deixis_pattern_does_not_eat_real_entities():
 
     안전 방향은 under-merge 지만, 명백한 도메인 엔티티까지 막으면 안 된다.
     """
-    from opentology_api.domain.identity import is_identifying_alias
+    from arche_api.domain.identity import is_identifying_alias
 
     for phrase in [
         "Framingham Heart Study",  # 고유명 + study
@@ -275,7 +275,7 @@ def test_step2_still_matches_identifying_alias():
 
 def test_merger_excludes_stoplist_from_normalized_aliases():
     """병합 후 normalized_aliases 인덱스에 stoplist alias 가 *들어가지 않음*."""
-    from opentology_api.domain.identity import EntityMerger
+    from arche_api.domain.identity import EntityMerger
 
     existing = _entity("Amcor plc", type_="Company")
     existing = StoredEntity(

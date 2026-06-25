@@ -9,7 +9,7 @@ ADR-0001 의 Pareto 우월 가설은 **정확도 + 토큰 비용 + 응답 지연
 
 - **질문 형식** — 30 개 **MCQ + 이유 서술** . 각 질문은 4-5 지선다 (정답 1개 + "정보 부족" 옵션 포함) + 시스템이 *왜 그 선택지를 골랐는지* 이유 서술 강제.
 - **정확도 채점** — Correctness (0/1, MCQ 자동) + Reasoning quality (0-2, LLM judge + spot-check) + Faithfulness (0-1, LLM judge + spot-check). 문항당 0-4 점.
-- **토큰** — 컬럼별·질문별·LLM 호출별 입출력 토큰 합계. Opentology 는 anchor 추출 + 답변 생성 두 호출 모두 계산. ingestion 토큰은 별도 계산.
+- **토큰** — 컬럼별·질문별·LLM 호출별 입출력 토큰 합계. Arche 는 anchor 추출 + 답변 생성 두 호출 모두 계산. ingestion 토큰은 별도 계산.
 - **지연** — 질문당 wall-clock. 중간값 + p95.
 - **재현성** — N=3 회 측정, 중간값 보고, 전체 prompt/response/timing 로그 보존.
 - **보고서** — 한 장. *3 컬럼 × 3 메트릭 = 9 칸 표* + failure mode breakdown + 한 단락 해석.
@@ -30,7 +30,7 @@ ADR-0001 의 Pareto 우월 가설은 **정확도 + 토큰 비용 + 응답 지연
 
 ## Context — 왜 이 결정이 필요했나
 
-ADR-0001 D2 의 가설은 *Pareto 우월* — Opentology 가 두 대안 (full-context LLM, 청크 벡터 RAG) 에 대해 *한 축에서 동등하면서 다른 축에서 우월* — 을 주장한다. 이 주장은 두 축 (정확도, 비용) 모두에서 측정 결과가 있어야 검증된다. *한 축만 측정* 하면 가설의 절반만 답하게 된다.
+ADR-0001 D2 의 가설은 *Pareto 우월* — Arche 가 두 대안 (full-context LLM, 청크 벡터 RAG) 에 대해 *한 축에서 동등하면서 다른 축에서 우월* — 을 주장한다. 이 주장은 두 축 (정확도, 비용) 모두에서 측정 결과가 있어야 검증된다. *한 축만 측정* 하면 가설의 절반만 답하게 된다.
 
 또한 *측정 방식이 모호하면 결과 해석이 갈린다* . "정확도가 0.78 이다" 라는 숫자가 어떻게 산출되었는지가 명확하지 않으면, 보고서를 6 개월 뒤 다시 봤을 때 *그 숫자가 무엇을 의미했는지* 를 재구성할 수 없다.
 
@@ -99,7 +99,7 @@ reference_reasoning: |
 |---|---|---|---|
 | **Correctness** | 1 | `choice` 가 `is_correct: true` 인 옵션과 일치하면 1, 아니면 0 | *자동 채점, judge 불필요* |
 | **Reasoning quality** | 2 | LLM judge 가 *reference_reasoning* 과 시스템의 `reasoning` 을 비교. 정답 경로의 *핵심 hop 들이 식별되었는가* . 2점 = 모든 핵심 hop 식별, 1점 = 일부 hop 식별, 0점 = 핵심 hop 누락 또는 잘못된 경로 | LLM judge 1차 + spot-check |
-| **Faithfulness** | 1 | LLM judge 가 `reasoning` 의 모든 주장이 *제공된 컨텍스트* (full-context 의 코퍼스 / chunk RAG 의 청크 / Opentology 의 서브그래프) 로 뒷받침되는지 확인. hallucination 없으면 1, 있으면 0 | LLM judge 1차 + spot-check |
+| **Faithfulness** | 1 | LLM judge 가 `reasoning` 의 모든 주장이 *제공된 컨텍스트* (full-context 의 코퍼스 / chunk RAG 의 청크 / Arche 의 서브그래프) 로 뒷받침되는지 확인. hallucination 없으면 1, 있으면 0 | LLM judge 1차 + spot-check |
 
 문항당 0-4 점. 30 문항 합계 / 30 = 컬럼 평균 (0-4 스케일).
 
@@ -108,7 +108,7 @@ reference_reasoning: |
 - **Judge 모델** — 시스템 답변 생성에 쓰는 LLM 과 *다른 계열* 의 모델 사용. 예: 시스템이 GPT-4 면 judge 는 Claude 또는 Gemini. 자기 편향 (self-preference bias) 회피.
 - **Judge 프롬프트** — Reasoning quality 와 Faithfulness 각각 별도 프롬프트. 각 프롬프트는 *rubric* + *판단 근거 서술 강제* + JSON 출력 강제.
 - **순서 무작위** — judge 에 답변을 보여줄 때 컬럼 순서를 *질문마다 무작위* 로. position bias 회피.
-- **컬럼 익명화** — judge 에게 *"답변 A / B / C"* 로 보여주고 (1) full-context / (2) chunk RAG / (3) Opentology 라벨을 숨김.
+- **컬럼 익명화** — judge 에게 *"답변 A / B / C"* 로 보여주고 (1) full-context / (2) chunk RAG / (3) Arche 라벨을 숨김.
 
 ### D5. Spot-check — 본인 직접 검증 트리거
 
@@ -116,7 +116,7 @@ LLM judge 의 결과 중 다음 케이스를 본인이 직접 재검토.
 
 1. **Correctness = 1 인데 Reasoning quality = 0** → "우연히 맞춤" 후보. 본인 확인.
 2. **Faithfulness = 0 인 모든 케이스** → hallucination 은 중요하므로 전수 확인.
-3. **컬럼 간 순위가 도메인 직관과 어긋나는 케이스** → 예: 도메인 직관상 명확히 Opentology 가 유리한 질문인데 chunk RAG 가 더 높은 점수 받은 경우.
+3. **컬럼 간 순위가 도메인 직관과 어긋나는 케이스** → 예: 도메인 직관상 명확히 Arche 가 유리한 질문인데 chunk RAG 가 더 높은 점수 받은 경우.
 
 경험적으로 spot-check 대상은 전체의 *10-20%* (3 차원 × 30 문항 × 3 컬럼 = 270 점수 중 30-50 개). 본인 시간 *30 분 ~ 1 시간*.
 
@@ -130,9 +130,9 @@ LLM judge 의 결과 중 다음 케이스를 본인이 직접 재검토.
 |---|---|---|
 | Full-context LLM | 1 | (전체 코퍼스 + 질문) input + 답변 output |
 | Chunk vector RAG | 1 | (top-k 청크 + 질문) input + 답변 output |
-| Opentology | 2 | (질문) input + (anchor JSON) output + (서브그래프 + 질문) input + 답변 output |
+| Arche | 2 | (질문) input + (anchor JSON) output + (서브그래프 + 질문) input + 답변 output |
 
-**Opentology 의 두 호출을 모두 계산하는 게 중요하다** — anchor 추출 비용을 숨기면 가설 검증이 부정직해진다.
+**Arche 의 두 호출을 모두 계산하는 게 중요하다** — anchor 추출 비용을 숨기면 가설 검증이 부정직해진다.
 
 **Ingestion 토큰은 별도 계산** — 컬럼별로 *코퍼스 → 인덱스/그래프* 구축에 쓰인 LLM 토큰을 한 번 합산. 보고서에 *ingestion 비용 (1회성)* + *질의 평균 비용 (반복성)* 두 줄로 기록.
 
@@ -144,7 +144,7 @@ LLM judge 의 결과 중 다음 케이스를 본인이 직접 재검토.
 
 - 컬럼별 30 개 측정값 → 중간값 + p95 보고.
 - 통제: *같은 시간대* (같은 날 연속 측정), *같은 네트워크 조건* (같은 머신/연결), *순차 실행* (병렬 실행 시 API rate limit / 서버 부하 변동이 결과를 흐림).
-- Opentology 는 *anchor 추출 + 그래프 traversal + 답변 생성* 의 합. 각 단계도 별도 기록.
+- Arche 는 *anchor 추출 + 그래프 traversal + 답변 생성* 의 합. 각 단계도 별도 기록.
 
 ### D8. 재현성 — N=3 회 측정
 
@@ -168,16 +168,16 @@ LLM 호출의 `temperature` 는 *0 또는 최저값* 으로 고정. seed 가 지
 MVP 종료 시점에 보고서 한 장을 다음 구조로 작성한다.
 
 ```
-# Opentology MVP 측정 보고서
+# Arche MVP 측정 보고서
 Date: YYYY-MM-DD | Domain: 상거래 비즈니스 규칙 | N: 30 questions × 3 runs
 
 ## 핵심 표
                      | Accuracy (0-4) | Tokens/Q (median) | Latency/Q (median, p95)
 Full-context LLM     |  X.XX ± SD     |  X,XXX,XXX        |  XX,XXX ms / XX,XXX ms
 Chunk vector RAG     |  X.XX ± SD     |    X,XXX          |     X,XXX ms /  X,XXX ms
-Opentology           |  X.XX ± SD     |    X,XXX          |     X,XXX ms /  X,XXX ms
+Arche           |  X.XX ± SD     |    X,XXX          |     X,XXX ms /  X,XXX ms
 
-Ingestion cost (one-time): Full-context X | Chunk RAG XX,XXX tokens | Opentology XX,XXX tokens
+Ingestion cost (one-time): Full-context X | Chunk RAG XX,XXX tokens | Arche XX,XXX tokens
 
 ## Pareto 우월 검증
 - vs Full-context: 정확도 차이 ΔX.XX, 토큰 비율 1:XX. → [Pass / Fail / Partial]
@@ -187,7 +187,7 @@ Ingestion cost (one-time): Full-context X | Chunk RAG XX,XXX tokens | Opentology
                      | missed_hop | wrong_relation | retrieval_fail | other
 Full-context LLM     |    X       |       X        |       X        |   X
 Chunk vector RAG     |    X       |       X        |       X        |   X
-Opentology           |    X       |       X        |       X        |   X
+Arche           |    X       |       X        |       X        |   X
 
 ## 한 단락 해석
 [결과의 의미. 가설이 검증됐는가, 부분 검증인가, 거부됐는가. 다음 행동 한 줄.]
@@ -228,7 +228,7 @@ Opentology           |    X       |       X        |       X        |   X
 
 ### 옵션 5 — Distractor 의 failure mode 메타데이터 생략
 
-거부. *보고서가 "어디서 실패하는가" 를 짚지 못한다* . 정확도 점수만 있고 *왜 틀렸는지* 의 정보가 없으면 보고서가 "Opentology 가 0.81, chunk RAG 가 0.78" 같은 *단일 숫자 비교* 로 끝난다. failure mode breakdown 이 있으면 "chunk RAG 는 missed_hop 실패가 많고 Opentology 는 retrieval_failure 가 많다" 같은 *원인 분석* 이 가능해진다 — 이게 *post-MVP 의 다음 행동* 을 결정하는 핵심 정보다.
+거부. *보고서가 "어디서 실패하는가" 를 짚지 못한다* . 정확도 점수만 있고 *왜 틀렸는지* 의 정보가 없으면 보고서가 "Arche 가 0.81, chunk RAG 가 0.78" 같은 *단일 숫자 비교* 로 끝난다. failure mode breakdown 이 있으면 "chunk RAG 는 missed_hop 실패가 많고 Arche 는 retrieval_failure 가 많다" 같은 *원인 분석* 이 가능해진다 — 이게 *post-MVP 의 다음 행동* 을 결정하는 핵심 정보다.
 
 만약 이걸 택했다면, MVP 종료 후 *다음 무엇을 개선할지* 가 보고서에서 도출되지 않아 별도 분석 작업이 필요했을 것이다.
 
@@ -237,14 +237,14 @@ Opentology           |    X       |       X        |       X        |   X
 ### 즉시 영향
 
 - 30 개 MCQ 질문 설계가 *상거래 검증 데이터 준비* 의 일부가 된다. 각 질문에 정답·distractor·failure mode·reference reasoning 4 가지 메타데이터를 본인이 작성해야 한다 — 자유 서술 30 개보다 *작성 시간이 1.5-2 배* 들지만 채점 시간이 *수배 줄어든다* .
-- 측정 코드는 *비교 하니스* (`eval/` 디렉토리, 구현 단계 결정) 에 들어간다. Opentology 본체에 포함되지 않는다.
+- 측정 코드는 *비교 하니스* (`eval/` 디렉토리, 구현 단계 결정) 에 들어간다. Arche 본체에 포함되지 않는다.
 - LLM judge 비용이 측정 예산에 추가 (전형적으로 $5-20 수준).
 - 본인 spot-check 시간 30 분-1 시간이 *MVP 종료 작업의 일부* .
 
 ### 코드 작업 시 기억할 점
 
 - LLM 호출 어디서든 *usage (input tokens / output tokens)* 응답을 *모두 로깅* . 토큰 카운트는 사후에 못 만든다.
-- Opentology 의 *anchor 추출 호출과 답변 생성 호출* 을 별도 로깅. 합산이 보고서의 *Opentology 토큰* 컬럼이 된다.
+- Arche 의 *anchor 추출 호출과 답변 생성 호출* 을 별도 로깅. 합산이 보고서의 *Arche 토큰* 컬럼이 된다.
 - Judge LLM 호출 시 *답변 익명화 (A/B/C)* 와 *순서 무작위* 를 코드에서 강제. 사람 실수 여지 없게.
 - 측정 N=3 회. 한 회차 실패 시 *그 회차만 재실행*, 모든 회차 다시 하지 않음 (단 raw 데이터에 회차 식별자 명시).
 - `temperature = 0` (또는 최저값) 고정. 변경 시 *측정 무효* — 코드에 상수로 박고 변경 차단.

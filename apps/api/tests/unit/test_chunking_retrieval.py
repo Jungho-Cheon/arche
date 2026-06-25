@@ -5,7 +5,7 @@ ADR-0009 D5 + 사용자 요청 (2026-06-21 semantic chunking 강화).
 
 from __future__ import annotations
 
-from opentology_api.domain.chunking import (
+from arche_api.domain.chunking import (
     RETRIEVAL_CHUNK_TOKENS,
     Chunk,
     chunk_for_retrieval,

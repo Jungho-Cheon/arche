@@ -20,7 +20,7 @@
 ```
 eval/datasets/<dataset_id>/
 ├── README.md              # 이 데이터셋의 짧은 설명
-├── corpus/                # 소스 문서 디렉토리 (Opentology ingest 의 입력)
+├── corpus/                # 소스 문서 디렉토리 (Arche ingest 의 입력)
 │   ├── policy/
 │   │   ├── refund.md
 │   │   ├── coupon.md
@@ -31,7 +31,7 @@ eval/datasets/<dataset_id>/
 │   ├── images/
 │   │   ├── promotion_diagram.png
 │   │   └── ...
-│   └── .opentologyignore  # 선택. PRD 2 §2.2 참조.
+│   └── .archeignore  # 선택. PRD 2 §2.2 참조.
 ├── questions.yaml         # 30 개 MCQ 질문 세트
 └── meta.yaml              # 데이터셋 메타데이터 (도메인, 작성자, 생성일 등)
 ```
@@ -54,7 +54,7 @@ language: ko
 author: <user>
 created_at: "2026-06-15"
 description: |
-  3-way 비교 측정 (full-context / chunk RAG / Opentology) 의 차이가 잘 드러나도록
+  3-way 비교 측정 (full-context / chunk RAG / Arche) 의 차이가 잘 드러나도록
   의도된 상거래 도메인 데이터셋. 다중 hop 관계, 동의어/별칭, cross-source 질문이
   의도적으로 포함되어 있다.
 corpus:
@@ -195,7 +195,7 @@ questions:
 | `missed_hop` | multi-hop 추론에서 한 단계를 놓침 (예: 카테고리 매핑 무시) | 청크 RAG, full-context (긴 컨텍스트의 lost-in-the-middle) |
 | `missed_category_hop` | 카테고리/그룹 관계를 놓침 (multi-hop 의 한 변형) | 청크 RAG |
 | `wrong_relation` | 관계의 *방향* 또는 *타입* 을 잘못 해석 (예: "A 가 B 를 포함" 을 "B 가 A 를 포함" 으로) | 모든 컬럼 |
-| `wrong_promotion_filter` | 도메인 특정 필터 조건 (예: 활성 프로모션만) 을 적용 안 함 | 청크 RAG, Opentology |
+| `wrong_promotion_filter` | 도메인 특정 필터 조건 (예: 활성 프로모션만) 을 적용 안 함 | 청크 RAG, Arche |
 | `overgeneralization` | 특정 규칙을 전체에 일반화 (예: 일부 상품 → "모든 상품") | full-context |
 | `retrieval_failure` | 관련 문서를 retrieve 하지 못함 → "정보 부족" 답 | 청크 RAG (cross-source 질문에서) |
 | `synonym_confusion` | 같은 엔티티의 다른 이름을 *다른 엔티티* 로 오인 | 청크 RAG, full-context |
@@ -241,7 +241,7 @@ questions:
 측정 하니스 (PRD 4) 가 제공해야 하는 lint 명령.
 
 ```
-opentology eval lint --dataset eval/datasets/commerce-rules-20260615
+arche eval lint --dataset eval/datasets/commerce-rules-20260615
 ```
 
 검증 항목:
@@ -261,7 +261,7 @@ opentology eval lint --dataset eval/datasets/commerce-rules-20260615
 ### 6.1 dry-run
 
 ```
-opentology eval lint --dataset ... --dry-run-ingest
+arche eval lint --dataset ... --dry-run-ingest
 ```
 
 추가로 *corpus 전체를 ingest 시뮬레이션* (실제 LLM 호출 없이 청크 분할 + 토큰 추정) — 측정 비용을 예상.

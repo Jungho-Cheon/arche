@@ -11,21 +11,21 @@ from __future__ import annotations
 
 from fastapi.testclient import TestClient
 
-from opentology_api.api.admin_tasks import IngestTaskRegistry
-from opentology_api.api.deps import (
+from arche_api.api.admin_tasks import IngestTaskRegistry
+from arche_api.api.deps import (
     embedding_provider_dep,
     graph_repo_dep,
     llm_provider_dep,
     task_registry_dep,
 )
-from opentology_api.api.error_codes import ERROR_HTTP_STATUS, ErrorCode
-from opentology_api.main import create_app
-from opentology_api.test_support import FakeEmbedder, FakeGraph
+from arche_api.api.error_codes import ERROR_HTTP_STATUS, ErrorCode
+from arche_api.main import create_app
+from arche_api.test_support import FakeEmbedder, FakeGraph
 
 
 class _StubLLM:
     def extract(self, **kwargs):
-        from opentology_api.domain.models import ExtractedGraph
+        from arche_api.domain.models import ExtractedGraph
         return ExtractedGraph(entities=[], relations=[])
 
     def complete(self, **kwargs):

@@ -4,14 +4,14 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from opentology_api.domain.errors import DependencyUnavailableError
-from opentology_api.domain.main_entity import (
+from arche_api.domain.errors import DependencyUnavailableError
+from arche_api.domain.main_entity import (
     MAIN_ENTITY_SYSTEM,
     MainEntity,
     MainEntityExtractor,
     take_head_lines,
 )
-from opentology_api.domain.ports import GenericCompleteResult, LLMProvider
+from arche_api.domain.ports import GenericCompleteResult, LLMProvider
 
 
 def test_take_head_lines_returns_first_n():

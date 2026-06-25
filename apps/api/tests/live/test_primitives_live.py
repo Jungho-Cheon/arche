@@ -42,11 +42,11 @@ def setup_world(tmp_path_factory, live_enabled):
         encoding="utf-8",
     )
 
-    from opentology_api.adapters.embedding import OpenAIEmbeddingProvider
-    from opentology_api.adapters.graph import Neo4jGraphRepository
-    from opentology_api.adapters.llm import OpenAILLMProvider
-    from opentology_api.config import get_settings
-    from opentology_api.domain.ingest import IngestService
+    from arche_api.adapters.embedding import OpenAIEmbeddingProvider
+    from arche_api.adapters.graph import Neo4jGraphRepository
+    from arche_api.adapters.llm import OpenAILLMProvider
+    from arche_api.config import get_settings
+    from arche_api.domain.ingest import IngestService
 
     settings = get_settings()
     graph = Neo4jGraphRepository(settings)
@@ -67,11 +67,11 @@ def test_find_entities_hybrid_rrf_returns_matches(setup_world):
     """ingest 한 도메인에서 키워드로 매칭이 나온다."""
     from fastapi.testclient import TestClient
 
-    from opentology_api.api.deps import (
+    from arche_api.api.deps import (
         embedding_provider_dep,
         graph_repo_dep,
     )
-    from opentology_api.main import create_app
+    from arche_api.main import create_app
 
     graph, embedder, _ = setup_world
     app = create_app()
@@ -96,8 +96,8 @@ def test_find_entities_hybrid_rrf_returns_matches(setup_world):
 def test_get_schema_lists_entity_types(setup_world):
     from fastapi.testclient import TestClient
 
-    from opentology_api.api.deps import graph_repo_dep
-    from opentology_api.main import create_app
+    from arche_api.api.deps import graph_repo_dep
+    from arche_api.main import create_app
 
     graph, _, _ = setup_world
     app = create_app()
@@ -115,11 +115,11 @@ def test_get_subgraph_then_find_path(setup_world):
     """find_entities → get_subgraph → find_path 연속."""
     from fastapi.testclient import TestClient
 
-    from opentology_api.api.deps import (
+    from arche_api.api.deps import (
         embedding_provider_dep,
         graph_repo_dep,
     )
-    from opentology_api.main import create_app
+    from arche_api.main import create_app
 
     graph, embedder, _ = setup_world
     app = create_app()

@@ -3,47 +3,47 @@
 # 같은 compose 에 들어가는 게 운영 무게 면에서 합리적.
 
 services:
-  opentology-neo4j:
+  arche-neo4j:
     # WHY 5.15-community: 5.15+ 부터 표준 `CREATE VECTOR INDEX ... IF NOT
     # EXISTS` Cypher 가 GA. 5.13 의 `db.index.vector.createNodeIndex`
     # 프로시저 + SHOW INDEXES 가드 패턴이 정리된다. 특정 minor 에 고정 (latest
     # 금지) — 인덱스 syntax / 동작이 minor 업그레이드 시 *깨질 수* 있어 부팅
     # 가정을 명시적으로 묶는다.
     image: neo4j:5.15-community
-    container_name: opentology-neo4j
+    container_name: arche-neo4j
     ports:
       - "7474:7474"   # browser UI
       - "7687:7687"   # bolt
     environment:
       # NEO4J_AUTH 가 단일 문자열 (user/password). .env 의 NEO4J_PASSWORD 사용.
-      NEO4J_AUTH: "neo4j/${NEO4J_PASSWORD:-opentology}"
+      NEO4J_AUTH: "neo4j/${NEO4J_PASSWORD:-arche}"
       NEO4J_dbms_security_procedures_unrestricted: "apoc.*,gds.*"
     volumes:
       - neo4j-data:/data
       - neo4j-logs:/logs
     healthcheck:
-      test: ["CMD-SHELL", "cypher-shell -u neo4j -p ${NEO4J_PASSWORD:-opentology} 'RETURN 1' || exit 1"]
+      test: ["CMD-SHELL", "cypher-shell -u neo4j -p ${NEO4J_PASSWORD:-arche} 'RETURN 1' || exit 1"]
       interval: 5s
       timeout: 10s
       retries: 20
       start_period: 20s
 
-  opentology-api:
+  arche-api:
     build:
       context: .
       dockerfile: apps/api/Dockerfile
-    container_name: opentology-api
+    container_name: arche-api
     ports:
       - "8000:8000"
     environment:
       OPENAI_API_KEY: "${OPENAI_API_KEY}"
-      NEO4J_URI: "bolt://opentology-neo4j:7687"
+      NEO4J_URI: "bolt://arche-neo4j:7687"
       NEO4J_USER: "neo4j"
-      NEO4J_PASSWORD: "${NEO4J_PASSWORD:-opentology}"
-      OPENTOLOGY_API_LLM_MODEL: "${OPENTOLOGY_API_LLM_MODEL:-openai/gpt-4.1}"
-      OPENTOLOGY_API_EMBEDDING_MODEL: "${OPENTOLOGY_API_EMBEDDING_MODEL:-openai/text-embedding-3-small}"
+      NEO4J_PASSWORD: "${NEO4J_PASSWORD:-arche}"
+      ARCHE_API_LLM_MODEL: "${ARCHE_API_LLM_MODEL:-openai/gpt-4.1}"
+      ARCHE_API_EMBEDDING_MODEL: "${ARCHE_API_EMBEDDING_MODEL:-openai/text-embedding-3-small}"
     depends_on:
-      opentology-neo4j:
+      arche-neo4j:
         condition: service_healthy
     # WHY ./eval/datasets 마운트: PRD 4 측정 파이프라인이 admin/ingest 로 호스트
     # 절대 경로 (eval CLI 가 .resolve() 후 전달) 를 그대로 보낸다. 컨테이너에

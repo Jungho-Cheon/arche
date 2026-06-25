@@ -88,11 +88,11 @@ class ExtractionCacheKey:
 
 def cache_path(key: ExtractionCacheKey) -> Path:
     # 같은 corpus 내 다른 파일이 우연히 동일 청크 본문이면 *결과 공유* 가능.
-    return Path(".opentology-cache/extract/") / f"{key.combined_sha()}.json"
+    return Path(".arche-cache/extract/") / f"{key.combined_sha()}.json"
 ```
 
 캐시 저장소:
-- 호스트 파일 시스템 (`.opentology-cache/` — `.gitignore` 권장).
+- 호스트 파일 시스템 (`.arche-cache/` — `.gitignore` 권장).
 - Docker volume 마운트로 컨테이너 간 공유 가능.
 - 사내 인프라 채택 시 (Phase 3 의 ADR-0015) Redis 또는 S3 로 격상 가능.
 

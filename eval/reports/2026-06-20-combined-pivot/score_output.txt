@@ -5,7 +5,7 @@ Baseline run-dir:  eval/runs/2026-06-20-0923
 col            accuracy wrong (qid)                       tok_med   lat_med_ms
 ---------------------------------------------------------------------------
 chunk_rag        0.9667 Q02                                  8523         2854
-opentology       0.9000 Q05,Q20,Q25                          7936         4822
+arche       0.9000 Q05,Q20,Q25                          7936         4822
 combined         1.0000                                     15694         5108
 
 -- 오답 집합 교차 분석 --
@@ -29,5 +29,5 @@ combined         1.0000                                     15694         5108
 
 -- 비용 (gpt-4.1 단가) --
   chunk_rag  : $0.9652
-  opentology : $1.6910
+  arche : $1.6910
   combined   : $2.5353

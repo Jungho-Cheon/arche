@@ -1,7 +1,7 @@
 """ADR-0017 방향 2 — extract_identifier_aliases 의 고정밀 식별자 추출."""
 from __future__ import annotations
 
-from opentology_api.domain.identity import extract_identifier_aliases
+from arche_api.domain.identity import extract_identifier_aliases
 
 
 def test_parenthetical_id_extracted():

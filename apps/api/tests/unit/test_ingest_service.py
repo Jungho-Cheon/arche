@@ -11,20 +11,20 @@ from pathlib import Path
 
 import pytest
 
-from opentology_api.domain.errors import (
+from arche_api.domain.errors import (
     InvalidInputError,
     UnsupportedFileTypeError,
 )
-from opentology_api.domain.identity import normalize
-from opentology_api.domain.ingest import IngestService
-from opentology_api.domain.models import (
+from arche_api.domain.identity import normalize
+from arche_api.domain.ingest import IngestService
+from arche_api.domain.models import (
     ExtractedEntity,
     ExtractedGraph,
     ExtractedRelation,
     MergeMutation,
     StoredEntity,
 )
-from opentology_api.domain.ports import (
+from arche_api.domain.ports import (
     EmbeddingProvider,
     GraphRepository,
     ImageInput,
@@ -289,7 +289,7 @@ class FakeGraph(GraphRepository):
         hops,
         max_nodes,
     ):
-        from opentology_api.domain.ports import NeighborhoodResult
+        from arche_api.domain.ports import NeighborhoodResult
 
         return NeighborhoodResult(nodes=[], edges=[], truncated=False)
 
@@ -301,7 +301,7 @@ class FakeGraph(GraphRepository):
         hops,
         max_nodes,
     ):
-        from opentology_api.domain.ports import NeighborhoodResult
+        from arche_api.domain.ports import NeighborhoodResult
 
         return NeighborhoodResult(nodes=[], edges=[], truncated=False)
 

@@ -1,21 +1,21 @@
 # Combined RAG 검증 결과 + MVP 피벗 방향
 
 날짜: 2026-06-20
-측정 run: `eval/runs/2026-06-20-0923` (corpus 재ingest 후 opentology + combined N=3, chunk_rag 는 2126 본 측정 결과를 복사하여 동일 dataset 기준 비교)
+측정 run: `eval/runs/2026-06-20-0923` (corpus 재ingest 후 arche + combined N=3, chunk_rag 는 2126 본 측정 결과를 복사하여 동일 dataset 기준 비교)
 
 ## TL;DR
 
 | 컬럼 | 정확도 | 오답 질문 | 토큰 중앙값 | 지연 중앙값 | 비용 (gpt-4.1) |
 |---|---|---|---|---|---|
 | chunk_rag | 96.7% | Q02 | 8.5K | 2.85s | $0.97 |
-| opentology (graph 단독) | 90.0% | Q05, Q20, Q25 | 7.9K | 4.82s | $1.69 |
+| arche (graph 단독) | 90.0% | Q05, Q20, Q25 | 7.9K | 4.82s | $1.69 |
 | **combined (chunk + graph 단일 호출)** | **100.0%** | **없음** | 15.7K | 5.11s | $2.54 |
 
 기준 참고 (2126 본 측정): full_context (gpt-4.1, 코퍼스 전체 dump) = 100%, 70K tokens, 8.08s, $12.69.
 
 ## 무엇이 일어났나
 
-Combined 는 chunk RAG 의 top-k 청크와 opentology 의 anchor → subgraph 를 *한 LLM 호출의 컨텍스트* 에 같이 넣고 답변시킨다. 라우터 없음, 두 retrieval 모두 매번 수행.
+Combined 는 chunk RAG 의 top-k 청크와 arche 의 anchor → subgraph 를 *한 LLM 호출의 컨텍스트* 에 같이 넣고 답변시킨다. 라우터 없음, 두 retrieval 모두 매번 수행.
 
 3 가지 실패 패턴이 combined 안에서 *모두* 회복됨:
 
@@ -62,13 +62,13 @@ Chunk 단독 (96.7%) 도 가성비는 좋다 ($0.97). 하지만:
 - 본 회차에서 graph 단독 90% — 자동 EntityMatcher 의 alias 통합이 *충분하지 않다*. 이는 매번 ingest 마다 발생할 수 있는 *불안정한 그래프 품질* 의 신호.
 - Graph 의 품질 변동성을 chunk 가 완충하는 것이 안전. 단독 운영은 graph 품질 보장 추가 비용 (수동 머지·alias 사전 등) 을 요구함.
 
-### Pivot 후 Opentology 의 정체성
+### Pivot 후 Arche 의 정체성
 
-"Opentology = 그래프 KB" 에서 → **"Opentology = chunk 와 graph 신호를 결합해 LLM/에이전트에 단일 컨텍스트로 제공하는 retrieval orchestrator"**.
+"Arche = 그래프 KB" 에서 → **"Arche = chunk 와 graph 신호를 결합해 LLM/에이전트에 단일 컨텍스트로 제공하는 retrieval orchestrator"**.
 
 - graph 는 *제거하지 않음* — chunk 가 못 잡는 synonym/alias 다중-홉 질의에서 결정적 신호 제공.
 - chunk 는 *제거하지 않음* — graph 품질 변동을 완충, 명시적 사실 인용에 강함.
-- 두 신호를 결합해 단일 LLM 호출로 답변 → 외부 시스템은 "Opentology API" 하나만 호출.
+- 두 신호를 결합해 단일 LLM 호출로 답변 → 외부 시스템은 "Arche API" 하나만 호출.
 
 ## Post-MVP 우선순위 재정렬
 
@@ -83,7 +83,7 @@ Chunk 단독 (96.7%) 도 가성비는 좋다 ($0.97). 하지만:
 
 ## 데이터 산출물
 
-- `eval/runs/2026-06-20-0923/responses/{chunk_rag,opentology,combined}/` — 270 raw 응답 (chunk_rag 는 2126 회차 복사본)
+- `eval/runs/2026-06-20-0923/responses/{chunk_rag,arche,combined}/` — 270 raw 응답 (chunk_rag 는 2126 회차 복사본)
 - `eval/scripts/score_combined.py` — 본 보고서의 표를 재생산하는 스코어링 스크립트
 - `eval/reports/2026-06-20-mvp-closure/` — 2126 본 측정 보고서 (Pareto NG 결론) — 본 보고서가 그 *후속 검증* 이며 결론을 갱신한다
 

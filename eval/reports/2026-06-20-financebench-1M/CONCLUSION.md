@@ -1,7 +1,7 @@
 # M6.5 — FinanceBench 1M 3-way 검증 보고서
 
 날짜: 2026-06-20
-측정 run: `eval/runs/2026-06-20-1426` (FinanceBench 1M corpus, chunk_rag + opentology + combined × N=3, gpt-4.1)
+측정 run: `eval/runs/2026-06-20-1426` (FinanceBench 1M corpus, chunk_rag + arche + combined × N=3, gpt-4.1)
 선행: [eval/reports/2026-06-20-combined-pivot/CONCLUSION.md](../2026-06-20-combined-pivot/CONCLUSION.md) — 95K corpus 의 Combined 채택 결정
 ADR: [ADR-0007 — Combined RAG 채택](../../../docs/adr/0007-combined-rag-pivot.md)
 
@@ -10,7 +10,7 @@ ADR: [ADR-0007 — Combined RAG 채택](../../../docs/adr/0007-combined-rag-pivo
 | 컬럼 | 정확도 | 오답 (qid) | 토큰 중앙값 | 지연 중앙값 | 비용 (99 호출) |
 |---|---|---|---|---|---|
 | chunk_rag | **72.7%** | Q01,Q02,Q05,Q11,Q12,Q13,Q21,Q28,Q30 | 36.9K | 2.02s | $1.55 |
-| opentology (graph 단독) | **6.1%** | 31/33 (Q06,Q15 만 정답) | 4.1K | 3.56s | $1.20 |
+| arche (graph 단독) | **6.1%** | 31/33 (Q06,Q15 만 정답) | 4.1K | 3.56s | $1.20 |
 | combined (chunk + graph) | **72.7%** | Q01,Q05,Q11,Q12,Q13,Q21,Q28,Q30,Q11 | 41.1K | 4.90s | $2.66 |
 
 **결론**: Combined ≈ chunk RAG (±0pp). 그래프 단독은 6%로 사실상 동작 불능. 이는 **ADR-0007 D2 의 "Combined ≈ chunk" 분기 (D6 만 유지, M7 단순화)** 에 해당하는 듯 보이지만, *원인 진단 결과* 그래프 데이터가 **catastrophic over-merge** 로 부패되어 *측정 자체가 의미 없는 상태*. → 결정 보류 + M6.5b (EntityConsolidator) gating 추가 권고.
@@ -19,11 +19,11 @@ ADR: [ADR-0007 — Combined RAG 채택](../../../docs/adr/0007-combined-rag-pivo
 
 ### 증상
 
-opentology 컬럼이 33 문항 중 31 개에 "정보 부족 (e)" 응답.
+arche 컬럼이 33 문항 중 31 개에 "정보 부족 (e)" 응답.
 
 ### 1 차 가설 — anchor extraction 의 언어 mismatch
 
-영어 corpus 에 대해 anchor extraction 이 한국어 entity 를 생성 (예: "AMCOR" → "당좌비율, 재무분석가"). `eval/src/opentology_eval/prompts.py:65` 의 ANCHOR_EXTRACTION_SYSTEM 이 한국어로 작성되어 LLM 이 entity 정규명을 한국어로 번역.
+영어 corpus 에 대해 anchor extraction 이 한국어 entity 를 생성 (예: "AMCOR" → "당좌비율, 재무분석가"). `eval/src/arche_eval/prompts.py:65` 의 ANCHOR_EXTRACTION_SYSTEM 이 한국어로 작성되어 LLM 이 entity 정규명을 한국어로 번역.
 
 **조치**: `ANCHOR_EXTRACTION_SYSTEM` 에 *질문의 언어를 보존* 하라는 원칙 추가 + 영어 예시 추가 (커밋: 본 측정 PR).
 
@@ -48,7 +48,7 @@ MATCH (e:Entity) WHERE "Boeing" IN e.aliases RETURN e.name, e.aliases
 
 원인 (ADR-0001 의 4 단계 EntityMatcher 기준):
 1. 첫 ingest 된 10-K (AMCOR) 에서 "the Company" / "we" / "us" / "Registrant" 등 generic 자기지칭을 entity 로 추출
-2. 다음 10-K (AMD) 에서 동일한 "the Company" 가 *embedding cosine ≥ 0.92* (`apps/api/src/opentology_api/domain/identity.py` 의 `EMBEDDING_MATCH_THRESHOLD`) 를 만족 → Amcor 의 "the Company" entity 로 merge → AMD 도 alias 로 흡수
+2. 다음 10-K (AMD) 에서 동일한 "the Company" 가 *embedding cosine ≥ 0.92* (`apps/api/src/arche_api/domain/identity.py` 의 `EMBEDDING_MATCH_THRESHOLD`) 를 만족 → Amcor 의 "the Company" entity 로 merge → AMD 도 alias 로 흡수
 3. 매번 다음 10-K 마다 반복 → 모든 회사가 Amcor plc 에 흡수
 4. 한편 회사명 자체 ("Boeing", "The Boeing Company") 는 별도 entity 로 살아남기도 함 (alias 매칭 우선순위)
 
@@ -90,12 +90,12 @@ ADR-0007 D2 의 정의: "Combined 가 chunk RAG 와 정확도 우위 + Full-cont
    - "post-ingest 단계에서 cosine ≥ 0.92 의 entity 쌍 을 ANN 으로 찾아 LLM 으로 정말 같은 entity 인지 검증, generic 자기지칭은 회사별로 분리 유지" (PRD 6 §3.A)
    - 본 1M 측정의 catastrophic over-merge 는 EntityConsolidator 부재의 *명백한 1M 시점 발현*
 
-2. **M6.5b 종료 후 graph 재 ingest + opentology + combined 만 재측정 (chunk 는 본 회차 재사용)**
+2. **M6.5b 종료 후 graph 재 ingest + arche + combined 만 재측정 (chunk 는 본 회차 재사용)**
    - 그때의 결과로 ADR-0007 D2 의 진짜 분기 결정
 
 ## 95K 결과와의 비교 (참고)
 
-| 코퍼스 | 도메인 | 언어 | chunk | opentology | combined | combined 의 우위 |
+| 코퍼스 | 도메인 | 언어 | chunk | arche | combined | combined 의 우위 |
 |---|---|---|---|---|---|---|
 | 95K (commerce-verbose) | 가상 이커머스 정책 | 한국어 | 96.7% | 90.0% | 100.0% | +3.3pp vs chunk |
 | 1M (FinanceBench) | SEC 10-K | 영어 | 72.7% | **6.1%** | 72.7% | **0pp** |
@@ -106,7 +106,7 @@ ADR-0007 D2 의 정의: "Combined 가 chunk RAG 와 정확도 우위 + Full-cont
 
 ### chunk_rag setup 의 embedding API 한도 초과 (수정 포함)
 
-첫 실행 시 `crag.setup()` 이 1.1M 토큰을 한 번에 OpenAI embeddings API 로 전송 → `max_tokens_per_request` (300K) 초과. `eval/src/opentology_eval/providers.py:OpenAIEmbeddingProvider.embed()` 에 *250K 토큰 / 2048 input 기준 자동 배치 분할* 적용 (본 측정 PR 에 포함). 1M+ corpus 에서 chunk_rag 가 정상 동작.
+첫 실행 시 `crag.setup()` 이 1.1M 토큰을 한 번에 OpenAI embeddings API 로 전송 → `max_tokens_per_request` (300K) 초과. `eval/src/arche_eval/providers.py:OpenAIEmbeddingProvider.embed()` 에 *250K 토큰 / 2048 input 기준 자동 배치 분할* 적용 (본 측정 PR 에 포함). 1M+ corpus 에서 chunk_rag 가 정상 동작.
 
 ### 데이터셋 옵션 위치 무작위화
 
@@ -134,7 +134,7 @@ ADR-0007 D2 의 정의: "Combined 가 chunk RAG 와 정확도 우위 + Full-cont
 
 ## 데이터 산출물
 
-- `eval/runs/2026-06-20-1426/responses/{chunk_rag,opentology,combined}/` — 297 raw 응답
+- `eval/runs/2026-06-20-1426/responses/{chunk_rag,arche,combined}/` — 297 raw 응답
 - `eval/runs/2026-06-20-1426/meta.yaml` — run 메타데이터 + hyperparameters
 - `eval/datasets/financebench-2026-06-20/` — 33 MCQ, 980K tokens, lint green
 - `eval/reports/2026-06-20-financebench-1M/score_output.txt` — 본 보고서의 표 재생산

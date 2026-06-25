@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from opentology_eval.scoring.correctness import score_correctness
+from arche_eval.scoring.correctness import score_correctness
 
 
 def test_correct_choice_returns_one() -> None:

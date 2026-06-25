@@ -5,8 +5,8 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from opentology_eval.scoring.aggregate import ColumnMetrics, RunAggregate
-from opentology_eval.scoring.report import (
+from arche_eval.scoring.aggregate import ColumnMetrics, RunAggregate
+from arche_eval.scoring.report import (
     evaluate_pareto,
     render_markdown,
     write_report,
@@ -53,7 +53,7 @@ def test_pareto_passes_when_all_three_inequalities_hold() -> None:
     v = evaluate_pareto(
         full_context=_col("full_context", accuracy=0.5, total_med=10000, latency_med=8000),
         chunk_rag=_col("chunk_rag", accuracy=0.6, total_med=500, latency_med=1000),
-        opentology=_col("opentology", accuracy=0.6, total_med=400, latency_med=800),
+        arche=_col("arche", accuracy=0.6, total_med=400, latency_med=800),
     )
     assert v.passed is True
     assert v.accuracy_ok and v.tokens_ok and v.latency_ok
@@ -63,7 +63,7 @@ def test_pareto_fails_on_accuracy() -> None:
     v = evaluate_pareto(
         full_context=_col("full_context", accuracy=0.9),
         chunk_rag=_col("chunk_rag", accuracy=0.5),
-        opentology=_col("opentology", accuracy=0.5),
+        arche=_col("arche", accuracy=0.5),
     )
     assert v.passed is False
     assert v.accuracy_ok is False
@@ -74,7 +74,7 @@ def test_pareto_fails_on_tokens() -> None:
     v = evaluate_pareto(
         full_context=_col("full_context", accuracy=0.5),
         chunk_rag=_col("chunk_rag", accuracy=0.5, total_med=100),
-        opentology=_col("opentology", accuracy=0.6, total_med=500),
+        arche=_col("arche", accuracy=0.6, total_med=500),
     )
     assert v.passed is False
     assert v.tokens_ok is False
@@ -84,7 +84,7 @@ def test_pareto_fails_on_latency() -> None:
     v = evaluate_pareto(
         full_context=_col("full_context", accuracy=0.5),
         chunk_rag=_col("chunk_rag", accuracy=0.5, latency_med=100),
-        opentology=_col("opentology", accuracy=0.6, latency_med=200),
+        arche=_col("arche", accuracy=0.6, latency_med=200),
     )
     assert v.passed is False
     assert v.latency_ok is False
@@ -98,7 +98,7 @@ def _agg() -> RunAggregate:
         columns={
             "full_context": _col("full_context", accuracy=0.6, total_med=5000, latency_med=8000),
             "chunk_rag": _col("chunk_rag", accuracy=0.7, total_med=400, latency_med=1000),
-            "opentology": _col("opentology", accuracy=0.75, total_med=350, latency_med=800),
+            "arche": _col("arche", accuracy=0.75, total_med=350, latency_med=800),
         },
         questions_count=10,
         runs_count=3,

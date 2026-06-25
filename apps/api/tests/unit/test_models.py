@@ -7,7 +7,7 @@ import re
 import pytest
 from pydantic import ValidationError
 
-from opentology_api.domain.models import Node, SourceRef, now_rfc3339
+from arche_api.domain.models import Node, SourceRef, now_rfc3339
 
 ULID_RE = re.compile(r"^[0-9A-Z]{26}$")
 RFC3339_RE = re.compile(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.*$")

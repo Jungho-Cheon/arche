@@ -1,6 +1,6 @@
 # 파괴적 개선 PoC — 그래프 단독 정답률 끌어올리기 (2026-06-22)
 
-graphify 비교 측정(opentology 그래프 단독 21.2% << graphify 57.6%)을 받아, "graphify
+graphify 비교 측정(arche 그래프 단독 21.2% << graphify 57.6%)을 받아, "graphify
 를 훨씬 상회하는 그래프 단독" 을 목표로 *도메인 무관* 개선을 적용하고 Amcor 단일 회사로
 개념 증명한 기록. 모든 변경은 특정 벤치마크에 과적합되지 않는 일반 규칙으로 작성했다.
 
@@ -8,7 +8,7 @@ graphify 비교 측정(opentology 그래프 단독 21.2% << graphify 57.6%)을 �
 
 | # | 변경 | 파일 | 효과 |
 | --- | --- | --- | --- |
-| 1 | 답변 흐름 과보수성 완화 — 검색된 엔티티로부터의 상식 추론 허용(환각·수치 날조는 계속 금지) | `eval/.../prompts.py` OPENTOLOGY_ANSWER_SYSTEM | 전체 33문항 graph-only 21.2% → 33.3% (회피 'e' 26→22) |
+| 1 | 답변 흐름 과보수성 완화 — 검색된 엔티티로부터의 상식 추론 허용(환각·수치 날조는 계속 금지) | `eval/.../prompts.py` ARCHE_ANSWER_SYSTEM | 전체 33문항 graph-only 21.2% → 33.3% (회피 'e' 26→22) |
 | 2 | 정량 사실·표 완전 추출 — 측정값/표를 요약·누락 없이 구조화 추출, 수치 엔티티 name 에 소속 대상 포함(cross-company 오염 차단) | `apps/api/.../llm.py` SYSTEM_PROMPT 원칙 5·6 | 재무 수치가 그래프에 들어옴 (이전엔 전무) |
 | 3 | 추출 청크 크기를 모델 컨텍스트(~90K 토큰)에서 분리해 작게(4K) | `apps/api/.../chunking.py` budget_tokens, `ingest.py` extraction_chunk_tokens | Amcor 2청크 → 30청크, 엔티티 80 → 799 (약 10배) |
 | 4 | anchor 추출이 파생 지표(비율·마진·증가율)를 구성 입력 항목으로 분해 | `eval/.../prompts.py` ANCHOR_EXTRACTION_SYSTEM 원칙 3 | Q01 anchor 가 유동자산·유동부채·재고로 분해되어 해당 노드 검색 성공 |
@@ -22,7 +22,7 @@ graphify 비교 측정(opentology 그래프 단독 21.2% << graphify 57.6%)을 �
 | + 작은 청크(4K) | 2/4 | 799 엔티티, "Total current liabilities" 등 노드 등장 |
 | + anchor 분해 | 2/4 | Q01 이 구성 항목 노드를 검색까지 도달 (추출 완성도에서 막힘) |
 
-**핵심 성과**: graphify 와 옛 opentology 가 *둘 다 틀렸던* 수치 multi_hop(Q04)을, 도메인
+**핵심 성과**: graphify 와 옛 arche 가 *둘 다 틀렸던* 수치 multi_hop(Q04)을, 도메인
 하드코딩 없이 그래프 단독·저토큰(약 3.2K 토큰)으로 풀었다. 숫자를 그래프에 넣는 접근이
 "graphify 가 구조적으로 못 푸는 영역"을 여는 것을 실증.
 
@@ -67,9 +67,9 @@ graphify 비교 측정(opentology 그래프 단독 21.2% << graphify 57.6%)을 �
 
 | 구성 | 정답률 |
 | --- | --- |
-| opentology v1 (원본 그래프, 과보수 프롬프트) | 21.2% |
-| opentology v2 (원본 그래프 + 개선 답변 프롬프트) | **33.3%** |
-| **opentology v3 (조밀한 새 그래프 + 개선 프롬프트 + anchor 분해)** | **21.2%** (회피 e=24) |
+| arche v1 (원본 그래프, 과보수 프롬프트) | 21.2% |
+| arche v2 (원본 그래프 + 개선 답변 프롬프트) | **33.3%** |
+| **arche v3 (조밀한 새 그래프 + 개선 프롬프트 + anchor 분해)** | **21.2%** (회피 e=24) |
 | graphify (기준선) | 57.6% |
 
 **핵심: 추출을 늘렸더니 오히려 후퇴했다 (v2 33.3% → v3 21.2%).** Amcor 단일 회사
@@ -87,7 +87,7 @@ PoC 에서 통한 개선이 6개 회사 전체에서는 역효과.
 
 "더 많이 추출하면 그래프 단독이 좋아진다"는 단순 가정은 *틀렸다*. 노드를 늘리면
 고정 retrieval 창(80 노드, 2 hop)이 더 작은 *비율* 만 담아 오히려 신호가 희석된다.
-opentology 가 graphify 를 넘으려면 다음 *검색 측* 개선이 선행되어야 한다.
+arche 가 graphify 를 넘으려면 다음 *검색 측* 개선이 선행되어야 한다.
 
 1. **namespace 회사 단위 스코핑 (ADR-0015)** — 진입점·서브그래프 검색을 질문 대상
    회사로 한정해 cross-company 노이즈 제거. (현재 6개 회사가 모두 default namespace
@@ -132,4 +132,4 @@ v2(33.3%, 옛 sparse 그래프)와 graphify(57.6%)에 못 미친다. 300 노드 
 
 검증 코드 변경(전부 유닛 테스트 green, 미커밋): `apps/api/.../llm.py`(정량·표 추출
 원칙), `chunking.py`+`ingest.py`(추출 청크 분리), `graph.py`(Lucene 예약어 버그 수정),
-`eval/.../prompts.py`(답변·anchor 프롬프트), `eval/.../columns/opentology.py`(max_nodes).
+`eval/.../prompts.py`(답변·anchor 프롬프트), `eval/.../columns/arche.py`(max_nodes).

@@ -21,13 +21,13 @@ import mcp.types as mcp_types
 import pytest
 from pydantic import ValidationError
 
-from opentology_api.domain.errors import (
+from arche_api.domain.errors import (
     DependencyUnavailableError,
     EntityNotFoundError,
 )
-from opentology_api.domain.models import Edge, Node, SourceRef, now_rfc3339
-from opentology_api.domain.ports import EntityTypeStat, NeighborhoodResult, RelationTypeStat
-from opentology_api.mcp_server import (
+from arche_api.domain.models import Edge, Node, SourceRef, now_rfc3339
+from arche_api.domain.ports import EntityTypeStat, NeighborhoodResult, RelationTypeStat
+from arche_api.mcp_server import (
     WRITE_TOOL_NAMES_EXCLUDED,
     _build_tools,
     _dispatch_tool,
@@ -261,7 +261,7 @@ def test_dispatch_get_neighbors_splits_id_from_body():
 
 
 def test_dispatch_find_path_same_id_raises_unprocessable():
-    from opentology_api.domain.errors import UnprocessableError
+    from arche_api.domain.errors import UnprocessableError
 
     graph = PrimitiveStubGraph(nodes=[_make_node()])
     with pytest.raises(UnprocessableError):
@@ -321,7 +321,7 @@ def test_to_mcp_error_dependency_unavailable_carries_code():
 def test_to_mcp_error_validation_error_maps_to_invalid_input():
     """pydantic 검증 실패 → invalid_input."""
     try:
-        from opentology_api.api.schemas import FindEntitiesRequest
+        from arche_api.api.schemas import FindEntitiesRequest
 
         FindEntitiesRequest.model_validate({"keywords": []})
     except ValidationError as ve:

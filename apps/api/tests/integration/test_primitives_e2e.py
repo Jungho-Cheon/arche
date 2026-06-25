@@ -13,19 +13,19 @@ from __future__ import annotations
 
 from fastapi.testclient import TestClient
 
-from opentology_api.api.deps import (
+from arche_api.api.deps import (
     embedding_provider_dep,
     graph_repo_dep,
     llm_provider_dep,
 )
-from opentology_api.domain.models import (
+from arche_api.domain.models import (
     Edge,
     ExtractedGraph,
     Node,
     SourceRef,
     now_rfc3339,
 )
-from opentology_api.domain.ports import (
+from arche_api.domain.ports import (
     EmbeddingProvider,
     EntityTypeStat,
     EntityWithCounts,
@@ -36,7 +36,7 @@ from opentology_api.domain.ports import (
     PathResult,
     RelationTypeStat,
 )
-from opentology_api.main import create_app
+from arche_api.main import create_app
 
 
 def _node(node_id: str, name: str, type_: str = "coupon") -> Node:

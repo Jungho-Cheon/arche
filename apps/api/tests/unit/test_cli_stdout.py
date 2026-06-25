@@ -6,8 +6,8 @@
 
 from __future__ import annotations
 
-from opentology_api.cli import _format_progress_line, _print_summary
-from opentology_api.domain.ingest import FileProgressEvent, IngestResult
+from arche_api.cli import _format_progress_line, _print_summary
+from arche_api.domain.ingest import FileProgressEvent, IngestResult
 
 
 def _make_event(

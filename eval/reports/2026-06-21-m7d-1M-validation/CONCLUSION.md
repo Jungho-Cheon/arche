@@ -111,7 +111,7 @@ graphify 와의 *직접 정량 비교* (cross-doc edge 수 / multi-hop 정확도
 
 ## ADR-0007 D2 분기 결정
 
-PR #54 시점의 분기 (Combined 78.8% > chunk 72.7% +6.1pp) 는 유지. 본 회차는 *ingest 단계 evidence* 이며, opentology + combined N=3 측정은 후속 (chunk_rag 는 2026-06-20-1426 회차 재사용 가능).
+PR #54 시점의 분기 (Combined 78.8% > chunk 72.7% +6.1pp) 는 유지. 본 회차는 *ingest 단계 evidence* 이며, arche + combined N=3 측정은 후속 (chunk_rag 는 2026-06-20-1426 회차 재사용 가능).
 
 ## Phase 1 의 ADR 종료 권고
 
@@ -123,7 +123,7 @@ PR #54 시점의 분기 (Combined 78.8% > chunk 72.7% +6.1pp) 는 유지. 본 �
 
 ## 후속 측정 (사용자 trigger)
 
-- opentology + combined N=3 (33 MCQ) — 본 회차 그래프 위에서
+- arche + combined N=3 (33 MCQ) — 본 회차 그래프 위에서
 - 다도메인 회귀 (commerce-verbose 95K)
 - 다회사 개인 KB 시나리오 — namespace 격리 동작 검증 (Phase 3)
 - graphify 와의 직접 cross-doc edge 비교

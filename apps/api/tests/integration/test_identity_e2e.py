@@ -29,24 +29,24 @@ def neo4j_container():
 
 @pytest.fixture(scope="module")
 def settings(neo4j_container):
-    from opentology_api.config import Settings
+    from arche_api.config import Settings
 
     return Settings(
         OPENAI_API_KEY="test",
         NEO4J_URI=neo4j_container.get_connection_url(),
         NEO4J_USER="neo4j",
         NEO4J_PASSWORD=neo4j_container.password,
-        OPENTOLOGY_API_LLM_MODEL="openai/gpt-4.1",
-        OPENTOLOGY_API_EMBEDDING_MODEL="openai/text-embedding-3-small",
+        ARCHE_API_LLM_MODEL="openai/gpt-4.1",
+        ARCHE_API_EMBEDDING_MODEL="openai/text-embedding-3-small",
         # 작은 차원으로 vector 인덱스 비용 절감 — 단위 차원이 인덱스 동작 자체를
         # 바꾸지는 않는다.
-        OPENTOLOGY_API_EMBEDDING_DIMENSION=8,
+        ARCHE_API_EMBEDDING_DIMENSION=8,
     )
 
 
 @pytest.fixture(scope="module")
 def repo(settings):
-    from opentology_api.adapters.graph import Neo4jGraphRepository
+    from arche_api.adapters.graph import Neo4jGraphRepository
 
     r = Neo4jGraphRepository(settings)
     r.ensure_indexes()
@@ -147,7 +147,7 @@ def _relation_count(repo) -> int:
 
 
 def _make_extracted(entities, relations=None):
-    from opentology_api.domain.models import (
+    from arche_api.domain.models import (
         ExtractedEntity,
         ExtractedGraph,
         ExtractedRelation,
@@ -160,7 +160,7 @@ def _make_extracted(entities, relations=None):
 
 
 def _make_service(repo, llm, emb):
-    from opentology_api.domain.ingest import IngestService
+    from arche_api.domain.ingest import IngestService
 
     return IngestService(llm=llm, embedder=emb, graph=repo)
 

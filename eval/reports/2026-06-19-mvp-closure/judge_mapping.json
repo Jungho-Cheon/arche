@@ -1,151 +1,151 @@
 {
   "Q01": {
     "A": "full_context",
-    "B": "opentology",
+    "B": "arche",
     "C": "chunk_rag"
   },
   "Q02": {
     "A": "chunk_rag",
-    "B": "opentology",
+    "B": "arche",
     "C": "full_context"
   },
   "Q03": {
     "A": "full_context",
     "B": "chunk_rag",
-    "C": "opentology"
+    "C": "arche"
   },
   "Q04": {
     "A": "chunk_rag",
-    "B": "opentology",
+    "B": "arche",
     "C": "full_context"
   },
   "Q05": {
     "A": "full_context",
     "B": "chunk_rag",
-    "C": "opentology"
+    "C": "arche"
   },
   "Q06": {
     "A": "chunk_rag",
     "B": "full_context",
-    "C": "opentology"
+    "C": "arche"
   },
   "Q07": {
     "A": "chunk_rag",
     "B": "full_context",
-    "C": "opentology"
+    "C": "arche"
   },
   "Q08": {
     "A": "full_context",
-    "B": "opentology",
+    "B": "arche",
     "C": "chunk_rag"
   },
   "Q09": {
     "A": "chunk_rag",
-    "B": "opentology",
+    "B": "arche",
     "C": "full_context"
   },
   "Q10": {
     "A": "full_context",
-    "B": "opentology",
+    "B": "arche",
     "C": "chunk_rag"
   },
   "Q11": {
     "A": "full_context",
     "B": "chunk_rag",
-    "C": "opentology"
+    "C": "arche"
   },
   "Q12": {
     "A": "full_context",
-    "B": "opentology",
+    "B": "arche",
     "C": "chunk_rag"
   },
   "Q13": {
-    "A": "opentology",
+    "A": "arche",
     "B": "full_context",
     "C": "chunk_rag"
   },
   "Q14": {
-    "A": "opentology",
+    "A": "arche",
     "B": "full_context",
     "C": "chunk_rag"
   },
   "Q15": {
     "A": "chunk_rag",
     "B": "full_context",
-    "C": "opentology"
+    "C": "arche"
   },
   "Q16": {
     "A": "full_context",
     "B": "chunk_rag",
-    "C": "opentology"
+    "C": "arche"
   },
   "Q17": {
-    "A": "opentology",
+    "A": "arche",
     "B": "chunk_rag",
     "C": "full_context"
   },
   "Q18": {
     "A": "full_context",
     "B": "chunk_rag",
-    "C": "opentology"
+    "C": "arche"
   },
   "Q19": {
     "A": "full_context",
-    "B": "opentology",
+    "B": "arche",
     "C": "chunk_rag"
   },
   "Q20": {
-    "A": "opentology",
+    "A": "arche",
     "B": "chunk_rag",
     "C": "full_context"
   },
   "Q21": {
     "A": "chunk_rag",
     "B": "full_context",
-    "C": "opentology"
+    "C": "arche"
   },
   "Q22": {
     "A": "full_context",
-    "B": "opentology",
+    "B": "arche",
     "C": "chunk_rag"
   },
   "Q23": {
     "A": "chunk_rag",
     "B": "full_context",
-    "C": "opentology"
+    "C": "arche"
   },
   "Q24": {
-    "A": "opentology",
+    "A": "arche",
     "B": "full_context",
     "C": "chunk_rag"
   },
   "Q25": {
     "A": "chunk_rag",
     "B": "full_context",
-    "C": "opentology"
+    "C": "arche"
   },
   "Q26": {
     "A": "full_context",
-    "B": "opentology",
+    "B": "arche",
     "C": "chunk_rag"
   },
   "Q27": {
     "A": "full_context",
-    "B": "opentology",
+    "B": "arche",
     "C": "chunk_rag"
   },
   "Q28": {
     "A": "chunk_rag",
-    "B": "opentology",
+    "B": "arche",
     "C": "full_context"
   },
   "Q29": {
-    "A": "opentology",
+    "A": "arche",
     "B": "full_context",
     "C": "chunk_rag"
   },
   "Q30": {
-    "A": "opentology",
+    "A": "arche",
     "B": "full_context",
     "C": "chunk_rag"
   }

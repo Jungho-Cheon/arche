@@ -5,7 +5,7 @@ from __future__ import annotations
 import pytest
 from fastapi import HTTPException
 
-from opentology_api.api.auth import (
+from arche_api.api.auth import (
     DEFAULT_NAMESPACE,
     AuthContext,
     parse_authorization_header,

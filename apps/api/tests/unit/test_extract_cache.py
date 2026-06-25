@@ -2,13 +2,13 @@
 
 from __future__ import annotations
 
-from opentology_api.adapters.extract_cache import (
+from arche_api.adapters.extract_cache import (
     CACHE_VERSION,
     ExtractionCache,
     ExtractionCacheKey,
     make_key,
 )
-from opentology_api.domain.models import (
+from arche_api.domain.models import (
     ExtractedEntity,
     ExtractedGraph,
     ExtractedRelation,

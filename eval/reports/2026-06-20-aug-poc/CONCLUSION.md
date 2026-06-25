@@ -1,31 +1,31 @@
-# PoC — Graph-guided Chunk Retrieval (opentology_aug) 가 chunk RAG parity 초과
+# PoC — Graph-guided Chunk Retrieval (arche_aug) 가 chunk RAG parity 초과
 
 날짜: 2026-06-20
-측정 run: `eval/runs/2026-06-20-aug-smoke/responses/opentology_aug` (smoke, 21 MCQ × N=1)
-baseline run: `eval/runs/2026-06-20-1532/responses/{chunk_rag,opentology,combined}` (run0 비교)
-관련 코드: `eval/src/opentology_eval/columns/opentology_aug.py`
+측정 run: `eval/runs/2026-06-20-aug-smoke/responses/arche_aug` (smoke, 21 MCQ × N=1)
+baseline run: `eval/runs/2026-06-20-1532/responses/{chunk_rag,arche,combined}` (run0 비교)
+관련 코드: `eval/src/arche_eval/columns/arche_aug.py`
 관련 보고서: `eval/reports/2026-06-20-smoke-stoplist-fix/CONCLUSION.md`
 
 ## TL;DR
 
-ADR-0008 smoke 의 graph 33.3% vs chunk 71.4% gap 의 *진단* (graph 의 entity description 압축에서 정량 / 표 / 시계열 손실) 을 정설의 graphRAG Local Search 패턴 (Microsoft GraphRAG / LightRAG) 으로 보강하니 — **opentology_aug 81.0%** = chunk_rag 71.4% **+9.5pp**, graph 단독 33.3% **+47.7pp**. 사용자 목표 "chunk_rag 와 버금갈 정도" 를 *초과*.
+ADR-0008 smoke 의 graph 33.3% vs chunk 71.4% gap 의 *진단* (graph 의 entity description 압축에서 정량 / 표 / 시계열 손실) 을 정설의 graphRAG Local Search 패턴 (Microsoft GraphRAG / LightRAG) 으로 보강하니 — **arche_aug 81.0%** = chunk_rag 71.4% **+9.5pp**, graph 단독 33.3% **+47.7pp**. 사용자 목표 "chunk_rag 와 버금갈 정도" 를 *초과*.
 
-**결론: graphRAG 의 정설 — "graph 가 검색 공간 결정, raw chunk 가 재료" — 가 우리 측정에서도 맞다.** 우리의 *이전* opentology 컬럼이 (2) 단계만 하고 (3) raw chunk 동봉을 안 한 것이 -38pp gap 의 정체.
+**결론: graphRAG 의 정설 — "graph 가 검색 공간 결정, raw chunk 가 재료" — 가 우리 측정에서도 맞다.** 우리의 *이전* arche 컬럼이 (2) 단계만 하고 (3) raw chunk 동봉을 안 한 것이 -38pp gap 의 정체.
 
 ## 측정 결과 (smoke 21 MCQ, run0, gpt-4.1)
 
 | 컬럼 | 정확도 | 오답 (qid) | 입력 토큰 (중앙값) | 총 토큰 (중앙값) | 지연 중앙값 |
 |---|---|---|---|---|---|
 | chunk_rag | 71.4% | Q01, Q07, Q08, Q09, Q13, Q17 | 6.9K | 27.4K | 2.37s |
-| opentology (graph 단독) | 33.3% | Q01, Q05-09, Q12-17, Q20, Q21 | 10.5K | 10.7K | 3.92s |
+| arche (graph 단독) | 33.3% | Q01, Q05-09, Q12-17, Q20, Q21 | 10.5K | 10.7K | 3.92s |
 | combined (chunk + graph 독립) | 81.0% | Q01, Q09, Q17, Q21 | 17.1K | 37.7K | 5.28s |
-| **opentology_aug (graph-guided chunk)** | **81.0%** | Q01, Q07, Q09, Q17 | 17.1K | 37.7K | 4.99s |
+| **arche_aug (graph-guided chunk)** | **81.0%** | Q01, Q07, Q09, Q17 | 17.1K | 37.7K | 4.99s |
 
 ## graph 단독 → aug 의 회복 (47.7pp)
 
-opentology 단독이 틀린 14 개 중 **10 개를 aug 가 회복**:
+arche 단독이 틀린 14 개 중 **10 개를 aug 가 회복**:
 
-| qid | opentology 답 | aug 답 (정답) | 원인 진단 |
+| qid | arche 답 | aug 답 (정답) | 원인 진단 |
 |---|---|---|---|
 | Q05 | e (정보 부족) | a 정답 | AMD FY22 cash flow 수치 — graph 에는 정성, raw chunk 에 있음 |
 | Q06 | e (정보 부족) | 정답 | AMD 사업부문 매출 비중 — 동일 패턴 |
@@ -86,7 +86,7 @@ opentology 단독이 틀린 14 개 중 **10 개를 aug 가 회복**:
 
 ### 닫는 것
 
-- "opentology graph 가 chunk RAG 와 *동등 또는 우월* 한 정확도를 낼 수 있는가" 의 *부정 답변 가능성* — 본 측정의 +9.5pp 로 명백히 기각
+- "arche graph 가 chunk RAG 와 *동등 또는 우월* 한 정확도를 낼 수 있는가" 의 *부정 답변 가능성* — 본 측정의 +9.5pp 로 명백히 기각
 - "우리 graphRAG 구현이 정설과 맞는가" 의 *불확실성* — Local Search 패턴 적용만으로 33.3% → 81.0% 회복 = 우리 구현은 (1)(2) 만 하고 (3) 을 빼먹은 *불완전 graphRAG* 였음을 직접 확인
 
 ### 여는 것
@@ -105,12 +105,12 @@ opentology 단독이 틀린 14 개 중 **10 개를 aug 가 회복**:
 ## 다음 액션
 
 1. **본 PR 머지** — aug column + 측정 산출물 + 본 보고서
-2. **CLI 통합 + RunDirs 확장** — `opentology_aug` 정식 컬럼화 (후속 PR)
+2. **CLI 통합 + RunDirs 확장** — `arche_aug` 정식 컬럼화 (후속 PR)
 3. **M6.5b 와 묶어 1M 재측정** — EntityConsolidator 본 구현 후 aug / combined 둘 다 1M 에서 검증
 4. **다도메인 / N=10** — commerce-verbose-20260618 데이터셋으로도 검증해 일반화 확인
 
 ## 데이터 산출물
 
-- `eval/src/opentology_eval/columns/opentology_aug.py` — 컬럼 구현
+- `eval/src/arche_eval/columns/arche_aug.py` — 컬럼 구현
 - `eval/scripts/run_aug_poc.py` — PoC 측정 스크립트
-- `eval/runs/2026-06-20-aug-smoke/responses/opentology_aug/` — 21 응답
+- `eval/runs/2026-06-20-aug-smoke/responses/arche_aug/` — 21 응답

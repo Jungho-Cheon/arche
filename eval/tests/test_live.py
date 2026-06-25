@@ -8,12 +8,12 @@ from pathlib import Path
 
 import pytest
 
-from opentology_eval.columns.chunk_rag import ChunkRAGRunner
-from opentology_eval.columns.full_context import FullContextRunner
-from opentology_eval.config import load_config
-from opentology_eval.loaders import FileLoader
-from opentology_eval.providers import OpenAIEmbeddingProvider, OpenAIProvider
-from opentology_eval.questions import load_questions
+from arche_eval.columns.chunk_rag import ChunkRAGRunner
+from arche_eval.columns.full_context import FullContextRunner
+from arche_eval.config import load_config
+from arche_eval.loaders import FileLoader
+from arche_eval.providers import OpenAIEmbeddingProvider, OpenAIProvider
+from arche_eval.questions import load_questions
 
 
 pytestmark = pytest.mark.live

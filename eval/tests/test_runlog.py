@@ -4,7 +4,7 @@ from pathlib import Path
 
 import yaml
 
-from opentology_eval.runlog import (
+from arche_eval.runlog import (
     RunDirs,
     hash_directory,
     hash_file,

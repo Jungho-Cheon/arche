@@ -6,7 +6,7 @@
 
 from __future__ import annotations
 
-from opentology_api.domain.chunking import (
+from arche_api.domain.chunking import (
     OVERLAP_RATIO,
     TOKEN_BUDGET_RATIO,
     Chunk,
