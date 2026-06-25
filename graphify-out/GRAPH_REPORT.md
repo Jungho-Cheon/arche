@@ -1,4 +1,4 @@
-# Graph Report - opentology  (2026-06-25)
+# Graph Report - arche  (2026-06-25)
 
 ## Corpus Check
 - 326 files · ~1,087,992 words
@@ -508,7 +508,7 @@ Nodes (12): Path, spotcheck.py — 트리거 매칭 / write_override / apply_ove
 
 ### Community 65 - "Community 65"
 Cohesion: 0.08
-Nodes (29): Idempotent Ingestion (D6), One-page Report as MVP Exit Condition (D7), Opentology Project Identity (Graph KB tool for LLMs), Pareto Superiority Hypothesis (accuracy = full-context, tokens > chunk RAG), Rationale: Long-context LLMs make efficiency the differentiator, Caller-side Anchor Extraction (LLM responsibility offloaded to caller), Dual Alias Normalization (ingest-time + query-time) (D3), ADR-0003: Graph Entry Point Strategy (Hybrid Lexical + Dense) (+21 more)
+Nodes (29): Idempotent Ingestion (D6), One-page Report as MVP Exit Condition (D7), Arche Project Identity (Graph KB tool for LLMs), Pareto Superiority Hypothesis (accuracy = full-context, tokens > chunk RAG), Rationale: Long-context LLMs make efficiency the differentiator, Caller-side Anchor Extraction (LLM responsibility offloaded to caller), Dual Alias Normalization (ingest-time + query-time) (D3), ADR-0003: Graph Entry Point Strategy (Hybrid Lexical + Dense) (+21 more)
 
 ### Community 66 - "Community 66"
 Cohesion: 0.13
@@ -600,7 +600,7 @@ Nodes (6): Entity/Relation Audit Log deferred (D5), Auth/Access Control/Multi-te
 
 ### Community 90 - "Community 90"
 Cohesion: 0.29
-Nodes (7): Opentology API, Model Pricing (2026-06), Graph Primitives MCP Server, Graph Primitives REST API, Ingest Pipeline, LLM Multimodal Entity/Relation Extraction, Opentology
+Nodes (7): Arche API, Model Pricing (2026-06), Graph Primitives MCP Server, Graph Primitives REST API, Ingest Pipeline, LLM Multimodal Entity/Relation Extraction, Arche
 
 ### Community 91 - "Community 91"
 Cohesion: 0.13
@@ -608,7 +608,7 @@ Nodes (17): _make_edge(), _make_node(), now_rfc3339(), RFC 3339 (UTC) timestamp 
 
 ### Community 92 - "Community 92"
 Cohesion: 0.20
-Nodes (10): 3-way Measurement (Full-context vs Chunk RAG vs Opentology), OpenAI gpt-4.1 chosen for 1M context, Arche MVP — 평가 하니스 (베이스라인 두 컬럼), 실행 방법, 왜 이 provider / 모델인가, 응답 JSON 스키마, text-embedding-3-small (1536-dim) as shared embedding, Column 2: Chunk Vector RAG Baseline (+2 more)
+Nodes (10): 3-way Measurement (Full-context vs Chunk RAG vs Arche), OpenAI gpt-4.1 chosen for 1M context, Arche MVP — 평가 하니스 (베이스라인 두 컬럼), 실행 방법, 왜 이 provider / 모델인가, 응답 JSON 스키마, text-embedding-3-small (1536-dim) as shared embedding, Column 2: Chunk Vector RAG Baseline (+2 more)
 
 ### Community 93 - "Community 93"
 Cohesion: 0.08
@@ -620,7 +620,7 @@ Nodes (24): 1. .env 준비, 2. 인프라 + API 기동, 3. 단일 파일 ingest, 
 
 ### Community 95 - "Community 95"
 Cohesion: 0.29
-Nodes (7): Repo entry-point CLAUDE.md, Entry-point reading order (PRD -> ADR -> STATUS -> specs), legacy-opentology reference policy (do not consult), Public artifact accessibility rule (self-contained issues/ADRs), Session role modes (orchestrator vs worker), Worker mode end-of-task checklist (PR + Closes #N), Writing tone policy (no jargon, no colloquial verbs)
+Nodes (7): Repo entry-point CLAUDE.md, Entry-point reading order (PRD -> ADR -> STATUS -> specs), legacy-arche reference policy (do not consult), Public artifact accessibility rule (self-contained issues/ADRs), Session role modes (orchestrator vs worker), Worker mode end-of-task checklist (PR + Closes #N), Writing tone policy (no jargon, no colloquial verbs)
 
 ### Community 96 - "Community 96"
 Cohesion: 0.29
@@ -648,7 +648,7 @@ Nodes (23): 1 차 가설과 그 기각, 2 차 진단 — 진짜 원인: catastro
 
 ### Community 103 - "Community 103"
 Cohesion: 0.67
-Nodes (3): Control variables — same LLM, same embedding model across columns, Pareto hypothesis (accuracy vs token cost), README — Opentology overview & hypothesis
+Nodes (3): Control variables — same LLM, same embedding model across columns, Pareto hypothesis (accuracy vs token cost), README — Arche overview & hypothesis
 
 ### Community 104 - "Community 104"
 Cohesion: 0.08

@@ -1094,332 +1094,332 @@
     "ast_hash": "a8c02368af38059c6ef01be11bfc2557",
     "semantic_hash": ""
   },
-  ".opentology-cache/extract/4f7ac755b124874e0720d88e500903fa6f916fed91ab5c9797fe15210ba1e862.json": {
+  ".arche-cache/extract/4f7ac755b124874e0720d88e500903fa6f916fed91ab5c9797fe15210ba1e862.json": {
     "mtime": 1782270152.665504,
     "ast_hash": "0285c1bfe7161201eff431dafce9c027",
     "semantic_hash": ""
   },
-  ".opentology-cache/extract/e8e9d772ad95dca38d3052696864815643f7e6f69a46111e57b63f6a2f23a426.json": {
+  ".arche-cache/extract/e8e9d772ad95dca38d3052696864815643f7e6f69a46111e57b63f6a2f23a426.json": {
     "mtime": 1782270152.666889,
     "ast_hash": "0285c1bfe7161201eff431dafce9c027",
     "semantic_hash": ""
   },
-  "apps/api/.opentology-cache/extract/03a290cfc33aad599fa821f6e6c4eccdfdd001767bd32fc7da1c5469bb8d319a.json": {
+  "apps/api/.arche-cache/extract/03a290cfc33aad599fa821f6e6c4eccdfdd001767bd32fc7da1c5469bb8d319a.json": {
     "mtime": 1782044744.2601407,
     "ast_hash": "0285c1bfe7161201eff431dafce9c027",
     "semantic_hash": ""
   },
-  "apps/api/.opentology-cache/extract/053a8280195935ed8913a77c7681a310460e9b11f026e2e2fe0da5d7e96a03f9.json": {
+  "apps/api/.arche-cache/extract/053a8280195935ed8913a77c7681a310460e9b11f026e2e2fe0da5d7e96a03f9.json": {
     "mtime": 1782046413.2334545,
     "ast_hash": "0285c1bfe7161201eff431dafce9c027",
     "semantic_hash": ""
   },
-  "apps/api/.opentology-cache/extract/1314e4da0f572a12b415647eb1948eee8105a09b1c89f81301062e2a2ce4b5ad.json": {
+  "apps/api/.arche-cache/extract/1314e4da0f572a12b415647eb1948eee8105a09b1c89f81301062e2a2ce4b5ad.json": {
     "mtime": 1782044502.129226,
     "ast_hash": "0285c1bfe7161201eff431dafce9c027",
     "semantic_hash": ""
   },
-  "apps/api/.opentology-cache/extract/161554661159601e9a98ba2722eb4be2efb7d6a893ae6e4c461943e5055201ba.json": {
+  "apps/api/.arche-cache/extract/161554661159601e9a98ba2722eb4be2efb7d6a893ae6e4c461943e5055201ba.json": {
     "mtime": 1782180540.4489608,
     "ast_hash": "0285c1bfe7161201eff431dafce9c027",
     "semantic_hash": ""
   },
-  "apps/api/.opentology-cache/extract/16e1007d5ad8d35a76c38675babf33a5f82000f79419c814ecc34c593b445725.json": {
+  "apps/api/.arche-cache/extract/16e1007d5ad8d35a76c38675babf33a5f82000f79419c814ecc34c593b445725.json": {
     "mtime": 1782046499.7499652,
     "ast_hash": "0285c1bfe7161201eff431dafce9c027",
     "semantic_hash": ""
   },
-  "apps/api/.opentology-cache/extract/1c95b714f6a0c53c6993eaec9013c05de56372779c2985dc5eaa8be2d27e3d9f.json": {
+  "apps/api/.arche-cache/extract/1c95b714f6a0c53c6993eaec9013c05de56372779c2985dc5eaa8be2d27e3d9f.json": {
     "mtime": 1782099636.9349887,
     "ast_hash": "0285c1bfe7161201eff431dafce9c027",
     "semantic_hash": ""
   },
-  "apps/api/.opentology-cache/extract/29f540ca8155bee861419c93c108f5c09bb3dd813580a9de96643aed29288c8d.json": {
+  "apps/api/.arche-cache/extract/29f540ca8155bee861419c93c108f5c09bb3dd813580a9de96643aed29288c8d.json": {
     "mtime": 1782099636.9349809,
     "ast_hash": "0285c1bfe7161201eff431dafce9c027",
     "semantic_hash": ""
   },
-  "apps/api/.opentology-cache/extract/2af919a1194d84eb7a142ef96a73c548e9883124e9eea9b8f26b167d467c4d3d.json": {
+  "apps/api/.arche-cache/extract/2af919a1194d84eb7a142ef96a73c548e9883124e9eea9b8f26b167d467c4d3d.json": {
     "mtime": 1782170152.295546,
     "ast_hash": "0285c1bfe7161201eff431dafce9c027",
     "semantic_hash": ""
   },
-  "apps/api/.opentology-cache/extract/31abe80bbacfededbce4719bb81edd31c247d282e15b609a0214aff8f68e1e25.json": {
+  "apps/api/.arche-cache/extract/31abe80bbacfededbce4719bb81edd31c247d282e15b609a0214aff8f68e1e25.json": {
     "mtime": 1782270452.9646964,
     "ast_hash": "0285c1bfe7161201eff431dafce9c027",
     "semantic_hash": ""
   },
-  "apps/api/.opentology-cache/extract/35d0624577916d211e5c7676af36f52f114e73ffe417fb0bf2effca0b3033d9c.json": {
+  "apps/api/.arche-cache/extract/35d0624577916d211e5c7676af36f52f114e73ffe417fb0bf2effca0b3033d9c.json": {
     "mtime": 1782179875.3068976,
     "ast_hash": "0285c1bfe7161201eff431dafce9c027",
     "semantic_hash": ""
   },
-  "apps/api/.opentology-cache/extract/3a8aeee9ed5ebc17ba3fd1ebbca6c2b0f1072b944e086749822fedd38f3eab94.json": {
+  "apps/api/.arche-cache/extract/3a8aeee9ed5ebc17ba3fd1ebbca6c2b0f1072b944e086749822fedd38f3eab94.json": {
     "mtime": 1782278760.1311839,
     "ast_hash": "0285c1bfe7161201eff431dafce9c027",
     "semantic_hash": ""
   },
-  "apps/api/.opentology-cache/extract/3fca92df488d0c4dceeb29e2ba2e94f96a59a2a75302dff2b825f4e227ecc042.json": {
+  "apps/api/.arche-cache/extract/3fca92df488d0c4dceeb29e2ba2e94f96a59a2a75302dff2b825f4e227ecc042.json": {
     "mtime": 1782046499.7500405,
     "ast_hash": "0285c1bfe7161201eff431dafce9c027",
     "semantic_hash": ""
   },
-  "apps/api/.opentology-cache/extract/40a9ab5c111bdc612b141c5135aaa2fc5a3497d9160cb57366667ec97edfd084.json": {
+  "apps/api/.arche-cache/extract/40a9ab5c111bdc612b141c5135aaa2fc5a3497d9160cb57366667ec97edfd084.json": {
     "mtime": 1782279939.1766384,
     "ast_hash": "0285c1bfe7161201eff431dafce9c027",
     "semantic_hash": ""
   },
-  "apps/api/.opentology-cache/extract/415008f68b2aba6c711d9304be54b2aa7ee50a78b599776a977021f58953f4c3.json": {
+  "apps/api/.arche-cache/extract/415008f68b2aba6c711d9304be54b2aa7ee50a78b599776a977021f58953f4c3.json": {
     "mtime": 1782279939.1761475,
     "ast_hash": "0285c1bfe7161201eff431dafce9c027",
     "semantic_hash": ""
   },
-  "apps/api/.opentology-cache/extract/48992c5eacf9c7ca92d8fa96ee88e63fe8d8a5162949adc620fee3a04478653f.json": {
+  "apps/api/.arche-cache/extract/48992c5eacf9c7ca92d8fa96ee88e63fe8d8a5162949adc620fee3a04478653f.json": {
     "mtime": 1782269257.437098,
     "ast_hash": "0285c1bfe7161201eff431dafce9c027",
     "semantic_hash": ""
   },
-  "apps/api/.opentology-cache/extract/4b343b45ea18baf4a64d5625a522138c3d7ec27633d1e3992a41a8fb0b73f5ae.json": {
+  "apps/api/.arche-cache/extract/4b343b45ea18baf4a64d5625a522138c3d7ec27633d1e3992a41a8fb0b73f5ae.json": {
     "mtime": 1782270452.9646885,
     "ast_hash": "0285c1bfe7161201eff431dafce9c027",
     "semantic_hash": ""
   },
-  "apps/api/.opentology-cache/extract/4c18bfa9fcec2866a3eda27bacbc309a1e3cdc3382bdb5ca694d9962c95431e9.json": {
+  "apps/api/.arche-cache/extract/4c18bfa9fcec2866a3eda27bacbc309a1e3cdc3382bdb5ca694d9962c95431e9.json": {
     "mtime": 1782137638.471112,
     "ast_hash": "0285c1bfe7161201eff431dafce9c027",
     "semantic_hash": ""
   },
-  "apps/api/.opentology-cache/extract/5281b53ae7eb344135b69f560bc8444a31495508820b4160c2d039d73a1c373a.json": {
+  "apps/api/.arche-cache/extract/5281b53ae7eb344135b69f560bc8444a31495508820b4160c2d039d73a1c373a.json": {
     "mtime": 1782269888.1215763,
     "ast_hash": "0285c1bfe7161201eff431dafce9c027",
     "semantic_hash": ""
   },
-  "apps/api/.opentology-cache/extract/5ad970a25dc2f7edfad4d6a60df9f92e5a2b5c6fe99d9a7ac55cbdfb68136f12.json": {
+  "apps/api/.arche-cache/extract/5ad970a25dc2f7edfad4d6a60df9f92e5a2b5c6fe99d9a7ac55cbdfb68136f12.json": {
     "mtime": 1782044592.1501577,
     "ast_hash": "0285c1bfe7161201eff431dafce9c027",
     "semantic_hash": ""
   },
-  "apps/api/.opentology-cache/extract/6217c188139550fafcbd24a27f2b86b8ced4d510499999e7ba03fb238502b34a.json": {
+  "apps/api/.arche-cache/extract/6217c188139550fafcbd24a27f2b86b8ced4d510499999e7ba03fb238502b34a.json": {
     "mtime": 1782271258.977685,
     "ast_hash": "0285c1bfe7161201eff431dafce9c027",
     "semantic_hash": ""
   },
-  "apps/api/.opentology-cache/extract/6c7be1ec1ae9480d9f970a937a466b61690ba899b09b362f2092716515fe1a33.json": {
+  "apps/api/.arche-cache/extract/6c7be1ec1ae9480d9f970a937a466b61690ba899b09b362f2092716515fe1a33.json": {
     "mtime": 1782169929.9049182,
     "ast_hash": "0285c1bfe7161201eff431dafce9c027",
     "semantic_hash": ""
   },
-  "apps/api/.opentology-cache/extract/7b8dd3de604e39a025abd67fa55c9f1c5f78ee7162a678a95c2e5ea288651787.json": {
+  "apps/api/.arche-cache/extract/7b8dd3de604e39a025abd67fa55c9f1c5f78ee7162a678a95c2e5ea288651787.json": {
     "mtime": 1782278428.8111475,
     "ast_hash": "0285c1bfe7161201eff431dafce9c027",
     "semantic_hash": ""
   },
-  "apps/api/.opentology-cache/extract/7dbc55ebcfb3a87e65c97862d788f1097f921094b8e4bc6123b9b5d3e2bbb0fa.json": {
+  "apps/api/.arche-cache/extract/7dbc55ebcfb3a87e65c97862d788f1097f921094b8e4bc6123b9b5d3e2bbb0fa.json": {
     "mtime": 1782270382.0842266,
     "ast_hash": "0285c1bfe7161201eff431dafce9c027",
     "semantic_hash": ""
   },
-  "apps/api/.opentology-cache/extract/840439d96aa8f6d823812dc0ef083feac2ef217a957c9af395a3cfa9676eb8c8.json": {
+  "apps/api/.arche-cache/extract/840439d96aa8f6d823812dc0ef083feac2ef217a957c9af395a3cfa9676eb8c8.json": {
     "mtime": 1782277318.2095587,
     "ast_hash": "0285c1bfe7161201eff431dafce9c027",
     "semantic_hash": ""
   },
-  "apps/api/.opentology-cache/extract/85cbb8ff6014c1fed1245606895374e5db08e59c560320fa3e0174ab959b72d0.json": {
+  "apps/api/.arche-cache/extract/85cbb8ff6014c1fed1245606895374e5db08e59c560320fa3e0174ab959b72d0.json": {
     "mtime": 1782044744.2605247,
     "ast_hash": "0285c1bfe7161201eff431dafce9c027",
     "semantic_hash": ""
   },
-  "apps/api/.opentology-cache/extract/8bf4bd79fa58944acb355be657a8ae26eb77cb1abd2f45fb2af91c182a5d124f.json": {
+  "apps/api/.arche-cache/extract/8bf4bd79fa58944acb355be657a8ae26eb77cb1abd2f45fb2af91c182a5d124f.json": {
     "mtime": 1782169705.1550033,
     "ast_hash": "0285c1bfe7161201eff431dafce9c027",
     "semantic_hash": ""
   },
-  "apps/api/.opentology-cache/extract/8da39b51f7706d742a1ea9a5c8c3d3c2a65d9a72d2b9a4e402c21487cd3c1db8.json": {
+  "apps/api/.arche-cache/extract/8da39b51f7706d742a1ea9a5c8c3d3c2a65d9a72d2b9a4e402c21487cd3c1db8.json": {
     "mtime": 1782276973.0865076,
     "ast_hash": "0285c1bfe7161201eff431dafce9c027",
     "semantic_hash": ""
   },
-  "apps/api/.opentology-cache/extract/8ea5c9d28ace1cc6f2419171795765008a09d8391f35a3f43e6bc37f2ef41fcc.json": {
+  "apps/api/.arche-cache/extract/8ea5c9d28ace1cc6f2419171795765008a09d8391f35a3f43e6bc37f2ef41fcc.json": {
     "mtime": 1782096565.9164681,
     "ast_hash": "0285c1bfe7161201eff431dafce9c027",
     "semantic_hash": ""
   },
-  "apps/api/.opentology-cache/extract/8f0212236ce788bba50898f4c83bbba9fe0aff6eca13b6bfa864164e947795ba.json": {
+  "apps/api/.arche-cache/extract/8f0212236ce788bba50898f4c83bbba9fe0aff6eca13b6bfa864164e947795ba.json": {
     "mtime": 1782045182.5151784,
     "ast_hash": "0285c1bfe7161201eff431dafce9c027",
     "semantic_hash": ""
   },
-  "apps/api/.opentology-cache/extract/8faa5a643d2ab7c5c8e1f9c04da2fd79cf813f376655b7b23987f7df9dcb372e.json": {
+  "apps/api/.arche-cache/extract/8faa5a643d2ab7c5c8e1f9c04da2fd79cf813f376655b7b23987f7df9dcb372e.json": {
     "mtime": 1782046382.8345976,
     "ast_hash": "0285c1bfe7161201eff431dafce9c027",
     "semantic_hash": ""
   },
-  "apps/api/.opentology-cache/extract/911cf60d8c673599dd448d4a19621c136687862efd476df611d69366db93a549.json": {
+  "apps/api/.arche-cache/extract/911cf60d8c673599dd448d4a19621c136687862efd476df611d69366db93a549.json": {
     "mtime": 1782179875.30691,
     "ast_hash": "0285c1bfe7161201eff431dafce9c027",
     "semantic_hash": ""
   },
-  "apps/api/.opentology-cache/extract/93f140a3ac464b49e43966c0de6f701d44dc80bdd2ca4ab6821874942fdc721c.json": {
+  "apps/api/.arche-cache/extract/93f140a3ac464b49e43966c0de6f701d44dc80bdd2ca4ab6821874942fdc721c.json": {
     "mtime": 1782169929.9049273,
     "ast_hash": "0285c1bfe7161201eff431dafce9c027",
     "semantic_hash": ""
   },
-  "apps/api/.opentology-cache/extract/97848a17090d6ad36c6926aaec6ab54632f173aa89d3640f0fe1eefabc5357af.json": {
+  "apps/api/.arche-cache/extract/97848a17090d6ad36c6926aaec6ab54632f173aa89d3640f0fe1eefabc5357af.json": {
     "mtime": 1782167407.1936836,
     "ast_hash": "0285c1bfe7161201eff431dafce9c027",
     "semantic_hash": ""
   },
-  "apps/api/.opentology-cache/extract/99fdabfe1c8252f9e13573f4ee13028762285d789caf2c528a1be23d99425a5e.json": {
+  "apps/api/.arche-cache/extract/99fdabfe1c8252f9e13573f4ee13028762285d789caf2c528a1be23d99425a5e.json": {
     "mtime": 1782278575.9195654,
     "ast_hash": "0285c1bfe7161201eff431dafce9c027",
     "semantic_hash": ""
   },
-  "apps/api/.opentology-cache/extract/9b4668332299584d1a8a521e07739209b8def08e90c63778d66104b8456d0009.json": {
+  "apps/api/.arche-cache/extract/9b4668332299584d1a8a521e07739209b8def08e90c63778d66104b8456d0009.json": {
     "mtime": 1782269257.4367504,
     "ast_hash": "0285c1bfe7161201eff431dafce9c027",
     "semantic_hash": ""
   },
-  "apps/api/.opentology-cache/extract/a0647fa43352eeaf382e58e2753c7ab5b2de43279a9af310377a383bc7b4a83e.json": {
+  "apps/api/.arche-cache/extract/a0647fa43352eeaf382e58e2753c7ab5b2de43279a9af310377a383bc7b4a83e.json": {
     "mtime": 1782097707.0504599,
     "ast_hash": "0285c1bfe7161201eff431dafce9c027",
     "semantic_hash": ""
   },
-  "apps/api/.opentology-cache/extract/a500036db6d9914268b853be34aa09c33ee66a2896e3ff559e0af18d1518e237.json": {
+  "apps/api/.arche-cache/extract/a500036db6d9914268b853be34aa09c33ee66a2896e3ff559e0af18d1518e237.json": {
     "mtime": 1782271258.9766402,
     "ast_hash": "0285c1bfe7161201eff431dafce9c027",
     "semantic_hash": ""
   },
-  "apps/api/.opentology-cache/extract/ac4746ee6ac765666f0eafd77b4d94fb78c765d0c3f3c8dab157bc270fd8f3dc.json": {
+  "apps/api/.arche-cache/extract/ac4746ee6ac765666f0eafd77b4d94fb78c765d0c3f3c8dab157bc270fd8f3dc.json": {
     "mtime": 1782269370.410363,
     "ast_hash": "0285c1bfe7161201eff431dafce9c027",
     "semantic_hash": ""
   },
-  "apps/api/.opentology-cache/extract/b1b7982c85654a86951cc574d9398088a5b46ef671b2d2366502deac01093985.json": {
+  "apps/api/.arche-cache/extract/b1b7982c85654a86951cc574d9398088a5b46ef671b2d2366502deac01093985.json": {
     "mtime": 1782278760.1311865,
     "ast_hash": "0285c1bfe7161201eff431dafce9c027",
     "semantic_hash": ""
   },
-  "apps/api/.opentology-cache/extract/b2a08fa62d6db37e4cf181fda0f76aec734187423e013bfaa5353f2e21a4f521.json": {
+  "apps/api/.arche-cache/extract/b2a08fa62d6db37e4cf181fda0f76aec734187423e013bfaa5353f2e21a4f521.json": {
     "mtime": 1782183794.7741554,
     "ast_hash": "0285c1bfe7161201eff431dafce9c027",
     "semantic_hash": ""
   },
-  "apps/api/.opentology-cache/extract/b79225ea4ace98b22c37876a04cdf51d2890d23f51e178fcc9871ecd8b7ce406.json": {
+  "apps/api/.arche-cache/extract/b79225ea4ace98b22c37876a04cdf51d2890d23f51e178fcc9871ecd8b7ce406.json": {
     "mtime": 1782096524.284801,
     "ast_hash": "0285c1bfe7161201eff431dafce9c027",
     "semantic_hash": ""
   },
-  "apps/api/.opentology-cache/extract/b842b4d0ca91300c7bb806d81f8224e366b5d4dfc085e9cef6371d3d1f5f8812.json": {
+  "apps/api/.arche-cache/extract/b842b4d0ca91300c7bb806d81f8224e366b5d4dfc085e9cef6371d3d1f5f8812.json": {
     "mtime": 1782269370.410354,
     "ast_hash": "0285c1bfe7161201eff431dafce9c027",
     "semantic_hash": ""
   },
-  "apps/api/.opentology-cache/extract/ba8003bed8ed93706c8e7daafa5c9677970bfc9a43d281141eee6fb916669269.json": {
+  "apps/api/.arche-cache/extract/ba8003bed8ed93706c8e7daafa5c9677970bfc9a43d281141eee6fb916669269.json": {
     "mtime": 1782183794.7741551,
     "ast_hash": "0285c1bfe7161201eff431dafce9c027",
     "semantic_hash": ""
   },
-  "apps/api/.opentology-cache/extract/bb355cfac344a0a69f5cfec8eb27ee8568eeec260177930e607b8af454d4154a.json": {
+  "apps/api/.arche-cache/extract/bb355cfac344a0a69f5cfec8eb27ee8568eeec260177930e607b8af454d4154a.json": {
     "mtime": 1782045182.5150192,
     "ast_hash": "0285c1bfe7161201eff431dafce9c027",
     "semantic_hash": ""
   },
-  "apps/api/.opentology-cache/extract/bf4c4d59dd30d7dae6044bec53f1d67c81a95c7d2c479c5ccf59607acfbb12fc.json": {
+  "apps/api/.arche-cache/extract/bf4c4d59dd30d7dae6044bec53f1d67c81a95c7d2c479c5ccf59607acfbb12fc.json": {
     "mtime": 1782169705.155003,
     "ast_hash": "0285c1bfe7161201eff431dafce9c027",
     "semantic_hash": ""
   },
-  "apps/api/.opentology-cache/extract/c0d2f570d614698939c429ec4b7993380529eea7dc56e5fad0e46e3fb3117383.json": {
+  "apps/api/.arche-cache/extract/c0d2f570d614698939c429ec4b7993380529eea7dc56e5fad0e46e3fb3117383.json": {
     "mtime": 1782277318.2097862,
     "ast_hash": "0285c1bfe7161201eff431dafce9c027",
     "semantic_hash": ""
   },
-  "apps/api/.opentology-cache/extract/c20cb4d33ab9926692a2edfbc5104c598db98135356c35918e5c9e903cb9976e.json": {
+  "apps/api/.arche-cache/extract/c20cb4d33ab9926692a2edfbc5104c598db98135356c35918e5c9e903cb9976e.json": {
     "mtime": 1782046382.8345976,
     "ast_hash": "0285c1bfe7161201eff431dafce9c027",
     "semantic_hash": ""
   },
-  "apps/api/.opentology-cache/extract/c4bc3bf6822dc8fb8be73c0119f8f05b0da267151ef6bde461630003b1c41ce4.json": {
+  "apps/api/.arche-cache/extract/c4bc3bf6822dc8fb8be73c0119f8f05b0da267151ef6bde461630003b1c41ce4.json": {
     "mtime": 1782097707.0505078,
     "ast_hash": "0285c1bfe7161201eff431dafce9c027",
     "semantic_hash": ""
   },
-  "apps/api/.opentology-cache/extract/cac98fae27022d848e132ec826e89c1b13465c639591b0982e02ea623f45b8ed.json": {
+  "apps/api/.arche-cache/extract/cac98fae27022d848e132ec826e89c1b13465c639591b0982e02ea623f45b8ed.json": {
     "mtime": 1782276973.0866864,
     "ast_hash": "0285c1bfe7161201eff431dafce9c027",
     "semantic_hash": ""
   },
-  "apps/api/.opentology-cache/extract/ccaf59d50d4d59808b237b4ecf73efc038f2ce31531e2673855e6d4f9af76d85.json": {
+  "apps/api/.arche-cache/extract/ccaf59d50d4d59808b237b4ecf73efc038f2ce31531e2673855e6d4f9af76d85.json": {
     "mtime": 1782046413.2334626,
     "ast_hash": "0285c1bfe7161201eff431dafce9c027",
     "semantic_hash": ""
   },
-  "apps/api/.opentology-cache/extract/cf77a19be8f5c9188251e8fc364789087179c1a2ac88b4012a9895f80e5b01ae.json": {
+  "apps/api/.arche-cache/extract/cf77a19be8f5c9188251e8fc364789087179c1a2ac88b4012a9895f80e5b01ae.json": {
     "mtime": 1782044502.1292326,
     "ast_hash": "0285c1bfe7161201eff431dafce9c027",
     "semantic_hash": ""
   },
-  "apps/api/.opentology-cache/extract/db1130fcaf436fc333701ac3f670673ed3dc0354a674741ff2344a789e1805f5.json": {
+  "apps/api/.arche-cache/extract/db1130fcaf436fc333701ac3f670673ed3dc0354a674741ff2344a789e1805f5.json": {
     "mtime": 1782170152.295537,
     "ast_hash": "0285c1bfe7161201eff431dafce9c027",
     "semantic_hash": ""
   },
-  "apps/api/.opentology-cache/extract/db6a5972ad30db7c365b941c7acf5a461e634679f87e6035bc959cd22ae2029f.json": {
+  "apps/api/.arche-cache/extract/db6a5972ad30db7c365b941c7acf5a461e634679f87e6035bc959cd22ae2029f.json": {
     "mtime": 1782269888.1215458,
     "ast_hash": "0285c1bfe7161201eff431dafce9c027",
     "semantic_hash": ""
   },
-  "apps/api/.opentology-cache/extract/dd9e5cbd1884cd1a72dc9cbc32ade188ee10be3aef3a6caba508c595cb497ea1.json": {
+  "apps/api/.arche-cache/extract/dd9e5cbd1884cd1a72dc9cbc32ade188ee10be3aef3a6caba508c595cb497ea1.json": {
     "mtime": 1782044592.1500716,
     "ast_hash": "0285c1bfe7161201eff431dafce9c027",
     "semantic_hash": ""
   },
-  "apps/api/.opentology-cache/extract/de1127ed4f91b4b13afa8fe7d6d6dbe8aa1e9257b4d384430dfd660e828f4962.json": {
+  "apps/api/.arche-cache/extract/de1127ed4f91b4b13afa8fe7d6d6dbe8aa1e9257b4d384430dfd660e828f4962.json": {
     "mtime": 1782278428.811148,
     "ast_hash": "0285c1bfe7161201eff431dafce9c027",
     "semantic_hash": ""
   },
-  "apps/api/.opentology-cache/extract/e560dd949723c439d19cfd6e70df76d5a06c5035fc22a229288b19c7f72ca6d9.json": {
+  "apps/api/.arche-cache/extract/e560dd949723c439d19cfd6e70df76d5a06c5035fc22a229288b19c7f72ca6d9.json": {
     "mtime": 1782167407.1936831,
     "ast_hash": "0285c1bfe7161201eff431dafce9c027",
     "semantic_hash": ""
   },
-  "apps/api/.opentology-cache/extract/e7b496b0fa8f063732cacf51643157223d090949ce4618cc4046ffd91ce9dbe1.json": {
+  "apps/api/.arche-cache/extract/e7b496b0fa8f063732cacf51643157223d090949ce4618cc4046ffd91ce9dbe1.json": {
     "mtime": 1782137638.471112,
     "ast_hash": "0285c1bfe7161201eff431dafce9c027",
     "semantic_hash": ""
   },
-  "apps/api/.opentology-cache/extract/ef601499dbed53dd8a0047ffe2c10875b447efd1d2b3d29725ba7ec1761dafc0.json": {
+  "apps/api/.arche-cache/extract/ef601499dbed53dd8a0047ffe2c10875b447efd1d2b3d29725ba7ec1761dafc0.json": {
     "mtime": 1782269546.2407625,
     "ast_hash": "0285c1bfe7161201eff431dafce9c027",
     "semantic_hash": ""
   },
-  "apps/api/.opentology-cache/extract/f1a5fa5ddbf11e0542a38ac3c57d938f9313de1422c51b76c20f00bfbd782904.json": {
+  "apps/api/.arche-cache/extract/f1a5fa5ddbf11e0542a38ac3c57d938f9313de1422c51b76c20f00bfbd782904.json": {
     "mtime": 1782278575.91933,
     "ast_hash": "0285c1bfe7161201eff431dafce9c027",
     "semantic_hash": ""
   },
-  "apps/api/.opentology-cache/extract/f525324220f41d7cd9f3fc60c584f12ec7d9a304d1e8803b5c94e3763818f5a6.json": {
+  "apps/api/.arche-cache/extract/f525324220f41d7cd9f3fc60c584f12ec7d9a304d1e8803b5c94e3763818f5a6.json": {
     "mtime": 1782269546.2407625,
     "ast_hash": "0285c1bfe7161201eff431dafce9c027",
     "semantic_hash": ""
   },
-  "apps/api/.opentology-cache/extract/f794f453f4c9277d77f05878b82f237ce2aa7c38aa1aaa8337fe3f0a39e95086.json": {
+  "apps/api/.arche-cache/extract/f794f453f4c9277d77f05878b82f237ce2aa7c38aa1aaa8337fe3f0a39e95086.json": {
     "mtime": 1782046356.4303117,
     "ast_hash": "0285c1bfe7161201eff431dafce9c027",
     "semantic_hash": ""
   },
-  "apps/api/.opentology-cache/extract/fc34493a087f1810061ecd37512e9f2e06014de50d7ff3e6c136f2c90946d512.json": {
+  "apps/api/.arche-cache/extract/fc34493a087f1810061ecd37512e9f2e06014de50d7ff3e6c136f2c90946d512.json": {
     "mtime": 1782180540.449161,
     "ast_hash": "0285c1bfe7161201eff431dafce9c027",
     "semantic_hash": ""
   },
-  "apps/api/.opentology-cache/extract/fd86f34b3e9ba297288a943a1a7d8e0b33c6394c27df4ee856027bce5028eb5f.json": {
+  "apps/api/.arche-cache/extract/fd86f34b3e9ba297288a943a1a7d8e0b33c6394c27df4ee856027bce5028eb5f.json": {
     "mtime": 1782046356.4303117,
     "ast_hash": "0285c1bfe7161201eff431dafce9c027",
     "semantic_hash": ""
   },
-  "apps/api/.opentology-cache/extract/feb523045c95a5dba2b545dd6d90a53c14b9a340c78c80d7853d6da0cc6c1983.json": {
+  "apps/api/.arche-cache/extract/feb523045c95a5dba2b545dd6d90a53c14b9a340c78c80d7853d6da0cc6c1983.json": {
     "mtime": 1782270382.0842266,
     "ast_hash": "0285c1bfe7161201eff431dafce9c027",
     "semantic_hash": ""

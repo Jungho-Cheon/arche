@@ -1,4 +1,4 @@
-# Graph Report - opentology  (2026-06-24)
+# Graph Report - arche  (2026-06-24)
 
 ## Corpus Check
 - 258 files · ~1,084,112 words
@@ -247,20 +247,20 @@
 
 ## Surprising Connections (you probably didn't know these)
 - `FakeGraph` --uses--> `EmbeddingProvider`  [INFERRED]
-  eval/tests/test_opentology_integration.py → apps/api/src/opentology_api/adapters/embedding.py
+  eval/tests/test_arche_integration.py → apps/api/src/arche_api/adapters/embedding.py
 - `FakeGraph` --uses--> `KeywordHit`  [INFERRED]
-  eval/tests/test_opentology_integration.py → apps/api/src/opentology_api/adapters/graph.py
+  eval/tests/test_arche_integration.py → apps/api/src/arche_api/adapters/graph.py
 - `FakeGraph` --uses--> `EntityTypeStat`  [INFERRED]
-  eval/tests/test_opentology_integration.py → apps/api/src/opentology_api/adapters/graph.py
+  eval/tests/test_arche_integration.py → apps/api/src/arche_api/adapters/graph.py
 - `FakeGraph` --uses--> `RelationTypeStat`  [INFERRED]
-  eval/tests/test_opentology_integration.py → apps/api/src/opentology_api/adapters/graph.py
+  eval/tests/test_arche_integration.py → apps/api/src/arche_api/adapters/graph.py
 - `FakeGraph` --uses--> `EntityWithCounts`  [INFERRED]
-  eval/tests/test_opentology_integration.py → apps/api/src/opentology_api/adapters/graph.py
+  eval/tests/test_arche_integration.py → apps/api/src/arche_api/adapters/graph.py
 
 ## Import Cycles
-- 1-file cycle: `apps/api/src/opentology_api/mcp_http.py -> apps/api/src/opentology_api/mcp_http.py`
-- 1-file cycle: `apps/api/src/opentology_api/main.py -> apps/api/src/opentology_api/main.py`
-- 1-file cycle: `eval/src/opentology_eval/runlog.py -> eval/src/opentology_eval/runlog.py`
+- 1-file cycle: `apps/api/src/arche_api/mcp_http.py -> apps/api/src/arche_api/mcp_http.py`
+- 1-file cycle: `apps/api/src/arche_api/main.py -> apps/api/src/arche_api/main.py`
+- 1-file cycle: `eval/src/arche_eval/runlog.py -> eval/src/arche_eval/runlog.py`
 - 1-file cycle: `apps/api/tests/unit/test_mcp_http_mount.py -> apps/api/tests/unit/test_mcp_http_mount.py`
 
 ## Communities (229 total, 30 thin omitted)
@@ -271,7 +271,7 @@ Nodes (178): AdminIngestRequest, AdminIngestResponse, AdminIngestStatusResponse,
 
 ### Community 1 - "Identity E2E Tests"
 Cohesion: 0.15
-Nodes (12): OpentologyClient, PrimitiveCall, Opentology 코어 REST 클라이언트 — PRD 3 의 6 primitive + admin ingest.  격리 원칙 (ADR-0006, PRD 3 §3-7 의 6 primitive + admin ingest 의 thin HTTP wrapper.      동일 인스턴스에서 여러 질, HTTP 호출 + envelope 해제. 반환 = (data, latency_ms).          에러 envelope → Opentolog, primitive 호출 + 로그 한 줄 누적., ingest task 완료 대기 — running → succeeded/failed 까지 polling.          실패 시 Opentol, primitive 호출 한 건의 로그 (PRD 4 §3.6 의 primitives_called 항목 한 줄).      WHY result_si (+4 more)
+Nodes (12): ArcheClient, PrimitiveCall, Arche 코어 REST 클라이언트 — PRD 3 의 6 primitive + admin ingest.  격리 원칙 (ADR-0006, PRD 3 §3-7 의 6 primitive + admin ingest 의 thin HTTP wrapper.      동일 인스턴스에서 여러 질, HTTP 호출 + envelope 해제. 반환 = (data, latency_ms).          에러 envelope → Opentolog, primitive 호출 + 로그 한 줄 누적., ingest task 완료 대기 — running → succeeded/failed 까지 polling.          실패 시 Opentol, primitive 호출 한 건의 로그 (PRD 4 §3.6 의 primitives_called 항목 한 줄).      WHY result_si (+4 more)
 
 ### Community 2 - "Live Integration Tests"
 Cohesion: 0.13
@@ -291,7 +291,7 @@ Nodes (38): IngestionRunRecord, `(:IngestionRun)` 노드의 슬림 표현 — �
 
 ### Community 6 - "Eval Baseline Columns"
 Cohesion: 0.08
-Nodes (54): CombinedRunner, chunk RAG retrieval + opentology subgraph 를 단일 호출에 묶음.      Attributes:, chunk RAG 인덱스 구축. (opentology setup 은 별도 ingest 로 미리 끝나 있다 가정), datetime, AnthropicProvider, help, OpenAIProvider, Option (+46 more)
+Nodes (54): CombinedRunner, chunk RAG retrieval + arche subgraph 를 단일 호출에 묶음.      Attributes:, chunk RAG 인덱스 구축. (arche setup 은 별도 ingest 로 미리 끝나 있다 가정), datetime, AnthropicProvider, help, OpenAIProvider, Option (+46 more)
 
 ### Community 7 - "Entity Matcher Core"
 Cohesion: 0.15
@@ -363,7 +363,7 @@ Nodes (35): ImageInput, 멀티모달 LLM 입력의 이미지 한 장 (PRD 2 §2.
 
 ### Community 24 - "ADR-3/4 Vector Strategy"
 Cohesion: 0.07
-Nodes (29): §0. 전제 — 측정 결과 한 줄, §1.1 API 표면 — 그래프 primitive 에서 *retrieval orchestrator* 로, §1.2 Provenance — 어떤 신호가 답을 결정했나, §1.3 비용/품질 노브 — 사용자 손에 닿는 다이얼, §1.4 측정 모드 — 평가 하니스의 서비스화, §1.5 문서화 — 정체성 변경의 명시화, §1. Combined 를 Opentology 의 정체성으로 — 필요한 것, §2.1 카테고리 매핑 (+21 more)
+Nodes (29): §0. 전제 — 측정 결과 한 줄, §1.1 API 표면 — 그래프 primitive 에서 *retrieval orchestrator* 로, §1.2 Provenance — 어떤 신호가 답을 결정했나, §1.3 비용/품질 노브 — 사용자 손에 닿는 다이얼, §1.4 측정 모드 — 평가 하니스의 서비스화, §1.5 문서화 — 정체성 변경의 명시화, §1. Combined 를 Arche 의 정체성으로 — 필요한 것, §2.1 카테고리 매핑 (+21 more)
 
 ### Community 25 - "API Skeleton Notes"
 Cohesion: 0.09
@@ -375,7 +375,7 @@ Nodes (23): EmbeddingProvider, FastAPI, GraphRepository, Settings, EmbeddingProv
 
 ### Community 27 - "ADR-6 MCP Primitives"
 Cohesion: 0.08
-Nodes (43): OpentologyClientError, OpentologyUnavailableError, 코어가 에러 envelope (PRD 3 §0.3) 을 돌려준 경우.      HTTP 상태와 코드를 함께 보존해 호출 단에서 분류 가능., 네트워크 / 타임아웃 / 비-JSON 응답 — 코어가 *말이 통하지 않는* 상태.      측정 컬럼은 이 예외를 catch 해 "error", 컬럼 (4) Combined — chunk RAG 발췌 + Opentology 서브그래프를 단일 LLM 호출로 합침.  설계 의도 (95K 본, OpentologyRunner._extract_anchors 와 동일 동작 (1 회 재시도)., _AnchorResult, 컬럼 (5) Opentology Augmented — graph-guided chunk retrieval (PoC).  배경:   M6.5 sm (+35 more)
+Nodes (43): ArcheClientError, ArcheUnavailableError, 코어가 에러 envelope (PRD 3 §0.3) 을 돌려준 경우.      HTTP 상태와 코드를 함께 보존해 호출 단에서 분류 가능., 네트워크 / 타임아웃 / 비-JSON 응답 — 코어가 *말이 통하지 않는* 상태.      측정 컬럼은 이 예외를 catch 해 "error", 컬럼 (4) Combined — chunk RAG 발췌 + Arche 서브그래프를 단일 LLM 호출로 합침.  설계 의도 (95K 본, ArcheRunner._extract_anchors 와 동일 동작 (1 회 재시도)., _AnchorResult, 컬럼 (5) Arche Augmented — graph-guided chunk retrieval (PoC).  배경:   M6.5 sm (+35 more)
 
 ### Community 28 - "PRD-3 Primitives"
 Cohesion: 0.16
@@ -459,7 +459,7 @@ Nodes (22): QuestionSet, Path, aggregate_run(), median_int(), p95(), run_dir →
 
 ### Community 49 - "Eval Package Init"
 Cohesion: 0.15
-Nodes (19): MCP stdio e2e — 본 서버를 subprocess 로 spawn 해 핸드셰이크 + 6 tool 호출.  검증 흐름: 1. stdio_c, from == to → isError + unprocessable (PRD 3 §9, §6)., 간단 lexical 매칭 — '쿠폰' 키워드로 node_a 가 surface 되어야 함., SDK 가 inputSchema 로 입력을 검증 — 빈 keywords 는 minItems 위반., 본 서버를 fake graph 모드로 spawn 하는 파라미터.      WHY `sys.executable -m opentology_api.c, initialize 핸드셰이크 + 6 tool list., 없는 ID → isError=True + body.error.code = entity_not_found (PRD 3 §9)., _server_params() (+11 more)
+Nodes (19): MCP stdio e2e — 본 서버를 subprocess 로 spawn 해 핸드셰이크 + 6 tool 호출.  검증 흐름: 1. stdio_c, from == to → isError + unprocessable (PRD 3 §9, §6)., 간단 lexical 매칭 — '쿠폰' 키워드로 node_a 가 surface 되어야 함., SDK 가 inputSchema 로 입력을 검증 — 빈 keywords 는 minItems 위반., 본 서버를 fake graph 모드로 spawn 하는 파라미터.      WHY `sys.executable -m arche_api.c, initialize 핸드셰이크 + 6 tool list., 없는 ID → isError=True + body.error.code = entity_not_found (PRD 3 §9)., _server_params() (+11 more)
 
 ### Community 50 - "Init Stub 50"
 Cohesion: 0.07
@@ -495,7 +495,7 @@ Nodes (14): Path, Chunk, chunk_corpus(), _count_tokens(), 청크 분할 — PRD 
 
 ### Community 58 - "Community 58"
 Cohesion: 0.17
-Nodes (16): Any, Path, Path, expected_sources 의 모든 경로가 corpus_root 안에 실존 + 상대경로., corpus 디렉토리의 모든 파일이 ingest 지원 포맷 (PRD 5 §6 표).      숨김 파일 (`.opentologyignore` 등, questions.yaml / meta.yaml 파싱.      Returns:         (findings, parsed_data 또는 N, rule_corpus_files_supported(), rule_expected_sources_exist() (+8 more)
+Nodes (16): Any, Path, Path, expected_sources 의 모든 경로가 corpus_root 안에 실존 + 상대경로., corpus 디렉토리의 모든 파일이 ingest 지원 포맷 (PRD 5 §6 표).      숨김 파일 (`.archeignore` 등, questions.yaml / meta.yaml 파싱.      Returns:         (findings, parsed_data 또는 N, rule_corpus_files_supported(), rule_expected_sources_exist() (+8 more)
 
 ### Community 59 - "Community 59"
 Cohesion: 0.18
@@ -511,15 +511,15 @@ Nodes (4): Path, ModelPrice, 모델 식별자에 대한 단가. 등록되지 않
 
 ### Community 62 - "Community 62"
 Cohesion: 0.11
-Nodes (17): Commerce Business Rules as Validation Domain, One-page Report as MVP Exit Condition (D7), Opentology Project Identity (Graph KB tool for LLMs), Pareto Superiority Hypothesis (accuracy = full-context, tokens > chunk RAG), Rationale: Long-context LLMs make efficiency the differentiator, 3-way Measurement (Full-context vs Chunk RAG vs Opentology), Latency Measurement (median + p95, controlled conditions) (D7), LLM-as-Judge with Anonymized Order (D4) (+9 more)
+Nodes (17): Commerce Business Rules as Validation Domain, One-page Report as MVP Exit Condition (D7), Arche Project Identity (Graph KB tool for LLMs), Pareto Superiority Hypothesis (accuracy = full-context, tokens > chunk RAG), Rationale: Long-context LLMs make efficiency the differentiator, 3-way Measurement (Full-context vs Chunk RAG vs Arche), Latency Measurement (median + p95, controlled conditions) (D7), LLM-as-Judge with Anonymized Order (D4) (+9 more)
 
 ### Community 63 - "Community 63"
 Cohesion: 0.27
-Nodes (12): OpentologyClient, _mock_client(), Opentology REST 클라이언트 단위 — httpx.MockTransport 로 응답 mock., test_admin_ingest_polling_failed_raises_client_error(), test_admin_ingest_polling_succeeds(), test_error_envelope_raises_client_error(), test_find_entities_sends_keywords_and_limit(), test_get_schema_unwraps_data_envelope() (+4 more)
+Nodes (12): ArcheClient, _mock_client(), Arche REST 클라이언트 단위 — httpx.MockTransport 로 응답 mock., test_admin_ingest_polling_failed_raises_client_error(), test_admin_ingest_polling_succeeds(), test_error_envelope_raises_client_error(), test_find_entities_sends_keywords_and_limit(), test_get_schema_unwraps_data_envelope() (+4 more)
 
 ### Community 64 - "Community 64"
 Cohesion: 0.28
-Nodes (12): Path, spotcheck.py — 트리거 매칭 / write_override / apply_overrides_file / 대화형 시뮬레이션., 스크립트된 입력으로 대화형 spotcheck 가 1 건 처리 후 종료하는지., 공통 fixture — 1 질문 × 3 컬럼 × 1 run, judge 점수 다양., add Q01 opentology 0' 으로 큐에 수동 추가 후 처리., _seed_fixture(), test_apply_overrides_file_batch(), test_build_queue_matches_both_triggers() (+4 more)
+Nodes (12): Path, spotcheck.py — 트리거 매칭 / write_override / apply_overrides_file / 대화형 시뮬레이션., 스크립트된 입력으로 대화형 spotcheck 가 1 건 처리 후 종료하는지., 공통 fixture — 1 질문 × 3 컬럼 × 1 run, judge 점수 다양., add Q01 arche 0' 으로 큐에 수동 추가 후 처리., _seed_fixture(), test_apply_overrides_file_batch(), test_build_queue_matches_both_triggers() (+4 more)
 
 ### Community 65 - "Community 65"
 Cohesion: 0.14
@@ -531,7 +531,7 @@ Nodes (14): Path, Path, dry_run_ingest(), DryRunEstimate, --dry-run-ingest — c
 
 ### Community 67 - "Community 67"
 Cohesion: 0.12
-Nodes (14): Option, QuestionSet, failure_mode_tested 카탈로그 + domain_pattern enum (PRD 5 §4 / §3.1).  WHY 단일 상수 파일:, 검증 데이터셋 lint — PRD 5 §6.  `opentology-eval lint --dataset <path>` 의 구현 패키지. hard, _is_info_insufficient_option(), lint 규칙 — PRD 5 §6 의 hard fail / warn 항목.  규칙 함수는 모두 `list[Finding]` 반환. runner., PRD 5 §3.2 의 "정보 부족" 옵션 판정.      판정 기준 (PRD 5 §3.2 명시 + §3.3 예시 + §4 카탈로그 종합):, failure_mode_tested 가 None 또는 PRD 5 §4 카탈로그 안 값. (+6 more)
+Nodes (14): Option, QuestionSet, failure_mode_tested 카탈로그 + domain_pattern enum (PRD 5 §4 / §3.1).  WHY 단일 상수 파일:, 검증 데이터셋 lint — PRD 5 §6.  `arche-eval lint --dataset <path>` 의 구현 패키지. hard, _is_info_insufficient_option(), lint 규칙 — PRD 5 §6 의 hard fail / warn 항목.  규칙 함수는 모두 `list[Finding]` 반환. runner., PRD 5 §3.2 의 "정보 부족" 옵션 판정.      판정 기준 (PRD 5 §3.2 명시 + §3.3 예시 + §4 카탈로그 종합):, failure_mode_tested 가 None 또는 PRD 5 §4 카탈로그 안 값. (+6 more)
 
 ### Community 68 - "Community 68"
 Cohesion: 0.18
@@ -583,7 +583,7 @@ Nodes (7): PRD 5 §3.1 JSON Schema 검증., rule_questions_schema(), test_rule_q
 
 ### Community 80 - "Community 80"
 Cohesion: 0.29
-Nodes (7): BaseException, ErrorData, 도메인 / 검증 예외 → MCP 표준 에러 (data.code 에 Opentology code).      분기:     - Opentology, _to_mcp_error(), pydantic 검증 실패 → invalid_input., test_to_mcp_error_dependency_unavailable_carries_code(), test_to_mcp_error_validation_error_maps_to_invalid_input()
+Nodes (7): BaseException, ErrorData, 도메인 / 검증 예외 → MCP 표준 에러 (data.code 에 Arche code).      분기:     - Arche, _to_mcp_error(), pydantic 검증 실패 → invalid_input., test_to_mcp_error_dependency_unavailable_carries_code(), test_to_mcp_error_validation_error_maps_to_invalid_input()
 
 ### Community 81 - "Community 81"
 Cohesion: 0.21
@@ -591,7 +591,7 @@ Nodes (9): 상품 카탈로그, 쿠폰 정책, Domain Entity: Category C (contai
 
 ### Community 82 - "Community 82"
 Cohesion: 0.07
-Nodes (26): (a) 어휘 매칭 (BM25 / 희소 검색), ADR-0003: 그래프 진입점 선정 전략 — 어휘 매칭 + dense 임베딩 하이브리드, (b) 밀집 벡터 (dense 단독), (c) 하이브리드 (BM25 + 밀집), Consequences, Considered Options, Context — 왜 이 결정이 필요했나, D1. 진입점 선정 = (caller 의 anchor 추출) + (Opentology 의 하이브리드 매칭) (+18 more)
+Nodes (26): (a) 어휘 매칭 (BM25 / 희소 검색), ADR-0003: 그래프 진입점 선정 전략 — 어휘 매칭 + dense 임베딩 하이브리드, (b) 밀집 벡터 (dense 단독), (c) 하이브리드 (BM25 + 밀집), Consequences, Considered Options, Context — 왜 이 결정이 필요했나, D1. 진입점 선정 = (caller 의 anchor 추출) + (Arche 의 하이브리드 매칭) (+18 more)
 
 ### Community 83 - "Community 83"
 Cohesion: 0.10
@@ -615,7 +615,7 @@ Nodes (5): _count_entities(), _count_relations(), Live idempotency — 실제 Op
 
 ### Community 88 - "Community 88"
 Cohesion: 0.09
-Nodes (18): _adaptive_top_k(), build_aug_user(), _ChunkEntry, _collect_source_paths(), _cos(), OpentologyAugRunner, source_path → list[_ChunkEntry] 로 그룹핑된 인덱스.      chunk_rag 의 _MemoryIndex 와 달리 전, 주어진 source_path 들의 chunks 중 cosine top-k.          WHY 절대 경로 우선 + basename fallb (+10 more)
+Nodes (18): _adaptive_top_k(), build_aug_user(), _ChunkEntry, _collect_source_paths(), _cos(), ArcheAugRunner, source_path → list[_ChunkEntry] 로 그룹핑된 인덱스.      chunk_rag 의 _MemoryIndex 와 달리 전, 주어진 source_path 들의 chunks 중 cosine top-k.          WHY 절대 경로 우선 + basename fallb (+10 more)
 
 ### Community 89 - "Community 89"
 Cohesion: 0.33
@@ -623,7 +623,7 @@ Nodes (6): Entity/Relation Audit Log deferred (D5), Auth/Access Control/Multi-te
 
 ### Community 90 - "Community 90"
 Cohesion: 0.29
-Nodes (7): Opentology API, Model Pricing (2026-06), Graph Primitives MCP Server, Graph Primitives REST API, Ingest Pipeline, LLM Multimodal Entity/Relation Extraction, Opentology
+Nodes (7): Arche API, Model Pricing (2026-06), Graph Primitives MCP Server, Graph Primitives REST API, Ingest Pipeline, LLM Multimodal Entity/Relation Extraction, Arche
 
 ### Community 91 - "Community 91"
 Cohesion: 0.11
@@ -631,7 +631,7 @@ Nodes (20): Edge, now_rfc3339(), RFC 3339 (UTC) timestamp — PRD 3 §1.1 의 `f
 
 ### Community 92 - "Community 92"
 Cohesion: 0.22
-Nodes (9): OpenAI gpt-4.1 chosen for 1M context, Opentology MVP — 평가 하니스 (베이스라인 두 컬럼), 실행 방법, 왜 이 provider / 모델인가, 응답 JSON 스키마, text-embedding-3-small (1536-dim) as shared embedding, Column 2: Chunk Vector RAG Baseline, Column 1: Full-context LLM Harness (+1 more)
+Nodes (9): OpenAI gpt-4.1 chosen for 1M context, Arche MVP — 평가 하니스 (베이스라인 두 컬럼), 실행 방법, 왜 이 provider / 모델인가, 응답 JSON 스키마, text-embedding-3-small (1536-dim) as shared embedding, Column 2: Chunk Vector RAG Baseline, Column 1: Full-context LLM Harness (+1 more)
 
 ### Community 93 - "Community 93"
 Cohesion: 0.08
@@ -639,11 +639,11 @@ Nodes (24): ADR-0013: Agent 친화적 API contract — 응답 envelope · 에러
 
 ### Community 94 - "Community 94"
 Cohesion: 0.08
-Nodes (24): 1. .env 준비, 2. 인프라 + API 기동, 3. 단일 파일 ingest, 4. find_entities 호출, 4 단계 동일성, apps/api — Opentology Walking Skeleton, Claude Desktop 등록 예시, MCP stdio 어댑터 (PRD 3 §8) (+16 more)
+Nodes (24): 1. .env 준비, 2. 인프라 + API 기동, 3. 단일 파일 ingest, 4. find_entities 호출, 4 단계 동일성, apps/api — Arche Walking Skeleton, Claude Desktop 등록 예시, MCP stdio 어댑터 (PRD 3 §8) (+16 more)
 
 ### Community 95 - "Community 95"
 Cohesion: 0.33
-Nodes (6): Repo entry-point CLAUDE.md, legacy-opentology reference policy (do not consult), Public artifact accessibility rule (self-contained issues/ADRs), Session role modes (orchestrator vs worker), Worker mode end-of-task checklist (PR + Closes #N), Writing tone policy (no jargon, no colloquial verbs)
+Nodes (6): Repo entry-point CLAUDE.md, legacy-arche reference policy (do not consult), Public artifact accessibility rule (self-contained issues/ADRs), Session role modes (orchestrator vs worker), Worker mode end-of-task checklist (PR + Closes #N), Writing tone policy (no jargon, no colloquial verbs)
 
 ### Community 96 - "Community 96"
 Cohesion: 0.53
@@ -671,7 +671,7 @@ Nodes (23): 1 차 가설과 그 기각, 2 차 진단 — 진짜 원인: catastro
 
 ### Community 103 - "Community 103"
 Cohesion: 0.67
-Nodes (3): Control variables — same LLM, same embedding model across columns, Pareto hypothesis (accuracy vs token cost), README — Opentology overview & hypothesis
+Nodes (3): Control variables — same LLM, same embedding model across columns, Pareto hypothesis (accuracy vs token cost), README — Arche overview & hypothesis
 
 ### Community 104 - "Community 104"
 Cohesion: 0.08
@@ -695,7 +695,7 @@ Nodes (23): 1. 등급 체계 개요, 2.1 실버 (Silver) = Standard, 2.2 골드 
 
 ### Community 113 - "Community 113"
 Cohesion: 0.09
-Nodes (22): ADR-0007: Combined RAG 채택 — Opentology 의 정체성 변경, Alternatives considered — 거절된 대안, Combined RAG 의 검증 (2026-06-20, run 0923), Consequences — 이 결정의 결과, Context — 왜 이 결정이 필요했나, D1. Opentology 의 정체성 변경, D2. Pareto 비교 기준 갱신 (ADR-0001 D2 갱신), D3. Graph 와 chunk 모두 유지 (chunk-only / graph-only 명시 거절) (+14 more)
+Nodes (22): ADR-0007: Combined RAG 채택 — Arche 의 정체성 변경, Alternatives considered — 거절된 대안, Combined RAG 의 검증 (2026-06-20, run 0923), Consequences — 이 결정의 결과, Context — 왜 이 결정이 필요했나, D1. Arche 의 정체성 변경, D2. Pareto 비교 기준 갱신 (ADR-0001 D2 갱신), D3. Graph 와 chunk 모두 유지 (chunk-only / graph-only 명시 거절) (+14 more)
 
 ### Community 115 - "Community 115"
 Cohesion: 0.09
@@ -723,7 +723,7 @@ Nodes (9): _IndexEntry, _MemoryIndex, 컬럼 (2) 청크 벡터 RAG — PRD 4 §2
 
 ### Community 123 - "Community 123"
 Cohesion: 0.29
-Nodes (16): OpentologyRunner, Opentology 컬럼 — 외부 코어를 HTTP 로 호출.      Attributes:         client:      Opentolo, Any, _fake_llm(), _mock_opentology_client(), _node(), _question(), Opentology 컬럼 단위 — provider + client 모두 mock 처리.  primitives 호출 흐름 (PRD 4 §3.5 조 (+8 more)
+Nodes (16): ArcheRunner, Arche 컬럼 — 외부 코어를 HTTP 로 호출.      Attributes:         client:      Opentolo, Any, _fake_llm(), _mock_arche_client(), _node(), _question(), Arche 컬럼 단위 — provider + client 모두 mock 처리.  primitives 호출 흐름 (PRD 4 §3.5 조 (+8 more)
 
 ### Community 124 - "Community 124"
 Cohesion: 0.10
@@ -779,7 +779,7 @@ Nodes (14): 0. 이 문서를 읽는 사람에게, 1. 캠페인 명명 컨벤션,
 
 ### Community 137 - "Community 137"
 Cohesion: 0.14
-Nodes (13): chunk_rag 와 비교 — chunk-only wrong 회복, combined vs aug — 비슷한 정확도, 다른 신호, graph 단독 → aug 의 회복 (47.7pp), PoC — Graph-guided Chunk Retrieval (opentology_aug) 가 chunk RAG parity 초과, TL;DR, 다음 액션, 닫는 것, 데이터 산출물 (+5 more)
+Nodes (13): chunk_rag 와 비교 — chunk-only wrong 회복, combined vs aug — 비슷한 정확도, 다른 신호, graph 단독 → aug 의 회복 (47.7pp), PoC — Graph-guided Chunk Retrieval (arche_aug) 가 chunk RAG parity 초과, TL;DR, 다음 액션, 닫는 것, 데이터 산출물 (+5 more)
 
 ### Community 138 - "Community 138"
 Cohesion: 0.14
@@ -791,7 +791,7 @@ Nodes (3): _EmbDeterministic, 이름별로 서로 멀어지는 벡터 — Step 3
 
 ### Community 140 - "Community 140"
 Cohesion: 0.15
-Nodes (12): Chunk RAG 만 선택하지 않는 이유, Combined RAG 검증 결과 + MVP 피벗 방향, Graph RAG 만 선택하지 않는 이유, MVP 피벗 방향: **Combined RAG (Chunk + Graph in single LLM call)**, Pivot 후 Opentology 의 정체성, Post-MVP 우선순위 재정렬, TL;DR, 가설 정합 (+4 more)
+Nodes (12): Chunk RAG 만 선택하지 않는 이유, Combined RAG 검증 결과 + MVP 피벗 방향, Graph RAG 만 선택하지 않는 이유, MVP 피벗 방향: **Combined RAG (Chunk + Graph in single LLM call)**, Pivot 후 Arche 의 정체성, Post-MVP 우선순위 재정렬, TL;DR, 가설 정합 (+4 more)
 
 ### Community 141 - "Community 141"
 Cohesion: 0.15
@@ -811,7 +811,7 @@ Nodes (12): Phase 1 — Destructive rebuild (graphify parity 회복), Phase 1 �
 
 ### Community 145 - "Community 145"
 Cohesion: 0.17
-Nodes (11): 1. 그래프 > grep 는 관계 도메인에서도 성립 (명제 입증), 2. 그래프의 *절대* 성능은 finance 만큼 일반화 안 됨 — 추출 천장, opentology 가 graphify 를 3배 이긴 이유 (정량 근거), 결과 (3자 비교 — 동일 코퍼스, 동일 gpt-4.1, 동일 agentic 조건), 동기, 두 결론 (둘 다 중요), 부산물 — 상용화 결함 (ingest 처리량), 설계 (+3 more)
+Nodes (11): 1. 그래프 > grep 는 관계 도메인에서도 성립 (명제 입증), 2. 그래프의 *절대* 성능은 finance 만큼 일반화 안 됨 — 추출 천장, arche 가 graphify 를 3배 이긴 이유 (정량 근거), 결과 (3자 비교 — 동일 코퍼스, 동일 gpt-4.1, 동일 agentic 조건), 동기, 두 결론 (둘 다 중요), 부산물 — 상용화 결함 (ingest 처리량), 설계 (+3 more)
 
 ### Community 146 - "Community 146"
 Cohesion: 0.20
@@ -823,7 +823,7 @@ Nodes (11): 10. 정책 적용 책임 부서 요약, 1. 회원 등급 정식 명�
 
 ### Community 148 - "Community 148"
 Cohesion: 0.18
-Nodes (10): domain_pattern 별, opentology vs graphify — 그래프 단독 + 제품 비교 (FinanceBench 1M, 2026-06-22), 결과, 공통 한계 (양쪽 그래프 모두), 비교 설계 (3-way, 통제 변수 동일), 비용 경고 (가치 제안 "최소 토큰" 과 충돌), 왜 opentology 그래프 단독이 이렇게 낮은가 (응답 원문 진단), 재현 / 부속 자료 (+2 more)
+Nodes (10): domain_pattern 별, arche vs graphify — 그래프 단독 + 제품 비교 (FinanceBench 1M, 2026-06-22), 결과, 공통 한계 (양쪽 그래프 모두), 비교 설계 (3-way, 통제 변수 동일), 비용 경고 (가치 제안 "최소 토큰" 과 충돌), 왜 arche 그래프 단독이 이렇게 낮은가 (응답 원문 진단), 재현 / 부속 자료 (+2 more)
 
 ### Community 150 - "Community 150"
 Cohesion: 0.18
@@ -835,7 +835,7 @@ Nodes (10): 0. 한눈 매트릭스, 1. 통화, 2. 주류 연령 (R1), 3. 가전�
 
 ### Community 152 - "Community 152"
 Cohesion: 0.18
-Nodes (10): 2026-06-21 1M 검증 핵심, STATUS — Opentology 현재 상태, 갱신 정책, 검증 흐름 헬스, 다음 액션 (M6.5 결과 반영) — M6.5b → M7 → M8 → M9, 마일스톤 진행도, 알려진 stub 표, 이전 상태 — M6.5 종료, M6.5b (EntityConsolidator) 신설 gating + smoke 로 Combined 유의미성 1 차 확인 (+2 more)
+Nodes (10): 2026-06-21 1M 검증 핵심, STATUS — Arche 현재 상태, 갱신 정책, 검증 흐름 헬스, 다음 액션 (M6.5 결과 반영) — M6.5b → M7 → M8 → M9, 마일스톤 진행도, 알려진 stub 표, 이전 상태 — M6.5 종료, M6.5b (EntityConsolidator) 신설 gating + smoke 로 Combined 유의미성 1 차 확인 (+2 more)
 
 ### Community 153 - "Community 153"
 Cohesion: 0.20
@@ -843,7 +843,7 @@ Nodes (10): ADR 이 무엇인가, ADR 작성 규칙, Architecture Decision Recor
 
 ### Community 154 - "Community 154"
 Cohesion: 0.22
-Nodes (6): build_triple_user(), OpentologyTripleRunner, combined ⊕ aug 합본 (PoC).      Attributes:         loader: corpus loader., _AnchorResult, Any, Question
+Nodes (6): build_triple_user(), ArcheTripleRunner, combined ⊕ aug 합본 (PoC).      Attributes:         loader: corpus loader., _AnchorResult, Any, Question
 
 ### Community 155 - "Community 155"
 Cohesion: 0.20
@@ -859,7 +859,7 @@ Nodes (9): AMERICANEXPRESS_2022_10K, Denotes a variance of 100 percent or more, 
 
 ### Community 159 - "Community 159"
 Cohesion: 0.27
-Nodes (8): Path, collect(), extract_choice(), extract_metrics(), main(), Combined 컬럼 정답률 집계 + chunk_rag / opentology 와 비교.  본 측정 종료 본 (2126) 의 chunk_rag, returns (total_tokens, latency_ms)., returns (choices_per_q, tokens_per_q, latency_per_q).
+Nodes (8): Path, collect(), extract_choice(), extract_metrics(), main(), Combined 컬럼 정답률 집계 + chunk_rag / arche 와 비교.  본 측정 종료 본 (2126) 의 chunk_rag, returns (total_tokens, latency_ms)., returns (choices_per_q, tokens_per_q, latency_per_q).
 
 ### Community 160 - "Community 160"
 Cohesion: 0.20
@@ -907,7 +907,7 @@ Nodes (8): 2.1 흐름, 2.2 청크 분할 알고리즘, 2.3 벡터 인덱스 (측
 
 ### Community 173 - "Community 173"
 Cohesion: 0.25
-Nodes (8): 3.1 흐름, 3.3 서브그래프 직렬화 형식 (Step 5), 3.4 답변 생성 LLM 호출 (Step 6), 3.5 Primitive 호출 시퀀스 — 기본 형태, 3.6 토큰 카운트 규칙, 3. 컬럼 3 — Opentology (그래프 노드 RAG + 탐색), 사용자 프롬프트 패턴, 시스템 프롬프트
+Nodes (8): 3.1 흐름, 3.3 서브그래프 직렬화 형식 (Step 5), 3.4 답변 생성 LLM 호출 (Step 6), 3.5 Primitive 호출 시퀀스 — 기본 형태, 3.6 토큰 카운트 규칙, 3. 컬럼 3 — Arche (그래프 노드 RAG + 탐색), 사용자 프롬프트 패턴, 시스템 프롬프트
 
 ### Community 174 - "Community 174"
 Cohesion: 0.29
@@ -919,7 +919,7 @@ Nodes (6): 결론, 그래프가 이기는 조건 (다음 평가 설계의 두 �
 
 ### Community 176 - "Community 176"
 Cohesion: 0.33
-Nodes (5): Failure mode breakdown, Opentology MVP 측정 보고서 — 2026-06-19-2126, Pareto 우월 판정, 메트릭 표, 한 단락 해석
+Nodes (5): Failure mode breakdown, Arche MVP 측정 보고서 — 2026-06-19-2126, Pareto 우월 판정, 메트릭 표, 한 단락 해석
 
 ### Community 178 - "Community 178"
 Cohesion: 0.33
@@ -979,7 +979,7 @@ Nodes (5): 7.1 REST, 7.2 MCP tool, 7.3 입력, 7.4 출력, 7. `get_subgraph`
 
 ### Community 194 - "Community 194"
 Cohesion: 0.40
-Nodes (4): Opentology, 검증 가설 한 줄, 이 저장소 이전의 작업, 진입점
+Nodes (4): Arche, 검증 가설 한 줄, 이 저장소 이전의 작업, 진입점
 
 ### Community 195 - "Community 195"
 Cohesion: 0.50
