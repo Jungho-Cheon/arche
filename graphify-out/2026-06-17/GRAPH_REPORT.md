@@ -81,22 +81,22 @@
 
 ## Surprising Connections (you probably didn't know these)
 - `Entry-point reading order (PRD -> ADR -> STATUS -> specs)` --references--> `ADR Index README`  [INFERRED]
-  CLAUDE.md → /Users/jungho1000/workspace/private/opentology/docs/adr/README.md
+  CLAUDE.md → /Users/jungho1000/workspace/private/arche/docs/adr/README.md
 - `FakeRepo` --shares_data_with--> `EntityMatcher (referenced)`  [INFERRED]
-  apps/api/tests/unit/test_entity_matcher.py → /Users/jungho1000/workspace/private/opentology/apps/api/src/opentology_api/domain/identity.py
+  apps/api/tests/unit/test_entity_matcher.py → /Users/jungho1000/workspace/private/arche/apps/api/src/arche_api/domain/identity.py
 - `OpenAIEmbeddingProvider` --implements--> `EmbeddingProvider Protocol`  [INFERRED]
-  eval/src/opentology_eval/providers.py → /Users/jungho1000/workspace/private/opentology/eval/src/opentology_eval/providers.py
+  eval/src/arche_eval/providers.py → /Users/jungho1000/workspace/private/arche/eval/src/arche_eval/providers.py
 - `repo()` --calls--> `Neo4jGraphRepository`  [INFERRED]
-  apps/api/tests/integration/test_identity_e2e.py → apps/api/src/opentology_api/adapters/graph.py
+  apps/api/tests/integration/test_identity_e2e.py → apps/api/src/arche_api/adapters/graph.py
 - `repo()` --calls--> `Neo4jGraphRepository`  [INFERRED]
-  apps/api/tests/integration/test_neo4j_repo.py → apps/api/src/opentology_api/adapters/graph.py
+  apps/api/tests/integration/test_neo4j_repo.py → apps/api/src/arche_api/adapters/graph.py
 
 ## Import Cycles
-- 1-file cycle: `apps/api/src/opentology_api/main.py -> apps/api/src/opentology_api/main.py`
-- 1-file cycle: `eval/src/opentology_eval/runlog.py -> eval/src/opentology_eval/runlog.py`
-- 2-file cycle: `apps/api/src/opentology_api/api/routers.py -> apps/api/src/opentology_api/main.py -> apps/api/src/opentology_api/api/routers.py`
-- 2-file cycle: `apps/api/src/opentology_api/api/deps.py -> apps/api/src/opentology_api/main.py -> apps/api/src/opentology_api/api/deps.py`
-- 3-file cycle: `apps/api/src/opentology_api/api/deps.py -> apps/api/src/opentology_api/main.py -> apps/api/src/opentology_api/api/routers.py -> apps/api/src/opentology_api/api/deps.py`
+- 1-file cycle: `apps/api/src/arche_api/main.py -> apps/api/src/arche_api/main.py`
+- 1-file cycle: `eval/src/arche_eval/runlog.py -> eval/src/arche_eval/runlog.py`
+- 2-file cycle: `apps/api/src/arche_api/api/routers.py -> apps/api/src/arche_api/main.py -> apps/api/src/arche_api/api/routers.py`
+- 2-file cycle: `apps/api/src/arche_api/api/deps.py -> apps/api/src/arche_api/main.py -> apps/api/src/arche_api/api/deps.py`
+- 3-file cycle: `apps/api/src/arche_api/api/deps.py -> apps/api/src/arche_api/main.py -> apps/api/src/arche_api/api/routers.py -> apps/api/src/arche_api/api/deps.py`
 
 ## Communities (63 total, 4 thin omitted)
 
@@ -146,7 +146,7 @@ Nodes (27): FileProgressEvent, help, IngestService, Path, FileProgressEvent, Arg
 
 ### Community 11 - "Community 11"
 Cohesion: 0.13
-Nodes (16): ABC, OpenAIEmbeddingProvider, 임베딩 어댑터 — 노드 임베딩 생성.  WHY 모델 식별자를 config 에서: ADR-0001 통제 변수 + ADR-0003 D2. 청크 벡터, 그래프 저장소 어댑터 — Neo4j 5.15+ 내장 인덱스 사용 (ADR-0004 D1).  핵심 책임: - ensure_indexes() —, LLM provider 어댑터 — 추출 결과를 ExtractedGraph 로 반환.  WHY 추상 + 단일 구현: PRD 2 §4 의 *교체 가, DependencyUnavailableError, OpentologyError, 도메인 예외 — PRD 3 §9 의 에러 코드 카탈로그와 매핑. (+8 more)
+Nodes (16): ABC, OpenAIEmbeddingProvider, 임베딩 어댑터 — 노드 임베딩 생성.  WHY 모델 식별자를 config 에서: ADR-0001 통제 변수 + ADR-0003 D2. 청크 벡터, 그래프 저장소 어댑터 — Neo4j 5.15+ 내장 인덱스 사용 (ADR-0004 D1).  핵심 책임: - ensure_indexes() —, LLM provider 어댑터 — 추출 결과를 ExtractedGraph 로 반환.  WHY 추상 + 단일 구현: PRD 2 §4 의 *교체 가, DependencyUnavailableError, ArcheError, 도메인 예외 — PRD 3 §9 의 에러 코드 카탈로그와 매핑. (+8 more)
 
 ### Community 12 - "Community 12"
 Cohesion: 0.09
@@ -162,7 +162,7 @@ Nodes (23): ExtractedGraph, IngestService, Path, ExtractedRelation, _build_servi
 
 ### Community 15 - "Community 15"
 Cohesion: 0.16
-Nodes (21): datetime, Any, Path, Path, CLI — `opentology-eval` 진입점. PRD 4 §6 의 서브커맨드 중 setup / ask / run 만.  judge / sp, ChunkRAGRunner (referenced), FullContextRunner (referenced), hash_directory() (+13 more)
+Nodes (21): datetime, Any, Path, Path, CLI — `arche-eval` 진입점. PRD 4 §6 의 서브커맨드 중 setup / ask / run 만.  judge / sp, ChunkRAGRunner (referenced), FullContextRunner (referenced), hash_directory() (+13 more)
 
 ### Community 16 - "Community 16"
 Cohesion: 0.11
@@ -242,7 +242,7 @@ Nodes (8): _lucene_escape(), fulltext 인덱스를 *keyword 별로* 따로 호�
 
 ### Community 35 - "Community 35"
 Cohesion: 0.20
-Nodes (9): apps/api README — walking skeleton, Control variables — same LLM, same embedding model across columns, PRD 2 §5.1 4-step entity identity, (:IngestionRun) idempotent diff model, Pareto hypothesis (accuracy vs token cost), Walking skeleton 1% slice, Opentology API — walking skeleton.  이 패키지는 PRD 2 (소스 입력과 그래프 적재) 와 PRD 3 (Graph, README — Opentology overview & hypothesis (+1 more)
+Nodes (9): apps/api README — walking skeleton, Control variables — same LLM, same embedding model across columns, PRD 2 §5.1 4-step entity identity, (:IngestionRun) idempotent diff model, Pareto hypothesis (accuracy vs token cost), Walking skeleton 1% slice, Arche API — walking skeleton.  이 패키지는 PRD 2 (소스 입력과 그래프 적재) 와 PRD 3 (Graph, README — Arche overview & hypothesis (+1 more)
 
 ### Community 36 - "Community 36"
 Cohesion: 0.20
@@ -266,7 +266,7 @@ Nodes (9): Corpus Tiny: Catalog (Product A/B, Category C/D), Corpus Tiny: Coupon
 
 ### Community 41 - "Community 41"
 Cohesion: 0.25
-Nodes (8): One-page Report as MVP Exit Condition (D7), Opentology Project Identity (Graph KB tool for LLMs), Pareto Superiority Hypothesis (accuracy = full-context, tokens > chunk RAG), ADR-0001: Project Identity and MVP Validation Hypothesis, Rationale: Long-context LLMs make efficiency the differentiator, 3-way Measurement (Full-context vs Chunk RAG vs Opentology), PRD 1: MVP Spec, MVP In-Scope Items (ingest, graph load, hybrid index, primitives, deliverables)
+Nodes (8): One-page Report as MVP Exit Condition (D7), Arche Project Identity (Graph KB tool for LLMs), Pareto Superiority Hypothesis (accuracy = full-context, tokens > chunk RAG), ADR-0001: Project Identity and MVP Validation Hypothesis, Rationale: Long-context LLMs make efficiency the differentiator, 3-way Measurement (Full-context vs Chunk RAG vs Arche), PRD 1: MVP Spec, MVP In-Scope Items (ingest, graph load, hybrid index, primitives, deliverables)
 
 ### Community 42 - "Community 42"
 Cohesion: 0.32
@@ -290,7 +290,7 @@ Nodes (7): OpenAI gpt-4.1 chosen for 1M context, Eval Package README (baseline c
 
 ### Community 47 - "Community 47"
 Cohesion: 0.29
-Nodes (7): Repo entry-point CLAUDE.md, Entry-point reading order (PRD -> ADR -> STATUS -> specs), legacy-opentology reference policy (do not consult), Public artifact accessibility rule (self-contained issues/ADRs), Session role modes (orchestrator vs worker), Worker mode end-of-task checklist (PR + Closes #N), Writing tone policy (no jargon, no colloquial verbs)
+Nodes (7): Repo entry-point CLAUDE.md, Entry-point reading order (PRD -> ADR -> STATUS -> specs), legacy-arche reference policy (do not consult), Public artifact accessibility rule (self-contained issues/ADRs), Session role modes (orchestrator vs worker), Worker mode end-of-task checklist (PR + Closes #N), Writing tone policy (no jargon, no colloquial verbs)
 
 ### Community 48 - "Community 48"
 Cohesion: 0.40

@@ -142,21 +142,21 @@
 
 ## Surprising Connections (you probably didn't know these)
 - `Corpus Tiny: Coupon Policy (Coupon X/Y, aliases)` --semantically_similar_to--> `skeleton_sample.md (test fixture: 여름 환영 쿠폰 entities)`  [INFERRED] [semantically similar]
-  eval/tests/fixtures/corpus_tiny/coupon.md → /Users/jungho1000/workspace/private/opentology/apps/api/tests/fixtures/skeleton_sample.md
+  eval/tests/fixtures/corpus_tiny/coupon.md → /Users/jungho1000/workspace/private/arche/apps/api/tests/fixtures/skeleton_sample.md
 - `Entry-point reading order (PRD -> ADR -> STATUS -> specs)` --references--> `ADR Index README`  [INFERRED]
   CLAUDE.md → docs/adr/README.md
-- `PRD 4: Evaluation Harness (3-way)` --implements--> `3-way Measurement (Full-context vs Chunk RAG vs Opentology)`  [EXTRACTED]
-  docs/prd/4_evaluation_harness.md → /Users/jungho1000/workspace/private/opentology/docs/adr/0001-project-identity-and-mvp-validation-hypothesis.md
+- `PRD 4: Evaluation Harness (3-way)` --implements--> `3-way Measurement (Full-context vs Chunk RAG vs Arche)`  [EXTRACTED]
+  docs/prd/4_evaluation_harness.md → /Users/jungho1000/workspace/private/arche/docs/adr/0001-project-identity-and-mvp-validation-hypothesis.md
 - `ADR-0001: Project Identity and MVP Validation Hypothesis` --references--> `Commerce Business Rules as Validation Domain`  [EXTRACTED]
-  docs/adr/0001-project-identity-and-mvp-validation-hypothesis.md → /Users/jungho1000/workspace/private/opentology/docs/adr/0001-project-identity-and-mvp-validation-hypothesis.md
+  docs/adr/0001-project-identity-and-mvp-validation-hypothesis.md → /Users/jungho1000/workspace/private/arche/docs/adr/0001-project-identity-and-mvp-validation-hypothesis.md
 - `ADR-0001: Project Identity and MVP Validation Hypothesis` --references--> `Idempotent Ingestion (D6)`  [EXTRACTED]
-  docs/adr/0001-project-identity-and-mvp-validation-hypothesis.md → /Users/jungho1000/workspace/private/opentology/docs/adr/0001-project-identity-and-mvp-validation-hypothesis.md
+  docs/adr/0001-project-identity-and-mvp-validation-hypothesis.md → /Users/jungho1000/workspace/private/arche/docs/adr/0001-project-identity-and-mvp-validation-hypothesis.md
 
 ## Import Cycles
-- 1-file cycle: `apps/api/src/opentology_api/main.py -> apps/api/src/opentology_api/main.py`
-- 1-file cycle: `eval/src/opentology_eval/runlog.py -> eval/src/opentology_eval/runlog.py`
-- 2-file cycle: `apps/api/src/opentology_api/api/deps.py -> apps/api/src/opentology_api/main.py -> apps/api/src/opentology_api/api/deps.py`
-- 2-file cycle: `apps/api/src/opentology_api/api/routers.py -> apps/api/src/opentology_api/main.py -> apps/api/src/opentology_api/api/routers.py`
+- 1-file cycle: `apps/api/src/arche_api/main.py -> apps/api/src/arche_api/main.py`
+- 1-file cycle: `eval/src/arche_eval/runlog.py -> eval/src/arche_eval/runlog.py`
+- 2-file cycle: `apps/api/src/arche_api/api/deps.py -> apps/api/src/arche_api/main.py -> apps/api/src/arche_api/api/deps.py`
+- 2-file cycle: `apps/api/src/arche_api/api/routers.py -> apps/api/src/arche_api/main.py -> apps/api/src/arche_api/api/routers.py`
 
 ## Communities (123 total, 12 thin omitted)
 
@@ -166,7 +166,7 @@ Nodes (124): AdminIngestRequest, AdminIngestResponse, AdminIngestStatusResponse,
 
 ### Community 1 - "Identity E2E Tests"
 Cohesion: 0.05
-Nodes (59): Opentology 코어 호출 클라이언트 — REST (MVP). MCP 어댑터는 #7 의존., OpentologyClient, OpentologyClientError, OpentologyUnavailableError, PrimitiveCall, Opentology 코어 REST 클라이언트 — PRD 3 의 6 primitive + admin ingest.  격리 원칙 (ADR-0006, PRD 3 §3-7 의 6 primitive + admin ingest 의 thin HTTP wrapper.      동일 인스턴스에서 여러 질, HTTP 호출 + envelope 해제. 반환 = (data, latency_ms).          에러 envelope → Opentolog (+51 more)
+Nodes (59): Arche 코어 호출 클라이언트 — REST (MVP). MCP 어댑터는 #7 의존., ArcheClient, ArcheClientError, ArcheUnavailableError, PrimitiveCall, Arche 코어 REST 클라이언트 — PRD 3 의 6 primitive + admin ingest.  격리 원칙 (ADR-0006, PRD 3 §3-7 의 6 primitive + admin ingest 의 thin HTTP wrapper.      동일 인스턴스에서 여러 질, HTTP 호출 + envelope 해제. 반환 = (data, latency_ms).          에러 envelope → Opentolog (+51 more)
 
 ### Community 2 - "Live Integration Tests"
 Cohesion: 0.12
@@ -290,7 +290,7 @@ Nodes (25): Option, Question, 한 질문에 "정보 부족 / 알 수 없음" 옵
 
 ### Community 33 - "ADR-5 Measurement"
 Cohesion: 0.11
-Nodes (18): Option, Path, Path, failure_mode_tested 카탈로그 + domain_pattern enum (PRD 5 §4 / §3.1).  WHY 단일 상수 파일:, DryRunEstimate, corpus 전체의 ingest 비용 추정.      - `total_files` — corpus 안의 *지원 포맷* 파일 수.     - `b, 검증 데이터셋 lint — PRD 5 §6.  `opentology-eval lint --dataset <path>` 의 구현 패키지. hard, _is_info_insufficient_option() (+10 more)
+Nodes (18): Option, Path, Path, failure_mode_tested 카탈로그 + domain_pattern enum (PRD 5 §4 / §3.1).  WHY 단일 상수 파일:, DryRunEstimate, corpus 전체의 ingest 비용 추정.      - `total_files` — corpus 안의 *지원 포맷* 파일 수.     - `b, 검증 데이터셋 lint — PRD 5 §6.  `arche-eval lint --dataset <path>` 의 구현 패키지. hard, _is_info_insufficient_option() (+10 more)
 
 ### Community 35 - "LLM Adapter Tests"
 Cohesion: 0.09
@@ -338,7 +338,7 @@ Nodes (12): OpenAIEmbeddingProvider, 임베딩 어댑터 — 노드 임베딩 �
 
 ### Community 46 - "Eval Tests Conftest"
 Cohesion: 0.21
-Nodes (17): help, IngestService, Option, Path, Argument, ingest(), mcp_serve(), `opentology` CLI — 디렉토리 / 단일 파일 ingest 진입점.  WHY in-process (HTTP 가 아닌): 사용자 셋업 (+9 more)
+Nodes (17): help, IngestService, Option, Path, Argument, ingest(), mcp_serve(), `arche` CLI — 디렉토리 / 단일 파일 ingest 진입점.  WHY in-process (HTTP 가 아닌): 사용자 셋업 (+9 more)
 
 ### Community 47 - "API Package Init"
 Cohesion: 0.17
@@ -350,7 +350,7 @@ Nodes (19): Path, median_int(), p95(), nearest-rank p95. 표본이 작으면 max
 
 ### Community 49 - "Eval Package Init"
 Cohesion: 0.15
-Nodes (19): MCP stdio e2e — 본 서버를 subprocess 로 spawn 해 핸드셰이크 + 6 tool 호출.  검증 흐름: 1. stdio_c, from == to → isError + unprocessable (PRD 3 §9, §6)., 간단 lexical 매칭 — '쿠폰' 키워드로 node_a 가 surface 되어야 함., SDK 가 inputSchema 로 입력을 검증 — 빈 keywords 는 minItems 위반., 본 서버를 fake graph 모드로 spawn 하는 파라미터.      WHY `sys.executable -m opentology_api.c, initialize 핸드셰이크 + 6 tool list., 없는 ID → isError=True + body.error.code = entity_not_found (PRD 3 §9)., _server_params() (+11 more)
+Nodes (19): MCP stdio e2e — 본 서버를 subprocess 로 spawn 해 핸드셰이크 + 6 tool 호출.  검증 흐름: 1. stdio_c, from == to → isError + unprocessable (PRD 3 §9, §6)., 간단 lexical 매칭 — '쿠폰' 키워드로 node_a 가 surface 되어야 함., SDK 가 inputSchema 로 입력을 검증 — 빈 keywords 는 minItems 위반., 본 서버를 fake graph 모드로 spawn 하는 파라미터.      WHY `sys.executable -m arche_api.c, initialize 핸드셰이크 + 6 tool list., 없는 ID → isError=True + body.error.code = entity_not_found (PRD 3 §9)., _server_params() (+11 more)
 
 ### Community 50 - "Init Stub 50"
 Cohesion: 0.15
@@ -386,7 +386,7 @@ Nodes (14): Path, Chunk, chunk_corpus(), _count_tokens(), 청크 분할 — PRD 
 
 ### Community 58 - "Community 58"
 Cohesion: 0.17
-Nodes (16): Any, Path, Path, expected_sources 의 모든 경로가 corpus_root 안에 실존 + 상대경로., corpus 디렉토리의 모든 파일이 ingest 지원 포맷 (PRD 5 §6 표).      숨김 파일 (`.opentologyignore` 등, questions.yaml / meta.yaml 파싱.      Returns:         (findings, parsed_data 또는 N, rule_corpus_files_supported(), rule_expected_sources_exist() (+8 more)
+Nodes (16): Any, Path, Path, expected_sources 의 모든 경로가 corpus_root 안에 실존 + 상대경로., corpus 디렉토리의 모든 파일이 ingest 지원 포맷 (PRD 5 §6 표).      숨김 파일 (`.archeignore` 등, questions.yaml / meta.yaml 파싱.      Returns:         (findings, parsed_data 또는 N, rule_corpus_files_supported(), rule_expected_sources_exist() (+8 more)
 
 ### Community 59 - "Community 59"
 Cohesion: 0.20
@@ -406,11 +406,11 @@ Nodes (13): Commerce Business Rules as Validation Domain, Latency Measurement (m
 
 ### Community 63 - "Community 63"
 Cohesion: 0.27
-Nodes (12): OpentologyClient, _mock_client(), Opentology REST 클라이언트 단위 — httpx.MockTransport 로 응답 mock., test_admin_ingest_polling_failed_raises_client_error(), test_admin_ingest_polling_succeeds(), test_error_envelope_raises_client_error(), test_find_entities_sends_keywords_and_limit(), test_get_schema_unwraps_data_envelope() (+4 more)
+Nodes (12): ArcheClient, _mock_client(), Arche REST 클라이언트 단위 — httpx.MockTransport 로 응답 mock., test_admin_ingest_polling_failed_raises_client_error(), test_admin_ingest_polling_succeeds(), test_error_envelope_raises_client_error(), test_find_entities_sends_keywords_and_limit(), test_get_schema_unwraps_data_envelope() (+4 more)
 
 ### Community 64 - "Community 64"
 Cohesion: 0.28
-Nodes (12): Path, spotcheck.py — 트리거 매칭 / write_override / apply_overrides_file / 대화형 시뮬레이션., 스크립트된 입력으로 대화형 spotcheck 가 1 건 처리 후 종료하는지., 공통 fixture — 1 질문 × 3 컬럼 × 1 run, judge 점수 다양., add Q01 opentology 0' 으로 큐에 수동 추가 후 처리., _seed_fixture(), test_apply_overrides_file_batch(), test_build_queue_matches_both_triggers() (+4 more)
+Nodes (12): Path, spotcheck.py — 트리거 매칭 / write_override / apply_overrides_file / 대화형 시뮬레이션., 스크립트된 입력으로 대화형 spotcheck 가 1 건 처리 후 종료하는지., 공통 fixture — 1 질문 × 3 컬럼 × 1 run, judge 점수 다양., add Q01 arche 0' 으로 큐에 수동 추가 후 처리., _seed_fixture(), test_apply_overrides_file_batch(), test_build_queue_matches_both_triggers() (+4 more)
 
 ### Community 65 - "Community 65"
 Cohesion: 0.20
@@ -474,7 +474,7 @@ Nodes (7): Edge, Node, _FakeData, _make_edge(), _make_node(), 테스트 전용 F
 
 ### Community 80 - "Community 80"
 Cohesion: 0.22
-Nodes (9): BaseException, ErrorData, 도메인 / 검증 예외 → MCP 표준 에러 (data.code 에 Opentology code).      분기:     - Opentology, _to_mcp_error(), PRD 3 §9 의 도메인 code 가 MCP 에러 data.code 에 노출., pydantic 검증 실패 → invalid_input., test_to_mcp_error_dependency_unavailable_carries_code(), test_to_mcp_error_entity_not_found_carries_code() (+1 more)
+Nodes (9): BaseException, ErrorData, 도메인 / 검증 예외 → MCP 표준 에러 (data.code 에 Arche code).      분기:     - Arche, _to_mcp_error(), PRD 3 §9 의 도메인 code 가 MCP 에러 data.code 에 노출., pydantic 검증 실패 → invalid_input., test_to_mcp_error_dependency_unavailable_carries_code(), test_to_mcp_error_entity_not_found_carries_code() (+1 more)
 
 ### Community 81 - "Community 81"
 Cohesion: 0.31
@@ -486,7 +486,7 @@ Nodes (4): Path, ModelPrice, 모델 식별자에 대한 단가. 등록되지 않
 
 ### Community 83 - "Community 83"
 Cohesion: 0.25
-Nodes (8): One-page Report as MVP Exit Condition (D7), Opentology Project Identity (Graph KB tool for LLMs), Pareto Superiority Hypothesis (accuracy = full-context, tokens > chunk RAG), ADR-0001: Project Identity and MVP Validation Hypothesis, Rationale: Long-context LLMs make efficiency the differentiator, 3-way Measurement (Full-context vs Chunk RAG vs Opentology), PRD 1: MVP Spec, MVP In-Scope Items (ingest, graph load, hybrid index, primitives, deliverables)
+Nodes (8): One-page Report as MVP Exit Condition (D7), Arche Project Identity (Graph KB tool for LLMs), Pareto Superiority Hypothesis (accuracy = full-context, tokens > chunk RAG), ADR-0001: Project Identity and MVP Validation Hypothesis, Rationale: Long-context LLMs make efficiency the differentiator, 3-way Measurement (Full-context vs Chunk RAG vs Arche), PRD 1: MVP Spec, MVP In-Scope Items (ingest, graph load, hybrid index, primitives, deliverables)
 
 ### Community 84 - "Community 84"
 Cohesion: 0.36
@@ -514,7 +514,7 @@ Nodes (7): Entity/Relation Audit Log deferred (D5), Auth/Access Control/Multi-te
 
 ### Community 90 - "Community 90"
 Cohesion: 0.29
-Nodes (7): Opentology API, Model Pricing (2026-06), Graph Primitives MCP Server, Graph Primitives REST API, Ingest Pipeline, LLM Multimodal Entity/Relation Extraction, Opentology
+Nodes (7): Arche API, Model Pricing (2026-06), Graph Primitives MCP Server, Graph Primitives REST API, Ingest Pipeline, LLM Multimodal Entity/Relation Extraction, Arche
 
 ### Community 91 - "Community 91"
 Cohesion: 0.38
@@ -534,11 +534,11 @@ Nodes (7): PRD 5 §3.1 JSON Schema 검증., rule_questions_schema(), test_rule_q
 
 ### Community 95 - "Community 95"
 Cohesion: 0.29
-Nodes (7): Repo entry-point CLAUDE.md, Entry-point reading order (PRD -> ADR -> STATUS -> specs), legacy-opentology reference policy (do not consult), Public artifact accessibility rule (self-contained issues/ADRs), Session role modes (orchestrator vs worker), Worker mode end-of-task checklist (PR + Closes #N), Writing tone policy (no jargon, no colloquial verbs)
+Nodes (7): Repo entry-point CLAUDE.md, Entry-point reading order (PRD -> ADR -> STATUS -> specs), legacy-arche reference policy (do not consult), Public artifact accessibility rule (self-contained issues/ADRs), Session role modes (orchestrator vs worker), Worker mode end-of-task checklist (PR + Closes #N), Writing tone policy (no jargon, no colloquial verbs)
 
 ### Community 96 - "Community 96"
 Cohesion: 0.33
-Nodes (5): OpentologyError, RateLimitedError, 공통 베이스 — code, message, details 셋이 envelope 의 error 로 직렬화된다., post-MVP. MVP 에서는 사용 안 함 — 코드 카탈로그 형태만 미리 정의.      WHY 미리 정의: PRD 3 §9 의 카탈로그를 *, Exception
+Nodes (5): ArcheError, RateLimitedError, 공통 베이스 — code, message, details 셋이 envelope 의 error 로 직렬화된다., post-MVP. MVP 에서는 사용 안 함 — 코드 카탈로그 형태만 미리 정의.      WHY 미리 정의: PRD 3 §9 의 카탈로그를 *, Exception
 
 ### Community 97 - "Community 97"
 Cohesion: 0.53
@@ -558,14 +558,14 @@ Nodes (3): Path, corpus_dir(), questions_path()
 
 ### Community 103 - "Community 103"
 Cohesion: 0.67
-Nodes (3): Control variables — same LLM, same embedding model across columns, Pareto hypothesis (accuracy vs token cost), README — Opentology overview & hypothesis
+Nodes (3): Control variables — same LLM, same embedding model across columns, Pareto hypothesis (accuracy vs token cost), README — Arche overview & hypothesis
 
 ### Community 122 - "Community 122"
 Cohesion: 0.18
 Nodes (7): Chunk, _IndexEntry, _MemoryIndex, chromadb 의존을 피하기 위한 in-process 인덱스. cosine 유사도 top-k.      WHY in-memory: 측정 하니스, corpus 를 청크화하고 모든 청크를 임베딩해 인덱스에 적재.          WHY 이미지 무시: PRD 4 §2 의 chunk RAG 대조, Any, Question
 
 ## Knowledge Gaps
-- **88 isolated node(s):** `README — Opentology overview & hypothesis`, `STATUS.md — milestone & stub table`, `Opentology Project Identity (Graph KB tool for LLMs)`, `One-page Report as MVP Exit Condition (D7)`, `Auth/Access Control/Multi-tenant deferred (D2, post-MVP rank 1)` (+83 more)
+- **88 isolated node(s):** `README — Arche overview & hypothesis`, `STATUS.md — milestone & stub table`, `Arche Project Identity (Graph KB tool for LLMs)`, `One-page Report as MVP Exit Condition (D7)`, `Auth/Access Control/Multi-tenant deferred (D2, post-MVP rank 1)` (+83 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **12 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 

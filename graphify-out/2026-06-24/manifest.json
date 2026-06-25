@@ -1,105 +1,105 @@
 {
-  "apps/api/src/opentology_api/__init__.py": {
+  "apps/api/src/arche_api/__init__.py": {
     "mtime": 1781618104.1587093,
     "ast_hash": "5592d7da96fec574e2f95b4d2436ff00",
     "semantic_hash": "5592d7da96fec574e2f95b4d2436ff00"
   },
-  "apps/api/src/opentology_api/adapters/__init__.py": {
+  "apps/api/src/arche_api/adapters/__init__.py": {
     "mtime": 1781618104.1589026,
     "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
     "semantic_hash": "d41d8cd98f00b204e9800998ecf8427e"
   },
-  "apps/api/src/opentology_api/adapters/embedding.py": {
+  "apps/api/src/arche_api/adapters/embedding.py": {
     "mtime": 1781618104.1605558,
     "ast_hash": "6a3f94c7987efb94c4578802e4d1a239",
     "semantic_hash": "6a3f94c7987efb94c4578802e4d1a239"
   },
-  "apps/api/src/opentology_api/adapters/graph.py": {
+  "apps/api/src/arche_api/adapters/graph.py": {
     "mtime": 1782279333.4556038,
     "ast_hash": "c09a463db22a3d55b3d8a87e59079371",
     "semantic_hash": ""
   },
-  "apps/api/src/opentology_api/adapters/llm.py": {
+  "apps/api/src/arche_api/adapters/llm.py": {
     "mtime": 1782279333.4596128,
     "ast_hash": "579eaaa718fa8c3e85c5b7ef3031fa3f",
     "semantic_hash": ""
   },
-  "apps/api/src/opentology_api/api/__init__.py": {
+  "apps/api/src/arche_api/api/__init__.py": {
     "mtime": 1781618104.1629102,
     "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
     "semantic_hash": "d41d8cd98f00b204e9800998ecf8427e"
   },
-  "apps/api/src/opentology_api/api/admin_tasks.py": {
+  "apps/api/src/arche_api/api/admin_tasks.py": {
     "mtime": 1782279333.4633274,
     "ast_hash": "5175445406d777c9bac51b98afe78c2c",
     "semantic_hash": ""
   },
-  "apps/api/src/opentology_api/api/deps.py": {
+  "apps/api/src/arche_api/api/deps.py": {
     "mtime": 1782223795.698938,
     "ast_hash": "b63df66455bb4cabeb1198464fd5c4ef",
     "semantic_hash": ""
   },
-  "apps/api/src/opentology_api/api/responses.py": {
+  "apps/api/src/arche_api/api/responses.py": {
     "mtime": 1782279333.4671223,
     "ast_hash": "76baf080cbc125c416e3b8036a95149a",
     "semantic_hash": ""
   },
-  "apps/api/src/opentology_api/api/routers.py": {
+  "apps/api/src/arche_api/api/routers.py": {
     "mtime": 1782279333.4687433,
     "ast_hash": "9e9de045107966d6782c500b79876f4b",
     "semantic_hash": ""
   },
-  "apps/api/src/opentology_api/api/schemas.py": {
+  "apps/api/src/arche_api/api/schemas.py": {
     "mtime": 1782279333.4705255,
     "ast_hash": "e36498600ac5e63cf9ee9d6180714c20",
     "semantic_hash": ""
   },
-  "apps/api/src/opentology_api/cli.py": {
+  "apps/api/src/arche_api/cli.py": {
     "mtime": 1782279333.47458,
     "ast_hash": "9532144f82d3b6be5eb4aeaac88548de",
     "semantic_hash": ""
   },
-  "apps/api/src/opentology_api/config.py": {
+  "apps/api/src/arche_api/config.py": {
     "mtime": 1782279333.4763944,
     "ast_hash": "4339a9dc7e0988fbee30bef8a97ea9fb",
     "semantic_hash": ""
   },
-  "apps/api/src/opentology_api/domain/__init__.py": {
+  "apps/api/src/arche_api/domain/__init__.py": {
     "mtime": 1781618104.1678889,
     "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
     "semantic_hash": "d41d8cd98f00b204e9800998ecf8427e"
   },
-  "apps/api/src/opentology_api/domain/chunking.py": {
+  "apps/api/src/arche_api/domain/chunking.py": {
     "mtime": 1782279333.4785037,
     "ast_hash": "b2c45f5ca843c746efd656545c6d293e",
     "semantic_hash": ""
   },
-  "apps/api/src/opentology_api/domain/crawl.py": {
+  "apps/api/src/arche_api/domain/crawl.py": {
     "mtime": 1782279333.4801376,
     "ast_hash": "8f0227c68c576c0bbc08e2799cbbdbda",
     "semantic_hash": ""
   },
-  "apps/api/src/opentology_api/domain/errors.py": {
+  "apps/api/src/arche_api/domain/errors.py": {
     "mtime": 1781697842.122642,
     "ast_hash": "bdc75f82ad725a273da5aef283c505ba",
     "semantic_hash": "bdc75f82ad725a273da5aef283c505ba"
   },
-  "apps/api/src/opentology_api/domain/identity.py": {
+  "apps/api/src/arche_api/domain/identity.py": {
     "mtime": 1782279333.4858248,
     "ast_hash": "4da55cee002522d2c8bde9fb81211db3",
     "semantic_hash": ""
   },
-  "apps/api/src/opentology_api/domain/ingest.py": {
+  "apps/api/src/arche_api/domain/ingest.py": {
     "mtime": 1782279333.4875174,
     "ast_hash": "20370a892c953414dae6ff967c0bb5f2",
     "semantic_hash": ""
   },
-  "apps/api/src/opentology_api/domain/models.py": {
+  "apps/api/src/arche_api/domain/models.py": {
     "mtime": 1782279333.4909074,
     "ast_hash": "8688892a16e2ab5b4b59d6128b4171b7",
     "semantic_hash": ""
   },
-  "apps/api/src/opentology_api/main.py": {
+  "apps/api/src/arche_api/main.py": {
     "mtime": 1782279333.4927251,
     "ast_hash": "a114e47e1009c5c606079b16855491ac",
     "semantic_hash": ""
@@ -249,62 +249,62 @@
     "ast_hash": "e3d0362042386d7e7c58b0626dcefbd2",
     "semantic_hash": ""
   },
-  "eval/src/opentology_eval/__init__.py": {
+  "eval/src/arche_eval/__init__.py": {
     "mtime": 1781613954.5486047,
     "ast_hash": "f3300004cf0fd56c4eca00505126fa4a",
     "semantic_hash": "f3300004cf0fd56c4eca00505126fa4a"
   },
-  "eval/src/opentology_eval/chunking.py": {
+  "eval/src/arche_eval/chunking.py": {
     "mtime": 1781613954.5501175,
     "ast_hash": "a11fc65cac06cf7babb7d7117f80180b",
     "semantic_hash": "a11fc65cac06cf7babb7d7117f80180b"
   },
-  "eval/src/opentology_eval/cli.py": {
+  "eval/src/arche_eval/cli.py": {
     "mtime": 1781936049.9012704,
     "ast_hash": "9ac82ca04a38e1402d58b759813a36ef",
     "semantic_hash": ""
   },
-  "eval/src/opentology_eval/columns/__init__.py": {
+  "eval/src/arche_eval/columns/__init__.py": {
     "mtime": 1781698997.9720342,
     "ast_hash": "b45d31d168bd34e2962bc2418442ba60",
     "semantic_hash": "b45d31d168bd34e2962bc2418442ba60"
   },
-  "eval/src/opentology_eval/columns/chunk_rag.py": {
+  "eval/src/arche_eval/columns/chunk_rag.py": {
     "mtime": 1781729185.3099258,
     "ast_hash": "e764654e027f0b43c5d89edadd6dac47",
     "semantic_hash": "e764654e027f0b43c5d89edadd6dac47"
   },
-  "eval/src/opentology_eval/columns/full_context.py": {
+  "eval/src/arche_eval/columns/full_context.py": {
     "mtime": 1781729185.3136036,
     "ast_hash": "d15ffc34fbefc783a7ac1d87f4133ff5",
     "semantic_hash": "d15ffc34fbefc783a7ac1d87f4133ff5"
   },
-  "eval/src/opentology_eval/config.py": {
+  "eval/src/arche_eval/config.py": {
     "mtime": 1781613954.5567634,
     "ast_hash": "972b0e411674a3cefe9a403e769fd483",
     "semantic_hash": "972b0e411674a3cefe9a403e769fd483"
   },
-  "eval/src/opentology_eval/loaders.py": {
+  "eval/src/arche_eval/loaders.py": {
     "mtime": 1781729185.3166356,
     "ast_hash": "6adcf57e60f2424b08e663d33e7d38b8",
     "semantic_hash": "6adcf57e60f2424b08e663d33e7d38b8"
   },
-  "eval/src/opentology_eval/prompts.py": {
+  "eval/src/arche_eval/prompts.py": {
     "mtime": 1782271136.2143757,
     "ast_hash": "0c352442bd7c8345664e3a193b015609",
     "semantic_hash": ""
   },
-  "eval/src/opentology_eval/providers.py": {
+  "eval/src/arche_eval/providers.py": {
     "mtime": 1781936049.9026856,
     "ast_hash": "9dd6411ca63f02450ccd7456ba2c414e",
     "semantic_hash": ""
   },
-  "eval/src/opentology_eval/questions.py": {
+  "eval/src/arche_eval/questions.py": {
     "mtime": 1781613954.560714,
     "ast_hash": "c6cd08b6ddcc2be43dab9fea3f6071c2",
     "semantic_hash": "c6cd08b6ddcc2be43dab9fea3f6071c2"
   },
-  "eval/src/opentology_eval/runlog.py": {
+  "eval/src/arche_eval/runlog.py": {
     "mtime": 1781921004.2554731,
     "ast_hash": "ac6841ef508727a59578f882fa0288bd",
     "semantic_hash": ""
@@ -464,27 +464,27 @@
     "ast_hash": "34e1d6ba084878d5ef1bb61320497cb5",
     "semantic_hash": "34e1d6ba084878d5ef1bb61320497cb5"
   },
-  "apps/api/src/opentology_api/adapters/image_loader.py": {
+  "apps/api/src/arche_api/adapters/image_loader.py": {
     "mtime": 1782279333.4576304,
     "ast_hash": "846987f436d6d5a2395b20e0226f83f7",
     "semantic_hash": ""
   },
-  "apps/api/src/opentology_api/adapters/pdf.py": {
+  "apps/api/src/arche_api/adapters/pdf.py": {
     "mtime": 1782279333.461371,
     "ast_hash": "912dbd026899229350b45f4877720061",
     "semantic_hash": ""
   },
-  "apps/api/src/opentology_api/api/services.py": {
+  "apps/api/src/arche_api/api/services.py": {
     "mtime": 1782279333.472562,
     "ast_hash": "75c6c6821bc7bd6d13f66749f3187953",
     "semantic_hash": ""
   },
-  "apps/api/src/opentology_api/mcp_server.py": {
+  "apps/api/src/arche_api/mcp_server.py": {
     "mtime": 1782279333.4960096,
     "ast_hash": "37170ca6d81cfd41126e7b1f4ce7ce7a",
     "semantic_hash": ""
   },
-  "apps/api/src/opentology_api/test_support.py": {
+  "apps/api/src/arche_api/test_support.py": {
     "mtime": 1782279333.4975522,
     "ast_hash": "e645c2d86db0eec2d26aebd9ecd7e6b4",
     "semantic_hash": ""
@@ -529,117 +529,117 @@
     "ast_hash": "19a6d8a75dd5cf27c4605b41f999889c",
     "semantic_hash": "19a6d8a75dd5cf27c4605b41f999889c"
   },
-  "eval/src/opentology_eval/clients/__init__.py": {
+  "eval/src/arche_eval/clients/__init__.py": {
     "mtime": 1781698997.9650316,
     "ast_hash": "c48fea54f7283142230ab342a404d904",
     "semantic_hash": "c48fea54f7283142230ab342a404d904"
   },
-  "eval/src/opentology_eval/clients/opentology.py": {
+  "eval/src/arche_eval/clients/arche.py": {
     "mtime": 1782042199.6906147,
     "ast_hash": "16fa026deb04c060b3c3b0101ffd0637",
     "semantic_hash": ""
   },
-  "eval/src/opentology_eval/columns/opentology.py": {
+  "eval/src/arche_eval/columns/arche.py": {
     "mtime": 1782223795.7874167,
     "ast_hash": "5f1331d82fb818464f875f6b0e3a22f7",
     "semantic_hash": ""
   },
-  "eval/src/opentology_eval/lint/__init__.py": {
+  "eval/src/arche_eval/lint/__init__.py": {
     "mtime": 1781728218.3861709,
     "ast_hash": "d33fb160280daead4b5a44df6316e743",
     "semantic_hash": "d33fb160280daead4b5a44df6316e743"
   },
-  "eval/src/opentology_eval/lint/_chunk.py": {
+  "eval/src/arche_eval/lint/_chunk.py": {
     "mtime": 1781728218.3863347,
     "ast_hash": "864412f3c8f8a97268b48df75fa5d8ef",
     "semantic_hash": "864412f3c8f8a97268b48df75fa5d8ef"
   },
-  "eval/src/opentology_eval/lint/_supported_exts.py": {
+  "eval/src/arche_eval/lint/_supported_exts.py": {
     "mtime": 1781728218.38646,
     "ast_hash": "7322cfddbb2cee4f9fb89b3a986c5d3a",
     "semantic_hash": "7322cfddbb2cee4f9fb89b3a986c5d3a"
   },
-  "eval/src/opentology_eval/lint/catalog.py": {
+  "eval/src/arche_eval/lint/catalog.py": {
     "mtime": 1781728218.3865814,
     "ast_hash": "e8dd828c111a4ad9d707c8834459b5d9",
     "semantic_hash": "e8dd828c111a4ad9d707c8834459b5d9"
   },
-  "eval/src/opentology_eval/lint/dryrun.py": {
+  "eval/src/arche_eval/lint/dryrun.py": {
     "mtime": 1781728218.3867335,
     "ast_hash": "e1f14e4a2e187a65e9d9f2344250bb47",
     "semantic_hash": "e1f14e4a2e187a65e9d9f2344250bb47"
   },
-  "eval/src/opentology_eval/lint/rules.py": {
+  "eval/src/arche_eval/lint/rules.py": {
     "mtime": 1781728218.386888,
     "ast_hash": "0509c16a03e4246cf112909f119c6697",
     "semantic_hash": "0509c16a03e4246cf112909f119c6697"
   },
-  "eval/src/opentology_eval/lint/runner.py": {
+  "eval/src/arche_eval/lint/runner.py": {
     "mtime": 1781728218.3870552,
     "ast_hash": "a3ba98d6013dcb3f1a6e9c1fcb57e0e1",
     "semantic_hash": "a3ba98d6013dcb3f1a6e9c1fcb57e0e1"
   },
-  "eval/src/opentology_eval/lint/schema.py": {
+  "eval/src/arche_eval/lint/schema.py": {
     "mtime": 1781728218.3872213,
     "ast_hash": "c400a9d9068c29531b3421e590c4a9ba",
     "semantic_hash": "c400a9d9068c29531b3421e590c4a9ba"
   },
-  "eval/src/opentology_eval/runs/__init__.py": {
+  "eval/src/arche_eval/runs/__init__.py": {
     "mtime": 1781700911.2287962,
     "ast_hash": "c112344d00d9c1c60004acf95b4c42d8",
     "semantic_hash": "c112344d00d9c1c60004acf95b4c42d8"
   },
-  "eval/src/opentology_eval/runs/layout.py": {
+  "eval/src/arche_eval/runs/layout.py": {
     "mtime": 1781700911.2311392,
     "ast_hash": "a283113eeec6a499fc53e45bb705fb93",
     "semantic_hash": "a283113eeec6a499fc53e45bb705fb93"
   },
-  "eval/src/opentology_eval/scoring/__init__.py": {
+  "eval/src/arche_eval/scoring/__init__.py": {
     "mtime": 1781700911.2332437,
     "ast_hash": "dfda06392aa0f0a421942f9f11cc7eeb",
     "semantic_hash": "dfda06392aa0f0a421942f9f11cc7eeb"
   },
-  "eval/src/opentology_eval/scoring/aggregate.py": {
+  "eval/src/arche_eval/scoring/aggregate.py": {
     "mtime": 1781700911.2351425,
     "ast_hash": "fdbc4a695f74d10a8703e241469776da",
     "semantic_hash": "fdbc4a695f74d10a8703e241469776da"
   },
-  "eval/src/opentology_eval/scoring/correctness.py": {
+  "eval/src/arche_eval/scoring/correctness.py": {
     "mtime": 1781700911.2375808,
     "ast_hash": "e280bcdba71d7df81ceeb4b459c05190",
     "semantic_hash": "e280bcdba71d7df81ceeb4b459c05190"
   },
-  "eval/src/opentology_eval/scoring/io.py": {
+  "eval/src/arche_eval/scoring/io.py": {
     "mtime": 1781921004.256159,
     "ast_hash": "c17b83413e8d2b914f7fb29f5b799406",
     "semantic_hash": ""
   },
-  "eval/src/opentology_eval/scoring/judge.py": {
+  "eval/src/arche_eval/scoring/judge.py": {
     "mtime": 1781700911.2449517,
     "ast_hash": "85923b6bf06a68d77279ceec9ef95e9b",
     "semantic_hash": "85923b6bf06a68d77279ceec9ef95e9b"
   },
-  "eval/src/opentology_eval/scoring/judge_runner.py": {
+  "eval/src/arche_eval/scoring/judge_runner.py": {
     "mtime": 1781700911.2489963,
     "ast_hash": "4b7d97bbabc04ade827d25099069952b",
     "semantic_hash": "4b7d97bbabc04ade827d25099069952b"
   },
-  "eval/src/opentology_eval/scoring/pricing.py": {
+  "eval/src/arche_eval/scoring/pricing.py": {
     "mtime": 1781700911.2546248,
     "ast_hash": "81d0b9d164f30281e250d8d03b89d734",
     "semantic_hash": "81d0b9d164f30281e250d8d03b89d734"
   },
-  "eval/src/opentology_eval/scoring/report.py": {
+  "eval/src/arche_eval/scoring/report.py": {
     "mtime": 1781700911.2571306,
     "ast_hash": "23495da93c9d8242070abaf2ad872f42",
     "semantic_hash": "23495da93c9d8242070abaf2ad872f42"
   },
-  "eval/src/opentology_eval/scoring/spotcheck.py": {
+  "eval/src/arche_eval/scoring/spotcheck.py": {
     "mtime": 1781700911.260218,
     "ast_hash": "8acc77fd8d8d0dedc0cb26ad2e2cb5e5",
     "semantic_hash": "8acc77fd8d8d0dedc0cb26ad2e2cb5e5"
   },
-  "eval/src/opentology_eval/serializers.py": {
+  "eval/src/arche_eval/serializers.py": {
     "mtime": 1782271136.2160072,
     "ast_hash": "d7460fe678ce032a16ed48318594c233",
     "semantic_hash": ""
@@ -674,22 +674,22 @@
     "ast_hash": "11b6ad3613de2fbb57b1284957a0cdc8",
     "semantic_hash": "11b6ad3613de2fbb57b1284957a0cdc8"
   },
-  "eval/tests/test_opentology_client.py": {
+  "eval/tests/test_arche_client.py": {
     "mtime": 1781698997.9929206,
     "ast_hash": "66a0b88ebc292227f483d672198cba2c",
     "semantic_hash": "66a0b88ebc292227f483d672198cba2c"
   },
-  "eval/tests/test_opentology_column.py": {
+  "eval/tests/test_arche_column.py": {
     "mtime": 1781698997.9965725,
     "ast_hash": "24cb4200711e10b1ac9dfc794637fbdb",
     "semantic_hash": "24cb4200711e10b1ac9dfc794637fbdb"
   },
-  "eval/tests/test_opentology_integration.py": {
+  "eval/tests/test_arche_integration.py": {
     "mtime": 1781698998.0002162,
     "ast_hash": "730483009a2439c3bc6f3a04b6074b71",
     "semantic_hash": "730483009a2439c3bc6f3a04b6074b71"
   },
-  "eval/tests/test_opentology_live.py": {
+  "eval/tests/test_arche_live.py": {
     "mtime": 1781698998.0039577,
     "ast_hash": "28260a4f68c6359010d3fc0e1ddf13ab",
     "semantic_hash": "28260a4f68c6359010d3fc0e1ddf13ab"
@@ -754,22 +754,22 @@
     "ast_hash": "a4c79550cea84f1062b0320928beb6d2",
     "semantic_hash": ""
   },
-  "eval/src/opentology_eval/multimodal/__init__.py": {
+  "eval/src/arche_eval/multimodal/__init__.py": {
     "mtime": 1781729185.3198133,
     "ast_hash": "af89e73cc18fa97c6738b27b8e1a8e56",
     "semantic_hash": "af89e73cc18fa97c6738b27b8e1a8e56"
   },
-  "eval/src/opentology_eval/multimodal/image_input.py": {
+  "eval/src/arche_eval/multimodal/image_input.py": {
     "mtime": 1781729185.3224547,
     "ast_hash": "f51dd2e43c0fce9a5ea7127833455ebf",
     "semantic_hash": "f51dd2e43c0fce9a5ea7127833455ebf"
   },
-  "eval/src/opentology_eval/multimodal/image_loader.py": {
+  "eval/src/arche_eval/multimodal/image_loader.py": {
     "mtime": 1781729185.3244832,
     "ast_hash": "989fdd14adcb3a09c1ba05268bb4fe24",
     "semantic_hash": "989fdd14adcb3a09c1ba05268bb4fe24"
   },
-  "eval/src/opentology_eval/multimodal/pdf.py": {
+  "eval/src/arche_eval/multimodal/pdf.py": {
     "mtime": 1781729185.3270802,
     "ast_hash": "19955cf0cee571b6e5ba1dbe2c75e3da",
     "semantic_hash": "19955cf0cee571b6e5ba1dbe2c75e3da"
@@ -819,7 +819,7 @@
     "ast_hash": "6d00bae2114af4058881649c3ec52f3c",
     "semantic_hash": "6d00bae2114af4058881649c3ec52f3c"
   },
-  "eval/src/opentology_eval/scoring/price.yaml": {
+  "eval/src/arche_eval/scoring/price.yaml": {
     "mtime": 1781700911.2521331,
     "ast_hash": "81996b10d9512a92a04612f8931597f8",
     "semantic_hash": "81996b10d9512a92a04612f8931597f8"
@@ -854,32 +854,32 @@
     "ast_hash": "a9e19da637d0bc90beb0a3a9f8109311",
     "semantic_hash": "a9e19da637d0bc90beb0a3a9f8109311"
   },
-  "apps/api/src/opentology_api/adapters/extract_cache.py": {
+  "apps/api/src/arche_api/adapters/extract_cache.py": {
     "mtime": 1782279333.4534032,
     "ast_hash": "e2fb5dcf4ae0e9bda108a208f7e7756b",
     "semantic_hash": ""
   },
-  "apps/api/src/opentology_api/api/auth.py": {
+  "apps/api/src/arche_api/api/auth.py": {
     "mtime": 1782279333.46532,
     "ast_hash": "68b3e763f602c9607d9ddbba7db76e10",
     "semantic_hash": ""
   },
-  "apps/api/src/opentology_api/api/error_codes.py": {
+  "apps/api/src/arche_api/api/error_codes.py": {
     "mtime": 1782223795.7007663,
     "ast_hash": "225599a90b9441e005c21f77dc525181",
     "semantic_hash": ""
   },
-  "apps/api/src/opentology_api/domain/extract_context.py": {
+  "apps/api/src/arche_api/domain/extract_context.py": {
     "mtime": 1782279333.4820843,
     "ast_hash": "4e078a1300c8f6e21f6cd953deac8a32",
     "semantic_hash": ""
   },
-  "apps/api/src/opentology_api/domain/main_entity.py": {
+  "apps/api/src/arche_api/domain/main_entity.py": {
     "mtime": 1782279333.4891117,
     "ast_hash": "01139cd543e71ec88efdffe227dd5e63",
     "semantic_hash": ""
   },
-  "apps/api/src/opentology_api/mcp_http.py": {
+  "apps/api/src/arche_api/mcp_http.py": {
     "mtime": 1782279333.49431,
     "ast_hash": "a299343ffd976c456258b91d8cf3a971",
     "semantic_hash": ""
@@ -999,17 +999,17 @@
     "ast_hash": "b15f6aeeff3ded76116763fe59adbab8",
     "semantic_hash": ""
   },
-  "eval/src/opentology_eval/columns/combined.py": {
+  "eval/src/arche_eval/columns/combined.py": {
     "mtime": 1781921004.2526815,
     "ast_hash": "ab19d035faac87a184dadd384374e0b9",
     "semantic_hash": ""
   },
-  "eval/src/opentology_eval/columns/opentology_aug.py": {
+  "eval/src/arche_eval/columns/arche_aug.py": {
     "mtime": 1781989329.618779,
     "ast_hash": "dabf0b5032b99279c110152352fa7745",
     "semantic_hash": ""
   },
-  "eval/src/opentology_eval/columns/opentology_triple.py": {
+  "eval/src/arche_eval/columns/arche_triple.py": {
     "mtime": 1781989329.6202679,
     "ast_hash": "e7980966c48614f18d3f1495a000c2b0",
     "semantic_hash": ""
@@ -1479,7 +1479,7 @@
     "ast_hash": "d87fa30c41b253db7f8ef8fef9b08ed5",
     "semantic_hash": ""
   },
-  "apps/api/src/opentology_api/domain/extraction_contract.py": {
+  "apps/api/src/arche_api/domain/extraction_contract.py": {
     "mtime": 1782279333.4839003,
     "ast_hash": "d1596a60f26e4b615cda1a8ddd290f00",
     "semantic_hash": ""
