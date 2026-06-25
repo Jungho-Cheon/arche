@@ -101,6 +101,15 @@ class IngestResult:
     # WHY chunks_total 노출: CLI / admin status 가 "[i/n] doc.md (3 chunks) ..."
     # 출력 형식 (PRD 2 §7.3) 을 만들 신호. short_circuit 시에는 1 (재처리 안 함).
     chunks_total: int = 1
+    # issue #78 — 디렉토리 2-pass 가 정방향 cross-file 관계를 *원 파일 run* 에
+    # 귀속시키려면 그 run id 가 필요하다. short_circuit / dry-run 은 run 이 없어 "".
+    run_id: str = ""
+    # issue #78 — 1-pass 에서 해소 실패한 관계 (정방향 cross-file 후보). 디렉토리
+    # 모드가 모든 파일 적재 후 그래프 전체 기준으로 재해소한다. 단일 파일 ingest
+    # 호출자는 이 필드를 무시 (그 경우는 진짜 dangling 이라 회수 대상 없음).
+    unresolved_relations: list[tuple[ExtractedRelation, SourceRef]] = field(
+        default_factory=list
+    )
 
 
 @dataclass
@@ -124,6 +133,12 @@ class DirectoryIngestResult:
     files_pending_skipped: int = 0
     files_unsupported_skipped: int = 0
     per_file: list[IngestResult] = field(default_factory=list)
+    # issue #78 — 디렉토리 2-pass 가 회수한 정방향 cross-file 관계 수. 1-pass 에서
+    # dangling 으로 떨어졌다가 전 파일 적재 후 재해소된 관계. per_file 의 dangling/
+    # created 카운터는 2-pass 결과를 반영해 *제자리에서 보정* 되므로, 아래 집계
+    # property 들은 별도 조정 없이 최종 진실을 합산한다. 본 필드는 그중 "정방향
+    # 회수" 만 따로 가시화하는 관측 신호.
+    relations_recovered_cross_file: int = 0
 
     @property
     def entities_created(self) -> int:
@@ -299,6 +314,14 @@ class IngestService:
                     )
                 )
 
+        # issue #78 — 디렉토리 2-pass. 모든 파일 적재가 끝나 전 엔티티가 그래프에
+        # 들어온 지금, 1-pass 에서 dangling 으로 떨어진 관계(정방향 cross-file 참조
+        # 후보)를 그래프 전체 기준으로 한 번 더 해소한다. dry-run 은 그래프에 쓰지
+        # 않으므로 건너뛴다 (불변: dry-run 은 상태 부작용 0).
+        recovered = 0
+        if not dry_run:
+            recovered = self._resolve_cross_file_relations(per_file)
+
         return DirectoryIngestResult(
             directory_path=str(path),
             files_total=len(files),
@@ -308,6 +331,7 @@ class IngestService:
             files_pending_skipped=summary.files_pending_skipped,
             files_unsupported_skipped=summary.files_unsupported_skipped,
             per_file=per_file,
+            relations_recovered_cross_file=recovered,
         )
 
     def _dry_run_file(self, path: Path) -> IngestResult:
@@ -589,7 +613,7 @@ class IngestService:
             # (1) 이번 파일의 name_to_id (정확/정규화), (2) 그래프 정규명(이전 파일
             # 포함) 순으로 찾는다 → cross-chunk 정방향/역방향 + cross-doc 역방향 참조
             # 가 모두 이어진다.
-            agg_rel_created, agg_rel_dangling, all_rel_ids = (
+            agg_rel_created, agg_rel_dangling, all_rel_ids, unresolved_rels = (
                 self._upsert_relations_deferred(
                     pending=pending_relations,
                     name_to_id=all_name_to_id,
@@ -628,6 +652,10 @@ class IngestService:
                 relations_deleted=diff_metrics["relations_deleted"],
                 relations_trimmed=diff_metrics["relations_trimmed"],
                 chunks_total=total_chunks,
+                # issue #78 — 디렉토리 2-pass 가 정방향 cross-file 관계를 이 run 에
+                # 귀속시켜 재해소할 수 있도록 run_id + 미해소 관계를 surface.
+                run_id=run_id,
+                unresolved_relations=unresolved_rels,
             )
         except Exception:
             # 실패 — run 을 failed 로 마킹해 다음 호출에서 short-circuit 되지
@@ -1016,7 +1044,7 @@ class IngestService:
         pending: list[tuple[ExtractedRelation, SourceRef]],
         name_to_id: dict[str, str],
         run_id: str,
-    ) -> tuple[int, int, list[str]]:
+    ) -> tuple[int, int, list[str], list[tuple[ExtractedRelation, SourceRef]]]:
         """모아 둔 관계를 *파일 전체 엔티티 + 그래프* 기준으로 한 번에 해소 (issue #28).
 
         엔드포인트 해소 우선순위 (`_resolve_endpoint`):
@@ -1024,10 +1052,16 @@ class IngestService:
           2. 이번 파일 name_to_id 의 *정규화* 일치 (표기 흔들림 흡수).
           3. 그래프 정규명 lookup (이전 파일 노드 — cross-doc 역방향 참조).
         셋 다 miss 면 dangling.
+
+        반환의 마지막 원소 `unresolved` 는 1-pass 에서 해소 실패한 관계 목록이다
+        (issue #78). 디렉토리 모드가 *모든 파일 적재 후* 그래프 전체 기준으로
+        이들을 한 번 더 해소한다 (정방향 cross-file 참조). 단일 파일 ingest 에서는
+        진짜 dangling 이라 회수 대상이 없다.
         """
         created = 0
         dangling = 0
         rel_ids: list[str] = []
+        unresolved: list[tuple[ExtractedRelation, SourceRef]] = []
         # 이번 파일 엔티티의 정규화 인덱스 — 정확 일치 miss 시 표기 흔들림 흡수.
         norm_index: dict[str, str] = {}
         for name, eid in name_to_id.items():
@@ -1040,6 +1074,8 @@ class IngestService:
             to_id = self._resolve_endpoint(r.to_name, name_to_id, norm_index)
             if not from_id or not to_id:
                 dangling += 1
+                # issue #78 — 디렉토리 2-pass 가 나중에 재시도하도록 보존.
+                unresolved.append((r, source_ref))
                 logger.warning(
                     "skip dangling relation from=%s to=%s type=%s source=%s",
                     r.from_name,
@@ -1057,12 +1093,13 @@ class IngestService:
             if not rid:
                 # 어댑터가 from/to 매치 실패 시 ("", False) 반환 — 방어.
                 dangling += 1
+                unresolved.append((r, source_ref))
                 continue
             rel_ids.append(rid)
             self._graph.mark_relation_emitted(relation_id=rid, run_id=run_id)
             if was_created:
                 created += 1
-        return created, dangling, rel_ids
+        return created, dangling, rel_ids, unresolved
 
     def _resolve_endpoint(
         self,
@@ -1085,6 +1122,73 @@ class IngestService:
         # 3. 그래프 정규명 lookup — 이전 파일에서 적재된 노드(cross-doc 역방향 참조).
         #    단일 store 는 유일 매치만 돌려주고, 그 외(기본 포트)는 None.
         return self._graph.find_entity_id_by_normalized_name(normalized=nkey)
+
+    def _resolve_cross_file_relations(
+        self, per_file: list[IngestResult]
+    ) -> int:
+        """디렉토리 2-pass — 1-pass 에서 떨어진 정방향 cross-file 관계 재해소 (issue #78).
+
+        모든 파일이 적재되어 전 엔티티가 그래프에 들어온 *후* 호출된다. 1-pass 에서
+        dangling 으로 떨어진 각 관계를, 이제 완성된 그래프의 정규명 lookup 으로 양
+        끝점을 다시 찾아 연결한다. name_to_id 는 파일 단위라 이미 사라졌으므로 순수
+        그래프 정규명 해소만 쓴다 (양 끝점이 모두 그래프에 존재).
+
+        provenance — 회수한 관계를 *그 관계를 추출한 파일의 run* 의
+        emitted_relation_ids 에 귀속시킨다 (`append_emitted_relations`). 그래야 그
+        파일의 다음 재적재 차분이 이 관계를 보존한다 (이슈 경고 해소). 동시에 원
+        파일의 IngestResult 카운터(dangling↓, created↑)를 제자리 보정해 per_file 과
+        디렉토리 집계가 최종 진실을 보고하게 한다.
+
+        WHY 추가 LLM 호출 0: 이미 추출된 관계의 엔드포인트를 *그래프에서* 다시 찾을
+        뿐이라 결정적 후처리다 (완료 조건 4).
+
+        반환값 — 회수(생성 또는 기존 연결)한 관계 수.
+        """
+        recovered = 0
+        for res in per_file:
+            if not res.unresolved_relations or not res.run_id:
+                continue
+            for rel, source_ref in res.unresolved_relations:
+                from_id = self._graph.find_entity_id_by_normalized_name(
+                    normalized=normalize(rel.from_name)
+                )
+                to_id = self._graph.find_entity_id_by_normalized_name(
+                    normalized=normalize(rel.to_name)
+                )
+                if not from_id or not to_id:
+                    # 여전히 끝점을 못 찾음 — 진짜 dangling (그래프 어디에도 없음).
+                    continue
+                rid, was_created = self._graph.upsert_relation(
+                    from_id=from_id,
+                    to_id=to_id,
+                    rel_type=rel.type,
+                    source_ref=source_ref,
+                )
+                if not rid:
+                    continue
+                # provenance — 원 파일 run 에 귀속 (edge + run 노드 양쪽).
+                self._graph.mark_relation_emitted(
+                    relation_id=rid, run_id=res.run_id
+                )
+                self._graph.append_emitted_relations(
+                    run_id=res.run_id, relation_ids=[rid]
+                )
+                # 원 파일 카운터 제자리 보정 — 더는 dangling 아님.
+                if res.relations_skipped_dangling > 0:
+                    res.relations_skipped_dangling -= 1
+                if was_created:
+                    res.relations_created += 1
+                recovered += 1
+                logger.info(
+                    "cross-file relation recovered from=%s to=%s type=%s "
+                    "source=%s run=%s",
+                    rel.from_name,
+                    rel.to_name,
+                    rel.type,
+                    source_ref.source_path,
+                    res.run_id,
+                )
+        return recovered
 
     def _apply_diff(
         self,

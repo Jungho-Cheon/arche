@@ -555,6 +555,34 @@ class Neo4jGraphRepository(GraphRepository):
                 rids=emitted_relation_ids,
             ).consume()
 
+    def append_emitted_relations(
+        self, *, run_id: str, relation_ids: list[str]
+    ) -> None:
+        """이미 finalize 된 run 의 emitted_relation_ids 에 dedupe append (issue #78).
+
+        디렉토리 2-pass 가 정방향 cross-file 관계를 *원래 그 관계를 추출한 파일의
+        run* 에 귀속시킨다. 차분(apply_*_diff)은 run 노드의 emitted_relation_ids
+        배열을 기준으로 삭제 여부를 판정하므로, 2-pass 관계를 이 배열에 넣어야
+        그 파일의 다음 재적재 차분이 관계를 잘못 삭제하지 않는다. 포트 docstring
+        참조. 빈 입력이면 호출 자체를 생략.
+        """
+        if not relation_ids:
+            return
+        with self._driver.session() as s:
+            # reduce 로 각 id 를 dedupe append — 같은 id 가 이미 있으면 그대로 둔다.
+            s.run(
+                f"""
+                MATCH (r:{INGESTION_RUN_LABEL} {{id: $id}})
+                WITH r, reduce(acc = coalesce(r.emitted_relation_ids, []),
+                               x IN $rids |
+                               CASE WHEN x IN acc THEN acc ELSE acc + [x] END
+                              ) AS merged
+                SET r.emitted_relation_ids = merged
+                """,
+                id=run_id,
+                rids=relation_ids,
+            ).consume()
+
     def apply_entity_diff(
         self, *, entity_id: str, source_path: str, run_id: str
     ) -> str:

@@ -389,6 +389,27 @@ class GraphStore(ABC):
     ) -> None:
         """run 의 종결 — status + completed_at + 이번에 손댄 id 목록 기록."""
 
+    def append_emitted_relations(
+        self, *, run_id: str, relation_ids: list[str]
+    ) -> None:
+        """이미 finalize 된 run 의 `emitted_relation_ids` 에 dedupe append (issue #78).
+
+        WHY (디렉토리 2-pass): 파일을 알파벳 순으로 직렬 적재할 때, 먼저 처리되는
+        파일 A 의 관계가 *나중에 처리되는* 파일 B 의 엔티티를 가리키면(정방향 참조),
+        A 적재 시점엔 B 노드가 없어 그 관계가 dangling 으로 떨어진다. 모든 파일
+        적재가 끝나 전 엔티티가 그래프에 들어온 뒤, `ingest_directory` 가 결정적
+        2-pass 로 그 관계를 재해소한다. 그런데 A 의 run 은 이미 finalize 됐으므로,
+        2-pass 가 만든 관계를 *그 관계를 추출한 A 의 run* 의 provenance 에 귀속시켜야
+        한다 — 그래야 A 의 다음 재적재 차분이 그 관계를 "이번 run 에서 emit 안 됨"
+        으로 오인해 삭제하지 않는다(차분은 run 노드의 emitted_relation_ids 를 본다).
+
+        WHY 기본 구현 no-op: 능력 포트의 *선택적* 확장점. 실 store(Neo4j) 만
+        오버라이드하면 되고, 다른 store/테스트 더블은 no-op 으로 동작이 깨지지 않는다
+        (2-pass 미수행 store 에서는 정방향 참조가 첫 적재에 누락되되, 재적재 시
+        1-pass graph fallback 으로 자가 치유 — issue #78 본문 참조).
+        """
+        return None
+
     @abstractmethod
     def apply_entity_diff(
         self, *, entity_id: str, source_path: str, run_id: str

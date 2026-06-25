@@ -135,7 +135,7 @@ ADR-0016 측정이 제품 방향을 바꾸면서 (에이전트 반복 graph-only
 |---|---|---|---|
 | ✅ 완료 | cross-chunk/cross-doc 관계 엔드포인트 해소 (#28 의 multi-hop 사슬 끊김) | 관계 해소를 청크 루프 뒤로 미루고 그래프 정규명 fallback 추가. find_path 4-hop 사슬 복원 (단위+통합 테스트) | #28 |
 | 1 | 문서 간 엔티티 동일성 해소 강화 (추출 단계 cross-doc 병합) | cross-doc 병합률 ↑ + 관계-사슬 도메인(MedHop류) 천장 상승 evidence. ADR-0009 LLM 매칭 강화 축 | (신규 필요) |
-| 2 | cross-file *정방향* 관계 해소 (디렉토리 2-pass) | 나중 적재 파일의 엔티티를 가리키는 관계도 해소. idempotent diff/run 모델과 함께 설계. *첫 ingest 순서 artifact* — 재적재 시 자가 치유(나중 파일 엔티티가 그래프에 이미 있어 1-pass fallback 이 해소) | #78 |
+| ✅ 완료 | cross-file *정방향* 관계 해소 (디렉토리 2-pass) | 모든 파일 적재 후 결정적 2-pass 가 1-pass dangling 을 그래프 정규명으로 재해소하고, 회수한 관계를 *원 파일 run* 의 emitted_relation_ids 에 귀속(`append_emitted_relations`)시켜 재적재 차분 회귀 0. 추가 LLM 호출 없음. find_path 순서 비의존 (단위+통합 테스트) | #78 |
 | 3 | API 에러 계약 정규화 | Pydantic 422 → PRD 3 §0.3 envelope, 회귀 테스트 | #26 |
 | 4 | 결정적 측정 하니스 컬럼 (에이전트 반복 graph-only 고정) | 재현 가능한 컬럼으로 94-97% 재측정 | (신규 필요) |
 | 후순위 | Scale·다도메인·외부 비교 (옛 M9) | 1M 한국어 corpus + 외부 도구 비교 | TBD |
