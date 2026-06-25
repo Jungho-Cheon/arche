@@ -99,12 +99,27 @@ Arche = LLM·AI 에이전트가 *도메인 지식의 관계* 를 *최소한의 �
 | M5 | 평가 데이터 (상거래 검증 도메인 소스 + 30 MCQ) | 완료 — commerce-verbose-20260618 (33 파일 95K 토큰, 30 MCQ, lint green) + financebench-2026-06-20 (6 파일 980K 토큰, 33 MCQ, lint green) |
 | M6 | 3-way 측정 + 보고서 1 회 | 완료 — 2026-06-19-2126 (gpt-4.1 N=3) + 후속 Combined 검증 2026-06-20-0923 (Combined RAG 100% 달성, 피벗 확정) |
 | M6.5 | 1M corpus 3-way 재검증 (gating) | 완료 — `eval/reports/2026-06-20-financebench-1M/CONCLUSION.md`. Combined ≈ chunk (+0pp), 그러나 graph 부패로 측정 무효. ADR-0008 |
-| **M6.5b** | **EntityConsolidator + 1M 재측정 (신규 gating)** | **pending** — ADR-0008 신설. EntityConsolidator 구현 → 1M 재 ingest → arche + combined 재측정 → ADR-0007 D2 진짜 분기 결정 |
-| M7 | Combined RAG productization | pending (M6.5b 종료 후) |
-| M8 | Combined 품질·비용 최적화 (잔여) | pending (M7 종료 후, EntityConsolidator 는 M6.5b 로 이동) |
-| M9 | Scale·다도메인·외부 비교 | pending (M8 종료 후) |
+| ~~M6.5b~~ | ~~EntityConsolidator + 1M 재측정 (gating)~~ | **superseded (ADR-0016/0017)** — 아래 "마일스톤 재정렬" 참조 |
+| ~~M7~~ | ~~Combined RAG productization~~ | **superseded (ADR-0016 D1)** — Combined 단발은 측정 baseline 으로만 유지, 제품 소비 방식은 에이전트 반복 graph-only |
+| ~~M8~~ | ~~Combined 품질·비용 최적화~~ | **superseded (ADR-0016 D1)** — 단발 파이프라인 최적화는 외부 에이전트 반복 모델에서 무의미 |
+| M9 | Scale·다도메인·외부 비교 | 보류 (방향 유효, 우선순위 후순위) |
 
-위 골격은 *구현 계획서* 가 확정되면 그 결정에 맞춰 갱신된다.
+### 마일스톤 재정렬 (ADR-0016 피벗, 2026-06-25 반영)
+
+ADR-0016 측정이 제품 방향을 바꾸면서 (에이전트 반복 graph-only 94-97% > graphify 57.6%, 답변 LLM 외부화) Combined RAG 를 중심으로 짠 M6.5b~M8 의 전제가 무너졌다. 각 마일스톤의 종결 상태.
+
+| 옛 마일스톤 | 무엇이었나 | 왜 superseded | 종결 |
+|---|---|---|---|
+| M6.5b (EntityConsolidator gating) | post-ingest dedup 으로 over-merge 잡고 ADR-0007 D2 분기 결정 | ADR-0007 D2 분기 자체가 Combined 전제. 동일성 해소는 ADR-0009 추출 단계 매칭 + ADR-0017 정밀도(허브 인지)로 대체. ADR-0011 이 Consolidator deprecation 경로 명시 | 닫음 (#40, #50) |
+| M7 (Combined productization) | 내재화 `/answer` 단발 엔드포인트 + 운영화 | ADR-0016 D1 — 답변 LLM 을 외부(MCP/REST)에 두고 프리미티브 반복 호출이 제품 기본. `/answer` 미구현(코드 확인) | 닫음 (#33~39) |
+| M8 (Combined 최적화) | 단발 호출 컨텍스트 패킹 최적화(anchor/rerank/budget) | retrieval 오케스트레이션이 외부 에이전트로 이동 → 단발 패킹 가정 무효 | 닫음 (#41~43) |
+
+**실제 남은 백로그 (피벗 이후 유효):**
+- **문서 간 엔티티 동일성 해소 강화** — ADR-0016 D4 가 지목한 진짜 다음 레버 (관계-사슬 도메인 천장의 원인). 추출 단계 cross-doc 병합률 ↑. 관련 이슈 #28 (multi-chunk multi-hop 추출 누락 + cross-chunk identity collapse).
+- **API 에러 계약 정규화** — #26 (Pydantic 422 → PRD 3 §0.3 envelope). 피벗과 무관하게 유효.
+- **결정적 측정 하니스 컬럼** — ADR-0016 한계 §3 (서브에이전트 측정을 고정 컬럼으로).
+
+> ADR-0016 은 아직 `proposed (RFC)` 상태지만, 이를 amend 한 ADR-0017 과 후속 ADR-0018/0019 가 피벗을 기정사실로 빌드했고 코드도 D1 을 따른다(=`/answer` 없음, 프리미티브만). **권고: ADR-0016 을 accepted 로 승격** (본 STATUS 정정은 ADR 본문을 건드리지 않음 — CLAUDE.md ADR 자동갱신 금지 규칙 준수).
 
 ## 알려진 stub 표
 
@@ -112,19 +127,18 @@ Arche = LLM·AI 에이전트가 *도메인 지식의 관계* 를 *최소한의 �
 |---|---|---|
 | (없음 — M1 완료) | | |
 
-## 다음 액션 (M6.5 결과 반영) — M6.5b → M7 → M8 → M9
+## 다음 액션 (ADR-0016 피벗 이후)
 
-| 마일스톤 | 종료 조건 | 핵심 이슈 |
-|---|---|---|
-| M6.5 — 1M corpus 3-way 재검증 | 완료. 보고서 — `eval/reports/2026-06-20-financebench-1M/CONCLUSION.md`. 결과: Combined ≈ chunk (+0pp). graph 부패로 직접 분기 결정 보류. ADR-0008 신설 | #44 ✓ / #45 (deferred) / #46 ✓ |
-| **M6.5b — EntityConsolidator + 1M 재측정 (gating)** | post-ingest ANN + LLM 검증 dedup 구현 + 1M corpus 재 ingest 후 over-merge 감소 evidence + arche/combined 재측정 → ADR-0007 D2 진짜 분기 결정 | (신규) #40 EntityConsolidator 를 M8 → M6.5b 로 이동 + 1M 재측정 이슈 신설 |
-| M7 — Combined RAG productization | docker-compose up + ingest + `curl /answer` 만으로 외부 사용자가 답 받기 | #33 /answer, #34 /retrieve, #35 provenance, #36 노브, #37 Getting Started, #38 identity refresh, #39 service mode |
-| M8 — Combined 품질·비용 최적화 (잔여) | 95K 재측정 토큰 ≤ 10K / latency ≤ 3.5s / 정확도 100% 유지 | #41 retrieval anchor, #42 subgraph reranking, #43 budget allocator (#40 은 M6.5b 로 이동) |
-| M9 — Scale·다도메인·외부 비교 | 1M 자체 한국어 corpus 측정 + 외부 도구 (LangChain Hybrid / Microsoft GraphRAG) 비교 evidence | TBD (M8 종료 후 도출) |
+옛 M6.5b→M9 시퀀스는 Combined RAG 전제가 무너져 위 "마일스톤 재정렬" 로 종결했다. 피벗 이후 유효한 작업.
 
-상세 — `docs/prd/6_post_mvp_combined.md` §4 + ADR-0008. ADR-0007 의 정체성/기술 결정은 유지되며 ADR-0008 이 D2 의 *결정 시점만 지연*.
+| 우선순위 | 작업 | 종료 조건 | 이슈 |
+|---|---|---|---|
+| 1 | 문서 간 엔티티 동일성 해소 강화 (추출 단계) | cross-doc 병합률 ↑ + 관계-사슬 도메인(MedHop류) 천장 상승 evidence | #28 |
+| 2 | API 에러 계약 정규화 | Pydantic 422 → PRD 3 §0.3 envelope, 회귀 테스트 | #26 |
+| 3 | 결정적 측정 하니스 컬럼 (에이전트 반복 graph-only 고정) | 재현 가능한 컬럼으로 94-97% 재측정 | (신규 필요) |
+| 후순위 | Scale·다도메인·외부 비교 (옛 M9) | 1M 한국어 corpus + 외부 도구 비교 | TBD |
 
-**M6.5b 가 gating** — M7-M9 의 *코드 작업* 은 M6.5b 종료 전까지 착수하지 않음. 설계 문서/이슈 정리는 병행 가능. M6.5 의 *직접 결과* (Combined ≈ chunk) 만으로 ADR-0007 D2 의 "M7 단순화" 분기에 들어가는 것은 *graph 부패가 측정에 영향* 을 줬으므로 거부 (ADR-0008 D1).
+상세 측정 근거 — `eval/reports/2026-06-22-graphify-mcq-baseline/` (BREAKTHROUGH-AGENTIC-GRAPHONLY / GENERALIZATION-MEDHOP / SCALE-IS-THE-VARIABLE) + ADR-0016/0017.
 
 ## 갱신 정책
 
