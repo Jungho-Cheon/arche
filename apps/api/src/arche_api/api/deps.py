@@ -10,10 +10,9 @@ from fastapi import Depends, Request
 
 from arche_api.domain.ports import EmbeddingProvider, GraphRepository, LLMProvider
 
-from ..adapters.embedding import OpenAIEmbeddingProvider
 from ..adapters.extract_cache import DEFAULT_CACHE_DIR, ExtractionCache
 from ..adapters.graph import Neo4jGraphRepository
-from ..adapters.llm import OpenAILLMProvider
+from ..adapters.providers import build_embedding_provider, build_llm_provider
 from ..config import Settings, get_settings
 from ..domain.ingest import IngestService
 from ..domain.main_entity import MainEntityExtractor
@@ -70,12 +69,13 @@ def task_registry_dep(request: Request) -> IngestTaskRegistry:
 
 
 def build_default_components(settings: Settings) -> dict:
-    """프로덕션 부팅 경로에서 사용. 테스트는 별도 구성."""
+    """프로덕션 부팅 경로에서 사용. 테스트는 별도 구성.
+
+    LLM/임베딩 provider 는 모델 식별자의 접두사로 팩토리가 고른다 (ADR-0019) —
+    `ARCHE_API_LLM_MODEL=anthropic/...`, `ARCHE_API_EMBEDDING_MODEL=voyage/...` 처럼
+    환경 변수만 바꾸면 코드 변경 없이 교체된다.
+    """
     graph = Neo4jGraphRepository(settings)
-    llm = OpenAILLMProvider(
-        model_id=settings.llm_model_id, api_key=settings.openai_api_key
-    )
-    embedder = OpenAIEmbeddingProvider(
-        model_id=settings.embedding_model_id, api_key=settings.openai_api_key
-    )
+    llm = build_llm_provider(settings)
+    embedder = build_embedding_provider(settings)
     return {"graph_repo": graph, "llm_provider": llm, "embedding_provider": embedder}

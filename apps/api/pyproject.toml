@@ -22,6 +22,15 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+# 추가 provider SDK — OpenAI 외 LLM/임베딩을 쓸 때만 설치 (ADR-0019). 기본 의존성
+# 에서 빼 둔 이유: 기본 경로(OpenAI)만 쓰는 사용자에게 불필요한 무게를 지우지
+# 않기 위함. `uv sync --extra providers` 로 켠다.
+#   - anthropic: Claude 추출 어댑터
+#   - voyageai : Voyage 임베딩 어댑터 (Anthropic 은 임베딩 API 가 없어 짝으로 둔다)
+providers = [
+    "anthropic>=0.40.0",
+    "voyageai>=0.3.0",
+]
 dev = [
     "pytest>=8.0",
     "pytest-asyncio>=0.23.0",
@@ -29,6 +38,9 @@ dev = [
     "testcontainers[neo4j]>=4.7.0",
     "respx>=0.21.0",
     "ruff>=0.8.0",
+    # 테스트는 두 provider 어댑터를 mock 클라이언트로 검증하므로 SDK 타입이 필요.
+    "anthropic>=0.40.0",
+    "voyageai>=0.3.0",
 ]
 
 [project.scripts]
