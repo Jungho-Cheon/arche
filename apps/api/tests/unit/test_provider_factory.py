@@ -13,7 +13,11 @@ from types import SimpleNamespace
 import pytest
 
 from arche_api.adapters.embedding import OpenAIEmbeddingProvider, VoyageEmbeddingProvider
-from arche_api.adapters.llm import AnthropicLLMProvider, OpenAILLMProvider
+from arche_api.adapters.llm import (
+    AnthropicLLMProvider,
+    ClaudeCodeLLMProvider,
+    OpenAILLMProvider,
+)
 from arche_api.adapters.providers import (
     build_embedding_provider,
     build_llm_provider,
@@ -56,6 +60,13 @@ def test_llm_prefix_selects_adapter():
     )
 
 
+def test_claude_code_prefix_selects_adapter_without_key():
+    """claude-code/ 는 API 키 없이 빌드된다 (구독 인증 사용)."""
+    prov = build_llm_provider(_llm_settings("claude-code/claude-sonnet-4-5"))
+    assert isinstance(prov, ClaudeCodeLLMProvider)
+    assert prov.model_id == "claude-sonnet-4-5"
+
+
 def test_embedding_prefix_selects_adapter():
     assert isinstance(
         build_embedding_provider(_embed_settings("openai/text-embedding-3-small")),
@@ -91,5 +102,5 @@ def test_unknown_embedding_provider_raises_with_supported_list():
 
 
 def test_supported_lists_are_sorted():
-    assert supported_llm_providers() == ["anthropic", "openai"]
+    assert supported_llm_providers() == ["anthropic", "claude-code", "openai"]
     assert supported_embedding_providers() == ["openai", "voyage"]

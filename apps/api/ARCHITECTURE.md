@@ -88,7 +88,7 @@ ADR (`docs/adr/`) 에 있고, 여기서는 *지금 코드가 어떻게 생겼는
 | 파일 | 책임 |
 |---|---|
 | `adapters/graph.py` | 구현 `Neo4jGraphRepository` (포트는 `domain/ports.py` 에서 import). Neo4j Cypher + 인덱스. |
-| `adapters/llm.py` | `OpenAILLMProvider` (중립 계약 → OpenAI `response_format` 봉투) + `AnthropicLLMProvider` (중립 계약 → Anthropic tool-use). 둘 다 같은 포트/중립 계약 구현 (ADR-0019). |
+| `adapters/llm.py` | `OpenAILLMProvider` (중립 계약 → OpenAI `response_format` 봉투) + `AnthropicLLMProvider` (→ Anthropic tool-use) + `ClaudeCodeLLMProvider` (→ `claude -p` 구독 경유, 키 불필요·텍스트 전용). 모두 같은 포트/중립 계약 구현 (ADR-0019). |
 | `adapters/embedding.py` | `OpenAIEmbeddingProvider` + `VoyageEmbeddingProvider` (포트 import, ADR-0019). |
 | `adapters/providers.py` | provider 팩토리 — 모델 식별자 접두사(`openai/anthropic/voyage`)로 어느 어댑터를 만들지 고른다. 호출부(deps/cli)는 이 팩토리만 부른다 (ADR-0019 D2). |
 | `adapters/pdf.py` / `adapters/image_loader.py` | PDF/이미지 로딩. |
@@ -221,7 +221,7 @@ POST /admin/ingest {directory_path, namespace_id}
 |---|---|---|
 | Agent-agnostic | 달성 | REST + MCP 가 같은 `services` 위임. 소비자는 계약만 봄. |
 | DB-agnostic | 이음매 확보 | 능력별 포트(`GraphStore`/`VectorIndex`/`LexicalIndex`). 지금은 Neo4j 한 store. |
-| LLM-agnostic | 실증 | `LLMProvider` 포트 + provider-중립 추출 계약을 OpenAI(`response_format`) + Anthropic(tool-use) 두 형식으로 번역 (ADR-0019). 임베딩도 OpenAI + Voyage 두 구현. 팩토리가 모델 접두사로 선택. |
+| LLM-agnostic | 실증 | `LLMProvider` 포트 + provider-중립 추출 계약을 OpenAI(`response_format`) + Anthropic(tool-use) + Claude Code(`claude -p`, 키 불필요) 로 번역 (ADR-0019). 임베딩도 OpenAI + Voyage 두 구현. 팩토리가 모델 접두사로 선택. |
 
 ---
 

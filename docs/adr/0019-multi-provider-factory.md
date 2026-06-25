@@ -1,5 +1,15 @@
 # ADR-0019: 모델 provider 팩토리 + Anthropic/Voyage 어댑터
 
+> **Amendment (2026-06-25)**: 세 번째 LLM provider `claude-code/` 를 추가했다 —
+> 머신에 설치된 Claude Code(`claude -p`)의 *구독 인증* 으로 추출을 돌려 **별도 API
+> 키 없이** ("OpenAI 도 Anthropic API 키도 없이") 경로가 성립한다. D2 의 확장점
+> ("새 provider = 어댑터 + 레지스트리 한 줄")을 그대로 exercise 한 것이라 본문 결정은
+> 불변. 한계(의도된 trade-off): **텍스트 전용**(이미지/PDF 페이지는 openai//anthropic/
+> 사용), tool-use 부재로 **스키마 강제 대신 "JSON 만 출력" 지시 + 코드펜스 제거 +
+> 재시도 1 회**, Claude Code 시스템 프롬프트 주입에 따른 **호출 오버헤드**(고throughput
+> 적재보다 로컬 직접 사용용). 지문에 "claude-code" 토큰을 넣어 같은 모델명이라도
+> OpenAI/Anthropic-API 경로와 캐시가 구분된다.
+
 Status: accepted
 Date: 2026-06-25
 Phase: 구조 정리 (ADR-0018 의 LLM-agnostic 이음매 입증)
