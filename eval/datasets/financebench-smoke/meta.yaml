@@ -1,7 +1,7 @@
 dataset_id: financebench-smoke-2026-06-20
 domain: SEC 10-K (FinanceBench smoke subset — AMD / American Express / Boeing 2022 10-K)
 language: en
-author: opentology-eval
+author: arche-eval
 created_at: "2026-06-20"
 description: |
   ADR-0008 의 EntityConsolidator stoplist fix (identity.py 의

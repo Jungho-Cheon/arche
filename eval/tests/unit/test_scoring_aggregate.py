@@ -7,7 +7,7 @@ from pathlib import Path
 
 import pytest
 
-from opentology_eval.scoring.aggregate import (
+from arche_eval.scoring.aggregate import (
     aggregate_run,
     median,
     median_int,
@@ -152,12 +152,12 @@ def _make_fixture_run(tmp_path: Path) -> Path:
         encoding="utf-8",
     )
 
-    # opentology: run 0 정답 (정보 부족 옵션 선택 안 함), run 1 unknown_choice (e).
-    (run_dir / "responses" / "opentology").mkdir(parents=True)
-    (run_dir / "responses" / "opentology" / "Q01_run0.json").write_text(
+    # arche: run 0 정답 (정보 부족 옵션 선택 안 함), run 1 unknown_choice (e).
+    (run_dir / "responses" / "arche").mkdir(parents=True)
+    (run_dir / "responses" / "arche" / "Q01_run0.json").write_text(
         json.dumps(
             {
-                "column": "opentology",
+                "column": "arche",
                 "question_id": "Q01",
                 "run_index": 0,
                 "anchor_extraction": {
@@ -173,7 +173,7 @@ def _make_fixture_run(tmp_path: Path) -> Path:
                     "output_tokens": 50,
                     "latency_ms": 800,
                     "model": "openai/gpt-4.1",
-                    "parsed": {"choice": "a", "reasoning": "opentology 추론"},
+                    "parsed": {"choice": "a", "reasoning": "arche 추론"},
                     "parse_error": None,
                 },
                 "embedding_tokens_estimated": 8,
@@ -185,10 +185,10 @@ def _make_fixture_run(tmp_path: Path) -> Path:
         ),
         encoding="utf-8",
     )
-    (run_dir / "responses" / "opentology" / "Q01_run1.json").write_text(
+    (run_dir / "responses" / "arche" / "Q01_run1.json").write_text(
         json.dumps(
             {
-                "column": "opentology",
+                "column": "arche",
                 "question_id": "Q01",
                 "run_index": 1,
                 "anchor_extraction": {
@@ -224,8 +224,8 @@ def _make_fixture_run(tmp_path: Path) -> Path:
         {"question_id": "Q01", "column": "full_context", "run_index": 1, "reasoning_quality": 0, "faithfulness": 0},
         {"question_id": "Q01", "column": "chunk_rag", "run_index": 0, "reasoning_quality": 1, "faithfulness": 1},
         {"question_id": "Q01", "column": "chunk_rag", "run_index": 1, "reasoning_quality": None, "faithfulness": None},
-        {"question_id": "Q01", "column": "opentology", "run_index": 0, "reasoning_quality": 2, "faithfulness": 1},
-        {"question_id": "Q01", "column": "opentology", "run_index": 1, "reasoning_quality": 0, "faithfulness": 1},
+        {"question_id": "Q01", "column": "arche", "run_index": 0, "reasoning_quality": 2, "faithfulness": 1},
+        {"question_id": "Q01", "column": "arche", "run_index": 1, "reasoning_quality": 0, "faithfulness": 1},
     ]
     (run_dir / "judge" / "scores.jsonl").write_text(
         "\n".join(json.dumps(r) for r in judge_rows) + "\n",
@@ -238,12 +238,12 @@ def test_aggregate_run_basic_metrics(tmp_path: Path) -> None:
     run_dir = _make_fixture_run(tmp_path)
     agg = aggregate_run(run_dir)
 
-    assert set(agg.columns.keys()) == {"full_context", "chunk_rag", "opentology"}
+    assert set(agg.columns.keys()) == {"full_context", "chunk_rag", "arche"}
     fc = agg.columns["full_context"]
     cr = agg.columns["chunk_rag"]
-    op = agg.columns["opentology"]
+    op = agg.columns["arche"]
 
-    # Accuracy — full_context 1/2, chunk_rag 1/2, opentology 1/2.
+    # Accuracy — full_context 1/2, chunk_rag 1/2, arche 1/2.
     assert fc.accuracy == 0.5
     assert cr.accuracy == 0.5
     assert op.accuracy == 0.5
@@ -252,7 +252,7 @@ def test_aggregate_run_basic_metrics(tmp_path: Path) -> None:
     assert fc.input_tokens_median == 1050.0
     # chunk_rag total_tokens median = (560+542)/2 = 551.
     assert cr.total_tokens_median == 551.0
-    # opentology total_latency median = (1000+1020)/2 = 1010.
+    # arche total_latency median = (1000+1020)/2 = 1010.
     assert op.latency_ms_median == 1010.0
 
 
@@ -264,8 +264,8 @@ def test_aggregate_run_failure_mode_classification(tmp_path: Path) -> None:
     assert agg.columns["full_context"].failure_modes["parse_error"] == 0
     # chunk_rag — run0 정답, run1 parse_error.
     assert agg.columns["chunk_rag"].failure_modes["parse_error"] == 1
-    # opentology — run0 정답, run1 unknown_choice (e = 정보 부족).
-    assert agg.columns["opentology"].failure_modes["unknown_choice"] == 1
+    # arche — run0 정답, run1 unknown_choice (e = 정보 부족).
+    assert agg.columns["arche"].failure_modes["unknown_choice"] == 1
 
 
 def test_aggregate_run_override_takes_priority(tmp_path: Path) -> None:

@@ -1,6 +1,6 @@
-"""Combined 컬럼 정답률 집계 + chunk_rag / opentology 와 비교.
+"""Combined 컬럼 정답률 집계 + chunk_rag / arche 와 비교.
 
-본 측정 종료 본 (2126) 의 chunk_rag / opentology 결과 + 새 combined 결과를
+본 측정 종료 본 (2126) 의 chunk_rag / arche 결과 + 새 combined 결과를
 한 화면에 띄워 hybrid 가설 (Combined ≥ max(chunk, graph)) 의 실증 검증.
 
 usage:
@@ -27,7 +27,7 @@ def majority(lst: list[str | None]) -> str | None:
 
 
 def extract_choice(d: dict, col: str) -> str | None:
-    if col in ("opentology", "combined"):
+    if col in ("arche", "combined"):
         ag = d.get("answer_generation") or {}
         p = ag.get("parsed") or {}
         c = p.get("choice")
@@ -39,7 +39,7 @@ def extract_choice(d: dict, col: str) -> str | None:
 
 def extract_metrics(d: dict, col: str) -> tuple[int, int]:
     """returns (total_tokens, latency_ms)."""
-    if col in ("opentology", "combined"):
+    if col in ("arche", "combined"):
         tok = int(d.get("total_tokens", 0))
         lat = int(d.get("total_latency_ms", 0))
     elif col == "chunk_rag":
@@ -90,7 +90,7 @@ def main() -> None:
 
     combined = collect(args.combined_run, "combined")
     chunk = collect(args.baseline_run, "chunk_rag")
-    graph = collect(args.baseline_run, "opentology")
+    graph = collect(args.baseline_run, "arche")
 
     # 정답률 — majority
     def acc(choices: dict[str, list[str | None]]) -> tuple[float, list[str]]:
@@ -124,7 +124,7 @@ def main() -> None:
         f"{med_metric(chunk[1]):>10.0f} {med_metric(chunk[2]):>12.0f}"
     )
     print(
-        f"{'opentology':<12} {g_acc:>10.4f} {','.join(sorted(g_wrong))[:28]:<30} "
+        f"{'arche':<12} {g_acc:>10.4f} {','.join(sorted(g_wrong))[:28]:<30} "
         f"{med_metric(graph[1]):>10.0f} {med_metric(graph[2]):>12.0f}"
     )
     print(
@@ -169,7 +169,7 @@ def main() -> None:
         total = 0.0
         for fp in col_dir.glob("*.json"):
             d = json.loads(fp.read_text(encoding="utf-8"))
-            if col in ("opentology", "combined"):
+            if col in ("arche", "combined"):
                 in_t = int(d.get("total_input_tokens", 0))
                 out_t = int(d.get("total_output_tokens", 0))
                 emb_t = int(d.get("embedding_tokens_estimated", 0))
@@ -188,7 +188,7 @@ def main() -> None:
 
     print("-- 비용 (gpt-4.1 단가) --")
     print(f"  chunk_rag  : ${precise_cost(args.baseline_run, 'chunk_rag'):.4f}")
-    print(f"  opentology : ${precise_cost(args.baseline_run, 'opentology'):.4f}")
+    print(f"  arche : ${precise_cost(args.baseline_run, 'arche'):.4f}")
     print(f"  combined   : ${precise_cost(args.combined_run, 'combined'):.4f}")
 
 

@@ -29,7 +29,7 @@ Amends: [ADR-0001](./0001-project-identity-and-mvp-validation-hypothesis.md) §5
 
 > 용어 인라인 풀이.
 >
-> - **추출 단계 (extraction step)**: ingest 흐름에서 *청크 본문 → ExtractedGraph (entity + relation 목록)* 를 만드는 단일 LLM 호출. 현재 `apps/api/src/opentology_api/adapters/llm.py:OpenAILLMProvider.extract`.
+> - **추출 단계 (extraction step)**: ingest 흐름에서 *청크 본문 → ExtractedGraph (entity + relation 목록)* 를 만드는 단일 LLM 호출. 현재 `apps/api/src/arche_api/adapters/llm.py:OpenAILLMProvider.extract`.
 > - **컨텍스트 동봉 (context priming)**: 호출의 system / user 메시지에 *청크 본문 외의 보조 정보* 를 prepend 해 LLM 의 판단을 돕는 일반적 패턴.
 > - **KNOWN_ENTITIES**: 이미 그래프에 적재된 entity 중 *본 청크와 관련 가능성이 있는 후보 N 개* 의 (id, name, aliases, type, 1-line description) 목록.
 
@@ -51,7 +51,7 @@ Amends: [ADR-0001](./0001-project-identity-and-mvp-validation-hypothesis.md) §5
 
 ### 현 흐름의 정확한 상태
 
-`apps/api/src/opentology_api/domain/ingest.py:ingest_file` 의 추출 호출 흐름:
+`apps/api/src/arche_api/domain/ingest.py:ingest_file` 의 추출 호출 흐름:
 
 ```
 파일 읽기
@@ -284,7 +284,7 @@ graphify 를 그대로 사용하고 그 위에 답변 오케스트레이션만 �
 | 동일 corpus (FinanceBench 1M) ingest 시 over-merge entity 수 | 0 (현 4 + STOPLIST/Consolidator 가드 없이) |
 | ingest 시간 | 현 30 분 대비 50% 이하 (ADR-0010 multi-agent + 캐싱 후) |
 | ingest 비용 | 현 회차 대비 ±10% 이내 (KNOWN_ENTITIES 토큰 추가 vs STOPLIST/Consolidator 호출 제거의 상쇄) |
-| opentology + combined 정확도 (1M FinanceBench) | combined ≥ PR #54 의 78.8% (회귀 0) |
+| arche + combined 정확도 (1M FinanceBench) | combined ≥ PR #54 의 78.8% (회귀 0) |
 | **vs graphify 벤치마크** | 같은 corpus → graphify 와 *동등 또는 우월* 한 cross-doc INFERRED edge 수 + 우월한 매칭 정확도 |
 
 마지막 행이 본 goal 의 MVP 성공 조건 (1) "graphify 보다 우월한 그래프 생성" 의 직접 충족 evidence.

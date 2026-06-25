@@ -1,6 +1,6 @@
 """디렉토리 재귀 수집 — PRD 2 §2.
 
-자동 제외 / `.opentologyignore` / 지원 확장자 / PDF/이미지 quiet skip.
+자동 제외 / `.archeignore` / 지원 확장자 / PDF/이미지 quiet skip.
 """
 
 from __future__ import annotations
@@ -9,7 +9,7 @@ from pathlib import Path
 
 import pytest
 
-from opentology_api.domain.crawl import (
+from arche_api.domain.crawl import (
     DEFAULT_EXCLUDE_DIR_NAMES,
     PENDING_EXTS,
     SUPPORTED_EXTS,
@@ -65,22 +65,22 @@ def test_auto_excludes_dot_and_cache_directories(tmp_path: Path):
     assert names == ["kept.md"]
 
 
-def test_opentologyignore_excludes_matching_files(tmp_path: Path):
+def test_archeignore_excludes_matching_files(tmp_path: Path):
     """gitignore 문법 — `*.draft.md` 가 제외되는지."""
     _touch(tmp_path / "keep.md")
     _touch(tmp_path / "draft.draft.md")
-    _touch(tmp_path / ".opentologyignore", "*.draft.md\n")
+    _touch(tmp_path / ".archeignore", "*.draft.md\n")
 
     summary = crawl(tmp_path)
     names = sorted(p.name for p in summary.files_collected)
     assert names == ["keep.md"]
 
 
-def test_opentologyignore_can_exclude_directory(tmp_path: Path):
+def test_archeignore_can_exclude_directory(tmp_path: Path):
     """gitignore 문법 — `private/` 디렉토리 통째로 제외."""
     _touch(tmp_path / "public.md")
     _touch(tmp_path / "private" / "secret.md")
-    _touch(tmp_path / ".opentologyignore", "private/\n")
+    _touch(tmp_path / ".archeignore", "private/\n")
 
     summary = crawl(tmp_path)
     names = [p.name for p in summary.files_collected]

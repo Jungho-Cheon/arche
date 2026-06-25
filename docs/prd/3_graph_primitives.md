@@ -1,12 +1,12 @@
 # PRD 3 — Graph Primitives (REST + MCP)
 
-> 본 문서는 *Opentology 가 외부에 노출하는 모든 호출* 의 완전 명세를 담는다. 표면 결정의 근거는 ADR-0006. 본 문서는 *동작 명세* 만 다룬다.
+> 본 문서는 *Arche 가 외부에 노출하는 모든 호출* 의 완전 명세를 담는다. 표면 결정의 근거는 ADR-0006. 본 문서는 *동작 명세* 만 다룬다.
 
 ## 0. 표면 일반
 
 ### 0.1 두 통로의 1:1 매핑
 
-Opentology 는 같은 작업을 **REST** 와 **MCP** 양쪽으로 노출한다. 두 통로의 *입출력 스키마는 동일* 하다 — 인코딩 (JSON over HTTP vs JSON-RPC over MCP) 만 다르다.
+Arche 는 같은 작업을 **REST** 와 **MCP** 양쪽으로 노출한다. 두 통로의 *입출력 스키마는 동일* 하다 — 인코딩 (JSON over HTTP vs JSON-RPC over MCP) 만 다르다.
 
 | Primitive | REST | MCP tool |
 |---|---|---|
@@ -591,10 +591,10 @@ description: "Extract a subgraph centered on multiple entry-point nodes, expande
 
 ### 8.2 stdio 어댑터
 
-설치된 `opentology` CLI 의 서브커맨드.
+설치된 `arche` CLI 의 서브커맨드.
 
 ```
-opentology mcp serve --stdio
+arche mcp serve --stdio
 ```
 
 표준 MCP 프로토콜 (JSON-RPC over stdio) 로 위 6 primitive 를 노출.
@@ -667,7 +667,7 @@ ingestion 과 read 가 동시에 일어나도 *치명적이지 않다* — read 
 
 ## 참조 ADR
 
-- [ADR-0001 D3 — Opentology 컬럼의 primitives 사용 흐름](../adr/0001-project-identity-and-mvp-validation-hypothesis.md)
+- [ADR-0001 D3 — Arche 컬럼의 primitives 사용 흐름](../adr/0001-project-identity-and-mvp-validation-hypothesis.md)
 - [ADR-0003 D1 — find_entities 의 하이브리드 매칭 알고리즘](../adr/0003-graph-entry-point-strategy-hybrid-lexical-dense.md)
 - [ADR-0004 D1 — 그래프 DB 내장 인덱스 (BM25 + vector)](../adr/0004-vector-infra-graph-db-internal-index.md)
 - [ADR-0006 — MCP/REST 표면 결정의 본체](../adr/0006-mcp-rest-primitives-surface.md)

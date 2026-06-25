@@ -7,8 +7,8 @@ from pathlib import Path
 
 import pytest
 
-from opentology_api.adapters.image_loader import IMAGE_EXTS, load_image_as_b64
-from opentology_api.domain.errors import InvalidInputError
+from arche_api.adapters.image_loader import IMAGE_EXTS, load_image_as_b64
+from arche_api.domain.errors import InvalidInputError
 
 
 def test_image_exts_covers_expected_extensions():

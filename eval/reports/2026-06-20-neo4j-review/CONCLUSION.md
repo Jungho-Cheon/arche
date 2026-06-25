@@ -1,7 +1,7 @@
 # Neo4j 활용 검토 — 잘 쓰는 부분 / 안티패턴 / 비효율
 
 날짜: 2026-06-20
-범위: `apps/api/src/opentology_api/adapters/graph.py` (1485 줄, 23 곳의 session)
+범위: `apps/api/src/arche_api/adapters/graph.py` (1485 줄, 23 곳의 session)
 관련: ADR-0002 (Neo4j 채택), ADR-0006 (graph primitives), Neo4j 5.15 community
 
 ## TL;DR

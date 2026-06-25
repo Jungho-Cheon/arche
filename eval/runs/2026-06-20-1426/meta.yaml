@@ -2,7 +2,7 @@ measurement_id: 2026-06-20-1426
 timestamp: '2026-06-20T14:49:08+09:00'
 runs: 3
 columns:
-- opentology
+- arche
 - combined
 models:
   llm: openai/gpt-4.1

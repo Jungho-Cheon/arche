@@ -9,8 +9,8 @@ from unittest.mock import MagicMock
 
 import yaml
 
-from opentology_eval.providers import LLMResult, LLMUsage
-from opentology_eval.scoring.judge_runner import run_judge_on_run_dir
+from arche_eval.providers import LLMResult, LLMUsage
+from arche_eval.scoring.judge_runner import run_judge_on_run_dir
 
 
 def _r(score: int) -> LLMResult:
@@ -76,12 +76,12 @@ def _make_run(tmp_path: Path) -> Path:
             ),
             encoding="utf-8",
         )
-    # opentology — 답변 nested.
-    (run_dir / "responses" / "opentology").mkdir(parents=True)
-    (run_dir / "responses" / "opentology" / "Q01_run0.json").write_text(
+    # arche — 답변 nested.
+    (run_dir / "responses" / "arche").mkdir(parents=True)
+    (run_dir / "responses" / "arche" / "Q01_run0.json").write_text(
         json.dumps(
             {
-                "column": "opentology",
+                "column": "arche",
                 "question_id": "Q01",
                 "run_index": 0,
                 "anchor_extraction": {
@@ -112,7 +112,7 @@ def test_run_judge_emits_one_row_per_column(tmp_path: Path) -> None:
     judge_llm.complete.side_effect = [
         _r(2), _r(1),  # full_context
         _r(1), _r(1),  # chunk_rag
-        _r(2), _r(1),  # opentology
+        _r(2), _r(1),  # arche
     ]
     summary = run_judge_on_run_dir(
         run_dir=run_dir,
@@ -128,14 +128,14 @@ def test_run_judge_emits_one_row_per_column(tmp_path: Path) -> None:
     # mapping.json 이 있고 익명화 라벨이 셋.
     mapping = json.loads((run_dir / "judge" / "mapping.json").read_text())
     assert set(mapping["Q01"].keys()) == {"A", "B", "C"}
-    assert set(mapping["Q01"].values()) == {"full_context", "chunk_rag", "opentology"}
+    assert set(mapping["Q01"].values()) == {"full_context", "chunk_rag", "arche"}
 
     # scores.jsonl 한 줄 = 한 응답.
     lines = (run_dir / "judge" / "scores.jsonl").read_text().strip().split("\n")
     assert len(lines) == 3
     rows = [json.loads(ln) for ln in lines]
     cols = {r["column"] for r in rows}
-    assert cols == {"full_context", "chunk_rag", "opentology"}
+    assert cols == {"full_context", "chunk_rag", "arche"}
     for r in rows:
         # 점수가 정수로 기록됨.
         assert isinstance(r["reasoning_quality"], int)

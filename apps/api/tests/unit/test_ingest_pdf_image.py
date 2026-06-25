@@ -8,12 +8,12 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from opentology_api.domain.ingest import IngestService
-from opentology_api.domain.models import (
+from arche_api.domain.ingest import IngestService
+from arche_api.domain.models import (
     ExtractedEntity,
     ExtractedGraph,
 )
-from opentology_api.domain.ports import ImageInput
+from arche_api.domain.ports import ImageInput
 
 from ..fixtures._pdf_builder import write_text_pdf
 from .test_ingest_service import FakeEmbedder, FakeGraph, FakeLLM
@@ -129,7 +129,7 @@ def test_ingest_pdf_image_only_page_falls_back_to_image_call(tmp_path: Path):
     본 fixture builder 가 *실제 임베디드 이미지를 만들지 못해* 이 케이스는 직접
     PdfPage 를 합성해 `_build_pdf_extract_inputs` 만 단위로 검증한다.
     """
-    from opentology_api.adapters.pdf import PdfPage
+    from arche_api.adapters.pdf import PdfPage
 
     extracted = ExtractedGraph(entities=[], relations=[])
     service, _, _ = _build(extracted)
@@ -152,7 +152,7 @@ def test_ingest_pdf_image_only_page_falls_back_to_image_call(tmp_path: Path):
 
 def test_ingest_pdf_text_plus_image_attaches_image_to_first_chunk(tmp_path: Path):
     """텍스트가 있는 페이지에 이미지가 함께 있으면 *첫 청크에만* 이미지 동봉."""
-    from opentology_api.adapters.pdf import PdfPage
+    from arche_api.adapters.pdf import PdfPage
 
     extracted = ExtractedGraph(entities=[], relations=[])
     service, _, _ = _build(extracted)
@@ -175,7 +175,7 @@ def test_ingest_pdf_text_plus_image_attaches_image_to_first_chunk(tmp_path: Path
 
 def test_ingest_pdf_empty_page_is_skipped(tmp_path: Path):
     """텍스트 + 이미지 둘 다 없는 페이지는 LLM 호출 자체를 안 한다."""
-    from opentology_api.adapters.pdf import PdfPage
+    from arche_api.adapters.pdf import PdfPage
 
     extracted = ExtractedGraph(entities=[], relations=[])
     service, _, _ = _build(extracted)

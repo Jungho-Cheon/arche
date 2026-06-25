@@ -1,0 +1,25 @@
+{
+  "runs": [
+    {
+      "date": "2026-06-16T21:30:11.530147+00:00",
+      "input_tokens": 326208,
+      "output_tokens": 81552,
+      "files": 79
+    },
+    {
+      "date": "2026-06-16T21:40:44.903962+00:00",
+      "input_tokens": 27186,
+      "output_tokens": 6796,
+      "files": 79
+    },
+    {
+      "date": "2026-06-16T22:28:51.663510+00:00",
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "files": 89,
+      "note": "AST-only delta update from worktree (ingest-crawl-chunk)"
+    }
+  ],
+  "total_input_tokens": 353394,
+  "total_output_tokens": 88348
+}

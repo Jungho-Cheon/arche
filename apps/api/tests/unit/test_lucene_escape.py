@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from opentology_api.adapters.graph import _lucene_escape
+from arche_api.adapters.graph import _lucene_escape
 
 
 def test_simple_keyword_unchanged():

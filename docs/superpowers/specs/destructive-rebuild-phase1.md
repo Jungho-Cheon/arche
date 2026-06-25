@@ -1,6 +1,6 @@
 # Phase 1 — Destructive rebuild (graphify parity 회복)
 
-> Goal: opentology 의 *그래프 생성 자체* 를 graphify 와 동등 이상으로 만들고, ADR-0008 의 증상 가림 가드 (STOPLIST + Consolidator) 의 deprecation 경로를 시작한다.
+> Goal: arche 의 *그래프 생성 자체* 를 graphify 와 동등 이상으로 만들고, ADR-0008 의 증상 가림 가드 (STOPLIST + Consolidator) 의 deprecation 경로를 시작한다.
 
 ## Phase 1 의 ADR 묶음
 
@@ -24,10 +24,10 @@
 ### PR B — Extraction context builder + KNOWN_ENTITIES 동봉 (ADR-0009 D1, D4)
 
 - **변경 파일**:
-  - `apps/api/src/opentology_api/domain/extract_context.py` (신규) — 청크 + graph → context block 생성
-  - `apps/api/src/opentology_api/adapters/llm.py` — `extract` 시그니처에 `context: ExtractContext` 인자 추가
-  - `apps/api/src/opentology_api/domain/ingest.py` — context 생성 후 extract 호출
-  - `apps/api/src/opentology_api/domain/models.py` — `ExtractedEntity` 에 `matched_existing_id: str | None` 추가
+  - `apps/api/src/arche_api/domain/extract_context.py` (신규) — 청크 + graph → context block 생성
+  - `apps/api/src/arche_api/adapters/llm.py` — `extract` 시그니처에 `context: ExtractContext` 인자 추가
+  - `apps/api/src/arche_api/domain/ingest.py` — context 생성 후 extract 호출
+  - `apps/api/src/arche_api/domain/models.py` — `ExtractedEntity` 에 `matched_existing_id: str | None` 추가
 - **테스트**:
   - `tests/unit/test_extract_context.py` — KNOWN_ENTITIES 후보 선정 (hybrid 검색 stub)
   - `tests/unit/test_ingest_service.py` — matched_existing_id 처리 path
@@ -37,8 +37,8 @@
 ### PR C — 2nd pass 주 entity 식별 (ADR-0009 D3)
 
 - **변경 파일**:
-  - `apps/api/src/opentology_api/domain/main_entity.py` (신규) — 파일 첫 N 줄 → main_entity LLM 호출
-  - `apps/api/src/opentology_api/domain/ingest.py` — `_main_entity_pass` 호출 + DOC_CONTEXT 주입
+  - `apps/api/src/arche_api/domain/main_entity.py` (신규) — 파일 첫 N 줄 → main_entity LLM 호출
+  - `apps/api/src/arche_api/domain/ingest.py` — `_main_entity_pass` 호출 + DOC_CONTEXT 주입
 - **테스트**:
   - `tests/unit/test_main_entity.py` — 다양한 문서 (10-K, 학술 논문, 일기) fixture 로 추출 정확도
 - **머지 조건**: 30 fixture 중 90% 이상 정확한 main_entity 추출
@@ -46,10 +46,10 @@
 ### PR D — Multi-agent parallel + 청크 캐시 (ADR-0010)
 
 - **변경 파일**:
-  - `apps/api/src/opentology_api/adapters/extract_cache.py` (신규) — sha256 키 + JSON 저장
-  - `apps/api/src/opentology_api/domain/ingest.py` — batch parallel (asyncio.gather), cache check 우선
-  - `apps/api/src/opentology_api/config.py` — `INGEST_BATCH_SIZE=8`, `INGEST_CACHE_DIR`
-  - `.gitignore` — `.opentology-cache/`
+  - `apps/api/src/arche_api/adapters/extract_cache.py` (신규) — sha256 키 + JSON 저장
+  - `apps/api/src/arche_api/domain/ingest.py` — batch parallel (asyncio.gather), cache check 우선
+  - `apps/api/src/arche_api/config.py` — `INGEST_BATCH_SIZE=8`, `INGEST_CACHE_DIR`
+  - `.gitignore` — `.arche-cache/`
 - **테스트**:
   - `tests/unit/test_extract_cache.py` — 같은 키 hit, 다른 키 miss, version invalidation
   - `tests/integration/test_ingest_parallel.py` — 1M smoke fixture 로 시간 측정
@@ -58,17 +58,17 @@
 ### PR E — vs graphify 벤치마크 + ADR 종료 조건 (ADR-0009/10/11 종료)
 
 - **변경 파일**:
-  - `eval/scripts/bench_vs_graphify.py` (신규) — 동일 corpus 를 graphify CLI + opentology 양쪽 ingest → 두 graph 비교
+  - `eval/scripts/bench_vs_graphify.py` (신규) — 동일 corpus 를 graphify CLI + arche 양쪽 ingest → 두 graph 비교
   - `eval/reports/2026-06-22-vs-graphify/CONCLUSION.md` (신규)
 - **벤치 항목**:
-  | 항목 | opentology | graphify | 우월 판정 |
+  | 항목 | arche | graphify | 우월 판정 |
   |---|---|---|---|
   | ingest 시간 (1M corpus) | 측정 | 측정 | 동등 (±20%) |
   | ingest 비용 | 측정 | 측정 | 동등 (±20%) |
   | over-merge entity 수 | 측정 (목표 0) | 측정 (기대 0) | 동등 |
-  | cross-doc INFERRED edge | 측정 | 측정 | opentology ≥ graphify |
-  | multi-hop 질문 정확도 (FinanceBench 33 MCQ) | 측정 | 측정 | opentology > graphify |
-- **머지 조건**: 위 표의 마지막 두 행에서 opentology 가 *우월* 임이 evidence 와 함께 commit
+  | cross-doc INFERRED edge | 측정 | 측정 | arche ≥ graphify |
+  | multi-hop 질문 정확도 (FinanceBench 33 MCQ) | 측정 | 측정 | arche > graphify |
+- **머지 조건**: 위 표의 마지막 두 행에서 arche 가 *우월* 임이 evidence 와 함께 commit
 - **ADR Status 갱신**: 0009/0010/0011 모두 accepted → applied
 
 ## 일정 추정

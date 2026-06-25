@@ -2,7 +2,7 @@
 
 ## 한 줄 결론
 
-opentology 의 그래프만으로 (원본 문서 *미열람*) FinanceBench 33-MCQ 에서 **94-97%** —
+arche 의 그래프만으로 (원본 문서 *미열람*) FinanceBench 33-MCQ 에서 **94-97%** —
 graphify 의 동일 조건 (graph-only 에이전트) **57.6%** 를 **+36~39pp** 앞선다. 차이는
 그래프에 귀속된다.
 
@@ -11,13 +11,13 @@ graphify 의 동일 조건 (graph-only 에이전트) **57.6%** 를 **+36~39pp** 
 | 조건 | 정답률 | 비고 |
 | --- | --- | --- |
 | graphify graph-only (에이전트 반복) | 57.6% | 기준 |
-| opentology 단발 graph-only (max_nodes 1000) | 45.5% | 반복 없음 |
-| opentology 단발 graph-only (max_nodes 3000) | 45.5% | recall 포화, 평탄 |
-| **opentology 에이전트 graph-only — RUN 1** | **97.0% (32/33)** | source 미사용 |
-| **opentology 에이전트 graph-only — RUN 2 (재현)** | **93.9% (31/33)** | 선택 일치 32/33 |
+| arche 단발 graph-only (max_nodes 1000) | 45.5% | 반복 없음 |
+| arche 단발 graph-only (max_nodes 3000) | 45.5% | recall 포화, 평탄 |
+| **arche 에이전트 graph-only — RUN 1** | **97.0% (32/33)** | source 미사용 |
+| **arche 에이전트 graph-only — RUN 2 (재현)** | **93.9% (31/33)** | 선택 일치 32/33 |
 | (참고) combined 단발 (graph+chunk 내재화) | 75.8% | |
 
-측정: 새 컨텍스트 서브에이전트 3 개 (배치 11 문항, 정답 키 미제공) 가 opentology REST
+측정: 새 컨텍스트 서브에이전트 3 개 (배치 11 문항, 정답 키 미제공) 가 arche REST
 프리미티브 (`/entities/find`, `/subgraph`, `/entities/{id}/neighbors`, `/paths/find`)
 *만* 반복 호출. **원본 .md 파일 열람 / grep 금지** — graphify 와 동일한 graph-only
 조건. 문항당 평균 API 호출 약 1.5 회.
@@ -38,8 +38,8 @@ graphify 의 동일 조건 (graph-only 에이전트) **57.6%** 를 **+36~39pp** 
 | | 정량 추출 (값·기간·단위를 노드로) | 에이전트 반복 retrieval | 정답률 |
 | --- | --- | --- | --- |
 | graphify | 아니오 (범용 추출) | 예 | 57.6% |
-| opentology 단발 | 예 | 아니오 | 45.5% |
-| **opentology 에이전트** | **예** | **예** | **94-97%** |
+| arche 단발 | 예 | 아니오 | 45.5% |
+| **arche 에이전트** | **예** | **예** | **94-97%** |
 
 두 요인의 곱이다:
 - **정량 추출** (이번 세션 ingest 개선, `llm.py` 원칙 5/6 — metric 을 값·기간·단위
@@ -71,7 +71,7 @@ scale 현상" 으로 결론냈다. 그러나 *정량 추출로 강화된 그래�
 
 ## 산출물 (이 결과를 낸 코드)
 
-- ingest 정량 추출: `apps/api/src/opentology_api/adapters/llm.py` (원칙 5/6),
+- ingest 정량 추출: `apps/api/src/arche_api/adapters/llm.py` (원칙 5/6),
   `domain/chunking.py` + `domain/ingest.py` (extraction_chunk_tokens).
 - `/subgraph` 500 크래시 수정: `adapters/graph.py` `_clamp` (64 자 초과 관계 라벨이
   서브그래프 전체를 죽이던 회귀). 단위 테스트 `tests/unit/test_primitives.py` 3 개.

@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from opentology_eval.scoring.io import (
+from arche_eval.scoring.io import (
     extract_metrics,
     read_column_responses,
 )
@@ -41,7 +41,7 @@ def test_read_column_responses_dir_layout(tmp_path: Path) -> None:
 
 
 def test_read_column_responses_missing_returns_empty(tmp_path: Path) -> None:
-    assert read_column_responses(tmp_path, "opentology") == []
+    assert read_column_responses(tmp_path, "arche") == []
 
 
 def test_extract_metrics_full_context() -> None:
@@ -88,9 +88,9 @@ def test_extract_metrics_chunk_rag_uses_total_tokens_field() -> None:
     assert m.total_tokens == 245
 
 
-def test_extract_metrics_opentology_aggregates_anchor_plus_answer() -> None:
+def test_extract_metrics_arche_aggregates_anchor_plus_answer() -> None:
     response = {
-        "column": "opentology",
+        "column": "arche",
         "question_id": "Q03",
         "run_index": 0,
         "anchor_extraction": {
@@ -115,7 +115,7 @@ def test_extract_metrics_opentology_aggregates_anchor_plus_answer() -> None:
         "total_tokens": 363,
         "total_latency_ms": 900,
     }
-    m = extract_metrics(response, "opentology")
+    m = extract_metrics(response, "arche")
     assert m.input_tokens == 310
     assert m.output_tokens == 45
     assert m.embedding_tokens == 8
@@ -125,10 +125,10 @@ def test_extract_metrics_opentology_aggregates_anchor_plus_answer() -> None:
     assert m.parsed_reasoning == "그래프 기반 추론"
 
 
-def test_extract_metrics_opentology_anchor_parse_error_propagates() -> None:
+def test_extract_metrics_arche_anchor_parse_error_propagates() -> None:
     """anchor 가 실패하고 answer parsed 도 None 인 경우 parse_error 가 anchor 사유를 담는다."""
     response = {
-        "column": "opentology",
+        "column": "arche",
         "question_id": "Q04",
         "run_index": 0,
         "anchor_extraction": {
@@ -152,7 +152,7 @@ def test_extract_metrics_opentology_anchor_parse_error_propagates() -> None:
         "total_tokens": 15,
         "total_latency_ms": 100,
     }
-    m = extract_metrics(response, "opentology")
+    m = extract_metrics(response, "arche")
     assert m.parsed_choice is None
     assert m.parse_error is not None
     assert "anchor_parse_error" in m.parse_error

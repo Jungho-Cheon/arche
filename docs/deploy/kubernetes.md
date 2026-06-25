@@ -13,11 +13,11 @@
 
 | 컴포넌트 | 종류 | 비고 |
 |---|---|---|
-| `opentology-api` | Deployment | FastAPI + MCP HTTP transport |
-| `opentology-neo4j` | StatefulSet | Neo4j 5.15 (또는 Aura 외부) |
-| `opentology-cache` | PVC | ADR-0010 의 청크 캐시 (`.opentology-cache/`) — `ReadWriteMany` |
-| `opentology-secrets` | Secret | OPENAI_API_KEY / NEO4J_PASSWORD |
-| `opentology-config` | ConfigMap | 모델 ID / batch 크기 / namespace 기본 정책 |
+| `arche-api` | Deployment | FastAPI + MCP HTTP transport |
+| `arche-neo4j` | StatefulSet | Neo4j 5.15 (또는 Aura 외부) |
+| `arche-cache` | PVC | ADR-0010 의 청크 캐시 (`.arche-cache/`) — `ReadWriteMany` |
+| `arche-secrets` | Secret | OPENAI_API_KEY / NEO4J_PASSWORD |
+| `arche-config` | ConfigMap | 모델 ID / batch 크기 / namespace 기본 정책 |
 | Ingress | Ingress | `/v1/*` (REST) + `/mcp/v1/*` (MCP HTTP) |
 
 ## Manifest 골격
@@ -28,8 +28,8 @@
 apiVersion: v1
 kind: Secret
 metadata:
-  name: opentology-secrets
-  namespace: opentology
+  name: arche-secrets
+  namespace: arche
 type: Opaque
 stringData:
   OPENAI_API_KEY: "<설정>"
@@ -42,15 +42,15 @@ stringData:
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: opentology-neo4j
+  name: arche-neo4j
 spec:
-  serviceName: opentology-neo4j
+  serviceName: arche-neo4j
   replicas: 1
   selector:
-    matchLabels: { app: opentology-neo4j }
+    matchLabels: { app: arche-neo4j }
   template:
     metadata:
-      labels: { app: opentology-neo4j }
+      labels: { app: arche-neo4j }
     spec:
       containers:
       - name: neo4j
@@ -61,7 +61,7 @@ spec:
         env:
         - name: NEO4J_AUTH
           valueFrom:
-            secretKeyRef: { name: opentology-secrets, key: NEO4J_PASSWORD }
+            secretKeyRef: { name: arche-secrets, key: NEO4J_PASSWORD }
         volumeMounts:
         - { name: data, mountPath: /data }
   volumeClaimTemplates:
@@ -77,41 +77,41 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: opentology-api
+  name: arche-api
 spec:
   replicas: 2
   selector:
-    matchLabels: { app: opentology-api }
+    matchLabels: { app: arche-api }
   template:
     metadata:
-      labels: { app: opentology-api }
+      labels: { app: arche-api }
     spec:
       containers:
       - name: api
-        image: opentology-api:latest
+        image: arche-api:latest
         ports:
         - { name: http, containerPort: 8000 }
         env:
         - name: NEO4J_URI
-          value: "bolt://opentology-neo4j:7687"
+          value: "bolt://arche-neo4j:7687"
         - name: NEO4J_USER
           value: "neo4j"
         - name: NEO4J_PASSWORD
           valueFrom:
-            secretKeyRef: { name: opentology-secrets, key: NEO4J_PASSWORD }
+            secretKeyRef: { name: arche-secrets, key: NEO4J_PASSWORD }
         - name: OPENAI_API_KEY
           valueFrom:
-            secretKeyRef: { name: opentology-secrets, key: OPENAI_API_KEY }
+            secretKeyRef: { name: arche-secrets, key: OPENAI_API_KEY }
         envFrom:
-        - configMapRef: { name: opentology-config }
+        - configMapRef: { name: arche-config }
         volumeMounts:
-        - { name: cache, mountPath: /workspace/.opentology-cache }
+        - { name: cache, mountPath: /workspace/.arche-cache }
         readinessProbe:
           httpGet: { path: /healthz, port: 8000 }
           periodSeconds: 5
       volumes:
       - name: cache
-        persistentVolumeClaim: { claimName: opentology-cache }
+        persistentVolumeClaim: { claimName: arche-cache }
 ```
 
 ### PVC + ConfigMap + Service + Ingress
@@ -120,7 +120,7 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: opentology-cache
+  name: arche-cache
 spec:
   accessModes: [ReadWriteMany]  # 여러 replica 공유
   resources: { requests: { storage: 20Gi } }
@@ -128,32 +128,32 @@ spec:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: opentology-config
+  name: arche-config
 data:
-  OPENTOLOGY_API_LLM_MODEL: "openai/gpt-4.1"
-  OPENTOLOGY_API_EMBEDDING_MODEL: "openai/text-embedding-3-small"
+  ARCHE_API_LLM_MODEL: "openai/gpt-4.1"
+  ARCHE_API_EMBEDDING_MODEL: "openai/text-embedding-3-small"
   INGEST_BATCH_SIZE: "8"
 ---
 apiVersion: v1
 kind: Service
-metadata: { name: opentology-api }
+metadata: { name: arche-api }
 spec:
-  selector: { app: opentology-api }
+  selector: { app: arche-api }
   ports:
   - { port: 80, targetPort: 8000 }
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: opentology
+  name: arche
   annotations:
     nginx.ingress.kubernetes.io/proxy-read-timeout: "600"  # ingest task
 spec:
   rules:
-  - host: opentology.internal
+  - host: arche.internal
     http:
       paths:
-      - { path: /, pathType: Prefix, backend: { service: { name: opentology-api, port: { number: 80 } } } }
+      - { path: /, pathType: Prefix, backend: { service: { name: arche-api, port: { number: 80 } } } }
 ```
 
 ## 인증 게이트웨이 (ADR-0014 D3)
@@ -178,7 +178,7 @@ spec:
 | 두 사용자가 다른 토큰 (`ns:work-a`, `ns:work-b`) 으로 같은 corpus ingest | 두 namespace 가 독립 그래프 |
 | 같은 사용자가 같은 토큰으로 같은 파일 두 번 ingest | 두 번째 short-circuit (source_hash 일치) — 캐시 hit |
 | MCP HTTP 호출 (`POST /mcp/v1/`) | 6 graph primitive 모두 정상 응답 |
-| MCP stdio (`opentology mcp serve --stdio`) | HTTP 와 *완전 동일* 응답 (ADR-0014 D2 코드 공유) |
+| MCP stdio (`arche mcp serve --stdio`) | HTTP 와 *완전 동일* 응답 (ADR-0014 D2 코드 공유) |
 
 ## 후속 작업
 

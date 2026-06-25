@@ -10,13 +10,13 @@ from pathlib import Path
 
 import pytest
 
-from opentology_api.domain.errors import InvalidInputError
-from opentology_api.domain.ingest import (
+from arche_api.domain.errors import InvalidInputError
+from arche_api.domain.ingest import (
     DirectoryIngestResult,
     FileProgressEvent,
     IngestService,
 )
-from opentology_api.domain.models import (
+from arche_api.domain.models import (
     ExtractedEntity,
     ExtractedGraph,
     ExtractedRelation,
@@ -167,11 +167,11 @@ def test_ingest_directory_pending_skipped_is_zero_after_pdf_image_support(
     assert result.files_total == 1
 
 
-def test_ingest_directory_honors_opentologyignore(tmp_path: Path):
-    """`.opentologyignore` 의 패턴이 파일을 제외한다."""
+def test_ingest_directory_honors_archeignore(tmp_path: Path):
+    """`.archeignore` 의 패턴이 파일을 제외한다."""
     (tmp_path / "keep.md").write_text("x", encoding="utf-8")
     (tmp_path / "skip.draft.md").write_text("y", encoding="utf-8")
-    (tmp_path / ".opentologyignore").write_text("*.draft.md\n", encoding="utf-8")
+    (tmp_path / ".archeignore").write_text("*.draft.md\n", encoding="utf-8")
 
     extracted = ExtractedGraph(entities=[], relations=[])
     service, _, llm = _build(extracted)

@@ -1,9 +1,9 @@
-# 피벗 — opentology_aug 가 메인 컬럼. 검증 / 비교 / 결정 / 최적화 로드맵
+# 피벗 — arche_aug 가 메인 컬럼. 검증 / 비교 / 결정 / 최적화 로드맵
 
 날짜: 2026-06-20
 선행 보고서:
 - `eval/reports/2026-06-20-smoke-stoplist-fix/` — graph 부패 fix + Combined 유의미성 1 차
-- `eval/reports/2026-06-20-aug-poc/` — opentology_aug PoC (graph-guided chunk retrieval) 81.0%
+- `eval/reports/2026-06-20-aug-poc/` — arche_aug PoC (graph-guided chunk retrieval) 81.0%
 관련 PR: #51 (stoplist fix), #52 (aug PoC), (본 PR — 피벗 확정)
 
 ## TL;DR
@@ -32,8 +32,8 @@ ingest LLM 의 SYSTEM_PROMPT 에 "수치 / 시계열 / 표 항목 보존 필수"
 
 | 컬럼 | before F | after F | Δ acc | Δ tokens |
 |---|---|---|---|---|
-| opentology (graph 단독) | 33.3% | **47.6%** | **+14.3pp** | 10.5K → 6K (-43%) |
-| opentology_aug | 81.0% | 76.2% | **-4.8pp** | 17.1K → 13.2K (-23%) |
+| arche (graph 단독) | 33.3% | **47.6%** | **+14.3pp** | 10.5K → 6K (-43%) |
+| arche_aug | 81.0% | 76.2% | **-4.8pp** | 17.1K → 13.2K (-23%) |
 
 - graph-only 모드에는 **유효** (정설 충족 — description 이 정량 정보 보존하면 graph 단독으로 답 가능, 토큰도 ↓).
 - aug 모드에는 **후퇴** (Q05, Q08). 원인 추적:
@@ -71,9 +71,9 @@ AMD 안의 top-8 chunk: 비즈니스 개요 / 인사 / 재무 결과 (정답 청
 | 컬럼 | acc | 입력 토큰 | 지연 (중앙값) | 적합 시나리오 |
 |---|---|---|---|---|
 | chunk_rag | 71.4% | 6.9K | 2.37s | baseline / corpus 모를 때 |
-| opentology (graph 단독) | 33.3% (기본) / 47.6% (F profile) | 10.5K / 6K | 3.92s / 3.78s | agent 가 graph primitives 만 호출 시 |
+| arche (graph 단독) | 33.3% (기본) / 47.6% (F profile) | 10.5K / 6K | 3.92s / 3.78s | agent 가 graph primitives 만 호출 시 |
 | combined | 81.0% | 17K | 5.28s | 라우터 없이 두 retrieval 비교 가치 |
-| **opentology_aug** | **81.0%** | 17K | 4.99s | **메인 — graph 가 결정 / chunk 재료. 정설** |
+| **arche_aug** | **81.0%** | 17K | 4.99s | **메인 — graph 가 결정 / chunk 재료. 정설** |
 | triple | 76.2% | 23.7K | 5.39s | 기각 |
 | triple-dedup | 76.2% | 17.2K | 4.91s | 기각 |
 
@@ -146,9 +146,9 @@ robust 가드는 *정상 작동* (코드 변경은 아무 회귀 만들지 않�
 
 ## 데이터 산출물
 
-- `eval/runs/2026-06-20-triple-smoke/responses/opentology_triple/` — G naive 측정
-- `eval/runs/2026-06-20-triple-dedup-smoke/responses/opentology_triple_dedup/` — G dedup 측정
-- `eval/runs/2026-06-20-F-strong-desc-smoke/responses/{opentology,opentology_aug}/` — F 측정
+- `eval/runs/2026-06-20-triple-smoke/responses/arche_triple/` — G naive 측정
+- `eval/runs/2026-06-20-triple-dedup-smoke/responses/arche_triple_dedup/` — G dedup 측정
+- `eval/runs/2026-06-20-F-strong-desc-smoke/responses/{arche,arche_aug}/` — F 측정
 - `eval/reports/2026-06-20-neo4j-review/CONCLUSION.md` — Neo4j 검토
 - 본 보고서 (피벗 확정)
 

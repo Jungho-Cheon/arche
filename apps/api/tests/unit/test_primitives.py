@@ -9,20 +9,20 @@ from __future__ import annotations
 
 from fastapi.testclient import TestClient
 
-from opentology_api.api.deps import (
+from arche_api.api.deps import (
     embedding_provider_dep,
     graph_repo_dep,
     llm_provider_dep,
 )
-from opentology_api.api.services import _fuse_with_rrf
-from opentology_api.domain.models import (
+from arche_api.api.services import _fuse_with_rrf
+from arche_api.domain.models import (
     Edge,
     ExtractedGraph,
     Node,
     SourceRef,
     now_rfc3339,
 )
-from opentology_api.domain.ports import (
+from arche_api.domain.ports import (
     DenseHit,
     EmbeddingProvider,
     EntityTypeStat,
@@ -34,7 +34,7 @@ from opentology_api.domain.ports import (
     PathResult,
     RelationTypeStat,
 )
-from opentology_api.main import create_app
+from arche_api.main import create_app
 
 # ---------- 공통 stub ----------
 
@@ -594,7 +594,7 @@ def test_get_subgraph_rejects_non_ulid_entry():
 
 def test_clamp_truncates_over_limit():
     """_clamp 은 max_length 초과 문자열만 자르고 이하/None 은 그대로."""
-    from opentology_api.adapters.graph import _clamp
+    from arche_api.adapters.graph import _clamp
 
     assert _clamp(None, 64) is None
     assert _clamp("short", 64) == "short"
@@ -608,7 +608,7 @@ def test_record_to_edge_clamps_oversized_relation_type():
     조밀 그래프에서 BFS 가 verbose 라벨 엣지에 닿으면 응답 전체가 500 났던
     회귀의 단위 재현. clamp 후엔 Edge 가 정상 생성되고 type 이 64 자로 잘린다.
     """
-    from opentology_api.adapters.graph import _record_to_edge
+    from arche_api.adapters.graph import _record_to_edge
 
     oversized = "relates_to_in_a_very_long_and_verbose_way_" * 5  # > 64
     edge = _record_to_edge(
@@ -625,7 +625,7 @@ def test_record_to_edge_clamps_oversized_relation_type():
 
 def test_node_to_response_clamps_oversized_fields():
     """200 자 초과 name / 2000 자 초과 description 노드가 500 나지 않는다."""
-    from opentology_api.adapters.graph import _node_to_response
+    from arche_api.adapters.graph import _node_to_response
 
     node = {
         "id": "01AAA0G7M8N0RT0V0EXAMPLE03",

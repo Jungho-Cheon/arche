@@ -1,13 +1,13 @@
 # PRD 6 — post-MVP Combined RAG 청사진
 
-> 본 문서는 2026-06-20 Combined RAG 검증 (정확도 100%, full-context 의 1/5 비용) 결과를 받아 Opentology 의 정체성과 다음 마일스톤을 정한다. MVP 의 가설 (그래프 단독 Pareto 우월) 은 미달이었지만, *두 retrieval 의 보완재 결합* 이라는 새 가설이 한 번의 측정에서 강하게 입증되었다.
+> 본 문서는 2026-06-20 Combined RAG 검증 (정확도 100%, full-context 의 1/5 비용) 결과를 받아 Arche 의 정체성과 다음 마일스톤을 정한다. MVP 의 가설 (그래프 단독 Pareto 우월) 은 미달이었지만, *두 retrieval 의 보완재 결합* 이라는 새 가설이 한 번의 측정에서 강하게 입증되었다.
 >
 > 본 PRD 가 답해야 하는 4 가지 질문:
 >
-> 1. Combined 방식을 Opentology 의 새 정체성으로 가져가려면 무엇이 필요한가
+> 1. Combined 방식을 Arche 의 새 정체성으로 가져가려면 무엇이 필요한가
 > 2. Combined 가 Obsidian / Graphify / 실 경쟁 도구들 대비 어떤 이점을 갖는가
 > 3. Combined 의 최적해는 무엇인가 (chunk 최적화 + graph 최적화 + 둘의 관계)
-> 4. Opentology 가 경쟁력을 갖는 post-MVP 청사진은 무엇인가
+> 4. Arche 가 경쟁력을 갖는 post-MVP 청사진은 무엇인가
 
 ## §0. 전제 — 측정 결과 한 줄
 
@@ -16,7 +16,7 @@
 | 컬럼 | 정확도 | 토큰 중앙값 | 지연 중앙값 | 90 호출 비용 |
 |---|---|---|---|---|
 | chunk_rag | 96.7% | 8.5K | 2.85s | $0.97 |
-| opentology (graph 단독) | 90.0% | 7.9K | 4.82s | $1.69 |
+| arche (graph 단독) | 90.0% | 7.9K | 4.82s | $1.69 |
 | **combined (chunk + graph 단일 호출)** | **100.0%** | 15.7K | 5.11s | **$2.54** |
 | (참고) full_context | 100% | 70K | 8.1s | $12.7 |
 
@@ -24,7 +24,7 @@
 
 ---
 
-## §1. Combined 를 Opentology 의 정체성으로 — 필요한 것
+## §1. Combined 를 Arche 의 정체성으로 — 필요한 것
 
 ### §1.1 API 표면 — 그래프 primitive 에서 *retrieval orchestrator* 로
 
@@ -76,14 +76,14 @@
 
 ### §1.4 측정 모드 — 평가 하니스의 서비스화
 
-MVP 의 eval 하니스 (`opentology-eval`) 는 *수동 측정 CLI*. 이를 *서비스 모드* 로 격상:
+MVP 의 eval 하니스 (`arche-eval`) 는 *수동 측정 CLI*. 이를 *서비스 모드* 로 격상:
 
 - 운영 환경에서 받은 모든 `/answer` 호출을 익명화해 로그
 - 주기적 spot-check 측정 (사람이 만든 ground truth 셋에 대해 N=1 실행)
 - 정확도/토큰/지연 drift dashboards
 - chunk 와 graph 가 *다른 답* 을 낸 케이스를 자동 수집 → human-in-the-loop 검토 큐로
 
-이게 곧 Opentology 의 운영 가치 명제 — "RAG 를 *측정 가능하게* 운영한다".
+이게 곧 Arche 의 운영 가치 명제 — "RAG 를 *측정 가능하게* 운영한다".
 
 ### §1.5 문서화 — 정체성 변경의 명시화
 
@@ -112,19 +112,19 @@ MVP 의 eval 하니스 (`opentology-eval`) 는 *수동 측정 CLI*. 이를 *서�
 | **Neo4j GraphRAG** (Python) | 라이브러리 (Neo4j 네이티브) | 예 | 예 | 가능 |
 | Cohere Rerank + 벡터 DB | API 조합 | 예 | 부분 (chunk 만) | 아니오 |
 | Vectara / Pinecone Assistant | 매니지드 RAG | 예 (서비스) | 예 | 일부 (도메인별) |
-| **Opentology (Combined)** | 자가호스트 RAG orchestrator | 예 | 예 (단일 엔드포인트) | **기본 (chunk + graph 결합)** |
+| **Arche (Combined)** | 자가호스트 RAG orchestrator | 예 | 예 (단일 엔드포인트) | **기본 (chunk + graph 결합)** |
 
 ### §2.2 Obsidian / Graphify 대비 Combined 의 이점
 
 **Obsidian 대비**:
 - Obsidian 의 Smart Connections 같은 플러그인은 *벡터 only*. 동의어/별칭 다중-홉 질문에서 한계 (본 측정 Q02 같은 사례).
 - Obsidian 은 인간용 단축키/링크 UI 가 본체. *LLM/에이전트가 API 로 호출* 하기에는 비효율.
-- Opentology 는 API 가 본체. 운영 측정 가능.
+- Arche 는 API 가 본체. 운영 측정 가능.
 
 **Graphify 대비**:
 - Graphify 는 정적 산출물 (graph.json, GRAPH_REPORT.md). *실시간 질의* 가 아님.
 - Graphify 는 *그래프만*. 본 측정의 Q05/Q20 처럼 그래프 alias 가 미통합되면 답을 못 냄.
-- Graphify 는 재실행할 때마다 LLM 추출을 다시 함 (캐시는 있지만 청크 기준). Opentology 는 idempotent 차분 ingest (ADR-0003).
+- Graphify 는 재실행할 때마다 LLM 추출을 다시 함 (캐시는 있지만 청크 기준). Arche 는 idempotent 차분 ingest (ADR-0003).
 
 **둘 모두 대비 공통 이점**:
 - Combined 한 호출에서 chunk + graph 가 *서로의 약점 정정*. 본 측정 30 문항 100%.
@@ -133,17 +133,17 @@ MVP 의 eval 하니스 (`opentology-eval`) 는 *수동 측정 CLI*. 이를 *서�
 
 ### §2.3 실 경쟁군 대비 차별 요소 (정직한 평가)
 
-LangChain Hybrid 와 LlamaIndex 가 *기능적으로 같은 것을 조립 가능* 하다. Opentology 의 차별은 다음 *조합* 에서 온다:
+LangChain Hybrid 와 LlamaIndex 가 *기능적으로 같은 것을 조립 가능* 하다. Arche 의 차별은 다음 *조합* 에서 온다:
 
 1. **Opinionated 기본값** — 사용자가 청크 크기 / 임베딩 모델 / hop 수 / 머지 임계값을 정하지 않아도 동작. 본 측정으로 검증된 기본값이 박혀 있음.
 2. **Idempotent ingest + 4 단계 EntityMatcher** — 같은 문서를 다시 ingest 해도 그래프가 부풀지 않음 (ADR-0003). LangChain/LlamaIndex 는 ingest 정책이 사용자 몫.
-3. **Eval 하니스 동봉** — `opentology-eval` 이 같은 저장소에 있어 *내 도메인에서 측정* 이 5 분 안에 시작.
+3. **Eval 하니스 동봉** — `arche-eval` 이 같은 저장소에 있어 *내 도메인에서 측정* 이 5 분 안에 시작.
 4. **MCP + REST 동시 노출** — agentic workflow 에 그대로 꽂힘.
 5. **한국어 정책 도메인 검증 데이터셋 동봉** — 비영어/규정 도메인에서의 동작 보장.
 
-Microsoft GraphRAG 대비 — *cheaper*. GraphRAG 는 community summary 를 미리 만들어두는 multi-pass 파이프라인. Opentology 는 1 LLM call 로 답.
+Microsoft GraphRAG 대비 — *cheaper*. GraphRAG 는 community summary 를 미리 만들어두는 multi-pass 파이프라인. Arche 는 1 LLM call 로 답.
 
-Neo4j GraphRAG (Python) 대비 — Opentology 는 chunk RAG 를 *peer* 로 둠. Neo4j GraphRAG 는 그래프 중심.
+Neo4j GraphRAG (Python) 대비 — Arche 는 chunk RAG 를 *peer* 로 둠. Neo4j GraphRAG 는 그래프 중심.
 
 Vectara / Pinecone Assistant 대비 — *self-hostable* 라이선스. 데이터가 외부로 안 나감. Combined 가 그들의 retrieval 보다 *근본적으로 우수* 한지는 검증 필요 (이 PRD 의 §3 측정 항목으로).
 
@@ -282,7 +282,7 @@ Vectara / Pinecone Assistant 대비 — *self-hostable* 라이선스. 데이터�
 
 #### M6.5 gating — 1M 에서 본 PRD 의 가설을 재검증
 
-본 PRD 의 모든 제안은 *95K 한국어 정책 코퍼스 단일 회차 측정* 에 근거. 1M 시점에서 가설이 무너지면 본 PRD 자체가 amend 대상. *M7 productization 에 투자하기 전* 1M FinanceBench (외부 standard, multi-hop QA 동봉) 로 *3-way 검증* (chunk vs opentology vs combined) 을 한 번 돌린다. 비용 약 \$13 (full-context 제외, ADR-0007 D2 에 따라 비교 대상 아님).
+본 PRD 의 모든 제안은 *95K 한국어 정책 코퍼스 단일 회차 측정* 에 근거. 1M 시점에서 가설이 무너지면 본 PRD 자체가 amend 대상. *M7 productization 에 투자하기 전* 1M FinanceBench (외부 standard, multi-hop QA 동봉) 로 *3-way 검증* (chunk vs arche vs combined) 을 한 번 돌린다. 비용 약 \$13 (full-context 제외, ADR-0007 D2 에 따라 비교 대상 아님).
 
 **M6.5 결과 분기**:
 

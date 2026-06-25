@@ -12,7 +12,7 @@ FinanceBench 돌파 (graph-only 94-97%) 의 가장 큰 약점은 *단일 도메�
   3,508 엔티티 / 4,577 관계 그래프**. (전량 1,217 abstract 은 직렬 엔티티-매칭 병목으로
   8-9 시간 → 코퍼스 축소, 아래 "한계" 참조.)
 - 같은 코퍼스에 **두 조건 동시 측정** (상대 비교가 주장):
-  - agentic graph-only — opentology 프리미티브만 반복 (원본 .txt 미열람)
+  - agentic graph-only — arche 프리미티브만 반복 (원본 .txt 미열람)
   - agentic grep (baseline) — 원본 .txt 만 grep/read (그래프 미사용)
 - 정답 키 미제공 서브에이전트. 보기 9 개 (랜덤 기대 약 11%).
 
@@ -20,13 +20,13 @@ FinanceBench 돌파 (graph-only 94-97%) 의 가장 큰 약점은 *단일 도메�
 
 | 도구 | 정답률 |
 | --- | --- |
-| **opentology graph-only** | **30.0% (3/10)** |
+| **arche graph-only** | **30.0% (3/10)** |
 | graphify graph-only | 10.0% (1/10) |
 | grep (baseline) | 0.0% (0/10) |
 
 graphify 도 같은 289 abstract 코퍼스에 *동일 gpt-4.1* 로 빌드 (graphify 기본 20-file/청크는
 gpt-4.1 에서 degenerate → chunk_size=3 으로 정상화, 1,666 노드 1,414 엣지). 같은 10 문항을
-graphify query/path/explain 로 agentic 풀이. 순위 일관: **opentology > graphify > grep**.
+graphify query/path/explain 로 agentic 풀이. 순위 일관: **arche > graphify > grep**.
 
 ## 두 결론 (둘 다 중요)
 
@@ -53,16 +53,16 @@ lexical 검색이 가짜 사슬을 만든다. **"lexical 검색은 관계 사슬
 - finance: 정량(수치/표) 추출 — 이번 세션 ingest 개선으로 *해결* → 97%.
 - biomedical 관계: **문서 간 entity resolution + 관계 추출** — *미해결* → 30% 천장.
 
-### opentology 가 graphify 를 3배 이긴 이유 (정량 근거)
+### arche 가 graphify 를 3배 이긴 이유 (정량 근거)
 
 | | cross-document 엔티티 연결 |
 | --- | --- |
 | graphify | cross-abstract 엣지 **3 / 1,414 (0.2%)** — abstract 마다 고립된 섬 |
-| opentology | **423 엔티티가 여러 문서에 걸쳐 병합 (3,508 중 12%)** — ADR-0009 context-aware 매칭 |
+| arche | **423 엔티티가 여러 문서에 걸쳐 병합 (3,508 중 12%)** — ADR-0009 context-aware 매칭 |
 
 graphify 의 엣지는 196 종 관계로 다양하나 (references 384, conceptually_related_to 361,
 inhibits 90 ...) **거의 전부 단일 abstract 내부** — 문서 간 엔티티를 잇지 않아 multi-hop
-사슬이 끊긴다 (서브에이전트: "path 가 거의 항상 No path found"). opentology 는 ADR-0009
+사슬이 끊긴다 (서브에이전트: "path 가 거의 항상 No path found"). arche 는 ADR-0009
 의 context-aware 매칭으로 같은 단백질을 문서 간 병합 (423 엔티티) → 일부 사슬을 잇는다.
 **이 cross-doc 병합의 유무가 30% vs 10% 를 가른다.** 두 도구 모두 천장에 막힌 건 그
 병합이 *불완전* 하기 때문 — 다음 레버 = cross-document entity resolution 강화.

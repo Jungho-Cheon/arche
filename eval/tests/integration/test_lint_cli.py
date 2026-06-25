@@ -8,7 +8,7 @@ from pathlib import Path
 import pytest
 from typer.testing import CliRunner
 
-from opentology_eval.cli import app
+from arche_eval.cli import app
 
 
 FIXTURE_ROOT = (

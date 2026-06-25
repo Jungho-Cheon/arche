@@ -8,7 +8,7 @@ from pathlib import Path
 
 import pytest
 
-from opentology_eval.scoring.spotcheck import (
+from arche_eval.scoring.spotcheck import (
     apply_overrides_file,
     build_queue,
     render_case,
@@ -82,12 +82,12 @@ def _seed_fixture(tmp_path: Path) -> Path:
         ),
         encoding="utf-8",
     )
-    # opentology — 정답 + reasoning=2 + faithfulness=1 → 트리거 없음.
-    (run_dir / "responses" / "opentology").mkdir(parents=True)
-    (run_dir / "responses" / "opentology" / "Q01_run0.json").write_text(
+    # arche — 정답 + reasoning=2 + faithfulness=1 → 트리거 없음.
+    (run_dir / "responses" / "arche").mkdir(parents=True)
+    (run_dir / "responses" / "arche" / "Q01_run0.json").write_text(
         json.dumps(
             {
-                "column": "opentology",
+                "column": "arche",
                 "question_id": "Q01",
                 "run_index": 0,
                 "anchor_extraction": {
@@ -118,7 +118,7 @@ def _seed_fixture(tmp_path: Path) -> Path:
         {"question_id": "Q01", "column": "chunk_rag", "run_index": 0,
          "reasoning_quality": 1, "faithfulness": 0,
          "reasoning_rationale": "ok", "faithfulness_rationale": "환각"},
-        {"question_id": "Q01", "column": "opentology", "run_index": 0,
+        {"question_id": "Q01", "column": "arche", "run_index": 0,
          "reasoning_quality": 2, "faithfulness": 1,
          "reasoning_rationale": "good", "faithfulness_rationale": "ok"},
     ]
@@ -136,8 +136,8 @@ def test_build_queue_matches_both_triggers(tmp_path: Path) -> None:
     assert triggers_by_col["full_context"] == "lucky_correct"
     # chunk_rag — hallucination_suspect (faithfulness=0).
     assert triggers_by_col["chunk_rag"] == "hallucination_suspect"
-    # opentology — 트리거 없음.
-    assert "opentology" not in triggers_by_col
+    # arche — 트리거 없음.
+    assert "arche" not in triggers_by_col
 
 
 def test_render_case_contains_key_fields(tmp_path: Path) -> None:
@@ -214,15 +214,15 @@ def test_run_interactive_processes_one_case_via_scripted_input(tmp_path: Path) -
 
 
 def test_run_interactive_manual_add(tmp_path: Path) -> None:
-    """'add Q01 opentology 0' 으로 큐에 수동 추가 후 처리."""
+    """'add Q01 arche 0' 으로 큐에 수동 추가 후 처리."""
     run_dir = _seed_fixture(tmp_path)
-    # 첫 케이스에서 즉시 add 명령으로 opentology 를 큐 끝에 추가.
-    # 그 뒤 자동 매칭된 두 케이스를 s 로 스킵 → 추가된 opentology 케이스에 r 2 + n → q.
+    # 첫 케이스에서 즉시 add 명령으로 arche 를 큐 끝에 추가.
+    # 그 뒤 자동 매칭된 두 케이스를 s 로 스킵 → 추가된 arche 케이스에 r 2 + n → q.
     script = iter([
-        "add Q01 opentology 0",  # 처음 케이스를 보면서 큐 끝에 수동 추가
+        "add Q01 arche 0",  # 처음 케이스를 보면서 큐 끝에 수동 추가
         "s",  # 첫 자동 매칭 (full_context) skip
         "s",  # 두 번째 자동 매칭 (chunk_rag) skip
-        "r 2", "n",  # 수동 추가된 opentology 케이스에 점수 덮어쓰기
+        "r 2", "n",  # 수동 추가된 arche 케이스에 점수 덮어쓰기
         "q",
     ])
 
@@ -235,5 +235,5 @@ def test_run_interactive_manual_add(tmp_path: Path) -> None:
     saved = json.loads(
         (run_dir / "spotcheck" / "overrides.jsonl").read_text().strip()
     )
-    assert saved["column"] == "opentology"
+    assert saved["column"] == "arche"
     assert saved["human_reasoning_quality"] == 2

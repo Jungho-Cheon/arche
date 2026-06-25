@@ -1,10 +1,10 @@
 dataset_id: commerce-verbose-20260618
 domain: 종합 이커머스 정책 (가상 플랫폼 오로라마켓 — 5 개국 운영, 회원 등급 5 종, 셀러 3 종, 카테고리 8 종)
 language: ko
-author: opentology-eval
+author: arche-eval
 created_at: "2026-06-19"
 description: |
-  Opentology MVP 검증용 비정형 정책 문서 코퍼스.
+  Arche MVP 검증용 비정형 정책 문서 코퍼스.
   8 개 부서 (본사 정책 / 글로벌 확장 / 마케팅 / 셀러 운영 / CS 물류 / 법무 리스크 /
   로열티 등급 / B2B 엔터프라이즈) 가 같은 가상 세계를 각자 시점에서 묘사한다.
   같은 회원 등급을 부서마다 다른 별칭으로 부르고 (VIP = 프리미엄 멤버 = 골드 등급 =

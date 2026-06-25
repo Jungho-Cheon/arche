@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pytest
 
-from opentology_eval.loaders import (
+from arche_eval.loaders import (
     CorpusFile,
     FileLoader,
     SerializedCorpus,

@@ -3,7 +3,7 @@
 
 WHY pytest 가 아닌 standalone: 사용자 의도가 "한 번 돌려 결과를 PR 에 인용"
 이라 fixture / assertion 보다 명확한 print 가 낫다. RUN_LIVE_TESTS=1 환경 변수가
-필요. 실행 — `RUN_LIVE_TESTS=1 uv run --package opentology-api python apps/api/tests/live/proof_alias_and_deletion.py`.
+필요. 실행 — `RUN_LIVE_TESTS=1 uv run --package arche-api python apps/api/tests/live/proof_alias_and_deletion.py`.
 """
 
 from __future__ import annotations
@@ -18,11 +18,11 @@ def main() -> None:
     if os.environ.get("RUN_LIVE_TESTS") != "1":
         print("RUN_LIVE_TESTS!=1, skipping")
         sys.exit(0)
-    from opentology_api.adapters.embedding import OpenAIEmbeddingProvider
-    from opentology_api.adapters.graph import Neo4jGraphRepository
-    from opentology_api.adapters.llm import OpenAILLMProvider
-    from opentology_api.config import Settings
-    from opentology_api.domain.ingest import IngestService
+    from arche_api.adapters.embedding import OpenAIEmbeddingProvider
+    from arche_api.adapters.graph import Neo4jGraphRepository
+    from arche_api.adapters.llm import OpenAILLMProvider
+    from arche_api.config import Settings
+    from arche_api.domain.ingest import IngestService
 
     settings = Settings()
     if not settings.openai_api_key:

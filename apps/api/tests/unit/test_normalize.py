@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import unicodedata
 
-from opentology_api.domain.identity import normalize
+from arche_api.domain.identity import normalize
 
 
 def test_strip_and_lowercase_basic():

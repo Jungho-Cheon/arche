@@ -259,7 +259,7 @@ abstract 를 신선한 neo4j 에 전량 재적재(약 2.5 시간)하고 베이�
    같은 파일이 재추출되고, 안 바뀐 파일은 여전히 skip → 코드 변경을 델타로 잡는다.
 5. **eval 에이전트가 hub_score 소비** — ✅ **구현됨 (2026-06-24)**. `serialize_subgraph`
    가 각 경로에 `[hub_score=X.XX]` 를 노출하고 임계(≥2.0) 초과 시 `⚠허브경유-근거약함`
-   마커를 단다. `OPENTOLOGY_ANSWER_SYSTEM` 프롬프트에 "두 보기가 경쟁하면 hub_score
+   마커를 단다. `ARCHE_ANSWER_SYSTEM` 프롬프트에 "두 보기가 경쟁하면 hub_score
    낮은 경로 우선, ⚠ 경로로만 닿는 보기는 강한 근거로 삼지 않는다" 규칙 추가. 답변
    LLM 이 가짜 허브 다리를 근거 채택 전에 의심하게 된다. end-to-end 재측정(MedHop·
    FinanceBench)은 비용 때문에 별도. eval serializer 단위 테스트 추가.

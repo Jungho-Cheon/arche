@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from opentology_eval.lint.dryrun import dry_run_ingest
+from arche_eval.lint.dryrun import dry_run_ingest
 
 
 def test_dry_run_empty_corpus(tmp_path: Path) -> None:

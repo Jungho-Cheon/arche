@@ -7,8 +7,8 @@ source_refs / updated_at) 을 한 줄씩 검증.
 
 from __future__ import annotations
 
-from opentology_api.domain.identity import EntityMerger
-from opentology_api.domain.models import (
+from arche_api.domain.identity import EntityMerger
+from arche_api.domain.models import (
     ExtractedEntity,
     SourceRef,
     StoredEntity,

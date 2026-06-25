@@ -62,7 +62,7 @@ Amends: [ADR-0004](./0004-vector-infra-graph-db-internal-index.md) 단일 store 
 ### D1 — monorepo + 레이아웃
 
 ```
-opentology/                    # 단일 저장소 (OSS 코어)
+arche/                    # 단일 저장소 (OSS 코어)
 ├── apps/
 │   ├── api/                   # [현재] FastAPI 백엔드 — agnostic 그래프 엔진
 │   ├── docs/                  # [후속] Nextra — 소개 / API / MCP 문서

@@ -10,14 +10,14 @@ from typing import Any
 
 import pytest
 
-from opentology_eval.columns.chunk_rag import ChunkRAGRunner
-from opentology_eval.loaders import FileLoader
-from opentology_eval.providers import (
+from arche_eval.columns.chunk_rag import ChunkRAGRunner
+from arche_eval.loaders import FileLoader
+from arche_eval.providers import (
     EmbeddingResult,
     LLMResult,
     LLMUsage,
 )
-from opentology_eval.questions import load_questions
+from arche_eval.questions import load_questions
 from tests.fixtures._pdf_builder import write_text_pdf
 from tests.fixtures._png_builder import write_red_pixel_png
 
@@ -60,7 +60,7 @@ def test_chunk_rag_skips_image_files_and_pdf_image_pages(
     llm = _FakeLLM()
     embedder = _FakeEmbedder(captured_texts=[])
 
-    with caplog.at_level(logging.WARNING, logger="opentology_eval.loaders"):
+    with caplog.at_level(logging.WARNING, logger="arche_eval.loaders"):
         crag = ChunkRAGRunner(loader=loader, llm=llm, embedder=embedder)
         crag.setup()
 

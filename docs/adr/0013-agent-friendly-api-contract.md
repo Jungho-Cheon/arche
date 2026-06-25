@@ -30,14 +30,14 @@ MVP 성공 최소 조건 (사용자 goal 2026-06-21) 의 (2) "Agent 친화적인
 
 ### 현 상태의 산발적 contract
 
-`apps/api/src/opentology_api/api/schemas.py` 에 `DataEnvelope` 가 있지만 일관 적용 안 됨:
+`apps/api/src/arche_api/api/schemas.py` 에 `DataEnvelope` 가 있지만 일관 적용 안 됨:
 
 - `/answer` 의 응답 — DataEnvelope[AnswerResponse] ✓
 - `/admin/ingest` 의 응답 — DataEnvelope[AdminIngestResponse] ✓
 - `/healthz` — DataEnvelope 안 씀 (단순 객체)
 
 에러 처리:
-- `OpentologyError` 가 exception handler 에서 ErrorEnvelope 으로 변환 (`main.py`)
+- `ArcheError` 가 exception handler 에서 ErrorEnvelope 으로 변환 (`main.py`)
 - 그러나 *모든* 에러가 통과하지는 않음 — FastAPI 의 422 validation 은 raw FastAPI 형식
 
 OpenAPI:

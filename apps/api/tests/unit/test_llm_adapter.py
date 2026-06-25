@@ -6,8 +6,8 @@ import json
 
 import pytest
 
-from opentology_api.adapters.llm import OpenAILLMProvider
-from opentology_api.domain.errors import DependencyUnavailableError
+from arche_api.adapters.llm import OpenAILLMProvider
+from arche_api.domain.errors import DependencyUnavailableError
 
 
 def _make_provider_with_responses(responses: list[str]) -> OpenAILLMProvider:
@@ -102,7 +102,7 @@ def test_extraction_fingerprint_tracks_system_prompt():
     """
     import hashlib
 
-    from opentology_api.adapters import llm as llm_mod
+    from arche_api.adapters import llm as llm_mod
 
     prov = _provider_with_model("gpt-4.1")
     # 현재 SYSTEM_PROMPT 로 만든 지문.

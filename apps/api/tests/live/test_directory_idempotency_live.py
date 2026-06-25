@@ -27,7 +27,7 @@ def live_enabled() -> bool:
 def settings(live_enabled):
     if not live_enabled:
         pytest.skip("RUN_LIVE_TESTS!=1")
-    from opentology_api.config import Settings
+    from arche_api.config import Settings
 
     s = Settings()
     if not s.openai_api_key:
@@ -53,10 +53,10 @@ def test_directory_ingest_is_idempotent_and_includes_chunked_file(
     settings, tmp_path, capsys
 ):
     """디렉토리 두 번 → count 불변 + 큰 파일 청크 분할이 정상 동작."""
-    from opentology_api.adapters.embedding import OpenAIEmbeddingProvider
-    from opentology_api.adapters.graph import Neo4jGraphRepository
-    from opentology_api.adapters.llm import OpenAILLMProvider
-    from opentology_api.domain.ingest import IngestService
+    from arche_api.adapters.embedding import OpenAIEmbeddingProvider
+    from arche_api.adapters.graph import Neo4jGraphRepository
+    from arche_api.adapters.llm import OpenAILLMProvider
+    from arche_api.domain.ingest import IngestService
 
     # 디렉토리 구성 — 작은 파일 2 개 + 큰 파일 1 개.
     fixture = (

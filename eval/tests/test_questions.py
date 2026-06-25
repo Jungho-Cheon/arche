@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from opentology_eval.questions import load_questions
+from arche_eval.questions import load_questions
 
 
 def test_loads_synthetic_fixture(questions_path: Path) -> None:

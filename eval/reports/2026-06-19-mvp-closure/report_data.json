@@ -48,8 +48,8 @@
       },
       "override_count": 0
     },
-    "opentology": {
-      "column": "opentology",
+    "arche": {
+      "column": "arche",
       "response_count": 90,
       "accuracy": 0.9666666666666667,
       "reasoning_quality_median": 2.0,

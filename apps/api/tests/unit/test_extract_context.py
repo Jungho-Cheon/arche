@@ -6,7 +6,7 @@ FakeGraph stub 으로 KNOWN_ENTITIES 후보 선정 + schema summary + context bl
 
 from __future__ import annotations
 
-from opentology_api.domain.extract_context import (
+from arche_api.domain.extract_context import (
     ExtractContext,
     ExtractContextBuilder,
     KnownEntity,
@@ -14,9 +14,9 @@ from opentology_api.domain.extract_context import (
     extract_keywords,
     render_context_block,
 )
-from opentology_api.domain.models import Node, SourceRef, now_rfc3339
-from opentology_api.domain.ports import EntityTypeStat, KeywordHit, RelationTypeStat
-from opentology_api.test_support import FakeGraph
+from arche_api.domain.models import Node, SourceRef, now_rfc3339
+from arche_api.domain.ports import EntityTypeStat, KeywordHit, RelationTypeStat
+from arche_api.test_support import FakeGraph
 
 
 def _node(id_: str, name: str, type_: str, aliases=None, desc=None) -> Node:
@@ -170,7 +170,7 @@ def test_builder_collects_schema_summary():
 
 def test_render_includes_three_section_headers_and_known_entities():
     ctx = ExtractContext(
-        doc=__import__("opentology_api.domain.extract_context", fromlist=["DocContext"]).DocContext(
+        doc=__import__("arche_api.domain.extract_context", fromlist=["DocContext"]).DocContext(
             file_path="/x.md",
             main_entity_name="Amcor plc",
             main_entity_type="company",
@@ -200,7 +200,7 @@ def test_render_includes_three_section_headers_and_known_entities():
 
 
 def test_render_handles_empty_graph_gracefully():
-    from opentology_api.domain.extract_context import DocContext
+    from arche_api.domain.extract_context import DocContext
 
     ctx = ExtractContext(
         doc=DocContext(file_path="/x.md"),

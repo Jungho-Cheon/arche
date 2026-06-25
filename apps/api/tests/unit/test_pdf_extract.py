@@ -6,8 +6,8 @@ from pathlib import Path
 
 import pytest
 
-from opentology_api.adapters.pdf import PdfPage, extract_pdf
-from opentology_api.domain.errors import InvalidInputError
+from arche_api.adapters.pdf import PdfPage, extract_pdf
+from arche_api.domain.errors import InvalidInputError
 
 from ..fixtures._pdf_builder import build_text_pdf, write_text_pdf
 

@@ -13,10 +13,10 @@ from typing import Any
 
 import pytest
 
-from opentology_eval.columns.full_context import FullContextRunner
-from opentology_eval.loaders import FileLoader
-from opentology_eval.providers import LLMResult, LLMUsage
-from opentology_eval.questions import load_questions
+from arche_eval.columns.full_context import FullContextRunner
+from arche_eval.loaders import FileLoader
+from arche_eval.providers import LLMResult, LLMUsage
+from arche_eval.questions import load_questions
 from tests.fixtures._pdf_builder import write_text_pdf
 from tests.fixtures._png_builder import write_red_pixel_png
 

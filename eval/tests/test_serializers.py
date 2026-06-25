@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from opentology_eval.serializers import serialize_subgraph
+from arche_eval.serializers import serialize_subgraph
 
 
 def _node(

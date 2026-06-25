@@ -7,15 +7,15 @@ from pathlib import Path
 from typing import Any
 from unittest.mock import MagicMock
 
-from opentology_eval.columns.chunk_rag import ChunkRAGRunner
-from opentology_eval.columns.full_context import FullContextRunner
-from opentology_eval.loaders import FileLoader
-from opentology_eval.providers import (
+from arche_eval.columns.chunk_rag import ChunkRAGRunner
+from arche_eval.columns.full_context import FullContextRunner
+from arche_eval.loaders import FileLoader
+from arche_eval.providers import (
     EmbeddingResult,
     LLMResult,
     LLMUsage,
 )
-from opentology_eval.questions import load_questions
+from arche_eval.questions import load_questions
 
 
 def _fake_llm_result(

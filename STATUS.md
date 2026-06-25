@@ -1,4 +1,4 @@
-# STATUS — Opentology 현재 상태
+# STATUS — Arche 현재 상태
 
 > 이 파일의 위치: 본 저장소에 기여하는 모두를 위한 **단일 진입점**. 마일스톤 진행도 / 다음 액션 / 알려진 stub 표가 한 페이지에 모인다.
 
@@ -40,18 +40,18 @@ M1-M6 모든 마일스톤 완료. 2026-06-19 본 측정 (Pareto 우월 가설 �
 |---|---|---|---|---|---|
 | Full-context (gpt-4.1) | 100.0% | 없음 | 70K | 8.1s | $12.7 |
 | Chunk RAG | 96.7% | Q02 (synonym_alias 3-hop) | 8.5K | 2.85s | $0.97 |
-| Opentology (graph 단독) | 90.0% | Q05, Q20, Q25 | 7.9K | 4.82s | $1.69 |
+| Arche (graph 단독) | 90.0% | Q05, Q20, Q25 | 7.9K | 4.82s | $1.69 |
 | **Combined (chunk + graph 단일 호출)** | **100.0%** | **없음** | 15.7K | 5.11s | **$2.54** |
 
 핵심 발견: chunk 와 graph 의 오답 집합이 *서로 겹치지 않음* (Q02 ↔ Q05/Q20/Q25). Combined 는 두 retrieval 결과를 *한 LLM 호출의 컨텍스트* 에 같이 넣어 LLM 이 두 신호를 비교, *모든* 단독 실패를 회복.
 
 - 상세 (1차): `eval/runs/2026-06-19-2126/report.md` (Pareto 미달 결론)
 - 상세 (2차/피벗): `eval/reports/2026-06-20-combined-pivot/CONCLUSION.md` (Combined 채택)
-- 측정 데이터: `eval/runs/2026-06-20-0923/responses/{chunk_rag,opentology,combined}/`
+- 측정 데이터: `eval/runs/2026-06-20-0923/responses/{chunk_rag,arche,combined}/`
 
 ## 한 줄
 
-Opentology = LLM·AI 에이전트가 *도메인 지식의 관계* 를 *최소한의 토큰과 시간으로* 활용하도록 돕는, 그래프 기반 지식 베이스 도구. 자세한 가치 명제와 검증 가설은 [`docs/prd/1_mvp.md`](./docs/prd/1_mvp.md) 와 ADR-0001.
+Arche = LLM·AI 에이전트가 *도메인 지식의 관계* 를 *최소한의 토큰과 시간으로* 활용하도록 돕는, 그래프 기반 지식 베이스 도구. 자세한 가치 명제와 검증 가설은 [`docs/prd/1_mvp.md`](./docs/prd/1_mvp.md) 와 ADR-0001.
 
 ## 검증 흐름 헬스
 
@@ -59,15 +59,15 @@ Opentology = LLM·AI 에이전트가 *도메인 지식의 관계* 를 *최소한
 
 | 단계 | 상태 | 비고 |
 |---|---|---|
-| 소스 입력 (디렉토리 크롤) | 완료 | `opentology ingest <dir>` + `.opentologyignore` + 자동 제외 + `--dry-run` (#2). `--watch` 는 post-MVP |
+| 소스 입력 (디렉토리 크롤) | 완료 | `arche ingest <dir>` + `.archeignore` + 자동 제외 + `--dry-run` (#2). `--watch` 는 post-MVP |
 | 엔티티/관계 추출 (멀티모달 LLM) | 완료 | `.txt` / `.md` + 청크 분할 (heading→paragraph→sentence + 20% overlap) 완료 (#3). 동일성은 4 단계 + idempotent 차분 완료 (#4). PDF 페이지 텍스트 + 임베디드 이미지 + 단일 이미지 파일 멀티모달 호출 완료 (#5). 파일별 실패 isolation (PRD 2 §8) 적용 |
 | 그래프 적재 (idempotent) | 완료 | 4 단계 동일성 (정규화 / 별칭 / 임베딩 유사도 0.92) + IngestionRun 기반 차분 적용 (#4) + 청크 분할 (#3) 도 동일성 매처가 청크 경계 무관하게 흡수 |
 | 그래프 진입점 인덱싱 (어휘 + dense 하이브리드) | 완료 | fulltext + 벡터 인덱스 + 하이브리드 검색 (lexical + dense, RRF k=60). raw 점수는 `include_scores=true` 로 노출 |
 | Graph Primitives REST API | 완료 | 6 primitive 모두 (`get_schema` / `find_entities` 하이브리드 / `get_entity` + edge_counts / `get_neighbors` BFS + 절단 / `find_path` k-shortest / `get_subgraph` multi-source BFS) + `/healthz` + `/admin/ingest`. OpenAPI 는 `/openapi.json` 으로 노출. MCP 어댑터는 #7. cypher relationship 직렬화 hotfix (#27) — UNION/variable-length 결과를 properties-only RETURN 으로 정규화, get_neighbors body+path id 1:1 매핑 |
-| Graph Primitives MCP 서버 | 완료 (stdio) | `opentology mcp serve --stdio` 가 6 primitive 를 표준 MCP tool 로 노출 (#7). REST 와 *동일 입출력 schema* (Pydantic 단일 source). HTTP+SSE 는 post-MVP (PRD 3 §8.1) |
+| Graph Primitives MCP 서버 | 완료 (stdio) | `arche mcp serve --stdio` 가 6 primitive 를 표준 MCP tool 로 노출 (#7). REST 와 *동일 입출력 schema* (Pydantic 단일 source). HTTP+SSE 는 post-MVP (PRD 3 §8.1) |
 | 청크 벡터 RAG 베이스라인 하니스 | 완료 | #15 머지 (eval/). PDF 어댑터 연결 완료 — PDF 텍스트 페이지를 청크 소스로 사용 (#14). 이미지 입력은 PRD 4 §2 의 통제 변수 정책으로 무시 + warning 로그 |
 | Full-context LLM 베이스라인 하니스 | 완료 | #15 머지 (eval/). PDF/이미지 어댑터 연결 완료 — PDF 텍스트는 직렬화 본문에, 이미지 파일 + PDF 이미지 페이지는 멀티모달 user content 로 동봉 (#14) |
-| Opentology 컬럼 (anchor 추출 + primitives 조합 + 직렬화) | 완료 | #10 머지 (eval/columns/opentology.py + eval/clients/opentology.py + eval/serializers.py) |
+| Arche 컬럼 (anchor 추출 + primitives 조합 + 직렬화) | 완료 | #10 머지 (eval/columns/arche.py + eval/clients/arche.py + eval/serializers.py) |
 | 30 개 MCQ 평가 셋 | 완료 | `eval/datasets/commerce-verbose-20260618/` — 8 부서 33 파일 (md 20 / pdf 10 / png 3), 95K 토큰, 30 MCQ. lint green |
 | 3-way 측정 보고서 | 완료 (1 회) | `eval/runs/2026-06-19-2126/report.md` — gpt-4.1 N=3, 30 MCQ × 3 컬럼 × 3 runs = 270 응답 + judge 270 rows + Pareto 판정. 가설 *미달* |
 
@@ -82,7 +82,7 @@ Opentology = LLM·AI 에이전트가 *도메인 지식의 관계* 를 *최소한
 | M5 | 평가 데이터 (상거래 검증 도메인 소스 + 30 MCQ) | 완료 — commerce-verbose-20260618 (33 파일 95K 토큰, 30 MCQ, lint green) + financebench-2026-06-20 (6 파일 980K 토큰, 33 MCQ, lint green) |
 | M6 | 3-way 측정 + 보고서 1 회 | 완료 — 2026-06-19-2126 (gpt-4.1 N=3) + 후속 Combined 검증 2026-06-20-0923 (Combined RAG 100% 달성, 피벗 확정) |
 | M6.5 | 1M corpus 3-way 재검증 (gating) | 완료 — `eval/reports/2026-06-20-financebench-1M/CONCLUSION.md`. Combined ≈ chunk (+0pp), 그러나 graph 부패로 측정 무효. ADR-0008 |
-| **M6.5b** | **EntityConsolidator + 1M 재측정 (신규 gating)** | **pending** — ADR-0008 신설. EntityConsolidator 구현 → 1M 재 ingest → opentology + combined 재측정 → ADR-0007 D2 진짜 분기 결정 |
+| **M6.5b** | **EntityConsolidator + 1M 재측정 (신규 gating)** | **pending** — ADR-0008 신설. EntityConsolidator 구현 → 1M 재 ingest → arche + combined 재측정 → ADR-0007 D2 진짜 분기 결정 |
 | M7 | Combined RAG productization | pending (M6.5b 종료 후) |
 | M8 | Combined 품질·비용 최적화 (잔여) | pending (M7 종료 후, EntityConsolidator 는 M6.5b 로 이동) |
 | M9 | Scale·다도메인·외부 비교 | pending (M8 종료 후) |
@@ -100,7 +100,7 @@ Opentology = LLM·AI 에이전트가 *도메인 지식의 관계* 를 *최소한
 | 마일스톤 | 종료 조건 | 핵심 이슈 |
 |---|---|---|
 | M6.5 — 1M corpus 3-way 재검증 | 완료. 보고서 — `eval/reports/2026-06-20-financebench-1M/CONCLUSION.md`. 결과: Combined ≈ chunk (+0pp). graph 부패로 직접 분기 결정 보류. ADR-0008 신설 | #44 ✓ / #45 (deferred) / #46 ✓ |
-| **M6.5b — EntityConsolidator + 1M 재측정 (gating)** | post-ingest ANN + LLM 검증 dedup 구현 + 1M corpus 재 ingest 후 over-merge 감소 evidence + opentology/combined 재측정 → ADR-0007 D2 진짜 분기 결정 | (신규) #40 EntityConsolidator 를 M8 → M6.5b 로 이동 + 1M 재측정 이슈 신설 |
+| **M6.5b — EntityConsolidator + 1M 재측정 (gating)** | post-ingest ANN + LLM 검증 dedup 구현 + 1M corpus 재 ingest 후 over-merge 감소 evidence + arche/combined 재측정 → ADR-0007 D2 진짜 분기 결정 | (신규) #40 EntityConsolidator 를 M8 → M6.5b 로 이동 + 1M 재측정 이슈 신설 |
 | M7 — Combined RAG productization | docker-compose up + ingest + `curl /answer` 만으로 외부 사용자가 답 받기 | #33 /answer, #34 /retrieve, #35 provenance, #36 노브, #37 Getting Started, #38 identity refresh, #39 service mode |
 | M8 — Combined 품질·비용 최적화 (잔여) | 95K 재측정 토큰 ≤ 10K / latency ≤ 3.5s / 정확도 100% 유지 | #41 retrieval anchor, #42 subgraph reranking, #43 budget allocator (#40 은 M6.5b 로 이동) |
 | M9 — Scale·다도메인·외부 비교 | 1M 자체 한국어 corpus 측정 + 외부 도구 (LangChain Hybrid / Microsoft GraphRAG) 비교 evidence | TBD (M8 종료 후 도출) |

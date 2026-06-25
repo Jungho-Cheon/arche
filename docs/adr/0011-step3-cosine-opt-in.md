@@ -34,7 +34,7 @@ ADR-0009 가 *추출 단계의 LLM* 이 *기존 graph entity 와의 매칭* 을 
 
 ### Step 3 cosine 매칭의 본질적 위험
 
-`apps/api/src/opentology_api/domain/identity.py:EntityMatcher.match` 의 Step 3:
+`apps/api/src/arche_api/domain/identity.py:EntityMatcher.match` 의 Step 3:
 
 ```
 Step 3 — 임베딩 유사도 (cosine ≥ 0.92)

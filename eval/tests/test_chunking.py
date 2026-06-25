@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import tiktoken
 
-from opentology_eval.chunking import (
+from arche_eval.chunking import (
     CHUNK_OVERLAP_TOKENS,
     CHUNK_SIZE_TOKENS,
     split_text,

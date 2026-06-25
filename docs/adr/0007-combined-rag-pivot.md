@@ -1,4 +1,4 @@
-# ADR-0007: Combined RAG 채택 — Opentology 의 정체성 변경
+# ADR-0007: Combined RAG 채택 — Arche 의 정체성 변경
 
 Status: accepted (amended by ADR-0008)
 Date: 2026-06-20
@@ -7,11 +7,11 @@ Date: 2026-06-20
 
 ## TL;DR
 
-ADR-0001 의 Pareto 우월 가설은 2026-06-19 본 측정에서 *미달* 이었다 (Full-context 100% / Chunk 96.7% / Opentology 96.7% — 그래프 단독이 chunk 를 어느 한 축에서도 못 이김). 후속 진단에서 chunk 와 graph 의 *오답이 겹치지 않는다는* 사실이 발견되었고, 두 retrieval 결과를 *한 LLM 호출의 컨텍스트* 에 같이 넣는 **Combined RAG** 가 2026-06-20 재측정에서 100% 정확도 + Full-context 의 1/5 비용을 달성했다.
+ADR-0001 의 Pareto 우월 가설은 2026-06-19 본 측정에서 *미달* 이었다 (Full-context 100% / Chunk 96.7% / Arche 96.7% — 그래프 단독이 chunk 를 어느 한 축에서도 못 이김). 후속 진단에서 chunk 와 graph 의 *오답이 겹치지 않는다는* 사실이 발견되었고, 두 retrieval 결과를 *한 LLM 호출의 컨텍스트* 에 같이 넣는 **Combined RAG** 가 2026-06-20 재측정에서 100% 정확도 + Full-context 의 1/5 비용을 달성했다.
 
 본 ADR 은 다음을 결정한다.
 
-1. Opentology 의 정체성을 *그래프 KB* 에서 ***Combined RAG retrieval orchestrator*** 로 변경한다.
+1. Arche 의 정체성을 *그래프 KB* 에서 ***Combined RAG retrieval orchestrator*** 로 변경한다.
 2. ADR-0001 의 Pareto 정의를 갱신한다 — Full-context 는 *비교 기준* 이 아닌 *상한* 이고, Pareto 비교의 *실 경쟁군* 은 chunk RAG 와 Combined 다.
 3. Combined RAG 는 *graph 와 chunk 를 모두 유지* 한다. 둘 중 하나를 제거하지 않는다.
 
@@ -38,9 +38,9 @@ ADR-0001 의 Pareto 우월 가설은 2026-06-19 본 측정에서 *미달* 이었
 |---|---|---|---|---|
 | Full-context (gpt-4.1) | 100.0% | 70K | 8.1s | $12.69 |
 | Chunk RAG | 96.7% | 4.7K | 2.8s | $1.62 |
-| Opentology (graph 단독) | 96.7% | 8.3K | 5.8s | $1.76 |
+| Arche (graph 단독) | 96.7% | 8.3K | 5.8s | $1.76 |
 
-ADR-0001 의 Pareto 가설 — *Opentology 가 정확도/토큰/지연 모두에서 chunk 보다 우위* — 는 미달. Opentology 는 토큰/지연 어느 한 축에서도 chunk 를 못 이김.
+ADR-0001 의 Pareto 가설 — *Arche 가 정확도/토큰/지연 모두에서 chunk 보다 우위* — 는 미달. Arche 는 토큰/지연 어느 한 축에서도 chunk 를 못 이김.
 
 ### 진단에서 발견된 보완재 패턴
 
@@ -55,21 +55,21 @@ ADR-0001 의 Pareto 가설 — *Opentology 가 정확도/토큰/지연 모두에
 
 ### Combined RAG 의 검증 (2026-06-20, run 0923)
 
-Combined RAG = chunk RAG 의 top-k 청크와 Opentology 의 anchor → subgraph 를 *한 LLM 호출의 컨텍스트* 에 같이 넣고 답변시킴. 라우터 없음.
+Combined RAG = chunk RAG 의 top-k 청크와 Arche 의 anchor → subgraph 를 *한 LLM 호출의 컨텍스트* 에 같이 넣고 답변시킴. 라우터 없음.
 
 같은 데이터셋 / 같은 dataset hash 로 재측정 (corpus 재 ingest 포함):
 
 | 컬럼 | 정확도 | 오답 | 토큰 중앙값 | 지연 중앙값 | 비용 (90 호출) |
 |---|---|---|---|---|---|
 | chunk_rag | 96.7% | Q02 | 8.5K | 2.85s | $0.97 |
-| opentology | 90.0% | Q05, Q20, Q25 | 7.9K | 4.82s | $1.69 |
+| arche | 90.0% | Q05, Q20, Q25 | 7.9K | 4.82s | $1.69 |
 | **combined** | **100.0%** | **없음** | 15.7K | 5.11s | **$2.54** |
 
 Combined 가 chunk 와 graph *각자의 오답을 모두 회복*. LLM 이 두 retrieval 결과를 컨텍스트 안에서 비교해 신뢰성 높은 쪽 자동 선택. Full-context 와 동률 정확도 + 1/5 비용.
 
 ### 본 결정이 필요한 이유
 
-ADR-0001 의 가설이 미달했으므로, Opentology 의 정체성을 다음 중 하나로 *명시적으로* 정해야 한다.
+ADR-0001 의 가설이 미달했으므로, Arche 의 정체성을 다음 중 하나로 *명시적으로* 정해야 한다.
 
 1. Chunk RAG 만 채택 → graph 폐기 → 그러나 Q02 류 (페르소나의 핵심 페인) 해소 못함
 2. Graph RAG 만 채택 → chunk 폐기 → 그러나 graph 단독 90% (ingest 마다 흔들림)
@@ -80,20 +80,20 @@ ADR-0001 의 가설이 미달했으므로, Opentology 의 정체성을 다음 �
 
 ## Decision — 무엇을 결정했나
 
-### D1. Opentology 의 정체성 변경
+### D1. Arche 의 정체성 변경
 
-**기존**: "Opentology = LLM·AI 에이전트가 도메인의 *관계 정보* 를 *최소한의 토큰과 시간으로* 활용하도록 돕는 *그래프 기반* 지식 베이스 도구" (ADR-0001 D1)
+**기존**: "Arche = LLM·AI 에이전트가 도메인의 *관계 정보* 를 *최소한의 토큰과 시간으로* 활용하도록 돕는 *그래프 기반* 지식 베이스 도구" (ADR-0001 D1)
 
-**변경**: "Opentology = chunk RAG 와 graph RAG 의 신호를 *단일 LLM 호출의 컨텍스트* 로 결합해 LLM·에이전트에게 제공하는 ***retrieval orchestrator***"
+**변경**: "Arche = chunk RAG 와 graph RAG 의 신호를 *단일 LLM 호출의 컨텍스트* 로 결합해 LLM·에이전트에게 제공하는 ***retrieval orchestrator***"
 
 핵심 변화:
 - "그래프 기반" → "chunk + graph 결합 기반"
 - 그래프 단독 가치 명제 → 그래프가 chunk 의 약점을 *정정* 하는 *보완재* 로서의 가치 명제
-- 외부 시스템은 Opentology API 하나만 호출 — 내부적으로 두 retrieval 을 결합
+- 외부 시스템은 Arche API 하나만 호출 — 내부적으로 두 retrieval 을 결합
 
 ### D2. Pareto 비교 기준 갱신 (ADR-0001 D2 갱신)
 
-**기존** (ADR-0001 D2): "Pareto 가설 = Opentology 가 Full-context 와 정확도 동률 + chunk RAG 보다 토큰/지연 우위"
+**기존** (ADR-0001 D2): "Pareto 가설 = Arche 가 Full-context 와 정확도 동률 + chunk RAG 보다 토큰/지연 우위"
 
 **변경**: "Pareto 가설 = Combined 가 chunk RAG 와 정확도 *우위* + Full-context 의 *비용 대비 합리적* 비율 (Full-context 의 1/3 이하)"
 
@@ -109,7 +109,7 @@ ADR-0001 의 가설이 미달했으므로, Opentology 의 정체성을 다음 �
 
 ### D4. 단일 LLM 호출 결합 (라우터 휴리스틱 명시 거절)
 
-Combined 의 구현은 ***chunk top-k 청크 + opentology subgraph 를 *한 LLM 호출* 의 컨텍스트로 합치는 것*** 이다. 라우터로 *어느 도구를 쓸지* 선택하는 휴리스틱은 채택하지 *않는다*.
+Combined 의 구현은 ***chunk top-k 청크 + arche subgraph 를 *한 LLM 호출* 의 컨텍스트로 합치는 것*** 이다. 라우터로 *어느 도구를 쓸지* 선택하는 휴리스틱은 채택하지 *않는다*.
 
 이유 (사용자와의 토론 기록):
 - 라우터 자체가 또 다른 휴리스틱 — 임계값/규칙 튜닝 부담
@@ -152,7 +152,7 @@ ADR-0006 의 6 primitive (`get_schema` / `find_entities` / `get_entity` / `get_n
 
 ### 긍정적
 
-- Opentology 의 가치 명제가 *측정으로 검증된* 100% 정확도 + Full-context 의 1/5 비용으로 명료해짐
+- Arche 의 가치 명제가 *측정으로 검증된* 100% 정확도 + Full-context 의 1/5 비용으로 명료해짐
 - 두 retrieval 의 *zero-overlap 오답 패턴* 은 *구조적* 현상 (chunk 는 lexical, graph 는 relational — 다른 신호 채널). 단일 측정 회차가 작더라도 가설 강도가 큼
 - Graph 와 chunk 모두 유지 → 기존 작업 (M1-M6) 의 *전부 폐기* 가 아니라 *결합* 으로 살아남
 - 사용자 페르소나의 핵심 페인 (synonym_alias 다중-홉) 이 명확히 해소

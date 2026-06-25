@@ -10,8 +10,8 @@ from __future__ import annotations
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
-from opentology_api.mcp_http import mount_mcp_routes
-from opentology_api.test_support import FakeEmbedder, FakeGraph, FakeSettings
+from arche_api.mcp_http import mount_mcp_routes
+from arche_api.test_support import FakeEmbedder, FakeGraph, FakeSettings
 
 
 def _app_with_mcp() -> FastAPI:
@@ -45,14 +45,14 @@ def test_authorization_invalid_scheme_returns_401():
 def test_no_authorization_does_not_block_at_auth_layer():
     # 인증 헤더 없으면 default namespace — auth layer 가 401 던지지 않음.
     # 실제 streaming endpoint 동작은 별도 integration 단계에서.
-    from opentology_api.api.auth import parse_authorization_header
+    from arche_api.api.auth import parse_authorization_header
 
     ctx = parse_authorization_header(None)
     assert ctx.namespace_id == "default"
 
 
 def test_bearer_namespace_token_passes_auth_check():
-    from opentology_api.api.auth import parse_authorization_header
+    from arche_api.api.auth import parse_authorization_header
 
     ctx = parse_authorization_header("Bearer ns:work-a")
     assert ctx.namespace_id == "work-a"

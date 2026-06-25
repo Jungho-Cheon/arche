@@ -1,6 +1,6 @@
 # Architecture Decision Records (ADR)
 
-이 디렉토리는 Opentology 의 *주요 의사결정* 을 시간 순으로 기록한다. ADR 은 코드 자체에서 *읽어낼 수 없는* 정보 — **"왜 이렇게 만들었는가"** — 를 담는 단일 진실의 원천이다.
+이 디렉토리는 Arche 의 *주요 의사결정* 을 시간 순으로 기록한다. ADR 은 코드 자체에서 *읽어낼 수 없는* 정보 — **"왜 이렇게 만들었는가"** — 를 담는 단일 진실의 원천이다.
 
 처음 들어온 빌더/컨트리뷰터를 위한 가이드.
 
@@ -27,7 +27,7 @@ ADR 은 *불변에 가깝게* 다룬다. 결정이 바뀌면 *기존 ADR 을 수
 |---|---|---|
 | 1 | [ADR-0001 — 프로젝트 정체성과 MVP 검증 가설](./0001-project-identity-and-mvp-validation-hypothesis.md) | 왜 이 프로젝트가 존재하는가, MVP 가 무엇을 어떻게 검증하는가 (Pareto 우월 가설) |
 | 2 | [ADR-0002 — MVP 범위 경계](./0002-mvp-scope-boundaries.md) | 무엇을 의도적으로 미루는가, post-MVP 복귀 우선순위 |
-| 3 | [ADR-0003 — 그래프 진입점 선정 전략](./0003-graph-entry-point-strategy-hybrid-lexical-dense.md) | caller 의 anchor 추출 + Opentology 의 어휘 + dense 하이브리드 매칭 |
+| 3 | [ADR-0003 — 그래프 진입점 선정 전략](./0003-graph-entry-point-strategy-hybrid-lexical-dense.md) | caller 의 anchor 추출 + Arche 의 어휘 + dense 하이브리드 매칭 |
 | 4 | [ADR-0004 — 벡터 인프라 결정](./0004-vector-infra-graph-db-internal-index.md) | 별도 벡터 DB 서비스 미도입, 그래프 DB 내장 인덱스 |
 | 5 | [ADR-0005 — 측정 방법론](./0005-measurement-methodology-accuracy-tokens-latency.md) | MCQ + 이유 서술, 정확도/토큰/지연 3 메트릭, 하이브리드 judge |
 | 6 | [ADR-0006 — MCP/REST 표면](./0006-mcp-rest-primitives-surface.md) | graph primitives 만 노출, 자연어 미수용, Neo4j MCP 와 공존 |

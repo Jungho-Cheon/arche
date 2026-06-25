@@ -25,8 +25,8 @@ COPY eval/pyproject.toml eval/README.md ./eval/
 COPY apps/api/src ./apps/api/src
 COPY eval/src ./eval/src
 
-RUN uv sync --frozen --package opentology-api --no-dev
+RUN uv sync --frozen --package arche-api --no-dev
 
 EXPOSE 8000
 
-CMD ["uv", "run", "--package", "opentology-api", "uvicorn", "opentology_api.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uv", "run", "--package", "arche-api", "uvicorn", "arche_api.main:app", "--host", "0.0.0.0", "--port", "8000"]

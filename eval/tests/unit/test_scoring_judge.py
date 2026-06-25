@@ -9,8 +9,8 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from opentology_eval.providers import LLMResult, LLMUsage
-from opentology_eval.scoring.judge import (
+from arche_eval.providers import LLMResult, LLMUsage
+from arche_eval.scoring.judge import (
     DEFAULT_JUDGE_MODEL,
     build_mapping,
     invert_mapping,
@@ -38,7 +38,7 @@ def test_build_mapping_each_question_independent() -> None:
     assert set(mapping.keys()) == set(qids)
     for qid, m in mapping.items():
         assert set(m.keys()) == {"A", "B", "C"}
-        assert set(m.values()) == {"full_context", "chunk_rag", "opentology"}
+        assert set(m.values()) == {"full_context", "chunk_rag", "arche"}
 
 
 def test_build_mapping_reproducible_with_seed() -> None:
@@ -49,13 +49,13 @@ def test_build_mapping_reproducible_with_seed() -> None:
 
 
 def test_invert_mapping_round_trip() -> None:
-    forward = {"A": "full_context", "B": "chunk_rag", "C": "opentology"}
+    forward = {"A": "full_context", "B": "chunk_rag", "C": "arche"}
     inv = invert_mapping(forward)
-    assert inv == {"full_context": "A", "chunk_rag": "B", "opentology": "C"}
+    assert inv == {"full_context": "A", "chunk_rag": "B", "arche": "C"}
 
 
 def test_mapping_persistence(tmp_path: Path) -> None:
-    mapping = {"Q01": {"A": "opentology", "B": "chunk_rag", "C": "full_context"}}
+    mapping = {"Q01": {"A": "arche", "B": "chunk_rag", "C": "full_context"}}
     write_mapping(mapping, tmp_path / "mapping.json")
     assert read_mapping(tmp_path / "mapping.json") == mapping
 

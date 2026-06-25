@@ -1,12 +1,12 @@
-# Opentology — 프로젝트 소개
+# Arche — 프로젝트 소개
 
-> 이 문서는 Opentology 를 처음 보는 사람을 위한 것이다. 전문 용어는 처음 나올 때
+> 이 문서는 Arche 를 처음 보는 사람을 위한 것이다. 전문 용어는 처음 나올 때
 > 한 줄로 풀어 쓴다. 코드를 몰라도 "무엇을 만드는가 / 왜 필요한가 / 어떤 가치가
 > 있는가 / 무엇으로 이루어져 있는가" 를 따라갈 수 있게 했다.
 
 ## 한 문장
 
-**Opentology 는 흩어진 문서 더미를 "관계 지도(그래프)" 로 바꿔, AI 에이전트가
+**Arche 는 흩어진 문서 더미를 "관계 지도(그래프)" 로 바꿔, AI 에이전트가
 적은 비용으로 정확한 답을 찾게 돕는 도구다.**
 
 여기서 용어 둘만 먼저 풀면:
@@ -39,9 +39,9 @@
 
 ---
 
-## 2. Opentology 의 접근
+## 2. Arche 의 접근
 
-Opentology 는 문서를 미리 **관계 지도(그래프)** 로 바꿔 둔다. 그리고 AI 에이전트가
+Arche 는 문서를 미리 **관계 지도(그래프)** 로 바꿔 둔다. 그리고 AI 에이전트가
 그 지도 위에서 **작고 값싼 조회 동작** 만으로 필요한 부분을 따라가게 한다.
 
 비유하면, 도시 전체 지리를 통째로 외우게 하는(full-context) 대신, 또는 비슷한
@@ -61,8 +61,8 @@ Opentology 는 문서를 미리 **관계 지도(그래프)** 로 바꿔 둔다. 
 | `find_path` | 두 점 사이를 잇는 경로(연결 사슬)를 찾는다. |
 | `get_subgraph` | 여러 출발점 주변을 한꺼번에 펼친다. |
 
-중요한 설계 선택: **Opentology 는 "답을 쓰지" 않는다.** 자연어로 답을 만드는 일은
-에이전트(또는 부르는 쪽)의 몫이고, Opentology 는 *원자적인 그래프 조회* 만
+중요한 설계 선택: **Arche 는 "답을 쓰지" 않는다.** 자연어로 답을 만드는 일은
+에이전트(또는 부르는 쪽)의 몫이고, Arche 는 *원자적인 그래프 조회* 만
 제공한다. 그래서 답을 만드는 AI 모델을 무엇으로든 갈아 끼울 수 있다.
 
 ---
@@ -78,7 +78,7 @@ Opentology 는 문서를 미리 **관계 지도(그래프)** 로 바꿔 둔다. 
   의 ADR-0016.
 - **정답의 레버는 "모델 크기" 가 아니라 "추출 완전성" 이다.** 더 큰 모델로
   바꾸는 것보다, *문서에서 관계와 숫자를 빠짐없이 뽑아 그래프에 담는 것* 이
-  정확도를 올렸다 (ADR-0016/0017). 그래서 Opentology 는 숫자, 표, 식별자를 놓치지
+  정확도를 올렸다 (ADR-0016/0017). 그래서 Arche 는 숫자, 표, 식별자를 놓치지
   않는 추출 규칙에 공을 들인다.
 - **싸고 빠르다.** 통째로 넣기(full-context)에 비해 토큰과 시간 비용이 훨씬 낮으면서
   정확도는 견준다. "정확도 대 비용" 두 축에서 두 방법 모두보다 유리한 위치에 선다
@@ -95,7 +95,7 @@ Opentology 는 문서를 미리 **관계 지도(그래프)** 로 바꿔 둔다. 
 
 ### 교체 가능하게 설계됨 (agnostic)
 
-먼저 짚어 둘 것 — Opentology 에는 AI 가 두 자리에서 쓰인다. (1) 그래프를 **만들 때**
+먼저 짚어 둘 것 — Arche 에는 AI 가 두 자리에서 쓰인다. (1) 그래프를 **만들 때**
 문서에서 점과 선을 뽑는 AI(추출용 LLM), (2) 그래프를 **쓸 때** 질문에 답하는 AI(소비
 에이전트). 둘은 별개다. 이 둘을 포함해, 특정 기술에 묶이지 않도록 세 축 모두 열어
 뒀다 (ADR-0018).
@@ -110,7 +110,7 @@ Opentology 는 문서를 미리 **관계 지도(그래프)** 로 바꿔 둔다. 
 ## 4. 구성요소 (한눈에)
 
 ```
-   문서 더미                  Opentology                       AI 에이전트
+   문서 더미                  Arche                       AI 에이전트
  (md/pdf/이미지)                                              (질문하는 쪽)
       │                ┌──────────────────────────┐
       │   ① 적재        │  ② 그래프 저장 (Neo4j)    │   ④ 두 통로로 질의
@@ -147,7 +147,7 @@ Opentology 는 문서를 미리 **관계 지도(그래프)** 로 바꿔 둔다. 
 4. 돌아온 작은 부분 그래프(점과 선 몇 개)만 읽고 답을 구성한다.
 
 문서 전체를 읽지 않고, 비슷한 토막을 헤매지도 않고, **필요한 연결만** 몇 번의 값싼
-조회로 짚었다. 이것이 Opentology 가 노리는 그림이다.
+조회로 짚었다. 이것이 Arche 가 노리는 그림이다.
 
 ---
 
@@ -159,8 +159,8 @@ Opentology 는 문서를 미리 **관계 지도(그래프)** 로 바꿔 둔다. 
 
 ```bash
 # 1) 내려받고 환경 변수 채우기
-git clone https://github.com/Jungho-Cheon/opentology.git
-cd opentology
+git clone https://github.com/Jungho-Cheon/arche.git
+cd arche
 cp .env.example .env          # .env 를 열어 OPENAI_API_KEY 를 채운다 (필수)
 
 # 2) 그래프 DB(Neo4j) + API 를 한 번에 띄운다 (첫 실행은 이미지 빌드로 몇 분 걸린다)
@@ -169,18 +169,18 @@ docker compose up -d
 #   - 그래프를 눈으로 보기:            http://localhost:7474  (id: neo4j / pw: .env 의 NEO4J_PASSWORD)
 
 # 3) 내 문서 폴더(.md / .txt / .pdf / 이미지)를 그래프로 적재한다
-uv run --project apps/api opentology ingest ./내문서폴더
+uv run --project apps/api arche ingest ./내문서폴더
 
 # 4) 질의 — 두 가지 길
 #   (a) 코드 없이: http://localhost:8000/docs 에서 POST /entities/find 같은 동작을 직접 눌러 본다.
 #   (b) 에이전트(Claude Desktop / Cursor 등)에 MCP 도구로 연결한다:
-uv run --project apps/api opentology mcp serve --stdio
+uv run --project apps/api arche mcp serve --stdio
 ```
 
 MCP 클라이언트(예: Claude Desktop)의 설정 파일에는 이렇게 등록한다.
 
 ```json
-{ "mcpServers": { "opentology": { "command": "opentology", "args": ["mcp", "serve", "--stdio"] } } }
+{ "mcpServers": { "arche": { "command": "arche", "args": ["mcp", "serve", "--stdio"] } } }
 ```
 
 > 막히면 개발자용 [`apps/api/ARCHITECTURE.md`](../apps/api/ARCHITECTURE.md) 의 "빠른 시작"

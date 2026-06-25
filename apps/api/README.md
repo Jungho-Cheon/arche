@@ -1,4 +1,4 @@
-# apps/api — Opentology Walking Skeleton
+# apps/api — Arche Walking Skeleton
 
 > Issue #1 의 슬라이스. 단일 텍스트 파일 → 엔티티/관계 추출 → Neo4j 적재 → `find_entities` lexical 검색 까지 *끝에서 끝까지* 동작하는 가장 얇은 통로.
 
@@ -19,21 +19,21 @@ cp .env.example .env
 docker compose up -d --build
 ```
 
-`opentology-neo4j` 와 `opentology-api` 가 healthy 상태가 될 때까지 ~30 초.
+`arche-neo4j` 와 `arche-api` 가 healthy 상태가 될 때까지 ~30 초.
 
 ### 3. 단일 파일 ingest
 
 API 컨테이너 안의 CLI 사용:
 
 ```
-docker compose exec opentology-api uv run --package opentology-api \
-  opentology ingest /workspace/apps/api/tests/fixtures/skeleton_sample.md
+docker compose exec arche-api uv run --package arche-api \
+  arche ingest /workspace/apps/api/tests/fixtures/skeleton_sample.md
 ```
 
 또는 호스트에서 (uv workspace + 로컬 neo4j 가 떠 있을 때):
 
 ```
-uv run --package opentology-api opentology ingest apps/api/tests/fixtures/skeleton_sample.md
+uv run --package arche-api arche ingest apps/api/tests/fixtures/skeleton_sample.md
 ```
 
 ### 4. find_entities 호출
@@ -85,14 +85,14 @@ ADR-0004 D1 — 풀텍스트 인덱스 + 벡터 인덱스 + 그래프 traversal 
 
 ### OpenAI gpt-4.1 + text-embedding-3-small
 
-* `gpt-4.1` — eval/ 베이스라인 (`OPENTOLOGY_EVAL_LLM_MODEL` 기본값) 과 동일. PRD 4 §2.7 + ADR-0001 의 통제 변수 (세 컬럼이 같은 LLM 사용) 를 유지.
+* `gpt-4.1` — eval/ 베이스라인 (`ARCHE_EVAL_LLM_MODEL` 기본값) 과 동일. PRD 4 §2.7 + ADR-0001 의 통제 변수 (세 컬럼이 같은 LLM 사용) 를 유지.
 * `text-embedding-3-small` — eval/ 의 청크 임베딩 모델과 동일. PRD 2 §5.6 + ADR-0003 D2 — 청크 벡터 RAG 와 그래프 노드 RAG 는 *같은 임베딩 모델* 을 써야 가설 검증이 성립한다.
 
-**중요**: 임베딩 모델 식별자는 본 패키지 (`OPENTOLOGY_API_EMBEDDING_MODEL`) 와 `eval/` (`OPENTOLOGY_EVAL_EMBEDDING_MODEL`) 두 곳에서 따로 읽지만 *값* 은 반드시 같아야 한다. 기본값을 양쪽 코드에 박아 둬 환경 변수 누락 시에도 통제가 깨지지 않는다. 모델을 교체할 때는 *반드시 양쪽 동시에* 변경하고, Neo4j 의 vector 인덱스 차원도 새 모델에 맞춰 재생성 (`DROP INDEX entity_embedding_idx` 후 부팅 시 자동 재생성).
+**중요**: 임베딩 모델 식별자는 본 패키지 (`ARCHE_API_EMBEDDING_MODEL`) 와 `eval/` (`ARCHE_EVAL_EMBEDDING_MODEL`) 두 곳에서 따로 읽지만 *값* 은 반드시 같아야 한다. 기본값을 양쪽 코드에 박아 둬 환경 변수 누락 시에도 통제가 깨지지 않는다. 모델을 교체할 때는 *반드시 양쪽 동시에* 변경하고, Neo4j 의 vector 인덱스 차원도 새 모델에 맞춰 재생성 (`DROP INDEX entity_embedding_idx` 후 부팅 시 자동 재생성).
 
 ### uv workspace 멤버
 
-eval/ 와 같은 워크스페이스에 join. `uv sync` 한 번으로 두 패키지 의존성이 모두 락된다. 본 패키지의 진입점은 `opentology` (CLI), `uvicorn opentology_api.main:app` (서버).
+eval/ 와 같은 워크스페이스에 join. `uv sync` 한 번으로 두 패키지 의존성이 모두 락된다. 본 패키지의 진입점은 `arche` (CLI), `uvicorn arche_api.main:app` (서버).
 
 ## 인덱스 스키마
 
@@ -106,7 +106,7 @@ eval/ 와 같은 워크스페이스에 join. `uv sync` 한 번으로 두 패키�
 | `entity_normalized_name_idx` | BTREE on `(:Entity).normalized_name` | 4 단계 동일성 Step 1·2 lookup |
 | `ingestion_run_source_idx` | BTREE on `(:IngestionRun).source_path` | 차분 알고리즘의 "직전 성공 회차" 조회 |
 
-벡터 인덱스 차원 1536 은 `text-embedding-3-small` 의 출력 차원과 *반드시 일치* . 모델 교체 시 `OPENTOLOGY_API_EMBEDDING_DIMENSION` 환경 변수와 인덱스 재생성 둘 다 필요.
+벡터 인덱스 차원 1536 은 `text-embedding-3-small` 의 출력 차원과 *반드시 일치* . 모델 교체 시 `ARCHE_API_EMBEDDING_DIMENSION` 환경 변수와 인덱스 재생성 둘 다 필요.
 
 ## 재 ingest 동작 (Re-ingest behavior)
 
@@ -158,7 +158,7 @@ ingest 한 번이 곧 한 회차 노드. 노드 속성:
 
 다음 값들은 *측정 회차 사이에 바뀌면 모든 측정의 의미가 깨진다* (ADR-0001).
 
-- `EMBEDDING_MATCH_THRESHOLD = 0.92` — `src/opentology_api/domain/identity.py` 에 *단 한 곳* . 변경하려면 ADR-0003 amend + 새 측정 회차를 시작해야 한다. 기존 그래프의 동일성 분류가 통째로 달라진다.
+- `EMBEDDING_MATCH_THRESHOLD = 0.92` — `src/arche_api/domain/identity.py` 에 *단 한 곳* . 변경하려면 ADR-0003 amend + 새 측정 회차를 시작해야 한다. 기존 그래프의 동일성 분류가 통째로 달라진다.
 - `normalize()` 의 범위 — 동일 모듈. `strip + NFC + lowercase + 공백 축약 + 양 끝 흔한 구두점 trim` 까지. 한국어 조사/접미사 제거는 *의도적으로 안 한다* — false positive 가 많아서. 변경 시 `normalized_name` 인덱스 값이 전부 바뀌어 기존 동일성이 깨진다.
 - 임베딩 모델 (`text-embedding-3-small`) 과 차원 (1536) — eval/ 의 청크 RAG 와 *반드시 동일* (ADR-0003 D2).
 
@@ -181,7 +181,7 @@ ingest 한 번이 곧 한 회차 노드. 노드 속성:
 6 graph primitive 를 *Model Context Protocol* 의 표준 tool 로 노출. 로컬 에이전트 (Claude Desktop / Cursor 등) 가 REST 호출 어댑터 없이 그래프를 탐색할 수 있다.
 
 ```
-opentology mcp serve --stdio
+arche mcp serve --stdio
 ```
 
 서버는 stdio (stdin / stdout) 위에서 JSON-RPC 로 동작한다. 호출 전 `.env` 가 로드돼 `OPENAI_API_KEY` + Neo4j 접속 정보를 읽는다.
@@ -193,15 +193,15 @@ opentology mcp serve --stdio
 ```json
 {
   "mcpServers": {
-    "opentology": {
-      "command": "opentology",
+    "arche": {
+      "command": "arche",
       "args": ["mcp", "serve", "--stdio"]
     }
   }
 }
 ```
 
-`opentology` 가 PATH 에 없거나 venv 안에 있을 때는 절대 경로 (`/path/to/venv/bin/opentology`) 또는 `uv run --package opentology-api opentology mcp serve --stdio` 형태로 등록.
+`arche` 가 PATH 에 없거나 venv 안에 있을 때는 절대 경로 (`/path/to/venv/bin/arche`) 또는 `uv run --package arche-api arche mcp serve --stdio` 형태로 등록.
 
 ### 노출되는 tool
 
@@ -218,7 +218,7 @@ REST 와 MCP 의 *입출력 스키마는 완전 동일* — Pydantic 모델 1 �
 
 ### 보안 / write 미노출
 
-ADR-0006 D3 — MCP 어댑터는 **read-only** . `admin/ingest` / `create_entity` / `delete_*` 같은 write tool 은 *등록조차 하지 않는다* . ingest 는 CLI (`opentology ingest <path>`) 와 admin REST (`POST /admin/ingest`) 로만 수행.
+ADR-0006 D3 — MCP 어댑터는 **read-only** . `admin/ingest` / `create_entity` / `delete_*` 같은 write tool 은 *등록조차 하지 않는다* . ingest 는 CLI (`arche ingest <path>`) 와 admin REST (`POST /admin/ingest`) 로만 수행.
 
 ### 에러 형식
 
@@ -234,8 +234,8 @@ caller 는 `isError` 플래그로 분기 후 text 를 JSON 파싱.
 
 ```
 # 단위 + 통합 (testcontainers 가 neo4j:5.13 컨테이너를 띄움)
-uv run --package opentology-api pytest apps/api/
+uv run --package arche-api pytest apps/api/
 
 # live (실제 OpenAI + 실제 Neo4j compose 스택 필요)
-RUN_LIVE_TESTS=1 uv run --package opentology-api pytest -m live apps/api/
+RUN_LIVE_TESTS=1 uv run --package arche-api pytest -m live apps/api/
 ```
