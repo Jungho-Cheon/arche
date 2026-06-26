@@ -6,7 +6,9 @@ agent 가 *enum 기반 분기* 가능하도록 closed set. 추가 코드 도입 
 
 from __future__ import annotations
 
+from collections.abc import Iterable
 from enum import Enum
+from typing import Any
 
 
 class ErrorCode(str, Enum):
@@ -44,3 +46,33 @@ ERROR_HTTP_STATUS: dict[ErrorCode, int] = {
     ErrorCode.INTERNAL_ERROR: 500,
     ErrorCode.TIMEOUT: 504,
 }
+
+
+def flatten_validation_errors(errors: Iterable[dict[str, Any]]) -> list[dict[str, str]]:
+    """pydantic `ValidationError.errors()` 를 agent 가 파싱 가능한 평탄 형태로 변환.
+
+    각 항목은 정확히 세 키만 노출한다.
+    - `loc`  — 위반 필드를 점 표기 한 문자열 (예: `body.keywords`, `body.from_id`).
+               raw `loc` 는 `('body', 'keywords')` 튜플이라 그대로 직렬화하면 모양이
+               불안정하다. 점 표기는 *agent 가 어떤 필드를 고쳐야 하는지* 한 문자열로
+               식별 가능하게 한다 (ADR-0013 D2 수용 기준).
+    - `type` — pydantic 위반 종류 (예: `too_short`, `less_than_equal`,
+               `string_pattern_mismatch`). agent 의 enum 기반 분기 신호.
+    - `msg`  — 사람이 읽는 설명.
+
+    WHY `input` / `ctx` 제외: pydantic 의 raw error dict 는 위반 입력값 원본 (`input`)
+    과 컨텍스트 (`ctx`, 내부에 예외 객체가 들어갈 수 있음) 를 포함한다. 둘 다 JSON
+    직렬화가 불안정하거나 (`ctx` 의 예외 객체) 위반 식별에 불필요해 평탄화 시 떨군다.
+    REST 핸들러와 MCP 어댑터가 *같은 헬퍼* 를 써서 두 노출 표면의 형태를 한 곳에서 보장.
+    """
+    flattened: list[dict[str, str]] = []
+    for e in errors:
+        loc = e.get("loc", ())
+        flattened.append(
+            {
+                "loc": ".".join(str(part) for part in loc),
+                "type": str(e.get("type", "")),
+                "msg": str(e.get("msg", "")),
+            }
+        )
+    return flattened

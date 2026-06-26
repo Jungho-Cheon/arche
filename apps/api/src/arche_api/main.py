@@ -12,7 +12,11 @@ from fastapi.responses import JSONResponse
 
 from .api.admin_tasks import IngestTaskRegistry
 from .api.deps import build_default_components
-from .api.error_codes import ErrorCode
+from .api.error_codes import (
+    ERROR_HTTP_STATUS,
+    ErrorCode,
+    flatten_validation_errors,
+)
 from .api.routers import (
     admin_router,
     entities_router,
@@ -113,19 +117,18 @@ def create_app() -> FastAPI:
     ) -> JSONResponse:
         """ADR-0013 D1 — 422 validation 도 ErrorEnvelope 으로 wrap. agent 가
         같은 envelope 형태로 파싱 가능.
+
+        `details.errors[]` 는 `flatten_validation_errors` 로 평탄화 (loc 점 표기 +
+        type + msg) — agent 가 어떤 필드를 고쳐야 하는지 응답만으로 식별 (issue #26,
+        ADR-0013 D2 수용 기준). HTTP 코드는 422 (ERROR_HTTP_STATUS[INVALID_INPUT]).
         """
-        # pydantic 의 ValidationError.errors() 는 raw exception 객체 (input,
-        # ctx.error) 를 포함할 수 있어 JSON 직렬화 불가. 안전 변환.
-        safe_errors = [
-            {k: str(v) for k, v in e.items() if k != "ctx"} for e in exc.errors()
-        ]
         return JSONResponse(
-            status_code=422,
+            status_code=ERROR_HTTP_STATUS[ErrorCode.INVALID_INPUT],
             content=ErrorEnvelope(
                 error=ErrorBody(
                     code=ErrorCode.INVALID_INPUT.value,
                     message="request validation failed",
-                    details={"errors": safe_errors},
+                    details={"errors": flatten_validation_errors(exc.errors())},
                 )
             ).model_dump(),
         )
