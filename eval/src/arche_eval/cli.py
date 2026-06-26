@@ -19,6 +19,7 @@ from .columns.chunk_rag import ChunkRAGRunner
 from .columns.combined import CombinedRunner
 from .columns.full_context import FullContextRunner
 from .columns.arche import ArcheRunner
+from .columns.arche_agentic import ArcheAgenticRunner
 from .config import load_config
 from .lint.runner import LintReport, run_lint
 from .loaders import FileLoader
@@ -145,6 +146,12 @@ def ask(
                 # skip — 코어가 비어있어도 빈 결과로 흐름이 끝까지 가도록.
                 pass
             payload = orun.ask(question=q, run_index=run_index)
+    elif column == "arche_agentic":
+        with ArcheClient(base_url=_resolve_api_url(api_url)) as client:
+            arun = ArcheAgenticRunner(client=client, answer_llm=llm)
+            if setup_corpus_path is not None:
+                arun.setup_corpus(directory_path=str(setup_corpus_path.resolve()))
+            payload = arun.ask(question=q, run_index=run_index)
     elif column == "combined":
         embedder = OpenAIEmbeddingProvider(
             model_id=cfg.embedding_model_id, api_key=cfg.openai_api_key
