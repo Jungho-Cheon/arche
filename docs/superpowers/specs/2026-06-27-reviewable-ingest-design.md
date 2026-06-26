@@ -1,142 +1,128 @@
-# 검토 가능한 적재 (Reviewable Ingest) — 설계
+# Reviewable Ingest — Design Spec
 
-작성일: 2026-06-27
-상태: 설계 (검토 대기)
+Date: 2026-06-27
+Status: approved (design); implementation plan written
 
-> 용어 한 줄 풀이
-> - **적재(ingest)**: 문서를 읽어 엔티티(점)와 관계(선)를 뽑아 그래프 데이터베이스에 저장하는 일.
-> - **MCP (Model Context Protocol)**: AI 에이전트가 외부 도구를 호출하는 표준 규약. Claude Desktop 같은 클라이언트가 이 규약으로 Arche의 도구를 부른다.
-> - **델타(delta)**: 이번 적재로 그래프가 어떻게 바뀌는지 (새 점, 합쳐지는 점, 사라지는 점/선) 의 차이분.
+---
 
-## 1. 배경 — 왜 이걸 만드나
+## 사람용 요약 (Korean TL;DR)
 
-지금 Arche의 적재는 한 번에 끝까지 간다. 문서를 주면 추출하고, 동일성 해소(같은 대상을 한 점으로 모으기)를 하고, 곧바로 그래프에 쓴다. 사람이 중간에 "이게 정말 맞는가" 를 확인할 지점이 없다.
+적재(문서를 그래프로 저장)를 한 번에 끝내지 않고 `계획 → 미리보기 → 확정` 세 박자로 나눠, 저장 전에 사람이 변경 델타를 검토한다. 핵심 트릭: 검증된 적재 루프를 고치지 않고, 쓰기를 가로채 기록만 하는 그래프 데코레이터로 "쓰지 않는 계획"을 얻은 뒤 확정 때 재생한다. MCP 도구 3개 + 에이전트 스킬로 노출하며, stdio라 로컬 전용이라 인증 본체는 1차에서 불필요. 1차는 단일 파일, 생성·병합·관계 미리보기까지(삭제는 개수만). 본문(영어)이 에이전트 인수인계용 정본이다.
 
-문제는 두 가지다.
+---
 
-1. **추출과 동일성 해소는 LLM(거대 언어 모델) 판단에 기대므로 틀릴 수 있다.** 잘못된 병합이나 환각으로 들어온 점/선이 그대로 저장되면, 나중에 그 위에서 답을 찾는 에이전트가 오염된 지도를 따라간다.
-2. **에이전트 주도 도구로 진화하려면, 에이전트가 "이렇게 바꾸려 합니다, 맞습니까?" 를 사람에게 보여주고 확정받는 흐름이 필요하다.** 지금 구조엔 그 확정 단계가 없다.
+## 1. Context
 
-이 설계는 적재를 **계획 → 미리보기 → 확정** 세 박자로 나눠, 저장 전에 변경 내용을 검토받게 한다. 이건 더 큰 그림(애매하면 사람에게 묻기, 문서 보강)을 담을 *그릇*이기도 하다 — 그 후속 기능들은 모두 이 "계획" 위에 얹힌다.
+Ingestion currently runs end-to-end: extract → identity-resolve → write to graph, with no human checkpoint. Two problems:
 
-### 기존 자산 (이미 있는 것)
+1. Extraction and identity resolution rely on LLM judgment and can be wrong. Bad merges or hallucinated nodes/edges land in the graph and poison downstream agents.
+2. To become an agent-driven tool, the agent needs a "here is what I will change, confirm?" step before writing. None exists today.
 
-- `IngestService._dry_run_file` — 추출만 하고 그래프에 쓰지 않는 경로가 이미 있다. 단, 추출 *개수*만 세고 동일성 해소(병합 여부)는 하지 않아 "무엇이 바뀌는지" 는 모른다. 본 설계는 이 한계를 넘어 변경 묶음 전체를 계산한다.
-- `IngestTaskRegistry` (admin_tasks.py) — `task_id → 상태` 를 메모리에 들고 background 실행하는 패턴. 계획 저장에 같은 패턴을 재사용한다.
-- MCP 서버 (mcp_server.py) — 읽기 전용 6개 도구. 본 설계가 첫 *쓰기* 도구를 더한다.
+This design splits ingest into `plan → preview → commit` so the delta is reviewed before it is written. It is also the container for later features (ask-human on ambiguity; document enrichment), which plug into the same plan.
 
-## 2. 무엇을 만드나 — 범위
+### Existing assets
 
-1차 슬라이스에 포함:
+- `IngestService._dry_run_file` (ingest.py:337) — extracts without writing, but only counts; it does not resolve identity, so it cannot show merges. This design supersedes it with a full mutation plan.
+- `IngestTaskRegistry` (admin_tasks.py) — `task_id → state` in-memory pattern, reused for the plan registry.
+- `mcp_server.py` — 6 read-only tools. This design adds the first write tools.
+- MCP serve path (`cli.py mcp_serve`, `run_stdio_server`) currently wires graph + embedder only, no LLM. Write tools need extraction, so serve must also build the LLM provider + `IngestService` + plan registry.
 
-- 적재 흐름을 **계획 단계(쓰기 없음)** 와 **적용 단계(쓰기)** 로 분리.
-- MCP 도구 3개: `ingest_plan` / `ingest_preview` / `ingest_commit`.
-- 계획을 들고 있는 **메모리 레지스트리**.
-- 확정 시 **안전 빗장**: 미리보기를 거친 계획만, 그리고 낡지 않은 계획만 저장.
-- 에이전트가 순서를 알아서 밟게 하는 **오케스트레이션 안내**: 도구 description + 서버 instructions.
-- 함께 배포하는 **에이전트 스킬(SKILL.md)** — "이 문서 넣어줘" 한마디로 의례 전체를 작동시킨다.
+## 2. Scope
 
-1차에서 *제외* (후속 슬라이스):
+In scope (slice 1):
 
-- 디렉토리(여러 파일) 계획 — cross-file 2-pass 관계 보정이 얽혀 별도로 다룬다.
-- 애매한 항목을 사람에게 질문하기 (아이디어 2) — 이 계획 그릇 위에 얹는 다음 작업.
-- 추출 컨텍스트 보강 / 문서 메모 붙이기 (아이디어 1) — 그다음.
-- 인증 본체 — 쓰기 경로가 stdio MCP(로컬 전용)라 네트워크 노출이 없으므로 1차에선 불필요. 기존 REST admin 쓰기 표면은 *건드리지 않는다*.
+- `PlanningGraphRepository`: a `GraphRepository` decorator that records writes instead of executing them (record/replay), reusing the existing ingest logic unchanged.
+- Three MCP tools: `ingest_plan` / `ingest_preview` / `ingest_commit`.
+- In-memory `PlanRegistry`.
+- Safety latch at commit: only `previewed=True` plans, and only non-stale plans.
+- Orchestration guidance: tool descriptions + server `instructions`.
+- Bundled agent skill (`SKILL.md`).
+- MCP serve wiring: build LLM provider + `IngestService` + `PlanRegistry` at the serve entrypoint.
 
-## 3. 아키텍처 — 적재를 "계획"과 "적용"으로 쪼갠다
+Out of scope (later slices):
 
-현재 `ingest_file`은 *추출 → 동일성 해소 → 그래프 쓰기*를 한 덩어리로 수행한다. 이를 둘로 가른다 (extract-method 리팩터, 새 알고리즘 아님).
+- Itemized deletion/trim preview (re-ingest only; adapter couples read+write). Slice 1 reports a deletion count and still performs deletions at commit.
+- In-plan dedup via Step 3 (embedding) matching — see Limitations.
+- Directory (multi-file) plan, ask-human-on-ambiguity, document enrichment, real auth.
 
-- **계획 단계 (`_plan_file`)**: 추출 + 4단계 동일성 해소 + 임베딩 계산까지 하되 **그래프에 한 글자도 쓰지 않는다.** 산출물은 적용에 필요한 모든 것을 담은 완결된 변경 묶음 `IngestPlan`이다 (계산된 임베딩 포함).
-- **적용 단계 (`_apply_plan`)**: `IngestPlan`을 받아 실제 쓰기 — 엔티티 생성/병합, 관계 upsert, IngestionRun(적재 회차) 기록, 이전 회차 대비 차분(diff) 적용.
+## 3. Architecture — write-intercepting plan decorator (record/replay)
 
-그러면:
+The core loop (`_upsert_entities`, ingest.py:900) interleaves decide (matcher reads graph to find a merge target) and do (writes to graph) per entity. In multi-chunk documents, chunk N's decision depends on what chunk N-1 just wrote. So "just skip writes" produces duplicate nodes and breaks correctness.
 
-- 기존 `ingest_file` = `_plan_file` + 즉시 `_apply_plan` (동작 그대로, 하위 호환).
-- `ingest_plan` 도구 = `_plan_file` 후 레지스트리에 저장, 요약 반환.
-- `ingest_commit` 도구 = 레지스트리에서 계획을 꺼내 `_apply_plan`.
+Instead of rewriting the loop, introduce `PlanningGraphRepository` (implements the `GraphRepository` port, wraps a real one):
 
-**핵심 이득**: 비싼 단계(LLM 추출 + 임베딩)를 계획에서 한 번만 수행하고 그 결과를 계획에 담으므로, **확정은 LLM/임베딩을 다시 부르지 않는다.** 사람이 본 내용과 실제 저장되는 내용이 정확히 일치하고, 확정은 빠르고 결정적이다.
+- Read methods: delegate to the real graph. Exception: `find_by_normalized_name` and `find_entity_id_by_normalized_name` also consult pending entities created earlier in this plan (read overlay), so repeated normalized names within a document merge correctly inside the plan.
+- Write methods (`create_entity`, `apply_merge_mutation`, `upsert_relation`, `create_ingestion_run`, `mark_entity_emitted`, `mark_relation_emitted`, `finalize_run`, `apply_entity_diff`, `apply_relation_diff`, `append_emitted_relations`): record the call intent in order; do not execute. `create_entity` also adds to the pending normalized-name index. `apply_merge_mutation` snapshots the target's current state (`get_stored_entity`) as `before` for preview.
 
-### IngestPlan 의 모양 (개념)
+Then:
 
-```
-IngestPlan
-  plan_id: str
-  source_path: str
-  source_hash: str
-  extractor_version: str          # stale 판정에 사용
-  created_at: str
-  previewed: bool                 # 안전 빗장 (§5)
-  # 변경 묶음
-  new_entities:   [StoredEntity]              # 새로 생길 점 (임베딩 포함)
-  merges:         [{target_id, before, after}] # 기존 점에 합쳐짐 (전후 비교)
-  new_relations:  [{from_id|from_name, to_id|to_name, type, resolved: bool}]
-  deletions:      [entity_id | relation_id]    # 차분으로 사라질 것
-  trims:          [{id, removed_source_path}]   # 일부 출처만 제거
-  # 의존 스냅샷 (stale 재검증용)
-  depends_on_entity_ids: [str]    # merges/relations 가 가리키는 기존 점 id
-```
+- `ingest_plan` = run the unchanged `ingest_file` with the decorator swapped in for `self._graph`. The recorded writes are the `IngestPlan`. Nothing is written.
+- `ingest_commit` = replay the recorded writes against the real graph, in order.
 
-## 4. MCP 도구 3개
+Why this wins: the validated extraction / identity / relation logic is untouched. The expensive steps (LLM extraction + embedding) run once at plan time and their outputs (including embeddings) live in the plan, so commit calls neither the LLM nor the embedder. What the human sees equals what gets stored.
 
-| 도구 | 입력 | 하는 일 | 반환 |
+### Data structures
+
+| Type | Fields |
+|---|---|
+| `RecordedWrite` (frozen) | `method: str`, `kwargs: dict`, `before: StoredEntity \| None = None` |
+| `IngestPlan` | `plan_id, source_path, source_hash, extractor_version, created_at, previewed: bool, writes: list[RecordedWrite], result: IngestResult, depends_on_entity_ids: list[str]` |
+
+## 4. MCP tools
+
+| Tool | Input | Action | Returns |
 |---|---|---|---|
-| `ingest_plan` | `{ path }` | 추출 + 해소 (쓰기 없음), 계획 저장 | `{ plan_id, summary }` (개수 요약) |
-| `ingest_preview` | `{ plan_id }` | 그 계획의 상세 델타를 사람이 읽을 형태로 | `{ new_entities, merges(전후), new_relations, deletions, trims }` |
-| `ingest_commit` | `{ plan_id }` | 검토된 계획을 실제 저장 | `{ entities_created, entities_updated, relations_created, ... }` |
+| `ingest_plan` | `{ path }` | decorator-driven extract+resolve (no writes), store plan | `{ plan_id, summary }` |
+| `ingest_preview` | `{ plan_id }` | serialize delta for human review; set `previewed=True` | `{ new_entities, merges(before/after), new_relations, deletion_count }` |
+| `ingest_commit` | `{ plan_id }` | replay reviewed plan | `{ entities_created, entities_updated, relations_created, deletions, ... }` |
 
-세 도구 모두 MCP에 들어오는 **첫 쓰기 도구**다. stdio MCP는 네트워크를 타지 않아 로컬에만 노출되므로, 인증 본체 없이도 "외부엔 읽기 전용" 원칙이 유지된다. `mcp_server.py`의 write-tool 차단 가드(`WRITE_TOOL_NAMES_EXCLUDED`)는 이 셋을 *허용 목록*으로 명시해 의도된 노출임을 코드로 기록한다.
+These are the first write tools on MCP. stdio MCP has no network surface, so the "read-only over network" invariant holds without real auth; the existing REST admin write surface is not expanded. In `mcp_server.py`, `WRITE_TOOL_NAMES_EXCLUDED` keeps blocking `create_entity` etc.; the three new tools are intentionally registered (not in that set).
 
-## 5. 안전 빗장 — 순서를 실수로 건너뛸 수 없게
+## 5. Safety latch
 
-안내문만 믿으면 에이전트가 미리보기를 건너뛰고 바로 확정할 수 있다. 프로토콜 차원에서 두 가지를 막는다.
+1. Preview-before-commit: `ingest_commit` passes only if `previewed == True`, else `unprocessable` with "call ingest_preview before commit". `ingest_preview` sets the flag.
+2. Optimistic stale check: at commit, verify each id in `depends_on_entity_ids` still exists; if any is gone, reject with "plan is stale; re-plan". Full multi-write atomicity is out of scope (local single user) — see Limitations.
 
-1. **미리보기 선행 강제**: `ingest_commit`은 해당 계획의 `previewed == True`일 때만 통과. 아니면 `unprocessable` 에러 + "먼저 ingest_preview를 호출하라" 메시지. `ingest_preview` 호출이 이 플래그를 세운다.
-2. **stale 재검증 (낙관적)**: `ingest_commit` 시점에 `depends_on_entity_ids`의 점들이 여전히 존재하는지 확인. 하나라도 사라졌으면 거절 + "계획이 낡았으니 다시 계획하라". 다수 쓰기를 단일 원자 트랜잭션으로 묶는 *완전한* 원자성은 1차 범위 밖(로컬 단일 사용자라 경쟁이 사실상 없음) — §9에 한계로 명시.
+## 6. Plan state
 
-이로써 에이전트는 자율적으로 순서를 밟되, *안전 단계를 실수로 건너뛸 수는 없다.*
+`plan_id → IngestPlan` in an in-memory `PlanRegistry` (same pattern as `IngestTaskRegistry`; created once at serve/app startup and shared). Volatile across restart — acceptable under the local single-user assumption.
 
-## 6. 계획 상태 저장 — 메모리 레지스트리
+## 7. Orchestration
 
-`plan_id → IngestPlan`을 메모리 레지스트리에 둔다 (`IngestTaskRegistry`와 동일 패턴). 로컬 단일 사용자이므로 프로세스 재시작 시 계획이 휘발되는 건 받아들일 만한 트레이드오프 — 다시 계획하면 된다. 레지스트리는 의존성 주입(`api/deps.py`)으로 MCP 디스패치와 공유한다.
+Order lives in guidance, not in a mega-tool (preserves the primitive philosophy and room for mid-flow intervention):
 
-## 7. 오케스트레이션 & 안내 — 순서는 "안내"에 담는다
+- Tool descriptions: `ingest_plan` ends with "after planning you MUST call ingest_preview, show the human the delta, then commit only after they confirm"; `ingest_commit` says "do not call without a prior ingest_preview".
+- Server `instructions`: add one paragraph describing the ingest ritual.
 
-순서를 거대한 단일 도구로 묶지 않는다(프리미티브 철학 유지, 중간 개입 여지 보존). 대신 에이전트가 읽는 안내에 의례를 담는다.
+## 8. Agent skill (SKILL.md)
 
-- **도구 description**: `ingest_plan` 끝에 "계획 후 반드시 `ingest_preview`로 사람에게 보여주고 확정받아라", `ingest_commit`에 "preview 없이 호출하지 마라" 등 다음 행동을 명시.
-- **서버 instructions**: mcp_server.py의 `instructions`(현재 읽기 안내만)에 적재 의례 한 단락 추가.
+A bundled skill so "ingest this document" triggers the ritual even if the agent does not know the tools exist.
 
-## 8. 에이전트 스킬 (SKILL.md) — 핵심 가치
+- Triggers: "이 문서 적재", "이 파일 넣어줘", "add this to the knowledge graph".
+- Body: ① `ingest_plan` → ② report summary → ③ `ingest_preview` and present delta → ④ commit after human confirmation → ⑤ report result. Includes handling for not-previewed and stale rejections.
+- Location: skill dir in the repo + one line in README "직접 해보기".
 
-"이 문서 적재해줘" 류 발화가 떨어지면 에이전트가 도구 존재를 따로 몰라도 의례를 밟도록 가르치는 스킬 한 장을 함께 배포한다.
+## 9. Limitations / follow-ups
 
-- **트리거**: "문서 적재", "이 폴더 넣어줘", "knowledge graph에 추가" 등.
-- **내용**: ① `ingest_plan` 호출 → ② 요약을 사람에게 보고 → ③ `ingest_preview`로 델타를 사람이 읽기 좋게 제시 → ④ 사람 확정 후 `ingest_commit` → ⑤ 결과 보고. 애매/낡음 거절 시 사용자에게 어떻게 안내할지 포함.
-- **위치**: 저장소에 스킬 디렉토리로 배포하고, README의 "직접 해보기"에 설치/사용 한 줄 추가.
+- Step 3 (embedding) in-plan dedup: the overlay only sees pending entities by exact normalized name. Two surface forms in one document that would merge only via embedding similarity may appear as two separate new nodes in the plan. Rare; visible to the human in preview; self-heals on re-ingest. Vector overlay is a follow-up.
+- No itemized deletion preview: slice 1 reports a count; commit still performs deletions.
+- No full atomicity: commit's multiple writes are not a single transaction (no contention under local single user). Strengthen via staging-subgraph promote or single transaction when multi-user/networked.
+- Plan volatility, single-file only, no auth: intended slice-1 boundaries.
 
-스킬은 도구·instructions와 한 흐름을 공유하지만 별도 산출물이므로, 도구가 동작하는 것을 먼저 확인한 뒤 스킬 문안을 다듬는 순서로 만든다.
+## 10. Test strategy
 
-## 9. 알려진 한계 / 후속
+- Plan does not write: run `plan_file` with a fake graph, assert zero real write calls.
+- Equivalence: `plan` + `commit` equals direct `ingest_file` (created/merged/relation counts).
+- Multi-chunk normalized merge: two chunks emitting the same normalized name merge to one node in the plan (overlay).
+- Merge preview accuracy: before/after matches the actual merge for a node that joins an existing one.
+- Safety latch: (a) commit without preview is rejected; (b) commit after a dependency is deleted is stale-rejected.
+- MCP contract: three new tools exposed with correct input schema; the six read tools are unchanged.
 
-- **완전한 원자성 없음**: 확정 시 다수 쓰기가 하나의 트랜잭션이 아니다. 로컬 단일 사용자라 경쟁이 없어 1차에선 낙관적 재검증으로 충분. 멀티 사용자/네트워크 노출 시 staging 서브그래프 promote 또는 단일 트랜잭션으로 강화 (후속).
-- **계획 휘발성**: 재시작 시 메모리의 계획이 사라진다 (의도된 트레이드오프).
-- **단일 파일 한정**: 디렉토리 모드는 후속.
-- **인증 미포함**: 쓰기 경로가 로컬 stdio라 1차 불필요. 네트워크 쓰기를 열 때 선행 조건으로 승격.
+## 11. Task breakdown (detailed in the plan)
 
-## 10. 테스트 전략
-
-- **계획은 쓰지 않는다**: 가짜 그래프(fake)로 `_plan_file` 실행 후 write 계열 호출 수 0 검증.
-- **동치성**: 같은 입력에서 `plan`+`commit` 결과 = 기존 `ingest_file` 한 방 결과 (생성/병합/관계 카운트 일치).
-- **병합 미리보기 정확성**: 기존 점과 합쳐지는 케이스에서 preview의 before/after가 실제 병합 결과와 일치.
-- **안전 빗장**: (a) preview 없이 commit → 거절. (b) 의존 점 삭제 후 commit → stale 거절.
-- **MCP 계약**: 새 도구 3개가 list_tools에 노출되고 입력 스키마가 정확. 기존 6개 읽기 도구 불변.
-
-## 11. 작업 분해 (writing-plans 단계에서 상세화)
-
-1. `IngestPlan` 모델 + `_plan_file` / `_apply_plan` 분리 (기존 `ingest_file` 하위 호환).
-2. 계획 레지스트리 + deps 주입.
-3. MCP 도구 3개 + 안전 빗장 + 에러 매핑.
-4. 도구 description + 서버 instructions.
-5. 에이전트 스킬(SKILL.md) + README 한 줄.
+1. `RecordedWrite` / `IngestPlan` models + `PlanRegistry`.
+2. `PlanningGraphRepository` (write recording + normalized-name read overlay).
+3. `IngestService.plan_file()` + `commit_plan()`.
+4. Preview serialization + plan/preview/commit service functions (safety latch).
+5. MCP serve wiring + three tools + descriptions + instructions.
+6. Agent skill (SKILL.md) + README line.
