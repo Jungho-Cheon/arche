@@ -81,14 +81,40 @@ def test_v1_healthz_responds_same_as_root_healthz():
 
 def test_validation_422_returns_error_envelope_shape():
     with _client_namespaces({}) as c:
-        # find_entities 가 keywords 없이 호출되면 422.
-        r = c.post("/entities/find", json={})
+        # find_entities 가 빈 keywords 로 호출되면 422 (min_length=1 위반).
+        r = c.post("/entities/find", json={"keywords": []})
     assert r.status_code == 422
     body = r.json()
     assert "error" in body
     assert body["error"]["code"] == ErrorCode.INVALID_INPUT.value
     assert "details" in body["error"]
-    assert "errors" in body["error"]["details"]
+    errors = body["error"]["details"]["errors"]
+    # issue #26 — 평탄화: loc 점 표기 + type, 위반 필드 식별 가능.
+    assert any(e["loc"] == "body.keywords" and e["type"] == "too_short" for e in errors)
+    assert all(set(e.keys()) == {"loc", "type", "msg"} for e in errors)
+
+
+def test_flatten_validation_errors_dots_loc_and_drops_input_ctx():
+    """issue #26 — pydantic raw errors() 평탄화 헬퍼 단위 검증."""
+    from arche_api.api.error_codes import flatten_validation_errors
+
+    raw = [
+        {
+            "type": "too_short",
+            "loc": ("body", "keywords"),
+            "msg": "List should have at least 1 item",
+            "input": [],
+            "ctx": {"actual_length": 0},
+        }
+    ]
+    out = flatten_validation_errors(raw)
+    assert out == [
+        {
+            "loc": "body.keywords",
+            "type": "too_short",
+            "msg": "List should have at least 1 item",
+        }
+    ]
 
 
 # ---------- ADR-0013 D2 — 에러 코드 enum ----------

@@ -327,7 +327,12 @@ def test_to_mcp_error_validation_error_maps_to_invalid_input():
     except ValidationError as ve:
         err = _to_mcp_error(ve)
         assert err.data["code"] == "invalid_input"
-        assert "errors" in err.data["details"]
+        errors = err.data["details"]["errors"]
+        # REST 와 동일한 평탄화 (issue #26) — loc 점 표기 + type + msg 3 키만.
+        assert any(
+            e["loc"] == "keywords" and e["type"] == "too_short" for e in errors
+        )
+        assert all(set(e.keys()) == {"loc", "type", "msg"} for e in errors)
     else:
         raise AssertionError("expected ValidationError")
 

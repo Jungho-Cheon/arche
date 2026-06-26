@@ -33,6 +33,7 @@ from pydantic import BaseModel, ValidationError
 from arche_api.domain.ports import EmbeddingProvider, GraphRepository
 
 from .api import services
+from .api.error_codes import flatten_validation_errors
 from .api.responses import (
     FindPathRequest,
     GetNeighborsRequest,
@@ -299,10 +300,15 @@ def _to_mcp_error(exc: BaseException) -> mcp_types.ErrorData:
             data={"code": exc.code, "details": exc.details},
         )
     if isinstance(exc, ValidationError):
+        # REST 핸들러와 동일한 평탄화 — raw exc.errors() 의 input/ctx (직렬화 불가
+        # 가능) 를 떨구고 loc 점 표기 + type + msg 만 노출 (issue #26).
         return mcp_types.ErrorData(
             code=-32602,
             message="invalid input",
-            data={"code": "invalid_input", "details": {"errors": exc.errors()}},
+            data={
+                "code": "invalid_input",
+                "details": {"errors": flatten_validation_errors(exc.errors())},
+            },
         )
     if isinstance(exc, ValueError):
         # 단일 string 인자 같은 가벼운 입력 위반.
