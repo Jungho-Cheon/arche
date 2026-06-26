@@ -1,0 +1,88 @@
+"""Unit 테스트 공용 fixture — reviewable ingest 서비스 함수용 더블.
+
+WHY 가벼운 더블 (FakeGraph 전체 재사용 아님): plan/preview/commit *서비스 함수*
+의 안전 latch (previewed + stale) 는 그래프의 실제 적재 동작과 무관하다. 검증
+대상은 "previewed 가 아니면 거부 / depends 노드가 사라졌으면 거부" 라는 분기뿐
+이므로, `entity_exists` 와 `commit_plan` 만 흉내내는 최소 더블로 충분하다.
+"""
+
+from __future__ import annotations
+
+import pytest
+
+from arche_api.domain.ingest import IngestResult
+from arche_api.domain.ingest_plan import IngestPlan, RecordedWrite
+
+
+class _FakeGraph:
+    """서비스 latch 검증용 그래프 더블 — entity_exists 만 노출.
+
+    `exists` 로 stale 시나리오를 토글한다 (True = 의존 노드가 살아 있음).
+    """
+
+    def __init__(self, *, exists: bool = True) -> None:
+        self._exists = exists
+
+    def entity_exists(self, *, entity_id: str) -> bool:
+        return self._exists
+
+
+class _FakeService:
+    """IngestService 대역 — commit_plan 과 _graph 만 제공.
+
+    commit_plan 은 카운터가 채워진 단순 IngestResult 를 돌려준다. 서비스
+    `commit_plan` 함수가 latch 통과 후 도메인 메서드를 호출해 응답으로 변환하는지
+    확인하는 용도라, 실제 그래프 재생은 흉내내지 않는다.
+    """
+
+    def __init__(self, graph: _FakeGraph) -> None:
+        self._graph = graph
+
+    def commit_plan(self, plan: IngestPlan) -> IngestResult:
+        return IngestResult(
+            source_path=plan.source_path,
+            entities_created=2,
+            entities_updated=1,
+            relations_created=1,
+            relations_skipped_dangling=0,
+            entity_ids=[],
+            relations_deleted=0,
+        )
+
+
+@pytest.fixture
+def fake_service():
+    """기본 fake_service — entity_exists 가 True (의존 노드 존재)."""
+    return _FakeService(_FakeGraph(exists=True))
+
+
+@pytest.fixture
+def make_plan():
+    """plan_id "pln_1" 의 IngestPlan 을 만든다 (previewed / depends 토글 가능)."""
+
+    def _make(
+        *,
+        previewed: bool = False,
+        writes: list[RecordedWrite] | None = None,
+        depends_on_entity_ids: list[str] | None = None,
+    ) -> IngestPlan:
+        return IngestPlan(
+            plan_id="pln_1",
+            source_path="/tmp/a.md",
+            source_hash="deadbeef",
+            extractor_version="p2:test",
+            created_at="2026-06-27T00:00:00Z",
+            previewed=previewed,
+            writes=writes or [],
+            result=IngestResult(
+                source_path="/tmp/a.md",
+                entities_created=2,
+                entities_updated=1,
+                relations_created=1,
+                relations_skipped_dangling=0,
+                entity_ids=[],
+            ),
+            depends_on_entity_ids=depends_on_entity_ids or [],
+        )
+
+    return _make

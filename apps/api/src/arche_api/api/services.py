@@ -19,6 +19,8 @@ payload 만* (envelope 없음). REST 라우터가 envelope 으로 감싸는 책�
 from __future__ import annotations
 
 import logging
+from pathlib import Path
+from typing import TYPE_CHECKING
 
 from arche_api.domain.ports import DenseHit, EmbeddingProvider, GraphRepository, KeywordHit
 
@@ -26,9 +28,25 @@ from ..config import Settings
 from ..domain.errors import (
     DependencyUnavailableError,
     EntityNotFoundError,
+    InvalidInputError,
     UnprocessableError,
 )
 from ..domain.models import Node
+from .plan_schemas import (
+    CommitRequest,
+    IngestCommitResponse,
+    MergeView,
+    NewEntityView,
+    PlanIngestRequest,
+    PlanPreview,
+    PlanSummary,
+    PreviewRequest,
+    RelationView,
+)
+
+if TYPE_CHECKING:
+    from ..domain.ingest import IngestService
+    from .plan_registry import PlanRegistry
 from .responses import (
     EdgeCounts,
     EmbeddingInfo,
@@ -411,4 +429,133 @@ def get_subgraph(
         edges=result.edges,
         entry_ids=body.entry_ids,
         truncated=result.truncated,
+    )
+
+
+# ---------- reviewable ingest: plan → preview → commit ----------
+#
+# WHY 세 함수가 한 묶음: 적재 전 변경을 사람이 검토하는 흐름이다. plan 이 변경
+# 묶음(IngestPlan)을 만들어 레지스트리에 보관하고, preview 가 그 묶음을 항목 단위로
+# 펼치며 "미리보기 완료" 로 표시하고, commit 이 *미리보기를 거친 경우에만* 그래프에
+# 적용한다. 안전 latch(미리보기 전제 + stale 검출)는 도메인 메서드가 아니라 본
+# 서비스 함수에 둔다 — IngestService.commit_plan 은 *재생만* 담당하고, "지금 적용해도
+# 안전한가" 라는 정책 판단은 통로(서비스)의 책임이기 때문이다.
+
+
+def plan_ingest(
+    body: PlanIngestRequest,
+    *,
+    service: IngestService,
+    registry: PlanRegistry,
+) -> PlanSummary:
+    """파일을 쓰지 않고 변경 묶음을 만들어 레지스트리에 보관 + 개수 요약 반환."""
+    plan = service.plan_file(Path(body.path))
+    registry.create(plan)
+    n_new = sum(1 for w in plan.writes if w.method == "create_entity")
+    n_merge = sum(1 for w in plan.writes if w.method == "apply_merge_mutation")
+    n_rel = sum(1 for w in plan.writes if w.method == "upsert_relation")
+    n_del = sum(
+        1
+        for w in plan.writes
+        if w.method in ("apply_entity_diff", "apply_relation_diff")
+    )
+    return PlanSummary(
+        plan_id=plan.plan_id,
+        source_path=plan.source_path,
+        entities_created=n_new,
+        entities_merged=n_merge,
+        relations_created=n_rel,
+        deletion_count=n_del,
+    )
+
+
+def preview_plan(
+    body: PreviewRequest,
+    *,
+    registry: PlanRegistry,
+) -> PlanPreview:
+    """변경 묶음을 항목 단위로 펼치고, 계획을 "미리보기 완료" 로 표시한다.
+
+    WHY mark_previewed 가 여기서: commit 의 안전 latch 가 `previewed` 플래그를
+    전제한다. 미리보기를 *실제로 받아 본* 호출만 그 플래그를 세워야 latch 가
+    의미를 가진다 — 그래서 응답을 만드는 본 함수가 표시 책임을 진다.
+    """
+    plan = registry.get(body.plan_id)
+    if plan is None:
+        raise InvalidInputError("unknown plan_id", details={"plan_id": body.plan_id})
+    registry.mark_previewed(plan.plan_id)
+    new_entities = [
+        NewEntityView(
+            name=w.kwargs["entity"].name,
+            type=w.kwargs["entity"].type,
+            aliases=list(w.kwargs["entity"].aliases),
+        )
+        for w in plan.writes
+        if w.method == "create_entity"
+    ]
+    merges = [
+        MergeView(
+            target_id=w.kwargs["mutation"].id,
+            before_name=(w.before.name if w.before else ""),
+            after_aliases=list(w.kwargs["mutation"].aliases),
+        )
+        for w in plan.writes
+        if w.method == "apply_merge_mutation"
+    ]
+    new_relations = [
+        RelationView(
+            from_id=w.kwargs["from_id"],
+            to_id=w.kwargs["to_id"],
+            type=w.kwargs["rel_type"],
+        )
+        for w in plan.writes
+        if w.method == "upsert_relation"
+    ]
+    n_del = sum(
+        1
+        for w in plan.writes
+        if w.method in ("apply_entity_diff", "apply_relation_diff")
+    )
+    return PlanPreview(
+        new_entities=new_entities,
+        merges=merges,
+        new_relations=new_relations,
+        deletion_count=n_del,
+    )
+
+
+def commit_plan(
+    body: CommitRequest,
+    *,
+    service: IngestService,
+    registry: PlanRegistry,
+) -> IngestCommitResponse:
+    """미리보기를 거친 계획만 그래프에 적용한다 (안전 latch).
+
+    latch 두 단계:
+      1. previewed=False → 422 unprocessable. 사용자가 변경을 눈으로 확인하기 전에
+         그래프를 건드리는 사고를 막는다.
+      2. depends_on_entity_ids 중 *지금은 사라진* 노드가 있으면 → 422. 계획을 세운
+         시점과 적용 시점 사이에 그래프가 바뀌어 병합 대상이 없어진 경우, 재생이
+         어긋난 결과를 만든다. "stale; re-plan" 으로 명시 거부해 다시 계획하도록.
+    """
+    plan = registry.get(body.plan_id)
+    if plan is None:
+        raise InvalidInputError("unknown plan_id", details={"plan_id": body.plan_id})
+    if not plan.previewed:
+        raise UnprocessableError(
+            "call ingest_preview before commit", details={"plan_id": plan.plan_id}
+        )
+    for eid in plan.depends_on_entity_ids:
+        if not service._graph.entity_exists(entity_id=eid):
+            raise UnprocessableError(
+                "plan is stale; re-plan",
+                details={"plan_id": plan.plan_id, "missing_entity_id": eid},
+            )
+    result = service.commit_plan(plan)
+    return IngestCommitResponse(
+        entities_created=result.entities_created,
+        entities_updated=result.entities_updated,
+        relations_created=result.relations_created,
+        deletions=result.relations_deleted,
     )
