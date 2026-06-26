@@ -134,13 +134,23 @@ ADR-0016 측정이 제품 방향을 바꾸면서 (에이전트 반복 graph-only
 | 우선순위 | 작업 | 종료 조건 | 이슈 |
 |---|---|---|---|
 | ✅ 완료 | cross-chunk/cross-doc 관계 엔드포인트 해소 (#28 의 multi-hop 사슬 끊김) | 관계 해소를 청크 루프 뒤로 미루고 그래프 정규명 fallback 추가. find_path 4-hop 사슬 복원 (단위+통합 테스트) | #28 |
-| 1 | 문서 간 엔티티 동일성 해소 강화 (추출 단계 cross-doc 병합) | cross-doc 병합률 ↑ + 관계-사슬 도메인(MedHop류) 천장 상승 evidence. ADR-0009 LLM 매칭 강화 축 | (신규 필요) |
+| 1 🔒 예산 게이트 | 문서 간 엔티티 동일성 해소 강화 (추출 단계 cross-doc 병합) | cross-doc 병합률 ↑ + 관계-사슬 도메인(MedHop류) 천장 상승 evidence. ADR-0009 LLM 매칭 강화 축 | [#82](https://github.com/Jungho-Cheon/arche/issues/82) |
 | ✅ 완료 | cross-file *정방향* 관계 해소 (디렉토리 2-pass) | 모든 파일 적재 후 결정적 2-pass 가 1-pass dangling 을 그래프 정규명으로 재해소하고, 회수한 관계를 *원 파일 run* 의 emitted_relation_ids 에 귀속(`append_emitted_relations`)시켜 재적재 차분 회귀 0. 추가 LLM 호출 없음. find_path 순서 비의존 (단위+통합 테스트) | #78 |
 | ✅ 완료 | API 에러 계약 정규화 | Pydantic 위반(`RequestValidationError`)을 `invalid_input` ErrorEnvelope 으로 정규화. HTTP 코드는 ADR-0013 D2(422)를 따른다 — 이슈 본문의 옛 400 표기(PRD 3 §9)는 ADR-0013 이 422 로 amend 했고 코드/테스트가 이를 잠그고 있어 422 유지로 확정. `details.errors[]` 를 `flatten_validation_errors` 로 평탄화(`loc` 점 표기 + `type` + `msg`, `input`/`ctx` 제외)해 agent 가 위반 필드를 식별. REST/MCP 동일 헬퍼. 단위+통합 테스트 | #26 |
-| 4 | 결정적 측정 하니스 컬럼 (에이전트 반복 graph-only 고정) | 재현 가능한 컬럼으로 94-97% 재측정 | (신규 필요) |
-| 후순위 | Scale·다도메인·외부 비교 (옛 M9) | 1M 한국어 corpus + 외부 도구 비교 | TBD |
+| 4 🔒 예산 게이트 | 결정적 측정 하니스 컬럼 (에이전트 반복 graph-only 고정) | 재현 가능한 컬럼으로 94-97% 재측정. *컬럼 코드+단위 테스트는 키 불필요로 선행 가능*, 재측정만 예산 게이트 | [#83](https://github.com/Jungho-Cheon/arche/issues/83) |
+| 후순위 🔒 예산 게이트 | Scale·다도메인·외부 비교 (옛 M9) | 1M 한국어 corpus + 외부 도구 비교 | [#84](https://github.com/Jungho-Cheon/arche/issues/84) |
 
 상세 측정 근거 — `eval/reports/2026-06-22-graphify-mcq-baseline/` (BREAKTHROUGH-AGENTIC-GRAPHONLY / GENERALIZATION-MEDHOP / SCALE-IS-THE-VARIABLE) + ADR-0016/0017.
+
+### 백로그 갈무리 (2026-06-26)
+
+코드 이슈(#28 / #78 / #26)는 모두 완료·머지됐다. **남은 백로그 3개(우선순위 1·4·후순위)는 종료 조건이 전부 *eval evidence*(실측 정확도·병합률) 라 LLM API 호출 비용이 든다.** 현재 저장소 환경에는 측정용 API 키가 없어 *지금 비용을 들이지 않고* 각 항목을 grab 가능한 자기완결적 이슈로 정의해 파킹했다. 🔒 예산 게이트 표시 = 예산/키 확보(사람 결정, HITL) 전까지 착수 보류.
+
+- **#82** (우선순위 1) — 추출 단계 cross-doc 동일성 강화. 1 사이클 약 \$15-20, 강화 라운드 약 \$40-70, MedHop-only 축소안 약 \$10/사이클(gpt-4.1 + text-embedding-3-small 기준 실측 추정).
+- **#83** (우선순위 4) — agentic graph-only 재현 컬럼. *컬럼 코드+단위 테스트는 키 없이 선행 가능*, 94-97% 재측정만 예산 게이트.
+- **#84** (후순위) — Scale·다도메인·외부 비교.
+
+예산 확보 시 권장 착수 순서: #82 → #83(재측정) → #84. #83 의 코드 슬라이스만 키 없이 먼저 진행하는 선택도 가능(이슈 본문 참조).
 
 ## 갱신 정책
 
