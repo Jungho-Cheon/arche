@@ -47,6 +47,7 @@ from .identity import (
     extract_identifier_aliases,
     normalize,
 )
+from .ingest_plan import IngestPlan
 from .main_entity import MainEntity, MainEntityExtractor
 from .models import (
     ExtractedGraph,
@@ -55,6 +56,7 @@ from .models import (
     StoredEntity,
     now_rfc3339,
 )
+from .planning_graph import PlanningGraphRepository
 
 logger = logging.getLogger(__name__)
 
@@ -87,6 +89,11 @@ class IngestResult:
     relations_created: int
     relations_skipped_dangling: int
     entity_ids: list[str]
+    # WHY source_hash 노출: reviewable ingest 의 plan_file 이 IngestPlan 에 본문
+    # 해시를 실어야 한다 (계획 생성 시점의 파일 내용 지문). ingest_file 이 이미
+    # 계산하므로 결과에 surface 해 재계산/재읽기를 피한다. short_circuit / dry-run
+    # 등 해시를 계산하지 않은 경로는 "" 로 둔다.
+    source_hash: str = ""
     # WHY by_step dict: 측정 회차 디버깅 + threshold tuning 의 신호. PRD 2 §5.1
     # 의 step 별 동작이 실제로 어떻게 분포하는지 응답에 노출 — 1/2/3 만 노출
     # (step 4 = 신규 생성이므로 entities_created 로 동치).
@@ -494,6 +501,7 @@ class IngestService:
                 entity_ids=list(prior_success.emitted_entity_ids),
                 entities_matched_by_step={},
                 short_circuited=True,
+                source_hash=source_hash,
             )
 
         # 새 IngestionRun 시작.
@@ -656,6 +664,7 @@ class IngestService:
                 # 귀속시켜 재해소할 수 있도록 run_id + 미해소 관계를 surface.
                 run_id=run_id,
                 unresolved_relations=unresolved_rels,
+                source_hash=source_hash,
             )
         except Exception:
             # 실패 — run 을 failed 로 마킹해 다음 호출에서 short-circuit 되지
@@ -668,6 +677,80 @@ class IngestService:
                 emitted_relation_ids=[],
             )
             raise
+
+    # ---------- reviewable ingest (계획 → 미리보기 → 적용) ----------
+
+    def plan_file(
+        self, path: Path, *, namespace_id: str = "default"
+    ) -> IngestPlan:
+        """쓰지 않고 ingest_file 을 돌려 변경 묶음(IngestPlan)을 만든다.
+
+        WHY 그래프 교체로 재사용: 검증된 ingest_file 본 루프를 한 줄도 고치지 않고
+        "쓰지 않는 계획" 을 얻으려면, 포트 경계에서 쓰기를 가로채면 된다.
+        self._graph 를 PlanningGraphRepository(데코레이터) 로 잠시 바꿔치우면
+        _upsert_entities 가 매처를 `self._graph` 에서 새로 만들기 때문에 읽기도
+        오버레이를 통하고 쓰기는 기록만 된다. finally 로 원래 그래프를 복원해
+        plan_file 호출이 인스턴스 상태를 남기지 않게 한다.
+
+        depends_on_entity_ids — 이 계획이 *기존 엔티티 병합* 으로 건드리는 노드 id.
+        나중에 그 노드가 사라지면 commit 이 어긋날 수 있어, 미리보기/적용 시점의
+        정합 검증 신호로 노출한다.
+        """
+        planning = PlanningGraphRepository(self._graph)
+        real = self._graph
+        self._graph = planning
+        try:
+            result = self.ingest_file(path, namespace_id=namespace_id)
+        finally:
+            # 예외가 나도 인스턴스 그래프를 반드시 원복 — 상태 누수 방지.
+            self._graph = real
+
+        depends = [
+            w.kwargs["mutation"].id
+            for w in planning.writes
+            if w.method == "apply_merge_mutation"
+        ]
+        return IngestPlan(
+            plan_id=f"pln_{ULID()}",
+            source_path=result.source_path,
+            source_hash=result.source_hash,
+            extractor_version=self._extractor_version,
+            created_at=now_rfc3339(),
+            previewed=False,
+            writes=planning.writes,
+            result=result,
+            depends_on_entity_ids=depends,
+        )
+
+    def commit_plan(self, plan: IngestPlan) -> IngestResult:
+        """기록된 쓰기를 진짜 그래프에 순서대로 재생한다.
+
+        WHY 합성 relation id 치환: 계획 단계의 upsert_relation 은 진짜 id 를 모른 채
+        합성 id(plan_rel_N)를 돌려줬다. 재생 때 실제 그래프가 돌려주는 진짜 id 를
+        모아, finalize_run 의 emitted_relation_ids 를 그 진짜 id 로 바꿔치운다.
+        그래야 run 노드의 provenance(어떤 관계를 emit 했는지)가 실제 그래프와
+        정합한다 — 다음 재적재 차분이 이 관계를 보존하려면 진짜 id 여야 한다.
+
+        WHY 삭제 카운트 보정: 계획 단계의 apply_*_diff 는 항상 "deleted" 를 가정해
+        기록만 했다. 진짜 그래프에 재생하면 실제 삭제 수가 나오므로, 재생한
+        diff 호출 수로 relations_deleted 를 보정해 결과 카운터가 진실을 보고한다.
+        """
+        real_rel_ids: list[str] = []
+        deletions = 0
+        for w in plan.writes:
+            if w.method == "finalize_run":
+                # 합성 relation id 를 실제 id 로 치환해 provenance 정합 유지.
+                kwargs = dict(w.kwargs)
+                kwargs["emitted_relation_ids"] = real_rel_ids
+                self._graph.finalize_run(**kwargs)
+                continue
+            ret = getattr(self._graph, w.method)(**w.kwargs)
+            if w.method == "upsert_relation":
+                rel_id, _ = ret
+                real_rel_ids.append(rel_id)
+            elif w.method in ("apply_entity_diff", "apply_relation_diff"):
+                deletions += 1
+        return replace(plan.result, relations_deleted=deletions)
 
     # ---------- 모달별 LLM 호출 input 정규화 ----------
 
