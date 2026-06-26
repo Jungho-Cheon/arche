@@ -22,7 +22,7 @@ from arche_api.domain.ports import (
     RelationTypeStat,
 )
 
-from .domain.models import Edge, Node, SourceRef, now_rfc3339
+from .domain.models import Edge, Node, SourceRef, StoredEntity, now_rfc3339
 
 
 @dataclass
@@ -78,6 +78,9 @@ class FakeGraph(GraphRepository):
             to_id=self._data.node_b.id,
             rel_type="applies_to",
         )
+        # in-memory 엔티티 저장소 — PlanningGraphRepository 테스트가 create →
+        # get/find 왕복을 검증하므로 create_entity 가 실제로 보관해야 한다.
+        self._entities: dict[str, StoredEntity] = {}
 
     # ----- 인덱스 / 헬스 -----
 
@@ -140,7 +143,7 @@ class FakeGraph(GraphRepository):
         return entity_id in {self._data.node_a.id, self._data.node_b.id}
 
     def get_stored_entity(self, *, entity_id):
-        return None
+        return self._entities.get(entity_id)
 
     def expand_neighbors(
         self, *, entry_id, relation_types, direction, hops, max_nodes
@@ -204,13 +207,16 @@ class FakeGraph(GraphRepository):
     # ----- 아래는 ingest 흐름 — MCP read 경로는 안 부른다. 안전한 no-op. -----
 
     def find_by_normalized_name(self, *, normalized, type_):
+        for entity in self._entities.values():
+            if entity.normalized_name == normalized and entity.type == type_:
+                return entity
         return None
 
     def vector_search(self, *, embedding, top_k, type_):
         return []
 
     def create_entity(self, *, entity):
-        return None
+        self._entities[entity.id] = entity
 
     def apply_merge_mutation(self, *, mutation):
         return None
