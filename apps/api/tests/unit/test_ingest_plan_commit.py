@@ -11,7 +11,8 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from arche_api.domain.ingest import IngestService
+from arche_api.domain.ingest import IngestResult, IngestService
+from arche_api.domain.ingest_plan import IngestPlan, RecordedWrite
 from arche_api.domain.models import (
     ExtractedEntity,
     ExtractedGraph,
@@ -69,3 +70,172 @@ def test_plan_does_not_write_then_commit_matches_direct_ingest(tmp_path: Path):
     # commit 이 진짜 그래프에 노드 2 + 관계 1 을 실제로 만들었는지.
     assert len(g2._entities) == len(g3._entities) == 2
     assert len(g2._relations) == len(g3._relations) == 1
+    # 신선 파일 경로는 어떤 삭제·trim 도 만들지 않는다 (회귀 가드 — issue #88).
+    assert committed.entities_deleted == direct.entities_deleted == 0
+    assert committed.entities_trimmed == direct.entities_trimmed == 0
+    assert committed.relations_deleted == direct.relations_deleted == 0
+    assert committed.relations_trimmed == direct.relations_trimmed == 0
+
+
+class _RecordingGraph:
+    """commit_plan 재생만 검증하는 가벼운 더블 (issue #88).
+
+    WHY 별도 더블: 삭제/trim 분리 테스트는 apply_*_diff 의 반환을 호출마다
+    통제해야 하고, 합성 id 치환 테스트는 mark_relation_emitted / finalize_run /
+    append_emitted_relations 가 실제로 받은 인자를 그대로 포착해야 한다. 기존
+    FakeGraph 의 apply_*_diff 는 엔티티 상태로 결과를 결정해 통제가 어렵고,
+    emit 기록은 set 으로 합쳐 호출 인자 원형을 잃는다 — 그래서 호출 인자를
+    있는 그대로 기록·재생하는 최소 더블을 둔다.
+    """
+
+    def __init__(
+        self,
+        *,
+        rel_returns: list[str] | None = None,
+        entity_diff_by_id: dict[str, str] | None = None,
+        relation_diff_by_id: dict[str, str] | None = None,
+    ) -> None:
+        # upsert_relation 이 순서대로 돌려줄 진짜 id 큐.
+        self._rel_returns = list(rel_returns or [])
+        self._entity_diff_by_id = entity_diff_by_id or {}
+        self._relation_diff_by_id = relation_diff_by_id or {}
+        self.upsert_relation_calls: list[dict] = []
+        self.mark_relation_emitted_calls: list[dict] = []
+        self.finalize_run_calls: list[dict] = []
+        self.append_emitted_relations_calls: list[dict] = []
+
+    def upsert_relation(self, **kwargs) -> tuple[str, bool]:
+        self.upsert_relation_calls.append(kwargs)
+        real_id = self._rel_returns.pop(0)
+        return real_id, True
+
+    def mark_relation_emitted(self, *, relation_id: str, run_id: str) -> None:
+        self.mark_relation_emitted_calls.append(
+            {"relation_id": relation_id, "run_id": run_id}
+        )
+
+    def finalize_run(self, **kwargs) -> None:
+        self.finalize_run_calls.append(kwargs)
+
+    def append_emitted_relations(self, **kwargs) -> None:
+        self.append_emitted_relations_calls.append(kwargs)
+
+    def apply_entity_diff(self, *, entity_id: str, **_) -> str:
+        return self._entity_diff_by_id[entity_id]
+
+    def apply_relation_diff(self, *, relation_id: str, **_) -> str:
+        return self._relation_diff_by_id[relation_id]
+
+
+def _bare_result() -> IngestResult:
+    return IngestResult(
+        source_path="x.md",
+        entities_created=0,
+        entities_updated=0,
+        relations_created=0,
+        relations_skipped_dangling=0,
+        entity_ids=[],
+    )
+
+
+def _plan(writes: list[RecordedWrite]) -> IngestPlan:
+    return IngestPlan(
+        plan_id="pln_test",
+        source_path="x.md",
+        source_hash="h",
+        extractor_version="v",
+        created_at="t",
+        previewed=False,
+        writes=writes,
+        result=_bare_result(),
+    )
+
+
+def _commit_service(graph: _RecordingGraph) -> IngestService:
+    # commit_plan 은 llm/embedder 를 쓰지 않는다. 컨텍스트 동봉 빌더는 끄고
+    # 재생 경로만 통과시킨다.
+    return IngestService(
+        llm=FakeLLM(_extracted()),
+        embedder=FakeEmbedder(),
+        graph=graph,  # type: ignore[arg-type]
+        enable_context_aware_extraction=False,
+    )
+
+
+def test_commit_plan_splits_deletion_and_trim_counts():
+    """apply_*_diff 의 실제 반환으로 네 카운터를 분리 집계한다 (issue #88)."""
+    graph = _RecordingGraph(
+        entity_diff_by_id={"e_del": "deleted", "e_trim": "trimmed"},
+        relation_diff_by_id={"r_del": "deleted", "r_trim": "trimmed"},
+    )
+    plan = _plan(
+        [
+            RecordedWrite(
+                "apply_entity_diff",
+                {"entity_id": "e_del", "source_path": "x.md", "run_id": "run1"},
+            ),
+            RecordedWrite(
+                "apply_entity_diff",
+                {"entity_id": "e_trim", "source_path": "x.md", "run_id": "run1"},
+            ),
+            RecordedWrite(
+                "apply_relation_diff",
+                {"relation_id": "r_del", "source_path": "x.md"},
+            ),
+            RecordedWrite(
+                "apply_relation_diff",
+                {"relation_id": "r_trim", "source_path": "x.md"},
+            ),
+        ]
+    )
+
+    result = _commit_service(graph).commit_plan(plan)
+
+    assert result.entities_deleted == 1
+    assert result.entities_trimmed == 1
+    assert result.relations_deleted == 1
+    assert result.relations_trimmed == 1
+
+
+def test_commit_plan_substitutes_synthetic_relation_id():
+    """합성 plan_rel_N 을 mark/finalize/append 전반에서 진짜 id 로 치환 (issue #88)."""
+    graph = _RecordingGraph(rel_returns=["REAL1"])
+    plan = _plan(
+        [
+            RecordedWrite(
+                "upsert_relation",
+                {
+                    "from_id": "a",
+                    "to_id": "b",
+                    "rel_type": "acquired",
+                    "source_ref": None,
+                },
+            ),
+            RecordedWrite(
+                "mark_relation_emitted",
+                {"relation_id": "plan_rel_1", "run_id": "run1"},
+            ),
+            RecordedWrite(
+                "append_emitted_relations",
+                {"run_id": "run1", "relation_ids": ["plan_rel_1"]},
+            ),
+            RecordedWrite(
+                "finalize_run",
+                {
+                    "run_id": "run1",
+                    "status": "succeeded",
+                    "completed_at": "t",
+                    "emitted_entity_ids": [],
+                    "emitted_relation_ids": ["plan_rel_1"],
+                },
+            ),
+        ]
+    )
+
+    _commit_service(graph).commit_plan(plan)
+
+    assert graph.mark_relation_emitted_calls == [
+        {"relation_id": "REAL1", "run_id": "run1"}
+    ]
+    assert graph.append_emitted_relations_calls[0]["relation_ids"] == ["REAL1"]
+    assert graph.finalize_run_calls[0]["emitted_relation_ids"] == ["REAL1"]
