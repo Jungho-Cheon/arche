@@ -108,7 +108,10 @@ _TOOL_DESCRIPTIONS: dict[str, str] = {
         "a count summary (entities to create/merge, relations to create, "
         "deletions). After planning you MUST call ingest_preview and show the "
         "human the delta, then ingest_commit only after the human confirms. "
-        "Never plan and commit in one breath."
+        "Never plan and commit in one breath. Optionally pass `hints` (a "
+        "glossary or domain notes) to improve extraction of a poorly-structured "
+        "document; hints never modify the stored source, they only guide "
+        "extraction."
     ),
     "ingest_preview": (
         "Expand a planned change set (by `plan_id`) item by item — the new "
