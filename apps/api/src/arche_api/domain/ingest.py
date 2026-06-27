@@ -252,6 +252,12 @@ class IngestService:
         self._extractor_version = (
             f"p{INGEST_PIPELINE_VERSION}:{llm.extraction_fingerprint()}"
         )
+        # ask-human-on-ambiguity (해소 엔진) — resolve_plan 이 재계획 동안 켜 두는
+        # 강제 매칭 힌트 맵. 키는 추출 엔티티 서명("<정규명>\x00<type>"), 값은
+        # "merge:<candidate_id>" 또는 "keep". plan_file 의 self._graph 스왑/복원과
+        # 동일하게 resolve_plan 이 set → plan_file → finally 복원한다. 비어 있으면
+        # _upsert_entities 동작은 종전과 *완전히 동일* (정상 plan/ingest 경로).
+        self._active_resolutions: dict[str, str] = {}
 
     def ingest_directory(
         self,
@@ -751,6 +757,64 @@ class IngestService:
             open_questions=open_questions,
         )
 
+    def resolve_plan(
+        self, plan: IngestPlan, resolutions: dict[str, str]
+    ) -> IngestPlan:
+        """사람이 답한 모호성 질문을 적용해 *같은 plan_id* 로 재계획한다.
+
+        resolutions 는 {question_id: "merge" | "keep"}. plan.open_questions 로
+        번역해 추출 엔티티 서명("<정규명>\\x00<type>") 단위의 강제 매칭 힌트 맵을
+        만든다("merge:<candidate_id>" 또는 "keep"). 이 맵은 *이전에 적용된* 해소
+        (plan.resolved) 위에 *누적* 된다 — 같은 계획을 여러 번 다듬을 수 있다.
+
+        WHY plan_file 재사용 + 추출 캐시: 검증된 적재 루프를 한 줄도 고치지 않고
+        강제 매칭만 얹으려면, self._active_resolutions 를 켠 채로 plan_file 을 다시
+        돌리면 된다. 추출은 콘텐츠 키 디스크 캐시(_extract_with_cache)에서 가져오므로
+        LLM 재호출이 없다. self._graph 스왑과 동일한 set → 호출 → finally 복원 패턴으로
+        인스턴스 상태 누수를 막는다.
+
+        반환 계획은 새로 생성된 plan_id 를 *원 계획의 plan_id 로 덮어쓰고*,
+        previewed=False, 누적된 resolved 맵을 실은 채 writes/result/open_questions 를
+        재계산한 결과다. "merge" 로 해소된 엔티티는 open_questions 에서 사라지고 그
+        create_entity 는 candidate 로의 apply_merge_mutation 이 된다. "keep" 엔티티는
+        create_entity 로 남고 질문만 사라진다.
+        """
+        # plan.open_questions 로 {question_id: decision} 을 서명 맵으로 번역.
+        # 알 수 없는 question_id 는 무시 (멱등 — 이미 해소돼 사라진 질문 재전송 등).
+        question_by_id = {q.question_id: q for q in plan.open_questions}
+        # 이전 해소 위에 누적 (새 결정이 같은 서명을 덮어쓴다).
+        signature_map: dict[str, str] = dict(plan.resolved)
+        for question_id, decision in resolutions.items():
+            question = question_by_id.get(question_id)
+            if question is None:
+                continue
+            sig = normalize(question.extracted_name) + "\x00" + question.extracted_type
+            if decision == "merge":
+                signature_map[sig] = f"merge:{question.candidate_id}"
+            elif decision == "keep":
+                signature_map[sig] = "keep"
+            else:
+                raise InvalidInputError(
+                    f"Unknown resolution {decision!r} for {question_id!r} "
+                    "(expected 'merge' or 'keep')."
+                )
+
+        prior = self._active_resolutions
+        self._active_resolutions = signature_map
+        try:
+            refined = self.plan_file(Path(plan.source_path))
+        finally:
+            self._active_resolutions = prior
+
+        # 같은 plan_id 유지 + previewed 초기화 + 누적 해소 맵을 실어 다음
+        # resolve_plan 이 그 위에 덧붙일 수 있게 한다.
+        return replace(
+            refined,
+            plan_id=plan.plan_id,
+            previewed=False,
+            resolved=signature_map,
+        )
+
     def commit_plan(self, plan: IngestPlan) -> IngestResult:
         """기록된 쓰기를 진짜 그래프에 순서대로 재생한다.
 
@@ -1081,6 +1145,25 @@ class IngestService:
                         merged_aliases.append(a)
                 e_new = replace(e_new, aliases=merged_aliases)
 
+            # ask-human-on-ambiguity (해소 엔진) — 사람이 답한 강제 매칭 힌트를
+            # *매칭 결정 전* 에 주입한다. self._active_resolutions 가 비어 있으면
+            # (정상 plan/ingest) 아래 두 분기는 모두 건너뛰어 동작이 종전과 동일.
+            #   - "merge:<id>" → matched_existing_id 를 박아 기존 ADR-0009 fast-path
+            #     로 흘려보낸다 (병합 로직 중복 없이 재사용). 사람이 "같은 대상" 이라
+            #     답한 candidate 로 강제 병합된다.
+            #   - "keep" → force_keep 플래그로 매처 병합을 막아 *강제 새 노드* 로
+            #     떨어뜨리고, 이 엔티티의 near-miss 기록도 건너뛴다 (재질문 억제).
+            force_keep = False
+            if self._active_resolutions:
+                sig = normalize(e_new.name) + "\x00" + e_new.type
+                decision = self._active_resolutions.get(sig)
+                if decision is not None and decision.startswith("merge:"):
+                    e_new = replace(
+                        e_new, matched_existing_id=decision[len("merge:"):]
+                    )
+                elif decision == "keep":
+                    force_keep = True
+
             # ADR-0009 D2 — LLM 이 matched_existing_id 를 명시했으면 Step 1-3
             # 매처를 *skip* 하고 직접 merge. id 가 실제로 존재하는지 검증해
             # *환각* (없는 id) 케이스는 fallback.
@@ -1127,7 +1210,11 @@ class IngestService:
                     )
 
             result = matcher.match(e_new)
-            if result.existing is not None and result.step in (1, 2, 3):
+            if (
+                not force_keep
+                and result.existing is not None
+                and result.step in (1, 2, 3)
+            ):
                 # 병합 분기.
                 mutation = EntityMerger.merge(
                     existing=result.existing,
@@ -1190,7 +1277,7 @@ class IngestService:
             # 밴드의 후보를 보고했다면 '놓친 병합 후보' 로 기록한다. 이 기록은
             # *생성 결정 이후* 라 쓰기 동작에 영향이 없다 (이미 create 완료). 사람
             # 확인용 신호로만 surface. question_id 는 plan_file 이 부여 (여기선 "").
-            if result.near_miss is not None:
+            if not force_keep and result.near_miss is not None:
                 cand, sim = result.near_miss
                 ambiguities.append(
                     AmbiguousMatch(

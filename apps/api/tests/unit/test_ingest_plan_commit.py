@@ -22,7 +22,8 @@ from arche_api.domain.models import (
     StoredEntity,
     now_rfc3339,
 )
-from arche_api.domain.ports import EmbeddingProvider
+from arche_api.adapters.extract_cache import ExtractionCache
+from arche_api.domain.ports import EmbeddingProvider, LLMProvider
 
 # 검증된 ingest 흐름 더블을 그대로 재사용 (DRY — 새 더블 금지).
 from tests.unit.test_ingest_service import FakeEmbedder, FakeGraph, FakeLLM
@@ -386,3 +387,97 @@ def test_normal_ingest_behavior_unchanged_with_ambiguity(tmp_path: Path):
     assert r.ambiguities[0].question_id == ""
     assert r.ambiguities[0].candidate_name == "Acme Corporation"
     assert r.ambiguities[0].extracted_name == "Acme Inc"
+
+
+# ---------- Task 3: 해소 엔진 (강제 매칭 힌트로 재계획) ----------
+#
+# WHY counting LLM + ExtractionCache: resolve_plan 은 plan_file 을 다시 돌리되
+# 추출은 *콘텐츠 키 디스크 캐시* 에서 가져와 LLM 재호출이 없어야 한다. counting
+# 래퍼로 extract 호출 수를 세고, 재계획 전후 호출 수가 같음을 단언해 캐시 적중을
+# 증명한다.
+
+
+class _CountingLLM(LLMProvider):
+    """FakeLLM 을 감싸 extract 호출 횟수를 센다 (캐시 적중 증명용)."""
+
+    def __init__(self, inner: LLMProvider) -> None:
+        self._inner = inner
+        self.extract_calls = 0
+
+    def extract(self, **kwargs):  # noqa: ANN003
+        self.extract_calls += 1
+        return self._inner.extract(**kwargs)
+
+    def extraction_fingerprint(self) -> str:
+        return self._inner.extraction_fingerprint()
+
+
+def _resolve_service(graph: FakeGraph, llm: LLMProvider, cache_dir: Path) -> IngestService:
+    # near-miss 동일 통제 (2 차원 밴드 임베더 + 컨텍스트 동봉 off) + 디스크 캐시.
+    return IngestService(
+        llm=llm,
+        embedder=_BandEmbedder(),
+        graph=graph,
+        enable_context_aware_extraction=False,
+        extraction_cache=ExtractionCache(root=cache_dir),
+    )
+
+
+def test_resolve_merge_turns_create_into_merge_without_llm(tmp_path: Path):
+    """resolve "merge" 는 create-new 를 candidate 로의 병합으로 바꾸고 LLM 재호출이 없다."""
+    doc = tmp_path / "acme.md"
+    doc.write_text("Acme Inc raised a round.", encoding="utf-8")
+
+    graph = _NearMissGraph(_band_candidate(0.87))
+    llm = _CountingLLM(FakeLLM(_near_miss_extraction()))
+    service = _resolve_service(graph, llm, tmp_path / "cache")
+
+    plan = service.plan_file(doc)
+    assert len(plan.open_questions) == 1
+    assert plan.open_questions[0].question_id == "q1"
+    calls_after_plan = llm.extract_calls
+
+    resolved = service.resolve_plan(plan, {"q1": "merge"})
+
+    # 추출은 캐시에서 — LLM 재호출 0.
+    assert llm.extract_calls == calls_after_plan
+    # 같은 plan_id 를 유지하고 previewed 는 초기화.
+    assert resolved.plan_id == plan.plan_id
+    assert resolved.previewed is False
+    # 병합으로 해소된 질문은 사라진다.
+    assert resolved.open_questions == []
+    # candidate 로 병합하는 쓰기가 존재하고, 그 이름의 create_entity 는 없다.
+    assert any(w.method == "apply_merge_mutation" for w in resolved.writes)
+    assert not any(
+        w.method == "create_entity"
+        and w.kwargs["entity"].name == "Acme Inc"
+        for w in resolved.writes
+    )
+    # 해소 맵이 누적된 채로 실린다.
+    assert resolved.resolved
+
+
+def test_resolve_keep_leaves_new_and_clears_question(tmp_path: Path):
+    """resolve "keep" 는 새 노드 생성을 유지하고 질문만 지운다 (재질문 억제)."""
+    doc = tmp_path / "acme.md"
+    doc.write_text("Acme Inc raised a round.", encoding="utf-8")
+
+    graph = _NearMissGraph(_band_candidate(0.87))
+    llm = _CountingLLM(FakeLLM(_near_miss_extraction()))
+    service = _resolve_service(graph, llm, tmp_path / "cache")
+
+    plan = service.plan_file(doc)
+    calls_after_plan = llm.extract_calls
+
+    resolved = service.resolve_plan(plan, {"q1": "keep"})
+
+    assert llm.extract_calls == calls_after_plan
+    assert resolved.plan_id == plan.plan_id
+    assert resolved.previewed is False
+    assert resolved.open_questions == []
+    assert any(
+        w.method == "create_entity"
+        and w.kwargs["entity"].name == "Acme Inc"
+        for w in resolved.writes
+    )
+    assert not any(w.method == "apply_merge_mutation" for w in resolved.writes)
