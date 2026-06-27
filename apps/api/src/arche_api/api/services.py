@@ -41,11 +41,14 @@ from .plan_schemas import (
     PlanPreview,
     PlanSummary,
     PreviewRequest,
+    QuestionView,
     RelationView,
+    ResolveRequest,
 )
 
 if TYPE_CHECKING:
     from ..domain.ingest import IngestService
+    from ..domain.ingest_plan import IngestPlan
     from .plan_registry import PlanRegistry
 from .responses import (
     EdgeCounts,
@@ -442,15 +445,12 @@ def get_subgraph(
 # 안전한가" 라는 정책 판단은 통로(서비스)의 책임이기 때문이다.
 
 
-def plan_ingest(
-    body: PlanIngestRequest,
-    *,
-    service: IngestService,
-    registry: PlanRegistry,
-) -> PlanSummary:
-    """파일을 쓰지 않고 변경 묶음을 만들어 레지스트리에 보관 + 개수 요약 반환."""
-    plan = service.plan_file(Path(body.path))
-    registry.create(plan)
+def _summarize_plan(plan: IngestPlan) -> PlanSummary:
+    """IngestPlan 의 writes 종류별 개수 + 미해소 질문 수를 PlanSummary 로 집계.
+
+    WHY 공용 헬퍼: plan_ingest 와 resolve_ingest 가 *같은 규칙* 으로 요약해야
+    한다. 한쪽만 고치면 두 통로의 카운트가 어긋난다 — 집계 규칙을 한 곳에 모은다.
+    """
     n_new = sum(1 for w in plan.writes if w.method == "create_entity")
     n_merge = sum(1 for w in plan.writes if w.method == "apply_merge_mutation")
     n_rel = sum(1 for w in plan.writes if w.method == "upsert_relation")
@@ -466,7 +466,20 @@ def plan_ingest(
         entities_merged=n_merge,
         relations_created=n_rel,
         deletion_count=n_del,
+        open_questions=len(plan.open_questions),
     )
+
+
+def plan_ingest(
+    body: PlanIngestRequest,
+    *,
+    service: IngestService,
+    registry: PlanRegistry,
+) -> PlanSummary:
+    """파일을 쓰지 않고 변경 묶음을 만들어 레지스트리에 보관 + 개수 요약 반환."""
+    plan = service.plan_file(Path(body.path))
+    registry.create(plan)
+    return _summarize_plan(plan)
 
 
 def preview_plan(
@@ -516,12 +529,62 @@ def preview_plan(
         for w in plan.writes
         if w.method in ("apply_entity_diff", "apply_relation_diff")
     )
+    questions = [
+        QuestionView(
+            question_id=q.question_id,
+            extracted_name=q.extracted_name,
+            extracted_type=q.extracted_type,
+            candidate_id=q.candidate_id,
+            candidate_name=q.candidate_name,
+            similarity=q.similarity,
+            kind=q.kind,
+        )
+        for q in plan.open_questions
+    ]
     return PlanPreview(
         new_entities=new_entities,
         merges=merges,
         new_relations=new_relations,
         deletion_count=n_del,
+        questions=questions,
     )
+
+
+def resolve_ingest(
+    body: ResolveRequest,
+    *,
+    service: IngestService,
+    registry: PlanRegistry,
+) -> PlanSummary:
+    """사람이 답한 모호성 질문을 적용해 *같은 plan_id* 로 계획을 다듬는다.
+
+    흐름:
+      1. plan_id 로 계획을 찾는다 (없으면 InvalidInputError).
+      2. resolutions 의 모든 question_id 가 그 계획의 open_questions 에 존재하는지
+         검증한다 — 하나라도 없으면 InvalidInputError. WHY 도메인 위임 전에 검증:
+         IngestService.resolve_plan 은 알 수 없는 question_id 를 *조용히 무시* 한다
+         (멱등 재전송 흡수용). 통로(서비스)는 사용자가 *틀린 질문 id* 를 보냈음을
+         명시적으로 알려야 하므로, 위임 전에 거부한다.
+      3. {question_id: decision} 맵으로 도메인 resolve_plan 에 위임한다.
+      4. 정제된 계획을 *같은 plan_id* 로 레지스트리에 다시 보관한다 (previewed 는
+         resolve_plan 이 False 로 초기화 — 다시 미리보기를 거쳐야 commit 가능).
+      5. 정제 계획의 요약(남은 질문 수 포함)을 돌려준다.
+    """
+    plan = registry.get(body.plan_id)
+    if plan is None:
+        raise InvalidInputError("unknown plan_id", details={"plan_id": body.plan_id})
+    known_ids = {q.question_id for q in plan.open_questions}
+    unknown = [r.question_id for r in body.resolutions if r.question_id not in known_ids]
+    if unknown:
+        raise InvalidInputError(
+            "unknown question_id",
+            details={"plan_id": plan.plan_id, "question_ids": unknown},
+        )
+    refined = service.resolve_plan(
+        plan, {r.question_id: r.decision for r in body.resolutions}
+    )
+    registry.create(refined)
+    return _summarize_plan(refined)
 
 
 def commit_plan(

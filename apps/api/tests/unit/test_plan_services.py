@@ -14,10 +14,12 @@ from arche_api.api.plan_schemas import (
     CommitRequest,
     PlanIngestRequest,
     PreviewRequest,
+    ResolutionItem,
+    ResolveRequest,
 )
 from arche_api.domain.errors import InvalidInputError, UnprocessableError
 from arche_api.domain.ingest import IngestResult
-from arche_api.domain.ingest_plan import IngestPlan, RecordedWrite
+from arche_api.domain.ingest_plan import AmbiguousMatch, IngestPlan, RecordedWrite
 from arche_api.domain.models import MergeMutation, StoredEntity
 
 
@@ -115,6 +117,109 @@ def test_preview_serializes_writes(make_plan):
     assert preview.new_relations[0].type == "depends_on"
 
     assert preview.deletion_count == 1
+
+
+# ---------- Task 4: 모호성 질문 노출 + 해소 ----------
+
+
+def _ambiguous(question_id: str) -> AmbiguousMatch:
+    """near-miss 질문 한 건 — 미리보기/해소 테스트용."""
+    return AmbiguousMatch(
+        question_id=question_id,
+        extracted_name="결제 모듈",
+        extracted_type="Service",
+        candidate_id="01HCAND",
+        candidate_name="기존 결제",
+        similarity=0.84,
+        kind="possible_missed_merge",
+    )
+
+
+def test_preview_exposes_open_questions(make_plan):
+    """preview 가 plan.open_questions 를 questions 뷰로 펼치는지."""
+    reg = PlanRegistry()
+    reg.create(make_plan(open_questions=[_ambiguous("q1")]))
+
+    preview = services.preview_plan(PreviewRequest(plan_id="pln_1"), registry=reg)
+
+    assert len(preview.questions) == 1
+    q = preview.questions[0]
+    assert q.question_id == "q1"
+    assert q.extracted_name == "결제 모듈"
+    assert q.extracted_type == "Service"
+    assert q.candidate_id == "01HCAND"
+    assert q.candidate_name == "기존 결제"
+    assert q.similarity == 0.84
+    assert q.kind == "possible_missed_merge"
+
+
+def test_plan_ingest_counts_open_questions(make_plan):
+    """plan_ingest 의 PlanSummary.open_questions 가 plan.open_questions 길이와 일치."""
+
+    class _Stub:
+        def plan_file(self, path):  # noqa: ANN001, ANN202
+            return make_plan(open_questions=[_ambiguous("q1"), _ambiguous("q2")])
+
+    reg = PlanRegistry()
+    summary = services.plan_ingest(
+        PlanIngestRequest(path="/tmp/a.md"), service=_Stub(), registry=reg
+    )
+    assert summary.open_questions == 2
+
+
+def test_resolve_ingest_merges_and_restores(make_plan, fake_service):
+    """resolve_ingest 가 도메인 resolve_plan 으로 위임하고 정제 계획을 재보관한다."""
+    reg = PlanRegistry()
+    reg.create(make_plan(previewed=True, open_questions=[_ambiguous("q1")]))
+
+    summary = services.resolve_ingest(
+        ResolveRequest(
+            plan_id="pln_1",
+            resolutions=[ResolutionItem(question_id="q1", decision="merge")],
+        ),
+        service=fake_service,
+        registry=reg,
+    )
+
+    # 도메인 메서드로 위임됐는가 (질문 → 결정 맵).
+    assert len(fake_service.resolve_calls) == 1
+    assert fake_service.resolve_calls[0][1] == {"q1": "merge"}
+    # 정제 계획이 *같은 plan_id* 로 재보관됐는가 (질문이 비워진 형태).
+    assert reg.get("pln_1").open_questions == []
+    # 요약이 정제 계획 기준 (질문 0).
+    assert summary.plan_id == "pln_1"
+    assert summary.open_questions == 0
+
+
+def test_resolve_ingest_unknown_question_id_raises(make_plan, fake_service):
+    """resolutions 에 plan.open_questions 에 없는 question_id → InvalidInputError."""
+    reg = PlanRegistry()
+    reg.create(make_plan(open_questions=[_ambiguous("q1")]))
+
+    with pytest.raises(InvalidInputError):
+        services.resolve_ingest(
+            ResolveRequest(
+                plan_id="pln_1",
+                resolutions=[ResolutionItem(question_id="q_unknown", decision="keep")],
+            ),
+            service=fake_service,
+            registry=reg,
+        )
+    # 위임 전에 거부됐는지 (도메인 메서드 미호출).
+    assert fake_service.resolve_calls == []
+
+
+def test_resolve_ingest_unknown_plan_id_raises(fake_service):
+    reg = PlanRegistry()
+    with pytest.raises(InvalidInputError):
+        services.resolve_ingest(
+            ResolveRequest(
+                plan_id="pln_missing",
+                resolutions=[ResolutionItem(question_id="q1", decision="merge")],
+            ),
+            service=fake_service,
+            registry=reg,
+        )
 
 
 # ---------- Important 2: stale latch (의존 노드 소멸) ----------

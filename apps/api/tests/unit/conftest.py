@@ -8,10 +8,12 @@ WHY 가벼운 더블 (FakeGraph 전체 재사용 아님): plan/preview/commit *�
 
 from __future__ import annotations
 
+from dataclasses import replace
+
 import pytest
 
 from arche_api.domain.ingest import IngestResult
-from arche_api.domain.ingest_plan import IngestPlan, RecordedWrite
+from arche_api.domain.ingest_plan import AmbiguousMatch, IngestPlan, RecordedWrite
 
 
 class _FakeGraph:
@@ -37,6 +39,8 @@ class _FakeService:
 
     def __init__(self, graph: _FakeGraph) -> None:
         self._graph = graph
+        # resolve_plan 호출 인자를 기록해 서비스가 도메인 메서드로 위임하는지 검증.
+        self.resolve_calls: list[tuple[IngestPlan, dict[str, str]]] = []
 
     def commit_plan(self, plan: IngestPlan) -> IngestResult:
         return IngestResult(
@@ -48,6 +52,18 @@ class _FakeService:
             entity_ids=[],
             relations_deleted=0,
         )
+
+    def resolve_plan(
+        self, plan: IngestPlan, resolutions: dict[str, str]
+    ) -> IngestPlan:
+        """해소된 정제 계획 대역 — 같은 plan_id 로 질문을 비운 계획을 돌려준다.
+
+        실제 IngestService.resolve_plan 은 plan_file 을 재실행하지만, 서비스
+        `resolve_ingest` 가 (1) question_id 검증 후 (2) 도메인 메서드로 위임하고
+        (3) 결과를 같은 plan_id 로 재보관하는지만 보는 더블이라 질문만 비운다.
+        """
+        self.resolve_calls.append((plan, dict(resolutions)))
+        return replace(plan, open_questions=[], previewed=False)
 
 
 @pytest.fixture
@@ -65,6 +81,7 @@ def make_plan():
         previewed: bool = False,
         writes: list[RecordedWrite] | None = None,
         depends_on_entity_ids: list[str] | None = None,
+        open_questions: list[AmbiguousMatch] | None = None,
     ) -> IngestPlan:
         return IngestPlan(
             plan_id="pln_1",
@@ -83,6 +100,7 @@ def make_plan():
                 entity_ids=[],
             ),
             depends_on_entity_ids=depends_on_entity_ids or [],
+            open_questions=open_questions or [],
         )
 
     return _make
