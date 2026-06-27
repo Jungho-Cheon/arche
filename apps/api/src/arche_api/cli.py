@@ -109,9 +109,37 @@ def mcp_serve(
             # 표면화 — 부팅 자체를 막지는 않는다.
             typer.echo(f"[warn] ensure_indexes failed: {e}", err=True)
 
+        # reviewable ingest tool (plan/preview/commit) 을 노출하려면 LLM provider 와
+        # IngestService 가 필요하다 — 6 read tool 만 쓰던 경로엔 없던 의존성이다.
+        # 구성은 api/deps.py 의 ingest_service_dep 와 동일하게 맞춘다 (같은 추출
+        # 파이프라인을 REST 와 MCP 가 공유).
+        from .adapters.extract_cache import DEFAULT_CACHE_DIR, ExtractionCache
+        from .api.plan_registry import PlanRegistry
+        from .domain.main_entity import MainEntityExtractor
         from .mcp_server import run_stdio_server
 
-        asyncio.run(run_stdio_server(graph, embedder, settings))
+        llm = build_llm_provider(settings)
+        service = IngestService(
+            llm=llm,
+            embedder=embedder,
+            graph=graph,
+            model_context_tokens=settings.llm_model_context_tokens,
+            main_entity_extractor=MainEntityExtractor(llm=llm),
+            extraction_cache=ExtractionCache(root=DEFAULT_CACHE_DIR),
+            extract_batch_size=8,
+            llm_model_id=settings.llm_model_id,
+        )
+        registry = PlanRegistry()
+
+        asyncio.run(
+            run_stdio_server(
+                graph,
+                embedder,
+                settings,
+                ingest_service=service,
+                plan_registry=registry,
+            )
+        )
     finally:
         graph.close()
 
