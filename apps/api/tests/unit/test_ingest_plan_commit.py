@@ -481,3 +481,83 @@ def test_resolve_keep_leaves_new_and_clears_question(tmp_path: Path):
         for w in resolved.writes
     )
     assert not any(w.method == "apply_merge_mutation" for w in resolved.writes)
+
+
+# ---------- Task 2: enrichment hints → ExtractContext.enrichment (원문 불변) ----------
+#
+# WHY FakeLLM 을 capturing 더블로: FakeLLM.extract 는 이미 호출 인자 (context 포함) 를
+# call_args 에 그대로 보관한다. 별도 더블을 만들지 않고 마지막 호출의 context 를 꺼내
+# enrichment 가 hints 로 흘렀는지 확인한다. _service 는 컨텍스트 동봉 빌더를 켜고
+# (default on) 조립하므로 context 가 non-None 이다.
+
+
+def _last_context(llm: FakeLLM):
+    assert llm.call_args, "extract 가 한 번도 호출되지 않았다"
+    return llm.call_args[-1]["context"]
+
+
+def test_plan_with_hints_reaches_extraction_context(tmp_path: Path):
+    """plan_file(hints=...) 이 청크 추출 context.enrichment 까지 도달하고, 호출 후
+    _active_hints 가 None 으로 복원된다."""
+    doc = tmp_path / "a.md"
+    doc.write_text("Acme Corp acquired Beta Inc.", encoding="utf-8")
+
+    graph = FakeGraph()
+    llm = FakeLLM(_extracted())
+    service = IngestService(llm=llm, embedder=FakeEmbedder(), graph=graph)
+
+    hints = "GLOSSARY: Acme = Acme Corporation"
+    service.plan_file(doc, hints=hints)
+
+    ctx = _last_context(llm)
+    assert ctx is not None
+    assert ctx.enrichment == hints
+    # finally 블록이 transient 상태를 반드시 복원한다 (인스턴스 상태 누수 방지).
+    assert service._active_hints is None
+
+
+def test_plan_without_hints_no_enrichment(tmp_path: Path):
+    """hints 없는 plan_file 은 context.enrichment 를 채우지 않는다 (비보강 적재 불변)."""
+    doc = tmp_path / "a.md"
+    doc.write_text("Acme Corp acquired Beta Inc.", encoding="utf-8")
+
+    graph = FakeGraph()
+    llm = FakeLLM(_extracted())
+    service = IngestService(llm=llm, embedder=FakeEmbedder(), graph=graph)
+
+    service.plan_file(doc)
+
+    ctx = _last_context(llm)
+    assert ctx is None or ctx.enrichment is None
+    assert service._active_hints is None
+
+
+def _create_refs_by_name(plan) -> dict[str, list]:
+    """plan.writes 의 create_entity 들에서 이름 → source_refs 매핑을 모은다."""
+    out: dict[str, list] = {}
+    for w in plan.writes:
+        if w.method == "create_entity":
+            entity = w.kwargs["entity"]
+            out[entity.name] = list(entity.source_refs)
+    return out
+
+
+def test_provenance_unchanged_with_hints(tmp_path: Path):
+    """hints 는 LLM 프롬프트에만 들어가고 provenance (source_refs) 는 바꾸지 않는다.
+
+    같은 문서를 hints 유무로 각각 계획해, 양쪽에 모두 등장하는 노드의 source_refs 가
+    동일함을 단언한다 (원문 불변 = 출처 추적 불변).
+    """
+    doc = tmp_path / "a.md"
+    doc.write_text("Acme Corp acquired Beta Inc.", encoding="utf-8")
+
+    p_no = _service(FakeGraph()).plan_file(doc)
+    p_hint = _service(FakeGraph()).plan_file(doc, hints="GLOSSARY: Acme = Acme Corporation")
+
+    refs_no = _create_refs_by_name(p_no)
+    refs_hint = _create_refs_by_name(p_hint)
+
+    common = set(refs_no) & set(refs_hint)
+    assert common, "양쪽 계획에 공통으로 등장하는 노드가 없다 (테스트 전제 깨짐)"
+    for name in common:
+        assert refs_no[name] == refs_hint[name]

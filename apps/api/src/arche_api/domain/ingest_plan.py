@@ -69,3 +69,9 @@ class IngestPlan:
     # 재질문 억제). resolve_plan 이 plan.open_questions 로 번역해 채우고, 다음
     # resolve_plan 호출이 여기에 *덧붙여* 누적한다. NORMAL ingest/plan 은 비어 있다.
     resolved: dict[str, str] = field(default_factory=dict)
+    # enrichment hints — 에이전트가 이 계획에 실은 보강 메모 (용어 풀이/약어/도메인
+    # 힌트). 추출 단계 LLM 프롬프트의 [ENRICHMENT] prefix 로만 들어가고 원문/노드의
+    # source_refs 는 건드리지 않는다 (provenance 보존). resolve_plan 이 재계획 시
+    # 이 값을 그대로 다시 흘려보내 다듬어진 계획도 같은 보강을 유지한다. NORMAL
+    # ingest/plan 은 None.
+    hints: str | None = None
