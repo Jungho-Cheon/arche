@@ -41,6 +41,36 @@ class _FakeService:
         self._graph = graph
         # resolve_plan 호출 인자를 기록해 서비스가 도메인 메서드로 위임하는지 검증.
         self.resolve_calls: list[tuple[IngestPlan, dict[str, str]]] = []
+        # plan_file 이 받은 hints 를 기록해 서비스가 입력을 그대로 전달하는지 검증.
+        self.last_plan_file_hints: str | None = None
+
+    def plan_file(
+        self, path, *, namespace_id: str = "default", hints: str | None = None
+    ) -> IngestPlan:  # noqa: ANN001
+        """plan_file 대역 — 받은 hints 를 기록하고 최소 IngestPlan 을 돌려준다.
+
+        서비스 `plan_ingest` 가 요청의 hints 를 도메인 `plan_file` 로 그대로
+        전달하는지만 보는 더블이라, 추출은 흉내내지 않고 인자만 기록한다.
+        """
+        self.last_plan_file_hints = hints
+        return IngestPlan(
+            plan_id="pln_fake",
+            source_path=str(path),
+            source_hash="deadbeef",
+            extractor_version="p2:test",
+            created_at="2026-06-27T00:00:00Z",
+            previewed=False,
+            writes=[],
+            result=IngestResult(
+                source_path=str(path),
+                entities_created=0,
+                entities_updated=0,
+                relations_created=0,
+                relations_skipped_dangling=0,
+                entity_ids=[],
+            ),
+            depends_on_entity_ids=[],
+        )
 
     def commit_plan(self, plan: IngestPlan) -> IngestResult:
         return IngestResult(

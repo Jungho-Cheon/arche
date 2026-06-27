@@ -60,6 +60,31 @@ def test_preview_sets_flag_then_commit_ok(make_plan, fake_service):
     )
 
 
+# ---------- Task 3: hints 입력 전달 ----------
+
+
+def test_plan_ingest_forwards_hints_to_service(fake_service):
+    """plan_ingest 가 요청의 hints 를 도메인 plan_file 로 그대로 전달하는지."""
+    reg = PlanRegistry()
+    services.plan_ingest(
+        PlanIngestRequest(path="/tmp/a.md", hints="notes"),
+        service=fake_service,
+        registry=reg,
+    )
+    assert fake_service.last_plan_file_hints == "notes"
+
+
+def test_plan_ingest_without_hints_passes_none(fake_service):
+    """hints 미지정 시 plan_file 에 None 이 전달되는지."""
+    reg = PlanRegistry()
+    services.plan_ingest(
+        PlanIngestRequest(path="/tmp/a.md"),
+        service=fake_service,
+        registry=reg,
+    )
+    assert fake_service.last_plan_file_hints is None
+
+
 # ---------- Important 1: preview 직렬화 (writes → view) ----------
 
 
@@ -157,7 +182,7 @@ def test_plan_ingest_counts_open_questions(make_plan):
     """plan_ingest 의 PlanSummary.open_questions 가 plan.open_questions 길이와 일치."""
 
     class _Stub:
-        def plan_file(self, path):  # noqa: ANN001, ANN202
+        def plan_file(self, path, *, hints=None):  # noqa: ANN001, ANN202
             return make_plan(open_questions=[_ambiguous("q1"), _ambiguous("q2")])
 
     reg = PlanRegistry()
@@ -266,7 +291,7 @@ class _StubPlanService:
     def __init__(self, writes: list[RecordedWrite]) -> None:
         self._writes = writes
 
-    def plan_file(self, path) -> IngestPlan:  # noqa: ANN001
+    def plan_file(self, path, *, hints=None) -> IngestPlan:  # noqa: ANN001
         return IngestPlan(
             plan_id="pln_stub",
             source_path=str(path),

@@ -477,7 +477,7 @@ def plan_ingest(
     registry: PlanRegistry,
 ) -> PlanSummary:
     """파일을 쓰지 않고 변경 묶음을 만들어 레지스트리에 보관 + 개수 요약 반환."""
-    plan = service.plan_file(Path(body.path))
+    plan = service.plan_file(Path(body.path), hints=body.hints)
     registry.create(plan)
     return _summarize_plan(plan)
 
