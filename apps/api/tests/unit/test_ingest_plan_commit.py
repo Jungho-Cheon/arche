@@ -561,3 +561,73 @@ def test_provenance_unchanged_with_hints(tmp_path: Path):
     assert common, "양쪽 계획에 공통으로 등장하는 노드가 없다 (테스트 전제 깨짐)"
     for name in common:
         assert refs_no[name] == refs_hint[name]
+
+
+# ---------- spec §7: enrichment 캐시 키 민감도 + resolve hints 보존 (회귀 락) ----------
+#
+# WHY 회귀 락: 아래 두 동작은 이미 올바르게 구현돼 있다 (코드 변경 없음). 다만
+# spec 이 명시한 두 불변을 *고정* 하는 테스트가 빠져 있었다 — 이 두 테스트는 현재
+# 코드에서 통과해야 하며, 미래에 캐시 키 구성이나 resolve 의 hints 전달이 회귀하면
+# 깨져서 알린다.
+
+
+def test_enrichment_hints_drive_cache_key_sensitivity(tmp_path: Path):
+    """같은 파일이라도 다른 hints → 다른 context_sha → 재추출, 동일 hints → 캐시 적중.
+
+    추출 캐시 키는 render_context_block(context) 의 sha 를 포함한다. enrichment hints 는
+    context 에 실려 그 블록에 들어가므로, hints 가 다르면 캐시 키가 달라져 재추출이
+    일어나고, hints 가 같으면 키가 같아 캐시 적중으로 LLM 재호출이 없어야 한다.
+
+    WHY context-aware ON: enrichment 가 render_context_block 에 반영되려면 추출 컨텍스트
+    동봉이 켜져 있어야 한다 (default on). ExtractionCache 를 tmp 디스크에 둬 적중/미적중을
+    추출 호출 수로 구분한다. _CountingLLM 으로 extract 호출 수를 센다.
+    """
+    doc = tmp_path / "a.md"
+    doc.write_text("Acme Corp acquired Beta Inc.", encoding="utf-8")
+
+    llm = _CountingLLM(FakeLLM(_extracted()))
+    service = IngestService(
+        llm=llm,
+        embedder=FakeEmbedder(),
+        graph=FakeGraph(),
+        extraction_cache=ExtractionCache(root=tmp_path / "cache"),
+    )
+
+    # 첫 계획 — hints="A" (콜드 캐시 → 추출 발생).
+    service.plan_file(doc, hints="A")
+    after_a1 = llm.extract_calls
+    assert after_a1 > 0  # 콜드 캐시에서 최소 1 회 추출.
+
+    # 다른 hints="B" → 다른 context_sha → 캐시 미적중 → 재추출 (호출 수 증가).
+    service.plan_file(doc, hints="B")
+    after_b = llm.extract_calls
+    assert after_b > after_a1, "다른 hints 인데 재추출이 일어나지 않았다 (캐시 키가 비민감)"
+
+    # 동일 hints="A" 재계획 → 같은 context_sha → 캐시 적중 → 추출 없음 (호출 수 불변).
+    service.plan_file(doc, hints="A")
+    after_a2 = llm.extract_calls
+    assert after_a2 == after_b, "동일 hints 인데 캐시 적중에 실패해 재추출이 일어났다"
+
+
+def test_resolve_preserves_hints(tmp_path: Path):
+    """resolve_plan 은 plan.hints 를 다듬어진 계획에 그대로 보존한다.
+
+    resolve_plan 은 plan.hints 로 plan_file 을 재호출하고 replace 가 hints 를
+    덮어쓰지 않으므로 refined.hints == plan.hints 여야 한다 (보강 메모가 해소 후에도
+    유지돼 후속 commit/재계획이 같은 [ENRICHMENT] 를 본다).
+    """
+    doc = tmp_path / "acme.md"
+    doc.write_text("Acme Inc raised a round.", encoding="utf-8")
+
+    graph = _NearMissGraph(_band_candidate(0.87))
+    llm = _CountingLLM(FakeLLM(_near_miss_extraction()))
+    service = _resolve_service(graph, llm, tmp_path / "cache")
+
+    plan = service.plan_file(doc, hints="GLOSSARY X")
+    assert plan.hints == "GLOSSARY X"
+    assert len(plan.open_questions) == 1
+    assert plan.open_questions[0].question_id == "q1"
+
+    refined = service.resolve_plan(plan, {"q1": "keep"})
+
+    assert refined.hints == "GLOSSARY X"
