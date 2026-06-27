@@ -775,12 +775,12 @@ class IngestService:
             if w.method == "apply_entity_diff":
                 if ret == "trimmed":
                     entities_trimmed += 1
-                else:
+                elif ret == "deleted":
                     entities_deleted += 1
             elif w.method == "apply_relation_diff":
                 if ret == "trimmed":
                     relations_trimmed += 1
-                else:
+                elif ret == "deleted":
                     relations_deleted += 1
 
         return replace(

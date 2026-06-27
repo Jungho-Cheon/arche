@@ -197,6 +197,38 @@ def test_commit_plan_splits_deletion_and_trim_counts():
     assert result.relations_trimmed == 1
 
 
+def test_commit_plan_leaves_missing_diff_uncounted():
+    """apply_*_diff 가 "missing" 을 돌려주면 삭제·trim 어느 카운터도 올리지 않는다.
+
+    WHY (issue #88): 직접 적재 경로 _apply_diff 는 "deleted"/"trimmed" 만 집계하고
+    "missing"(대상이 이미 없음) 은 무집계로 둔다. commit_plan 재생도 동일해야 하므로
+    "missing" 반환이 deleted 로 잘못 새지 않는지 회귀 가드를 둔다.
+    """
+    graph = _RecordingGraph(
+        entity_diff_by_id={"e_missing": "missing"},
+        relation_diff_by_id={"r_missing": "missing"},
+    )
+    plan = _plan(
+        [
+            RecordedWrite(
+                "apply_entity_diff",
+                {"entity_id": "e_missing", "source_path": "x.md", "run_id": "run1"},
+            ),
+            RecordedWrite(
+                "apply_relation_diff",
+                {"relation_id": "r_missing", "source_path": "x.md"},
+            ),
+        ]
+    )
+
+    result = _commit_service(graph).commit_plan(plan)
+
+    assert result.entities_deleted == 0
+    assert result.entities_trimmed == 0
+    assert result.relations_deleted == 0
+    assert result.relations_trimmed == 0
+
+
 def test_commit_plan_substitutes_synthetic_relation_id():
     """합성 plan_rel_N 을 mark/finalize/append 전반에서 진짜 id 로 치환 (issue #88)."""
     graph = _RecordingGraph(rel_returns=["REAL1"])
