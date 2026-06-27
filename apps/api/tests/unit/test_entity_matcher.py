@@ -135,6 +135,74 @@ def test_step3_embedding_just_below_threshold_misses():
     assert sim < EMBEDDING_MATCH_THRESHOLD
 
 
+# ---------- Step 3 near-miss (밴드 [0.82, 0.92) 후보 보고) ----------
+
+
+def test_step3_near_miss_in_band_reports_candidate():
+    """임계 바로 아래 밴드 [0.82, 0.92) 후보를 near_miss 로 보고 (병합은 안 함).
+
+    cosine ~0.87 → 병합 임계(0.92) 미만이라 step 4 (신규) 지만, 사람 확인 대상
+    으로 near_miss 에 (후보, 유사도) 를 surface.
+    """
+    sim = 0.87
+    cand_vec = [sim, math.sqrt(1 - sim**2)]
+    cand = _entity("거의 같은 후보", embedding=cand_vec)
+    repo = FakeRepo(norm_index={}, vector_pool=[cand])
+    embedder = FakeEmbedder(vec=[1.0, 0.0])
+    matcher = EntityMatcher(repo=repo, embedder=embedder)
+
+    result = matcher.match(ExtractedEntity(name="쿠폰 X2", type="coupon"))
+    assert result.existing is None and result.step == 4
+    assert result.near_miss is not None
+    near_cand, near_sim = result.near_miss
+    assert near_cand is cand
+    assert 0.82 <= near_sim < 0.92
+
+
+def test_step3_near_miss_best_of_multiple_in_band():
+    """밴드 내 후보가 여럿이면 *가장 높은* 유사도 후보 하나만 보고."""
+    lo, hi = 0.83, 0.90
+    cand_lo = _entity("후보 lo", embedding=[lo, math.sqrt(1 - lo**2)])
+    cand_hi = _entity("후보 hi", embedding=[hi, math.sqrt(1 - hi**2)])
+    repo = FakeRepo(norm_index={}, vector_pool=[cand_lo, cand_hi])
+    embedder = FakeEmbedder(vec=[1.0, 0.0])
+    matcher = EntityMatcher(repo=repo, embedder=embedder)
+
+    result = matcher.match(ExtractedEntity(name="쿠폰 X2", type="coupon"))
+    assert result.existing is None and result.step == 4
+    assert result.near_miss is not None
+    near_cand, near_sim = result.near_miss
+    assert near_cand is cand_hi
+    assert abs(near_sim - hi) < 1e-9
+
+
+def test_step3_above_threshold_merges_no_near_miss():
+    """병합(cosine >= 0.92) 경로는 near_miss 를 채우지 않는다."""
+    cand_vec = [0.92, math.sqrt(1 - 0.92**2)]
+    cand = _entity("쿠폰 X1", embedding=cand_vec)
+    repo = FakeRepo(norm_index={}, vector_pool=[cand])
+    embedder = FakeEmbedder(vec=[1.0, 0.0])
+    matcher = EntityMatcher(repo=repo, embedder=embedder)
+
+    result = matcher.match(ExtractedEntity(name="쿠폰 X2", type="coupon"))
+    assert result.existing is cand and result.step == 3
+    assert result.near_miss is None
+
+
+def test_step3_below_band_no_near_miss():
+    """밴드 밖(cosine < 0.82) 후보는 near_miss 로 보고하지 않는다."""
+    sim = 0.75
+    cand_vec = [sim, math.sqrt(1 - sim**2)]
+    cand = _entity("멀리 있는 후보", embedding=cand_vec)
+    repo = FakeRepo(norm_index={}, vector_pool=[cand])
+    embedder = FakeEmbedder(vec=[1.0, 0.0])
+    matcher = EntityMatcher(repo=repo, embedder=embedder)
+
+    result = matcher.match(ExtractedEntity(name="쿠폰 X2", type="coupon"))
+    assert result.existing is None and result.step == 4
+    assert result.near_miss is None
+
+
 def test_step4_all_miss_returns_none():
     repo = FakeRepo(norm_index={}, vector_pool=[])
     embedder = FakeEmbedder(vec=[1.0, 0.0])

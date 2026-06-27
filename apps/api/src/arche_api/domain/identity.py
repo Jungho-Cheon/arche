@@ -24,6 +24,14 @@ from .models import ExtractedEntity, MergeMutation, SourceRef, StoredEntity
 # 호출부에서 "임시로" 우회하지 말 것 — 우회는 측정 무효의 원인이 된다.
 EMBEDDING_MATCH_THRESHOLD: float = 0.92
 
+# WHY 모호성 밴드 하한: 병합 임계(0.92) *바로 아래* 구간 [0.82, 0.92) 의 후보는
+# "병합하기엔 애매하지만 무시하기도 애매한" *놓친 병합 후보* 다. 자동 병합/생성
+# 결정은 바꾸지 않고(여전히 임계 미달이면 신규 생성), 이 구간의 최상위 후보만
+# `MatchResult.near_miss` 로 보고해 이후 단계에서 사람에게 "같은 엔티티인가?" 를
+# 물을 수 있게 한다. 0.82 미만은 보고조차 하지 않는다 (노이즈). 이 하한은 측정
+# 통제 변수가 아니라 *리포팅 감도* 라 병합 결과 그래프를 바꾸지 않는다.
+EMBEDDING_AMBIGUITY_BAND_LOW: float = 0.82
+
 
 # WHY 화이트리스트 한정 구두점: PRD 2 §5.1 의 normalize 는 "흔한 구두점 제거" 가
 # 목표지 일반 punctuation 전수 제거가 목표가 아니다. 한국어 본문에 자주 섞이는
@@ -302,6 +310,11 @@ class MatchResult:
 
     existing: StoredEntity | None
     step: int  # 1..4
+    # Step 3 에서 병합 임계 미달이지만 모호성 밴드 [0.82, 0.92) 안에 든 *최상위*
+    # 후보 (후보, cosine). 병합/생성 결정에는 영향 없음 — 순전히 보고용으로,
+    # 이후 단계가 사람에게 동일성 확인을 요청하는 근거가 된다. 밴드 밖이거나
+    # 병합(step 3 hit)/이른 단계 hit 이면 None.
+    near_miss: tuple[StoredEntity, float] | None = None
 
 
 # ---------- 4 단계 매처 ----------
@@ -378,6 +391,7 @@ class EntityMatcher:
         candidates = self._repo.vector_search(
             embedding=query_vec, top_k=5, type_=e_new.type
         )
+        best_near: tuple[StoredEntity, float] | None = None
         for cand in candidates:
             # WHY 명시적 cosine 재계산: Neo4j vector index 가 동봉하는 score 와
             # cosine 의 매핑이 버전별로 미세하게 다르다 (similarity vs distance).
@@ -386,9 +400,15 @@ class EntityMatcher:
             sim = _cosine(query_vec, cand.embedding)
             if sim >= EMBEDDING_MATCH_THRESHOLD:
                 return MatchResult(existing=cand, step=3)
+            # 임계 바로 아래 밴드 [LOW, THRESHOLD) 의 최상위 후보를 *놓친 병합*
+            # 후보로 기록 (사람 확인 대상). 밴드 밖은 무시. 병합 결정은 불변.
+            if sim >= EMBEDDING_AMBIGUITY_BAND_LOW and (
+                best_near is None or sim > best_near[1]
+            ):
+                best_near = (cand, sim)
 
-        # Step 4 — miss.
-        return MatchResult(existing=None, step=4)
+        # Step 4 — miss. 밴드 내 근접 후보가 있으면 near_miss 로 surface.
+        return MatchResult(existing=None, step=4, near_miss=best_near)
 
 
 # ---------- 병합 규칙 ----------
