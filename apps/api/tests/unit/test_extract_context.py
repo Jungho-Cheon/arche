@@ -212,3 +212,53 @@ def test_render_handles_empty_graph_gracefully():
     assert "[KNOWN_ENTITIES]" in block
     assert "(없음" in block  # 비어 있다는 표시
     assert "[SCHEMA]" in block
+
+
+# ----- enrichment (source-preserving 보강 메모) -----
+
+
+def test_render_includes_enrichment_block_when_present():
+    from arche_api.domain.extract_context import DocContext
+
+    ctx = ExtractContext(
+        doc=DocContext(file_path="/a.md"),
+        known_entities=[],
+        schema=SchemaSummary(entity_types=[], relation_types=[]),
+        enrichment="AmEx = American Express. Treat each table row as a fact.",
+    )
+    out = render_context_block(ctx)
+    assert "[ENRICHMENT]" in out
+    assert "AmEx = American Express" in out
+    # [DOC_CONTEXT] 다음에 위치 (KNOWN_ENTITIES 앞).
+    assert out.index("[DOC_CONTEXT]") < out.index("[ENRICHMENT]")
+    assert out.index("[ENRICHMENT]") < out.index("[KNOWN_ENTITIES]")
+
+
+def test_render_omits_enrichment_when_absent():
+    from arche_api.domain.extract_context import DocContext
+
+    ctx = ExtractContext(
+        doc=DocContext(file_path="/a.md"),
+        known_entities=[],
+        schema=SchemaSummary(entity_types=[], relation_types=[]),
+    )
+    assert "[ENRICHMENT]" not in render_context_block(ctx)
+    # 공백만 있는 경우도 통째 생략 — 캐시 키 불변.
+    ctx_ws = ExtractContext(
+        doc=DocContext(file_path="/a.md"),
+        known_entities=[],
+        schema=SchemaSummary(entity_types=[], relation_types=[]),
+        enrichment="   \n  ",
+    )
+    assert "[ENRICHMENT]" not in render_context_block(ctx_ws)
+
+
+def test_builder_sets_enrichment():
+    builder = ExtractContextBuilder(graph=_StubGraph())
+    ctx = builder.build(
+        source_path="/a.md", chunk_text="body", enrichment="X"
+    )
+    assert ctx.enrichment == "X"
+    # 기본값은 None — 비보강 경로 backward-compatible.
+    ctx_default = builder.build(source_path="/a.md", chunk_text="body")
+    assert ctx_default.enrichment is None
