@@ -47,7 +47,7 @@ from .identity import (
     extract_identifier_aliases,
     normalize,
 )
-from .ingest_plan import IngestPlan
+from .ingest_plan import AmbiguousMatch, IngestPlan
 from .main_entity import MainEntity, MainEntityExtractor
 from .models import (
     ExtractedGraph,
@@ -70,6 +70,12 @@ logger = logging.getLogger(__name__)
 # v2 (2026-06-24): ADR-0017 방향 2 — 식별자-별칭 후처리 추가. 추출 출력(별칭/병합)이
 # 달라지므로 +1 하여 같은 파일도 새 로직으로 재적재되게 한다.
 INGEST_PIPELINE_VERSION = 2
+
+
+# WHY 상한: 한 파일이 수많은 near-miss 를 만들면 사람이 답할 수 있는 양을 넘어선다.
+# plan_file 이 유사도 내림차순으로 정렬한 뒤 상위 MAX_OPEN_QUESTIONS 건만 질문으로
+# 남긴다 (유사도 높은 = 병합 가능성 큰 후보 우선). NORMAL ingest 는 상한과 무관하다.
+MAX_OPEN_QUESTIONS = 12
 
 
 TEXT_EXTS: frozenset[str] = frozenset({".txt", ".md"})
@@ -117,6 +123,12 @@ class IngestResult:
     unresolved_relations: list[tuple[ExtractedRelation, SourceRef]] = field(
         default_factory=list
     )
+    # ask-human-on-ambiguity — Step 3 에서 병합 임계 *바로 아래* 밴드의 후보가
+    # 잡혔지만 새 노드로 떨어진 건들(놓친 병합 후보). question_id 는 이 레이어에선
+    # "" 로 두고, plan_file 이 정렬·cap·번호 부여 후 IngestPlan.open_questions 로
+    # 옮긴다. WHY NORMAL ingest 도 채움: 쓰기 동작은 바꾸지 않되(병합 안 함, 새
+    # 노드 그대로) 관측 신호로 노출 — 호출자가 무시하면 동작은 완전히 동일하다.
+    ambiguities: list[AmbiguousMatch] = field(default_factory=list)
 
 
 @dataclass
@@ -557,6 +569,8 @@ class IngestService:
             agg_created = 0
             agg_updated = 0
             agg_by_step: dict[int, int] = {0: 0, 1: 0, 2: 0, 3: 0}
+            # ask-human-on-ambiguity — 청크별 near-miss 를 문서 단위로 누적.
+            agg_ambiguities: list[AmbiguousMatch] = []
             # issue #28 — 관계는 청크별 즉시 해소하지 않고 (relation, source_ref)
             # 로 모았다가 *모든 청크의 엔티티 적재 후* 한 번에 해소한다. WHY: 한
             # 청크의 관계가 가리키는 엔티티가 *다른 청크/파일* 에서 적재될 수 있어,
@@ -613,6 +627,7 @@ class IngestService:
                 agg_updated += entity_metrics["updated"]
                 for step in (0, 1, 2, 3):
                     agg_by_step[step] += entity_metrics["by_step"].get(step, 0)
+                agg_ambiguities.extend(entity_metrics.get("ambiguities", []))
                 # issue #28 — 관계는 모았다가 루프 뒤에서 일괄 해소.
                 for r in extracted.relations:
                     pending_relations.append((r, source_ref))
@@ -665,6 +680,7 @@ class IngestService:
                 run_id=run_id,
                 unresolved_relations=unresolved_rels,
                 source_hash=source_hash,
+                ambiguities=agg_ambiguities,
             )
         except Exception:
             # 실패 — run 을 failed 로 마킹해 다음 호출에서 short-circuit 되지
@@ -710,6 +726,18 @@ class IngestService:
             for w in planning.writes
             if w.method == "apply_merge_mutation"
         ]
+
+        # ask-human-on-ambiguity — 적재가 보고한 놓친 병합 후보를 사람 질문으로
+        # 가공한다. 유사도 내림차순(병합 가능성 높은 후보 우선)으로 정렬한 뒤 상위
+        # MAX_OPEN_QUESTIONS 건만 남기고, 안정적 question_id("q1"..) 를 부여한다.
+        ambiguities = sorted(
+            result.ambiguities, key=lambda a: a.similarity, reverse=True
+        )[:MAX_OPEN_QUESTIONS]
+        open_questions = [
+            replace(a, question_id=f"q{i + 1}")
+            for i, a in enumerate(ambiguities)
+        ]
+
         return IngestPlan(
             plan_id=f"pln_{ULID()}",
             source_path=result.source_path,
@@ -720,6 +748,7 @@ class IngestService:
             writes=planning.writes,
             result=result,
             depends_on_entity_ids=depends,
+            open_questions=open_questions,
         )
 
     def commit_plan(self, plan: IngestPlan) -> IngestResult:
@@ -1035,6 +1064,9 @@ class IngestService:
         # ADR-0009 D2 — LLM 이 추출 단계에서 매칭 결정한 entity 도 step 분포에
         # 보고. step=0 = "LLM 결정". 기존 1/2/3 (Matcher Step 1/2/3) 와 분리.
         by_step: dict[int, int] = {0: 0, 1: 0, 2: 0, 3: 0}
+        # ask-human-on-ambiguity — 이번 호출에서 발견한 놓친 병합 후보(near-miss).
+        # create-new (Step 4) 로 떨어졌지만 매처가 밴드 내 후보를 보고한 건만 모은다.
+        ambiguities: list[AmbiguousMatch] = []
         now = now_rfc3339()
 
         for e_new in extracted.entities:
@@ -1154,10 +1186,28 @@ class IngestService:
             name_to_id[e_new.name] = new_id
             created += 1
 
+            # ask-human-on-ambiguity — 새 노드로 떨어졌지만 매처가 임계 바로 아래
+            # 밴드의 후보를 보고했다면 '놓친 병합 후보' 로 기록한다. 이 기록은
+            # *생성 결정 이후* 라 쓰기 동작에 영향이 없다 (이미 create 완료). 사람
+            # 확인용 신호로만 surface. question_id 는 plan_file 이 부여 (여기선 "").
+            if result.near_miss is not None:
+                cand, sim = result.near_miss
+                ambiguities.append(
+                    AmbiguousMatch(
+                        question_id="",
+                        extracted_name=e_new.name,
+                        extracted_type=e_new.type,
+                        candidate_id=cand.id,
+                        candidate_name=cand.name,
+                        similarity=sim,
+                    )
+                )
+
         return name_to_id, {
             "created": created,
             "updated": updated,
             "by_step": by_step,
+            "ambiguities": ambiguities,
         }
 
     def _upsert_relations_deferred(
