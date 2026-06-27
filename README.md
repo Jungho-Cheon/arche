@@ -96,6 +96,7 @@ uv run --project apps/api arche ingest ./내문서폴더
 # 4) 질의 — 코드 없이 :8000/docs 에서 POST /entities/find 를 누르거나,
 #    에이전트(Claude Desktop / Cursor 등)에 MCP 도구로 연결한다:
 uv run --project apps/api arche mcp serve --stdio
+#    에이전트로 적재할 때는 reviewable-ingest 스킬이 plan, preview, 확정, commit 순서를 안내한다.
 ```
 
 MCP 클라이언트(예: Claude Desktop) 설정:

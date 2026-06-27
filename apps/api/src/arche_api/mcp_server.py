@@ -14,9 +14,13 @@ WHY `$defs` 평탄화: MCP 클라이언트 (Claude Desktop 포함) 는 *flat JSO
 `$defs` 참조를 만들면 일부 클라이언트가 못 푼다. 본 모듈의 `_inline_defs` 가
 참조를 모두 inline 해 자기완결 스키마로 변환.
 
-WHY write tool 미노출: ADR-0006 D3 — Arche MCP 는 *read-only* . admin
-ingest / create_entity 같은 write 는 CLI 와 admin REST 에만 노출. 본 어댑터는
-6 read tool 만 등록.
+WHY write tool 노출 제한: ADR-0006 D3 — `create_entity` / `delete_relation`
+같은 *직접 그래프 변형* write 는 MCP 에 노출하지 않는다 (CLI 와 admin REST
+전용). 단 reviewable ingest 의 3 tool (ingest_plan / ingest_preview /
+ingest_commit) 은 예외다: 사람의 미리보기 + 확인 latch 를 강제하므로, LLM 이
+검토 없이 그래프를 바꾸지 못한다. 이 세 tool 은 `ingest_service` 와
+`plan_registry` 가 *함께 주입된* 서버에서만 등록된다 (production serve 경로).
+LLM 이 없는 read-only fake-boot 경로는 6 read tool 만 노출한다.
 """
 
 from __future__ import annotations
@@ -24,7 +28,7 @@ from __future__ import annotations
 import copy
 import json
 import logging
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import mcp.types as mcp_types
 from mcp.server.lowlevel import Server
@@ -34,6 +38,7 @@ from arche_api.domain.ports import EmbeddingProvider, GraphRepository
 
 from .api import services
 from .api.error_codes import flatten_validation_errors
+from .api.plan_schemas import CommitRequest, PlanIngestRequest, PreviewRequest
 from .api.responses import (
     FindPathRequest,
     GetNeighborsRequest,
@@ -42,6 +47,10 @@ from .api.responses import (
 from .api.schemas import FindEntitiesRequest
 from .config import Settings
 from .domain.errors import ArcheError
+
+if TYPE_CHECKING:
+    from .api.plan_registry import PlanRegistry
+    from .domain.ingest import IngestService
 
 logger = logging.getLogger(__name__)
 
@@ -85,7 +94,36 @@ _TOOL_DESCRIPTIONS: dict[str, str] = {
         "Extract a subgraph centered on multiple entry-point nodes, expanded "
         "N hops. Returns deduplicated nodes and edges within the radius."
     ),
+    # reviewable ingest (plan -> preview -> commit). 이 세 tool 은 LLM 이 사람의
+    # 검토를 *건너뛰고* 그래프를 바꾸지 못하도록 다음 행동 지침을 description 에
+    # 명시한다. ingest_service + plan_registry 가 주입된 서버에서만 등록된다.
+    "ingest_plan": (
+        "Plan ingestion of a single file: run extraction WITHOUT writing to "
+        "the graph, stash the change set under a returned `plan_id`, and return "
+        "a count summary (entities to create/merge, relations to create, "
+        "deletions). After planning you MUST call ingest_preview and show the "
+        "human the delta, then ingest_commit only after the human confirms. "
+        "Never plan and commit in one breath."
+    ),
+    "ingest_preview": (
+        "Expand a planned change set (by `plan_id`) item by item — the new "
+        "entities, merges into existing entities, new relations, and deletion "
+        "count — so the human can review it before anything touches the graph. "
+        "This call also arms the safety latch that ingest_commit requires."
+    ),
+    "ingest_commit": (
+        "Apply a previously previewed plan (by `plan_id`) to the graph. Do not "
+        "call without a prior ingest_preview on this plan_id: commit is "
+        "rejected (unprocessable) unless the plan was previewed, and also "
+        "rejected if the graph drifted and the plan went stale (re-plan)."
+    ),
 }
+
+
+# reviewable ingest tool 이름 — service 주입 시에만 등록되는 plan/preview/commit.
+# WRITE_TOOL_NAMES_EXCLUDED (등록 금지 목록) 와는 *별개* 다: 이 세 tool 은 사람
+# 검토 latch 를 통과한 변경만 반영하므로 허용된다.
+INGEST_TOOL_NAMES: tuple[str, ...] = ("ingest_plan", "ingest_preview", "ingest_commit")
 
 
 # 노출 금지 (ADR-0006 D3) — 등록조차 하지 않는 write tool 이름. 단위 테스트가
@@ -208,6 +246,32 @@ def _build_tools() -> list[mcp_types.Tool]:
     ]
 
 
+def _build_ingest_tools() -> list[mcp_types.Tool]:
+    """reviewable ingest 의 3 tool — service 가 주입된 서버에서만 등록.
+
+    입력 스키마는 plan_schemas 의 Pydantic 모델에서 그대로 끌어와 REST 통로와
+    같은 출처를 공유한다 (read tool 과 동일 원칙). ingest_plan 은 `{path}`,
+    preview/commit 은 `{plan_id}`.
+    """
+    return [
+        mcp_types.Tool(
+            name="ingest_plan",
+            description=_TOOL_DESCRIPTIONS["ingest_plan"],
+            inputSchema=_build_input_schema(PlanIngestRequest),
+        ),
+        mcp_types.Tool(
+            name="ingest_preview",
+            description=_TOOL_DESCRIPTIONS["ingest_preview"],
+            inputSchema=_build_input_schema(PreviewRequest),
+        ),
+        mcp_types.Tool(
+            name="ingest_commit",
+            description=_TOOL_DESCRIPTIONS["ingest_commit"],
+            inputSchema=_build_input_schema(CommitRequest),
+        ),
+    ]
+
+
 def _merge_id_into_schema(schema: dict[str, Any]) -> dict[str, Any]:
     """`get_neighbors` 의 입력 — REST 의 URL path id 를 MCP body 안에 합친다.
 
@@ -236,6 +300,8 @@ def _dispatch_tool(
     graph: GraphRepository,
     embedder: EmbeddingProvider,
     settings: Settings,
+    ingest_service: IngestService | None = None,
+    plan_registry: PlanRegistry | None = None,
 ) -> BaseModel:
     """단일 tool 호출을 services 로 위임. 입력 검증 실패는 ValidationError 로 전파."""
     if name == "get_schema":
@@ -263,6 +329,24 @@ def _dispatch_tool(
     if name == "get_subgraph":
         body = GetSubgraphRequest.model_validate(arguments)
         return services.get_subgraph(body, graph=graph)
+    # reviewable ingest — service/registry 가 주입된 서버에서만 등록되므로, 여기
+    # 도달했다면 둘 다 존재한다. 방어적으로 None 을 막는다.
+    if name in INGEST_TOOL_NAMES:
+        if ingest_service is None or plan_registry is None:
+            raise ValueError(f"tool `{name}` requires an ingest service")
+        if name == "ingest_plan":
+            plan_body = PlanIngestRequest.model_validate(arguments)
+            return services.plan_ingest(
+                plan_body, service=ingest_service, registry=plan_registry
+            )
+        if name == "ingest_preview":
+            preview_body = PreviewRequest.model_validate(arguments)
+            return services.preview_plan(preview_body, registry=plan_registry)
+        # ingest_commit
+        commit_body = CommitRequest.model_validate(arguments)
+        return services.commit_plan(
+            commit_body, service=ingest_service, registry=plan_registry
+        )
     # 등록되지 않은 이름 — MCP 클라이언트의 잘못된 호출.
     raise ValueError(f"unknown tool: {name}")
 
@@ -332,24 +416,52 @@ def build_mcp_server(
     graph: GraphRepository,
     embedder: EmbeddingProvider,
     settings: Settings,
+    *,
+    ingest_service: IngestService | None = None,
+    plan_registry: PlanRegistry | None = None,
 ) -> Server:
-    """MCP Server 객체 생성 + 6 tool 등록.
+    """MCP Server 객체 생성 + tool 등록.
+
+    기본은 6 read tool 만 등록한다. `ingest_service` 와 `plan_registry` 가 *둘 다*
+    주입되면 reviewable ingest 의 3 tool (plan/preview/commit) 을 추가로 등록한다.
+    어느 한쪽이 None 이면 추가하지 않는다 — LLM 이 없는 read-only fake-boot 경로
+    (CLI 의 ARCHE_TEST_FAKE_GRAPH) 를 보호하기 위함이다.
 
     반환된 서버는 `mcp.server.stdio.stdio_server()` async context 안에서
     `server.run(read, write, server.create_initialization_options())` 로 구동.
     """
+    instructions = (
+        "Arche graph primitives. Use `get_schema` first to inspect the graph "
+        "shape, then `find_entities` to anchor user keywords to nodes, and "
+        "traverse with `get_neighbors` / `find_path` / `get_subgraph`."
+    )
+    register_ingest = ingest_service is not None and plan_registry is not None
+    if register_ingest:
+        # reviewable ingest 의식: 계획 -> 미리보기 -> 사람 확인 -> 반영. LLM 이
+        # 사람의 검토를 건너뛰고 그래프를 바꾸지 못하도록 순서를 명시한다.
+        instructions += (
+            " Writing to the graph follows a plan -> preview -> confirm -> "
+            "commit ritual: call `ingest_plan` to stage a file's changes "
+            "without touching the graph, then `ingest_preview` to expand the "
+            "delta and show it to the human, and only after the human "
+            "explicitly confirms call `ingest_commit`. Never skip the preview "
+            "or commit on the human's behalf."
+        )
+    else:
+        # 쓰기 tool 이 없는 read-only 부팅 경로 (ARCHE_TEST_FAKE_GRAPH 등) — 원래의
+        # read-only 안내를 보존한다. register_ingest 경로에는 붙이지 않는다: 그
+        # 서버는 plan/commit 으로 그래프를 *바꿀 수 있어* read-only 가 아니다.
+        instructions += " Read-only: these tools never modify the graph."
+
     server: Server = Server(
         name="arche",
         version="0.1.0",
-        instructions=(
-            "Arche graph primitives. Read-only. Use `get_schema` first to "
-            "inspect the graph shape, then `find_entities` to anchor user "
-            "keywords to nodes, and traverse with `get_neighbors` / "
-            "`find_path` / `get_subgraph`."
-        ),
+        instructions=instructions,
     )
 
     tools = _build_tools()
+    if register_ingest:
+        tools = tools + _build_ingest_tools()
     _assert_no_write_tools(tools)
 
     @server.list_tools()
@@ -376,7 +488,13 @@ def build_mcp_server(
         """
         try:
             result = _dispatch_tool(
-                name, arguments, graph=graph, embedder=embedder, settings=settings
+                name,
+                arguments,
+                graph=graph,
+                embedder=embedder,
+                settings=settings,
+                ingest_service=ingest_service,
+                plan_registry=plan_registry,
             )
         except BaseException as exc:  # noqa: BLE001
             err = _to_mcp_error(exc)
@@ -425,15 +543,27 @@ async def run_stdio_server(
     graph: GraphRepository,
     embedder: EmbeddingProvider,
     settings: Settings,
+    *,
+    ingest_service: IngestService | None = None,
+    plan_registry: PlanRegistry | None = None,
 ) -> None:
     """stdio transport 로 서버를 띄운다.
 
     WHY async: MCP SDK 의 server.run 은 async. CLI 진입점에서 `asyncio.run` 으로
     호출한다.
+
+    `ingest_service` + `plan_registry` 를 함께 넘기면 reviewable ingest tool 까지
+    노출한다 (production serve 경로). fake-boot 는 둘 다 생략해 read-only.
     """
     from mcp.server.stdio import stdio_server  # local import — 부팅 시 SDK 로딩 비용 한 번만.
 
-    server = build_mcp_server(graph, embedder, settings)
+    server = build_mcp_server(
+        graph,
+        embedder,
+        settings,
+        ingest_service=ingest_service,
+        plan_registry=plan_registry,
+    )
     async with stdio_server() as (read_stream, write_stream):
         await server.run(
             read_stream,
