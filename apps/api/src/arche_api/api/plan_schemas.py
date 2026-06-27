@@ -16,6 +16,8 @@ WHY 별도 모듈 (schemas.py 와 분리): plan/preview/commit 은 graph primiti
 
 from __future__ import annotations
 
+from typing import Literal
+
 from pydantic import BaseModel, ConfigDict, Field
 
 
@@ -42,6 +44,11 @@ class PlanSummary(BaseModel):
     relations_created: int = Field(ge=0, description="새로 만들 관계 수")
     deletion_count: int = Field(
         ge=0, description="차분으로 삭제/트림될 엔티티·관계 수"
+    )
+    open_questions: int = Field(
+        default=0,
+        ge=0,
+        description="사람 판단을 기다리는 '놓친 병합 후보' 질문 수 (near-miss)",
     )
 
 
@@ -86,6 +93,25 @@ class RelationView(BaseModel):
     type: str
 
 
+class QuestionView(BaseModel):
+    """'놓친 병합 후보' 질문 한 건의 미리보기 (near-miss disambiguation).
+
+    추출된 엔티티(extracted_*)가 기존 노드(candidate_*)와 임계 바로 아래
+    유사도(similarity)라 새 점으로 떨어졌다 — 같은 대상인지 사람에게 묻는다.
+    answer 는 resolve(merge/keep)로 보낸다.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    question_id: str
+    extracted_name: str
+    extracted_type: str
+    candidate_id: str
+    candidate_name: str
+    similarity: float
+    kind: str
+
+
 class PlanPreview(BaseModel):
     """preview 응답 — 변경 묶음을 항목 단위로 펼친 형태."""
 
@@ -95,6 +121,31 @@ class PlanPreview(BaseModel):
     merges: list[MergeView]
     new_relations: list[RelationView]
     deletion_count: int = Field(ge=0)
+    questions: list[QuestionView] = Field(
+        default_factory=list,
+        description="사람 판단을 기다리는 near-miss 병합 후보 질문 목록",
+    )
+
+
+# ---------- resolve ----------
+
+
+class ResolutionItem(BaseModel):
+    """질문 한 건에 대한 사람의 결정 — merge(같은 대상) 또는 keep(다른 대상)."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    question_id: str = Field(min_length=1)
+    decision: Literal["merge", "keep"]
+
+
+class ResolveRequest(BaseModel):
+    """resolve 입력 — 계획 식별자 + 그 계획의 질문에 대한 결정 묶음."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    plan_id: str = Field(min_length=1)
+    resolutions: list[ResolutionItem]
 
 
 # ---------- commit ----------

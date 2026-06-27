@@ -38,7 +38,12 @@ from arche_api.domain.ports import EmbeddingProvider, GraphRepository
 
 from .api import services
 from .api.error_codes import flatten_validation_errors
-from .api.plan_schemas import CommitRequest, PlanIngestRequest, PreviewRequest
+from .api.plan_schemas import (
+    CommitRequest,
+    PlanIngestRequest,
+    PreviewRequest,
+    ResolveRequest,
+)
 from .api.responses import (
     FindPathRequest,
     GetNeighborsRequest,
@@ -109,7 +114,20 @@ _TOOL_DESCRIPTIONS: dict[str, str] = {
         "Expand a planned change set (by `plan_id`) item by item — the new "
         "entities, merges into existing entities, new relations, and deletion "
         "count — so the human can review it before anything touches the graph. "
-        "This call also arms the safety latch that ingest_commit requires."
+        "This call also arms the safety latch that ingest_commit requires. The "
+        "response also carries `questions`: if it is non-empty, the extraction "
+        "found new entities that look close to existing ones but not close "
+        "enough to merge automatically. You MUST ask the human about each "
+        "question and call ingest_resolve with their answers before commit."
+    ),
+    "ingest_resolve": (
+        "Apply the human's answers to a plan's open `questions` (by `plan_id`). "
+        "Each resolution pairs a `question_id` with a `decision`: \"merge\" "
+        "means the new entity is the SAME as the suggested existing entity, "
+        "\"keep\" means it is genuinely new and distinct. This refines the same "
+        "plan_id in place and clears the safety latch, so you MUST call "
+        "ingest_preview again afterwards (and review any remaining questions) "
+        "before ingest_commit."
     ),
     "ingest_commit": (
         "Apply a previously previewed plan (by `plan_id`) to the graph. Do not "
@@ -123,7 +141,12 @@ _TOOL_DESCRIPTIONS: dict[str, str] = {
 # reviewable ingest tool 이름 — service 주입 시에만 등록되는 plan/preview/commit.
 # WRITE_TOOL_NAMES_EXCLUDED (등록 금지 목록) 와는 *별개* 다: 이 세 tool 은 사람
 # 검토 latch 를 통과한 변경만 반영하므로 허용된다.
-INGEST_TOOL_NAMES: tuple[str, ...] = ("ingest_plan", "ingest_preview", "ingest_commit")
+INGEST_TOOL_NAMES: tuple[str, ...] = (
+    "ingest_plan",
+    "ingest_preview",
+    "ingest_resolve",
+    "ingest_commit",
+)
 
 
 # 노출 금지 (ADR-0006 D3) — 등록조차 하지 않는 write tool 이름. 단위 테스트가
@@ -247,11 +270,11 @@ def _build_tools() -> list[mcp_types.Tool]:
 
 
 def _build_ingest_tools() -> list[mcp_types.Tool]:
-    """reviewable ingest 의 3 tool — service 가 주입된 서버에서만 등록.
+    """reviewable ingest 의 4 tool — service 가 주입된 서버에서만 등록.
 
     입력 스키마는 plan_schemas 의 Pydantic 모델에서 그대로 끌어와 REST 통로와
     같은 출처를 공유한다 (read tool 과 동일 원칙). ingest_plan 은 `{path}`,
-    preview/commit 은 `{plan_id}`.
+    preview/commit 은 `{plan_id}`, resolve 는 `{plan_id, resolutions}`.
     """
     return [
         mcp_types.Tool(
@@ -263,6 +286,11 @@ def _build_ingest_tools() -> list[mcp_types.Tool]:
             name="ingest_preview",
             description=_TOOL_DESCRIPTIONS["ingest_preview"],
             inputSchema=_build_input_schema(PreviewRequest),
+        ),
+        mcp_types.Tool(
+            name="ingest_resolve",
+            description=_TOOL_DESCRIPTIONS["ingest_resolve"],
+            inputSchema=_build_input_schema(ResolveRequest),
         ),
         mcp_types.Tool(
             name="ingest_commit",
@@ -342,6 +370,11 @@ def _dispatch_tool(
         if name == "ingest_preview":
             preview_body = PreviewRequest.model_validate(arguments)
             return services.preview_plan(preview_body, registry=plan_registry)
+        if name == "ingest_resolve":
+            resolve_body = ResolveRequest.model_validate(arguments)
+            return services.resolve_ingest(
+                resolve_body, service=ingest_service, registry=plan_registry
+            )
         # ingest_commit
         commit_body = CommitRequest.model_validate(arguments)
         return services.commit_plan(
@@ -437,15 +470,19 @@ def build_mcp_server(
     )
     register_ingest = ingest_service is not None and plan_registry is not None
     if register_ingest:
-        # reviewable ingest 의식: 계획 -> 미리보기 -> 사람 확인 -> 반영. LLM 이
-        # 사람의 검토를 건너뛰고 그래프를 바꾸지 못하도록 순서를 명시한다.
+        # reviewable ingest 의식: 계획 -> 미리보기 -> 질문 해소 -> 사람 확인 ->
+        # 반영. LLM 이 사람의 검토를 건너뛰고 그래프를 바꾸지 못하도록 순서를
+        # 명시한다.
         instructions += (
-            " Writing to the graph follows a plan -> preview -> confirm -> "
-            "commit ritual: call `ingest_plan` to stage a file's changes "
-            "without touching the graph, then `ingest_preview` to expand the "
-            "delta and show it to the human, and only after the human "
-            "explicitly confirms call `ingest_commit`. Never skip the preview "
-            "or commit on the human's behalf."
+            " Writing to the graph follows a plan -> preview -> resolve open "
+            "questions -> confirm -> commit ritual: call `ingest_plan` to stage "
+            "a file's changes without touching the graph, then `ingest_preview` "
+            "to expand the delta and show it to the human. If the preview "
+            "carries `questions` (new entities that look close to existing "
+            "ones), ask the human about each and feed their answers to "
+            "`ingest_resolve`, then `ingest_preview` again. Only after the human "
+            "explicitly confirms call `ingest_commit`. Never skip the preview, "
+            "resolve, or commit on the human's behalf."
         )
     else:
         # 쓰기 tool 이 없는 read-only 부팅 경로 (ARCHE_TEST_FAKE_GRAPH 등) — 원래의
