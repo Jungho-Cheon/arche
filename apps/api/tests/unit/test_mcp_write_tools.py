@@ -47,10 +47,11 @@ def test_read_only_server_has_no_write_tools():
     server = build_mcp_server(FakeGraph(), FakeEmbedder(), FakeSettings())
     names = _tool_names(server)
     assert "ingest_plan" not in names  # service 없으면 등록 안 됨
+    assert "ingest_resolve" not in names  # resolve 도 service 없으면 등록 안 됨
     assert len(names) == 6
 
 
-def test_server_with_service_exposes_three_write_tools(fake_ingest_service):
+def test_server_with_service_exposes_ingest_write_tools(fake_ingest_service):
     from arche_api.api.plan_registry import PlanRegistry
 
     server = build_mcp_server(
@@ -61,6 +62,11 @@ def test_server_with_service_exposes_three_write_tools(fake_ingest_service):
         plan_registry=PlanRegistry(),
     )
     names = _tool_names(server)
-    assert {"ingest_plan", "ingest_preview", "ingest_commit"} <= set(names)
+    assert {
+        "ingest_plan",
+        "ingest_preview",
+        "ingest_resolve",
+        "ingest_commit",
+    } <= set(names)
     # write 금지 목록과는 겹치지 않아야 한다 (ADR-0006 D3).
     assert not (set(names) & WRITE_TOOL_NAMES_EXCLUDED)
