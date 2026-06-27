@@ -447,6 +447,11 @@ def build_mcp_server(
             "explicitly confirms call `ingest_commit`. Never skip the preview "
             "or commit on the human's behalf."
         )
+    else:
+        # 쓰기 tool 이 없는 read-only 부팅 경로 (ARCHE_TEST_FAKE_GRAPH 등) — 원래의
+        # read-only 안내를 보존한다. register_ingest 경로에는 붙이지 않는다: 그
+        # 서버는 plan/commit 으로 그래프를 *바꿀 수 있어* read-only 가 아니다.
+        instructions += " Read-only: these tools never modify the graph."
 
     server: Server = Server(
         name="arche",
