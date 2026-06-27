@@ -726,31 +726,70 @@ class IngestService:
         """기록된 쓰기를 진짜 그래프에 순서대로 재생한다.
 
         WHY 합성 relation id 치환: 계획 단계의 upsert_relation 은 진짜 id 를 모른 채
-        합성 id(plan_rel_N)를 돌려줬다. 재생 때 실제 그래프가 돌려주는 진짜 id 를
-        모아, finalize_run 의 emitted_relation_ids 를 그 진짜 id 로 바꿔치운다.
-        그래야 run 노드의 provenance(어떤 관계를 emit 했는지)가 실제 그래프와
-        정합한다 — 다음 재적재 차분이 이 관계를 보존하려면 진짜 id 여야 한다.
+        합성 id(plan_rel_N)를 돌려줬다. 재생 때 i 번째 upsert_relation 이 진짜 id 를
+        만들면 그것이 합성 plan_rel_i 에 대응한다(PlanningGraphRepository._rel_seq 가
+        1 부터 증가하는 것과 같은 순번). 합성 id 가 등장하는 모든 곳
+        (mark_relation_emitted / finalize_run / append_emitted_relations)을 진짜 id 로
+        바꿔, 직접 적재와 provenance 가 정합한다.
 
-        WHY 삭제 카운트 보정: 계획 단계의 apply_*_diff 는 항상 "deleted" 를 가정해
-        기록만 했다. 진짜 그래프에 재생하면 실제 삭제 수가 나오므로, 재생한
-        diff 호출 수로 relations_deleted 를 보정해 결과 카운터가 진실을 보고한다.
+        WHY 삭제/trim 카운트 분리: 재생한 apply_*_diff 의 실제 반환("deleted" 또는
+        "trimmed")으로 entity/relation 삭제·trim 네 카운터를 _apply_diff(직접 적재)와
+        동일하게 구분 집계한다 — 엔티티 삭제가 relation 카운트로 섞이던 결함을 없앤다.
         """
-        real_rel_ids: list[str] = []
-        deletions = 0
+        real_rel_by_synthetic: dict[str, str] = {}
+        rel_seq = 0
+        entities_deleted = 0
+        entities_trimmed = 0
+        relations_deleted = 0
+        relations_trimmed = 0
+
+        def _translate(rid: str) -> str:
+            return real_rel_by_synthetic.get(rid, rid)
+
         for w in plan.writes:
-            if w.method == "finalize_run":
-                # 합성 relation id 를 실제 id 로 치환해 provenance 정합 유지.
+            if w.method == "upsert_relation":
+                real_id, _ = self._graph.upsert_relation(**w.kwargs)
+                rel_seq += 1
+                real_rel_by_synthetic[f"plan_rel_{rel_seq}"] = real_id
+                continue
+            if w.method == "mark_relation_emitted":
                 kwargs = dict(w.kwargs)
-                kwargs["emitted_relation_ids"] = real_rel_ids
+                kwargs["relation_id"] = _translate(kwargs["relation_id"])
+                self._graph.mark_relation_emitted(**kwargs)
+                continue
+            if w.method == "append_emitted_relations":
+                kwargs = dict(w.kwargs)
+                kwargs["relation_ids"] = [
+                    _translate(rid) for rid in kwargs.get("relation_ids", [])
+                ]
+                self._graph.append_emitted_relations(**kwargs)
+                continue
+            if w.method == "finalize_run":
+                kwargs = dict(w.kwargs)
+                kwargs["emitted_relation_ids"] = [
+                    _translate(rid) for rid in kwargs.get("emitted_relation_ids", [])
+                ]
                 self._graph.finalize_run(**kwargs)
                 continue
             ret = getattr(self._graph, w.method)(**w.kwargs)
-            if w.method == "upsert_relation":
-                rel_id, _ = ret
-                real_rel_ids.append(rel_id)
-            elif w.method in ("apply_entity_diff", "apply_relation_diff"):
-                deletions += 1
-        return replace(plan.result, relations_deleted=deletions)
+            if w.method == "apply_entity_diff":
+                if ret == "trimmed":
+                    entities_trimmed += 1
+                elif ret == "deleted":
+                    entities_deleted += 1
+            elif w.method == "apply_relation_diff":
+                if ret == "trimmed":
+                    relations_trimmed += 1
+                elif ret == "deleted":
+                    relations_deleted += 1
+
+        return replace(
+            plan.result,
+            entities_deleted=entities_deleted,
+            entities_trimmed=entities_trimmed,
+            relations_deleted=relations_deleted,
+            relations_trimmed=relations_trimmed,
+        )
 
     # ---------- 모달별 LLM 호출 input 정규화 ----------
 
