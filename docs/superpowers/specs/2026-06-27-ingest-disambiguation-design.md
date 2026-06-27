@@ -72,7 +72,7 @@ Out of scope (later):
 | Tool | Change |
 |---|---|
 | `ingest_plan` | summary gains `open_questions: int` |
-| `ingest_preview` | response gains `questions: [{question_id, extracted_name, extracted_type, candidate_id, candidate_name, similarity}]` |
+| `ingest_preview` | response gains `questions: [{question_id, extracted_name, extracted_type, candidate_id, candidate_name, similarity, kind}]` |
 | `ingest_resolve` (NEW) | input `{plan_id, resolutions: [{question_id, decision}]}`; re-plans; returns refined summary + remaining `questions`; sets `previewed=False` |
 | `ingest_commit` | unchanged; unresolved questions already defaulted to create-new in the plan |
 
