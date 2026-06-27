@@ -97,6 +97,7 @@ uv run --project apps/api arche ingest ./내문서폴더
 #    에이전트(Claude Desktop / Cursor 등)에 MCP 도구로 연결한다:
 uv run --project apps/api arche mcp serve --stdio
 #    에이전트로 적재할 때는 reviewable-ingest 스킬이 plan, preview, (모호하면 질문 해소) 확정, commit 순서를 안내한다.
+#    추출이 빈약하면 ingest_plan 에 hints(용어 풀이/도메인 메모)를 실어 추출만 보강할 수 있다 — 원문은 그대로 보존된다.
 ```
 
 MCP 클라이언트(예: Claude Desktop) 설정:

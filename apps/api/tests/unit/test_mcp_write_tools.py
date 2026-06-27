@@ -23,14 +23,19 @@ from arche_api.mcp_server import WRITE_TOOL_NAMES_EXCLUDED, build_mcp_server
 from arche_api.test_support import FakeEmbedder, FakeGraph, FakeSettings
 
 
-def _tool_names(server) -> list[str]:
-    """등록된 tool 이름 목록 — test_mcp_server.py 의 list_tools invoke 패턴 재사용."""
+def _tools(server) -> list[mcp_types.Tool]:
+    """등록된 Tool 객체 목록 — test_mcp_server.py 의 list_tools invoke 패턴 재사용."""
     handler = server.request_handlers[mcp_types.ListToolsRequest]
     req = mcp_types.ListToolsRequest(method="tools/list")
     result = asyncio.run(handler(req))
     inner = result.root
     assert isinstance(inner, mcp_types.ListToolsResult)
-    return [t.name for t in inner.tools]
+    return list(inner.tools)
+
+
+def _tool_names(server) -> list[str]:
+    """등록된 tool 이름 목록 — _tools 의 name 만 추린 헬퍼."""
+    return [t.name for t in _tools(server)]
 
 
 @pytest.fixture
@@ -70,3 +75,19 @@ def test_server_with_service_exposes_ingest_write_tools(fake_ingest_service):
     } <= set(names)
     # write 금지 목록과는 겹치지 않아야 한다 (ADR-0006 D3).
     assert not (set(names) & WRITE_TOOL_NAMES_EXCLUDED)
+
+
+def test_ingest_plan_input_schema_exposes_hints(fake_ingest_service):
+    """ingest_plan 의 inputSchema 는 PlanIngestRequest 에서 파생되므로 enrichment
+    hints 필드 (원문 불변 보강 메모) 가 자동 노출되어야 한다 — 회귀 잠금."""
+    from arche_api.api.plan_registry import PlanRegistry
+
+    server = build_mcp_server(
+        FakeGraph(),
+        FakeEmbedder(),
+        FakeSettings(),
+        ingest_service=fake_ingest_service,
+        plan_registry=PlanRegistry(),
+    )
+    ingest_plan = next(t for t in _tools(server) if t.name == "ingest_plan")
+    assert "hints" in ingest_plan.inputSchema["properties"]

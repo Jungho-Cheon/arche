@@ -15,6 +15,12 @@ When putting a document into the Arche graph, do not write immediately. Let the 
 4. Ask the user "Commit this?" and get explicit confirmation. Flag any questionable merge or odd node first.
 5. On confirmation, call `ingest_commit`. Report the result counts.
 
+## Sparse preview: hints
+
+If the preview looks sparse for a document that is clearly content-rich (many rows, dense terminology, lots of facts the extraction missed), you may guide the extraction with `hints`. Draft a short note that helps the extractor read the source: a glossary, a list of abbreviations, an instruction like "treat each row or line as a fact", or a disambiguation between similar terms. Then call `ingest_plan` again with that `hints` text and start the order over from step 1.
+
+Hints only steer extraction. The source file on disk is never rewritten, and the stored original content is preserved exactly as written. Hints shape the graph the planner proposes, not the source.
+
 ## Rejection handling
 
 - If `ingest_commit` returns "call ingest_preview before commit", do step 2 first.

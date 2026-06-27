@@ -258,6 +258,12 @@ class IngestService:
         # 동일하게 resolve_plan 이 set → plan_file → finally 복원한다. 비어 있으면
         # _upsert_entities 동작은 종전과 *완전히 동일* (정상 plan/ingest 경로).
         self._active_resolutions: dict[str, str] = {}
+        # enrichment hints (원문 불변) — plan_file/resolve_plan 이 재계획 동안 켜 두는
+        # 에이전트 보강 메모. _build_chunk_context 가 이 값을 ExtractContext.enrichment
+        # 로 흘려보내 추출 LLM 프롬프트의 [ENRICHMENT] prefix 로만 들어간다. self._graph
+        # 스왑/복원과 동일하게 set → 호출 → finally 복원한다. None 이면 (정상 ingest/plan)
+        # context.enrichment 도 None → 렌더 생략 → 캐시 키/동작 종전과 완전히 동일.
+        self._active_hints: str | None = None
 
     def ingest_directory(
         self,
@@ -703,7 +709,7 @@ class IngestService:
     # ---------- reviewable ingest (계획 → 미리보기 → 적용) ----------
 
     def plan_file(
-        self, path: Path, *, namespace_id: str = "default"
+        self, path: Path, *, namespace_id: str = "default", hints: str | None = None
     ) -> IngestPlan:
         """쓰지 않고 ingest_file 을 돌려 변경 묶음(IngestPlan)을 만든다.
 
@@ -721,11 +727,16 @@ class IngestService:
         planning = PlanningGraphRepository(self._graph)
         real = self._graph
         self._graph = planning
+        # enrichment hints — self._graph 스왑과 동일한 transient 상태. 추출 청크
+        # 컨텍스트가 이 값을 enrichment 로 받도록 켜고 같은 finally 에서 None 으로
+        # 복원해 인스턴스 상태 누수를 막는다 (hints=None 이면 동작 종전과 동일).
+        self._active_hints = hints
         try:
             result = self.ingest_file(path, namespace_id=namespace_id)
         finally:
-            # 예외가 나도 인스턴스 그래프를 반드시 원복 — 상태 누수 방지.
+            # 예외가 나도 인스턴스 그래프 + hints 를 반드시 원복 — 상태 누수 방지.
             self._graph = real
+            self._active_hints = None
 
         depends = [
             w.kwargs["mutation"].id
@@ -755,6 +766,7 @@ class IngestService:
             result=result,
             depends_on_entity_ids=depends,
             open_questions=open_questions,
+            hints=hints,
         )
 
     def resolve_plan(
@@ -802,7 +814,11 @@ class IngestService:
         prior = self._active_resolutions
         self._active_resolutions = signature_map
         try:
-            refined = self.plan_file(Path(plan.source_path))
+            # enrichment hints 도 다듬어진 계획에 그대로 보존한다 — plan_file 이
+            # hints 인자로 _active_hints set/복원을 처리하므로 별도 래핑 없이
+            # 넘기기만 하면 재계획 추출이 같은 [ENRICHMENT] 를 본다. replace 가
+            # hints 를 덮어쓰지 않아 refined.hints == plan.hints 로 유지된다.
+            refined = self.plan_file(Path(plan.source_path), hints=plan.hints)
         finally:
             self._active_resolutions = prior
 
@@ -1012,6 +1028,9 @@ class IngestService:
             main_entity_name=main_entity.name if main_entity else None,
             main_entity_type=main_entity.type if main_entity else None,
             main_entity_aliases=main_entity.aliases if main_entity else None,
+            # enrichment hints — plan_file/resolve_plan 이 켰을 때만 non-None.
+            # 정상 ingest 는 None 이라 [ENRICHMENT] 가 렌더에서 통째로 생략된다.
+            enrichment=self._active_hints,
         )
 
     def _detect_main_entity(

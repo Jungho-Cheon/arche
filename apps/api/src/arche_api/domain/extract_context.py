@@ -94,11 +94,16 @@ class SchemaSummary:
 
 @dataclass(frozen=True)
 class ExtractContext:
-    """ADR-0009 D1 의 4 종 컨텍스트 묶음."""
+    """ADR-0009 D1 의 4 종 컨텍스트 묶음 + (선택) 에이전트 보강 메모."""
 
     doc: DocContext
     known_entities: list[KnownEntity]
     schema: SchemaSummary
+    # WHY enrichment: 원문을 고치지 않고 추출 recall 을 올리기 위한 *에이전트
+    # 제공 메모* (용어 풀이/약어/도메인 힌트). LLM 프롬프트 prefix 에만 들어가고
+    # 저장 노드의 source_refs 에는 영향이 없다 (provenance 보존). None/빈 문자열
+    # 이면 렌더에서 통째로 생략 — 비보강 적재의 캐시 키/동작 불변.
+    enrichment: str | None = None
 
     def is_empty_graph(self) -> bool:
         """빈 그래프 (첫 ingest) 인가 — KNOWN_ENTITIES 와 SCHEMA 가 모두 empty."""
@@ -186,6 +191,13 @@ def render_context_block(ctx: ExtractContext) -> str:
         )
     lines.append("")
 
+    # [ENRICHMENT] — 에이전트 제공 보강 메모. 비어 있으면 통째로 생략하여
+    # 비보강 적재의 렌더 출력 (= 캐시 키) 을 불변으로 유지한다.
+    if ctx.enrichment and ctx.enrichment.strip():
+        lines.append("[ENRICHMENT]")
+        lines.append(ctx.enrichment.strip())
+        lines.append("")
+
     lines.append("[KNOWN_ENTITIES]")
     if not ctx.known_entities:
         lines.append("(없음 — 본 회차가 빈 그래프이거나 청크와 매칭되는 후보가 없음)")
@@ -252,6 +264,7 @@ class ExtractContextBuilder:
         main_entity_name: str | None = None,
         main_entity_type: str | None = None,
         main_entity_aliases: list[str] | None = None,
+        enrichment: str | None = None,
     ) -> ExtractContext:
         """청크 1 개에 대한 ExtractContext.
 
@@ -267,7 +280,9 @@ class ExtractContextBuilder:
         )
         known = self._known_entities_for_chunk(chunk_text=chunk_text)
         schema = self._schema_summary()
-        return ExtractContext(doc=doc, known_entities=known, schema=schema)
+        return ExtractContext(
+            doc=doc, known_entities=known, schema=schema, enrichment=enrichment
+        )
 
     def _known_entities_for_chunk(self, *, chunk_text: str) -> list[KnownEntity]:
         keywords = extract_keywords(

@@ -30,6 +30,14 @@ class PlanIngestRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     path: str = Field(min_length=1, description="적재 계획을 세울 파일의 절대 경로")
+    hints: str | None = Field(
+        default=None,
+        max_length=4000,
+        description=(
+            "추출 품질을 끌어올리는 선택 입력 — 도메인 용어/약어 풀이, 대상 엔티티 "
+            "강조 등. max_length 로 프롬프트 예산을 제한한다."
+        ),
+    )
 
 
 class PlanSummary(BaseModel):
