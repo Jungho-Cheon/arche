@@ -45,6 +45,8 @@ class StubGraph(GraphRepository):
         self._nodes = nodes or []
         self._healthy = healthy
         self._hits_by_keyword = hits_by_keyword
+        # 읽기 경로가 어떤 namespace 로 검색했는지 기록 (issue #98 wiring 검증).
+        self.last_search_namespace: str | None = None
 
     def ensure_indexes(self) -> None:
         pass
@@ -104,8 +106,9 @@ class StubGraph(GraphRepository):
         return "missing"
 
     def find_by_keywords_scored(  # noqa: D401
-        self, *, keywords, limit_per_keyword
+        self, *, keywords, limit_per_keyword, namespace_id="default"
     ) -> list[KeywordHit]:
+        self.last_search_namespace = namespace_id
         hits: list[KeywordHit] = []
         if self._hits_by_keyword is not None:
             for kw in keywords:
@@ -124,16 +127,16 @@ class StubGraph(GraphRepository):
         return hits
 
     def find_entities_dense(  # noqa: D401
-        self, *, query_embedding, matched_keyword, limit
+        self, *, query_embedding, matched_keyword, limit, namespace_id="default"
     ) -> list[DenseHit]:
         # 본 stub 은 dense 신호 미공급. 라우터의 RRF 결합은 lexical-only 입력
         # 으로도 동작해야 한다.
         return []
 
-    def get_schema_summary(self, *, examples_per_type=5):  # noqa: D401
+    def get_schema_summary(self, *, examples_per_type=5, namespace_id="default"):  # noqa: D401
         return ([], [])
 
-    def get_entity_with_counts(self, *, entity_id):  # noqa: D401
+    def get_entity_with_counts(self, *, entity_id, namespace_id="default"):  # noqa: D401
         for n in self._nodes:
             if n.id == entity_id:
                 return EntityWithCounts(node=n, outgoing={}, incoming={})
@@ -147,6 +150,7 @@ class StubGraph(GraphRepository):
         direction,
         hops,
         max_nodes,
+        namespace_id="default",
     ) -> NeighborhoodResult:
         for n in self._nodes:
             if n.id == entry_id:
@@ -160,6 +164,7 @@ class StubGraph(GraphRepository):
         relation_types,
         hops,
         max_nodes,
+        namespace_id="default",
     ) -> NeighborhoodResult:
         kept = [n for n in self._nodes if n.id in set(entry_ids)]
         return NeighborhoodResult(nodes=kept, edges=[], truncated=False)
@@ -172,13 +177,14 @@ class StubGraph(GraphRepository):
         max_hops,
         max_paths,
         relation_types,
+        namespace_id="default",
     ) -> list[PathResult]:
         return []
 
     def count_entities_by_namespace(self):
         return {}
 
-    def entity_exists(self, *, entity_id) -> bool:  # noqa: D401
+    def entity_exists(self, *, entity_id, namespace_id="default") -> bool:  # noqa: D401
         return any(n.id == entity_id for n in self._nodes)
 
     def get_stored_entity(self, *, entity_id):
@@ -366,6 +372,44 @@ def test_find_entities_rejects_limit_over_max():
         "/entities/find", json={"keywords": ["x"], "limit": 999}
     )
     assert r.status_code == 422
+
+
+# ---------- issue #98: 읽기 경로 namespace 배선 (auth header > body > default) ----------
+
+
+def test_find_entities_scopes_to_auth_header_namespace():
+    """auth header 의 namespace 가 검색에 흘러간다 (REST wiring)."""
+    g = StubGraph(nodes=[_make_node()])
+    client = _client_with(g)
+    r = client.post(
+        "/entities/find",
+        json={"keywords": ["여름"]},
+        headers={"Authorization": "Bearer ns:work-a"},
+    )
+    assert r.status_code == 200
+    assert g.last_search_namespace == "work-a"
+
+
+def test_find_entities_body_namespace_overrides_auth_header():
+    """body 의 namespace_id 가 auth header 보다 우선 (admin_ingest 와 동일 규칙)."""
+    g = StubGraph(nodes=[_make_node()])
+    client = _client_with(g)
+    r = client.post(
+        "/entities/find",
+        json={"keywords": ["여름"], "namespace_id": "work-b"},
+        headers={"Authorization": "Bearer ns:work-a"},
+    )
+    assert r.status_code == 200
+    assert g.last_search_namespace == "work-b"
+
+
+def test_find_entities_defaults_namespace_without_auth():
+    """auth header / body 둘 다 없으면 "default" (회귀 가드)."""
+    g = StubGraph(nodes=[_make_node()])
+    client = _client_with(g)
+    r = client.post("/entities/find", json={"keywords": ["여름"]})
+    assert r.status_code == 200
+    assert g.last_search_namespace == "default"
 
 
 # ---------- get_neighbors body id 정책 (이슈 #27 회귀 1) ----------

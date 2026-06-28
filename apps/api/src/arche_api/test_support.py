@@ -93,7 +93,7 @@ class FakeGraph(GraphRepository):
     # ----- 6 primitive 가 호출하는 메서드만 의미 있게 구현 -----
 
     def find_by_keywords_scored(
-        self, *, keywords, limit_per_keyword
+        self, *, keywords, limit_per_keyword, namespace_id="default"
     ) -> list[KeywordHit]:
         # 단순 매칭: keyword 가 node_a.name 안에 포함되면 hit.
         hits: list[KeywordHit] = []
@@ -104,12 +104,12 @@ class FakeGraph(GraphRepository):
         return hits
 
     def find_entities_dense(
-        self, *, query_embedding, matched_keyword, limit
+        self, *, query_embedding, matched_keyword, limit, namespace_id="default"
     ) -> list[DenseHit]:
         # dense 는 항상 빈 결과 — lexical 만으로 fused score 가 의미 있게 산출.
         return []
 
-    def get_schema_summary(self, *, examples_per_type=5):
+    def get_schema_summary(self, *, examples_per_type=5, namespace_id="default"):
         return (
             [
                 EntityTypeStat(
@@ -128,7 +128,7 @@ class FakeGraph(GraphRepository):
             ],
         )
 
-    def get_entity_with_counts(self, *, entity_id):
+    def get_entity_with_counts(self, *, entity_id, namespace_id="default"):
         for node in (self._data.node_a, self._data.node_b):
             if node.id == entity_id:
                 if node.id == self._data.node_a.id:
@@ -139,14 +139,14 @@ class FakeGraph(GraphRepository):
     def count_entities_by_namespace(self):
         return {}
 
-    def entity_exists(self, *, entity_id) -> bool:
+    def entity_exists(self, *, entity_id, namespace_id="default") -> bool:
         return entity_id in {self._data.node_a.id, self._data.node_b.id}
 
     def get_stored_entity(self, *, entity_id):
         return self._entities.get(entity_id)
 
     def expand_neighbors(
-        self, *, entry_id, relation_types, direction, hops, max_nodes
+        self, *, entry_id, relation_types, direction, hops, max_nodes, namespace_id="default"
     ) -> NeighborhoodResult:
         if entry_id == self._data.node_a.id:
             return NeighborhoodResult(
@@ -163,7 +163,7 @@ class FakeGraph(GraphRepository):
         return NeighborhoodResult(nodes=[], edges=[], truncated=False)
 
     def expand_subgraph(
-        self, *, entry_ids, relation_types, hops, max_nodes
+        self, *, entry_ids, relation_types, hops, max_nodes, namespace_id="default"
     ) -> NeighborhoodResult:
         nodes = []
         seen: set[str] = set()
@@ -190,7 +190,7 @@ class FakeGraph(GraphRepository):
         return NeighborhoodResult(nodes=nodes, edges=edges, truncated=False)
 
     def find_shortest_paths(
-        self, *, from_id, to_id, max_hops, max_paths, relation_types
+        self, *, from_id, to_id, max_hops, max_paths, relation_types, namespace_id="default"
     ) -> list[PathResult]:
         valid = (
             (from_id == self._data.node_a.id and to_id == self._data.node_b.id)

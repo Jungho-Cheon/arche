@@ -56,6 +56,13 @@ class FindEntitiesRequest(BaseModel):
         default=False,
         description="True 이면 매치별 raw lexical/dense 점수 동봉 (디버깅 / 커스텀 re-rank).",
     )
+    # ADR-0015 — 질의할 namespace. REST 는 미지정 시 auth 헤더 > "default". MCP 는
+    # 미지정 시 "default". 검색을 이 namespace 안으로 가둔다 (issue #98 읽기 격리).
+    namespace_id: str | None = Field(
+        default=None,
+        min_length=1,
+        description="ADR-0015 — 질의할 namespace. 미지정 시 auth 헤더 또는 'default'",
+    )
 
 
 class MatchScores(BaseModel):

@@ -704,7 +704,11 @@ class Neo4jGraphRepository(GraphRepository):
     # ---------- Read ----------
 
     def find_by_keywords_scored(
-        self, *, keywords: list[str], limit_per_keyword: int
+        self,
+        *,
+        keywords: list[str],
+        limit_per_keyword: int,
+        namespace_id: str = "default",
     ) -> list[KeywordHit]:
         """fulltext 인덱스를 *keyword 별로* 따로 호출.
 
@@ -731,6 +735,7 @@ class Neo4jGraphRepository(GraphRepository):
                 records = s.run(
                     """
                     CALL db.index.fulltext.queryNodes($idx, $q) YIELD node, score
+                    WHERE coalesce(node.namespace_id, 'default') = $ns
                     RETURN node, score
                     ORDER BY score DESC
                     LIMIT $limit
@@ -738,6 +743,7 @@ class Neo4jGraphRepository(GraphRepository):
                     parameters={
                         "idx": FULLTEXT_INDEX,
                         "q": lucene_query,
+                        "ns": namespace_id,
                         "limit": limit_per_keyword,
                     },
                 ).data()
@@ -757,6 +763,7 @@ class Neo4jGraphRepository(GraphRepository):
         query_embedding: list[float],
         matched_keyword: str,
         limit: int,
+        namespace_id: str = "default",
     ) -> list[DenseHit]:
         """단일 keyword 의 dense ANN — PRD 3 §3.5 의 dense path.
 
@@ -774,11 +781,13 @@ class Neo4jGraphRepository(GraphRepository):
                 "CALL db.index.vector.queryNodes($idx, $k, $vec) "
                 "YIELD node, score "
                 f"WHERE node:{ENTITY_LABEL} "
+                "  AND coalesce(node.namespace_id, 'default') = $ns "
                 "RETURN node, score ORDER BY score DESC LIMIT $limit",
                 parameters={
                     "idx": VECTOR_INDEX,
                     "k": limit,
                     "vec": query_embedding,
+                    "ns": namespace_id,
                     "limit": limit,
                 },
             ).data()
@@ -797,7 +806,7 @@ class Neo4jGraphRepository(GraphRepository):
     # ---------- 5 primitive read (PRD 3 §2-7) ----------
 
     def get_schema_summary(
-        self, *, examples_per_type: int = 5
+        self, *, examples_per_type: int = 5, namespace_id: str = "default"
     ) -> tuple[list[EntityTypeStat], list[RelationTypeStat]]:
         """엔티티/관계 통계 + 타입별 example 노드.
 
@@ -812,18 +821,22 @@ class Neo4jGraphRepository(GraphRepository):
         entity_stats: list[EntityTypeStat] = []
         relation_stats: list[RelationTypeStat] = []
         with self._driver.session() as s:
-            # 엔티티 타입 카운트
+            # 엔티티 타입 카운트 (namespace 안에서만, issue #98)
             type_rows = s.run(
                 f"MATCH (n:{ENTITY_LABEL}) "
+                "WHERE coalesce(n.namespace_id, 'default') = $ns "
                 "RETURN n.type AS type, count(*) AS count "
-                "ORDER BY type"
+                "ORDER BY type",
+                ns=namespace_id,
             ).data()
             for row in type_rows:
                 examples = s.run(
                     f"MATCH (n:{ENTITY_LABEL}) WHERE n.type = $t "
+                    "  AND coalesce(n.namespace_id, 'default') = $ns "
                     "RETURN n.id AS id, n.name AS name "
                     "ORDER BY n.updated_at DESC LIMIT $k",
                     t=row["type"],
+                    ns=namespace_id,
                     k=examples_per_type,
                 ).data()
                 entity_stats.append(
@@ -837,17 +850,23 @@ class Neo4jGraphRepository(GraphRepository):
             # 관계 타입 카운트 — 단일 RELATES_TO 라벨 + type 속성 (graph.py 상단
             # WHY 라벨 단일화 코멘트 참조).
             rel_rows = s.run(
-                f"MATCH ()-[r:{RELATION_TYPE_LABEL_DEFAULT}]->() "
+                f"MATCH (a:{ENTITY_LABEL})-[r:{RELATION_TYPE_LABEL_DEFAULT}]->(b:{ENTITY_LABEL}) "
+                "WHERE coalesce(a.namespace_id, 'default') = $ns "
+                "  AND coalesce(b.namespace_id, 'default') = $ns "
                 "RETURN r.type AS type, count(*) AS count "
-                "ORDER BY type"
+                "ORDER BY type",
+                ns=namespace_id,
             ).data()
             for row in rel_rows:
                 pairs = s.run(
                     f"MATCH (a:{ENTITY_LABEL})-[r:{RELATION_TYPE_LABEL_DEFAULT}]->(b:{ENTITY_LABEL}) "
                     "WHERE r.type = $t "
+                    "  AND coalesce(a.namespace_id, 'default') = $ns "
+                    "  AND coalesce(b.namespace_id, 'default') = $ns "
                     "RETURN a.type AS from_type, b.type AS to_type, count(*) AS c "
                     "ORDER BY c DESC LIMIT 5",
                     t=row["type"],
+                    ns=namespace_id,
                 ).data()
                 relation_stats.append(
                     RelationTypeStat(
@@ -860,11 +879,16 @@ class Neo4jGraphRepository(GraphRepository):
                 )
         return entity_stats, relation_stats
 
-    def entity_exists(self, *, entity_id: str) -> bool:
+    def entity_exists(
+        self, *, entity_id: str, namespace_id: str = "default"
+    ) -> bool:
         with self._driver.session() as s:
             rec = s.run(
-                f"MATCH (n:{ENTITY_LABEL} {{id: $id}}) RETURN n.id AS id",
+                f"MATCH (n:{ENTITY_LABEL} {{id: $id}}) "
+                "WHERE coalesce(n.namespace_id, 'default') = $ns "
+                "RETURN n.id AS id",
                 id=entity_id,
+                ns=namespace_id,
             ).single()
         return rec is not None
 
@@ -911,7 +935,7 @@ class Neo4jGraphRepository(GraphRepository):
         return _node_to_stored(rec["e"])
 
     def get_entity_with_counts(
-        self, *, entity_id: str
+        self, *, entity_id: str, namespace_id: str = "default"
     ) -> EntityWithCounts | None:
         """단일 노드 + outgoing/incoming relation type 카운트.
 
@@ -921,22 +945,32 @@ class Neo4jGraphRepository(GraphRepository):
         아래에서는 비결정적 결과가 발생할 가능성 매우 낮음).
         """
         with self._driver.session() as s:
+            # 노드가 이 namespace 밖이면 없는 것으로 (issue #98 — id 우회 차단).
             node_row = s.run(
-                f"MATCH (n:{ENTITY_LABEL} {{id: $id}}) RETURN n",
+                f"MATCH (n:{ENTITY_LABEL} {{id: $id}}) "
+                "WHERE coalesce(n.namespace_id, 'default') = $ns "
+                "RETURN n",
                 id=entity_id,
+                ns=namespace_id,
             ).single()
             if node_row is None:
                 return None
             node = _node_to_response(node_row["n"])
+            # 카운트도 같은 namespace 의 이웃 엣지만 — 다른 namespace 로 가는 엣지는
+            # 격리상 존재하지 않아야 하지만, 방어적으로 상대 노드도 namespace 로 거른다.
             out_rows = s.run(
-                f"MATCH (n:{ENTITY_LABEL} {{id: $id}})-[r:{RELATION_TYPE_LABEL_DEFAULT}]->() "
+                f"MATCH (n:{ENTITY_LABEL} {{id: $id}})-[r:{RELATION_TYPE_LABEL_DEFAULT}]->(m:{ENTITY_LABEL}) "
+                "WHERE coalesce(m.namespace_id, 'default') = $ns "
                 "RETURN r.type AS type, count(*) AS c",
                 id=entity_id,
+                ns=namespace_id,
             ).data()
             in_rows = s.run(
-                f"MATCH (n:{ENTITY_LABEL} {{id: $id}})<-[r:{RELATION_TYPE_LABEL_DEFAULT}]-() "
+                f"MATCH (n:{ENTITY_LABEL} {{id: $id}})<-[r:{RELATION_TYPE_LABEL_DEFAULT}]-(m:{ENTITY_LABEL}) "
+                "WHERE coalesce(m.namespace_id, 'default') = $ns "
                 "RETURN r.type AS type, count(*) AS c",
                 id=entity_id,
+                ns=namespace_id,
             ).data()
         outgoing = {row["type"]: int(row["c"]) for row in out_rows}
         incoming = {row["type"]: int(row["c"]) for row in in_rows}
@@ -950,6 +984,7 @@ class Neo4jGraphRepository(GraphRepository):
         direction: str,
         hops: int,
         max_nodes: int,
+        namespace_id: str = "default",
     ) -> NeighborhoodResult:
         """N-hop BFS — 진입점에서 거리 가까운 순으로 max_nodes 절단.
 
@@ -964,9 +999,13 @@ class Neo4jGraphRepository(GraphRepository):
         # frontier 는 (id, level) 튜플들의 리스트 — BFS 의 한 레벨씩 확장.
         with self._driver.session() as s:
             # 진입점 노드 자체 — PRD 3 §5.4 의 "nodes 에 진입점 포함" 충족.
+            # 진입점이 요청 namespace 밖이면 빈 결과 (issue #98 — id 우회 차단).
             row = s.run(
-                f"MATCH (n:{ENTITY_LABEL} {{id: $id}}) RETURN n",
+                f"MATCH (n:{ENTITY_LABEL} {{id: $id}}) "
+                "WHERE coalesce(n.namespace_id, 'default') = $ns "
+                "RETURN n",
                 id=entry_id,
+                ns=namespace_id,
             ).single()
             if row is None:
                 return NeighborhoodResult(nodes=[], edges=[], truncated=False)
@@ -983,6 +1022,7 @@ class Neo4jGraphRepository(GraphRepository):
                     frontier=frontier_ids,
                     rel_types=relation_types,
                     use_rel_filter=bool(relation_types),
+                    ns=namespace_id,
                 ).data()
                 # 허브 인지 절단 (ADR-0017 방향 3): max_nodes 초과 시 *낮은 degree
                 # (구체적) 이웃을 우선* 남긴다. degree 오름차순으로 처리해 절단이
@@ -1035,6 +1075,7 @@ class Neo4jGraphRepository(GraphRepository):
         relation_types: list[str] | None,
         hops: int,
         max_nodes: int,
+        namespace_id: str = "default",
     ) -> NeighborhoodResult:
         """multi-source BFS — 여러 진입점에서 동시에 확장.
 
@@ -1045,10 +1086,13 @@ class Neo4jGraphRepository(GraphRepository):
         visited_nodes: dict[str, Node] = {}
         boundary_edges: dict[str, Edge] = {}
         with self._driver.session() as s:
-            # 진입점 노드들 (PRD 3 §7.4 — 진입점 포함, dedupe).
+            # 진입점 노드들 (PRD 3 §7.4 — 진입점 포함, dedupe). namespace 밖 진입점은
+            # 무시 (issue #98 — id 우회 차단).
             rows = s.run(
-                f"MATCH (n:{ENTITY_LABEL}) WHERE n.id IN $ids RETURN n",
+                f"MATCH (n:{ENTITY_LABEL}) WHERE n.id IN $ids "
+                "  AND coalesce(n.namespace_id, 'default') = $ns RETURN n",
                 ids=entry_ids,
+                ns=namespace_id,
             ).data()
             for r in rows:
                 node = _node_to_response(r["n"])
@@ -1064,6 +1108,7 @@ class Neo4jGraphRepository(GraphRepository):
                     frontier=frontier_ids,
                     rel_types=relation_types,
                     use_rel_filter=bool(relation_types),
+                    ns=namespace_id,
                 ).data()
                 # 허브 인지 절단 (ADR-0017 방향 3) — expand_neighbors 와 동일 원리.
                 rows = _order_rows_by_degree(rows)
@@ -1112,6 +1157,7 @@ class Neo4jGraphRepository(GraphRepository):
         max_hops: int,
         max_paths: int,
         relation_types: list[str] | None,
+        namespace_id: str = "default",
     ) -> list[PathResult]:
         """k-shortest paths — Cypher `allShortestPaths` + 길이 정렬.
 
@@ -1144,13 +1190,18 @@ class Neo4jGraphRepository(GraphRepository):
         # (2) "같은 적재 run 에서 나왔다" 는 무의미한 다리로 두 엔티티를 잇는
         # 가짜 경로를 만든다. 의미 그래프 경로는 *엔티티 간 관계* (RELATES_TO)
         # 만 따라야 한다 — 크래시 회귀와 가짜 다리를 한 번에 제거.
+        # namespace 격리 (issue #98): 양 끝점 + 경로의 모든 노드가 요청 namespace
+        # 안에 있어야 한다. 다른 namespace 노드를 다리로 쓰는 경로는 제외.
         cypher = """
         MATCH (a:Entity {id: $from_id}), (b:Entity {id: $to_id})
+        WHERE coalesce(a.namespace_id, 'default') = $ns
+          AND coalesce(b.namespace_id, 'default') = $ns
         MATCH p = allShortestPaths((a)-[:%s*1..%d]-(b))
         WITH p,
              [r IN relationships(p) | r.type] AS rel_types,
              length(p) AS len
         WHERE ($filter_rels = false OR all(t IN rel_types WHERE t IN $rel_types))
+          AND all(n IN nodes(p) WHERE coalesce(n.namespace_id, 'default') = $ns)
         RETURN nodes(p) AS nodes,
                [r IN relationships(p) | {
                    id: r.id,
@@ -1170,6 +1221,7 @@ class Neo4jGraphRepository(GraphRepository):
                 to_id=to_id,
                 filter_rels=bool(relation_types),
                 rel_types=relation_types or [],
+                ns=namespace_id,
                 fetch_limit=fetch_limit,
             ).data()
 
@@ -1363,25 +1415,28 @@ def _build_neighbor_expand_cypher(direction: str) -> str:
     # 여기엔 등장하지 않는다(끝점 면제와 정합).
     deg_out = f"COUNT {{ (b)-[:{RELATION_TYPE_LABEL_DEFAULT}]-() }} AS other_degree"
     deg_in = f"COUNT {{ (a)-[:{RELATION_TYPE_LABEL_DEFAULT}]-() }} AS other_degree"
+    # namespace 격리 (issue #98): 확장 대상(other) 노드가 요청 namespace 안일 때만
+    # 따라간다. frontier 는 이미 in-namespace(진입점 검증 + in-namespace 노드만
+    # frontier 에 추가)라 other 만 거르면 순회가 namespace 를 넘지 않는다.
     if direction == "outgoing":
         pattern = f"(a:{ENTITY_LABEL})-[r:{RELATION_TYPE_LABEL_DEFAULT}]->(b:{ENTITY_LABEL})"
         select = f"a.id AS a_id, b.id AS b_id, b AS other, {rel_select}, {deg_out}"
-        where_frontier = "a.id IN $frontier"
+        where_frontier = "a.id IN $frontier AND coalesce(b.namespace_id, 'default') = $ns"
     elif direction == "incoming":
         pattern = f"(a:{ENTITY_LABEL})-[r:{RELATION_TYPE_LABEL_DEFAULT}]->(b:{ENTITY_LABEL})"
         select = f"a.id AS a_id, b.id AS b_id, a AS other, {rel_select}, {deg_in}"
-        where_frontier = "b.id IN $frontier"
+        where_frontier = "b.id IN $frontier AND coalesce(a.namespace_id, 'default') = $ns"
     else:
         # both — Cypher 의 한 쿼리에서 양방향을 한 번에 받으려면 UNION 또는
         # CASE 식이 필요. 가장 단순한 형태로 UNION 사용.
         return (
             f"MATCH (a:{ENTITY_LABEL})-[r:{RELATION_TYPE_LABEL_DEFAULT}]->(b:{ENTITY_LABEL}) "
-            "WHERE a.id IN $frontier "
+            "WHERE a.id IN $frontier AND coalesce(b.namespace_id, 'default') = $ns "
             "AND ($use_rel_filter = false OR r.type IN $rel_types) "
             f"RETURN a.id AS a_id, b.id AS b_id, b AS other, {rel_select}, {deg_out} "
             "UNION "
             f"MATCH (a:{ENTITY_LABEL})-[r:{RELATION_TYPE_LABEL_DEFAULT}]->(b:{ENTITY_LABEL}) "
-            "WHERE b.id IN $frontier "
+            "WHERE b.id IN $frontier AND coalesce(a.namespace_id, 'default') = $ns "
             "AND ($use_rel_filter = false OR r.type IN $rel_types) "
             f"RETURN a.id AS a_id, b.id AS b_id, a AS other, {rel_select}, {deg_in}"
         )

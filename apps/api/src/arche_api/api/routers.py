@@ -98,9 +98,16 @@ def find_entities(
     body: FindEntitiesRequest,
     graph: GraphRepository = Depends(graph_repo_dep),
     embedder: EmbeddingProvider = Depends(embedding_provider_dep),
+    auth: AuthContext = Depends(auth_context_dep),
 ) -> DataEnvelope[FindEntitiesResponse]:
-    """find_entities — services.find_entities 위임."""
-    payload = services.find_entities(body, graph=graph, embedder=embedder)
+    """find_entities — services.find_entities 위임.
+
+    ADR-0015 — namespace 결정: body 명시 > auth header > "default" (issue #98).
+    """
+    namespace_id = body.namespace_id or auth.namespace_id
+    payload = services.find_entities(
+        body, graph=graph, embedder=embedder, namespace_id=namespace_id
+    )
     return DataEnvelope(data=payload)
 
 
@@ -114,9 +121,12 @@ def find_entities(
 def get_schema(
     graph: GraphRepository = Depends(graph_repo_dep),
     settings=Depends(settings_dep),
+    auth: AuthContext = Depends(auth_context_dep),
 ) -> DataEnvelope[GetSchemaResponse]:
-    """그래프 모양 조회 — services.get_schema 위임."""
-    payload = services.get_schema(graph=graph, settings=settings)
+    """그래프 모양 조회 — services.get_schema 위임. namespace = auth header (issue #98)."""
+    payload = services.get_schema(
+        graph=graph, settings=settings, namespace_id=auth.namespace_id
+    )
     return DataEnvelope(data=payload)
 
 
@@ -130,9 +140,15 @@ def get_schema(
 def get_entity(
     entity_id: str,
     graph: GraphRepository = Depends(graph_repo_dep),
+    auth: AuthContext = Depends(auth_context_dep),
 ) -> DataEnvelope[GetEntityResponse]:
-    """ID 로 단일 노드 + 인접 엣지 카운트 — services.get_entity 위임."""
-    payload = services.get_entity(entity_id=entity_id, graph=graph)
+    """ID 로 단일 노드 + 인접 엣지 카운트 — services.get_entity 위임.
+
+    namespace = auth header. 다른 namespace 의 id 는 404 (issue #98 — 우회 차단).
+    """
+    payload = services.get_entity(
+        entity_id=entity_id, graph=graph, namespace_id=auth.namespace_id
+    )
     return DataEnvelope(data=payload)
 
 
@@ -147,19 +163,25 @@ def get_neighbors(
     entity_id: str,
     body: GetNeighborsRequest,
     graph: GraphRepository = Depends(graph_repo_dep),
+    auth: AuthContext = Depends(auth_context_dep),
 ) -> DataEnvelope[GetNeighborsResponse]:
     """진입점의 N-hop 이웃 — services.get_neighbors 위임.
 
     WHY path + body id 일치 검증: PRD 3 §0.1 의 REST + MCP 1:1 매핑 때문 body 에
     도 id 를 *선택* 으로 받는다. REST 호출이 body 의 id 까지 보냈는데 path 의
     entity_id 와 다르면 진입점이 모호해진다 — `invalid_input` 400 으로 분기.
+
+    ADR-0015 — namespace 결정: body 명시 > auth header > "default" (issue #98).
     """
     if body.id is not None and body.id != entity_id:
         raise InvalidInputError(
             "path entity_id and body id mismatch",
             details={"path_entity_id": entity_id, "body_id": body.id},
         )
-    payload = services.get_neighbors(entity_id=entity_id, body=body, graph=graph)
+    namespace_id = body.namespace_id or auth.namespace_id
+    payload = services.get_neighbors(
+        entity_id=entity_id, body=body, graph=graph, namespace_id=namespace_id
+    )
     return DataEnvelope(data=payload)
 
 
@@ -173,9 +195,14 @@ def get_neighbors(
 def find_path(
     body: FindPathRequest,
     graph: GraphRepository = Depends(graph_repo_dep),
+    auth: AuthContext = Depends(auth_context_dep),
 ) -> DataEnvelope[FindPathResponse]:
-    """두 노드 사이 k-shortest path — services.find_path 위임."""
-    payload = services.find_path(body, graph=graph)
+    """두 노드 사이 k-shortest path — services.find_path 위임.
+
+    ADR-0015 — namespace 결정: body 명시 > auth header > "default" (issue #98).
+    """
+    namespace_id = body.namespace_id or auth.namespace_id
+    payload = services.find_path(body, graph=graph, namespace_id=namespace_id)
     return DataEnvelope(data=payload)
 
 
@@ -189,9 +216,14 @@ def find_path(
 def get_subgraph(
     body: GetSubgraphRequest,
     graph: GraphRepository = Depends(graph_repo_dep),
+    auth: AuthContext = Depends(auth_context_dep),
 ) -> DataEnvelope[GetSubgraphResponse]:
-    """여러 진입점 union N-hop — services.get_subgraph 위임."""
-    payload = services.get_subgraph(body, graph=graph)
+    """여러 진입점 union N-hop — services.get_subgraph 위임.
+
+    ADR-0015 — namespace 결정: body 명시 > auth header > "default" (issue #98).
+    """
+    namespace_id = body.namespace_id or auth.namespace_id
+    payload = services.get_subgraph(body, graph=graph, namespace_id=namespace_id)
     return DataEnvelope(data=payload)
 
 

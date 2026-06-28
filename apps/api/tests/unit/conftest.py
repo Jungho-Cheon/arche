@@ -25,7 +25,7 @@ class _FakeGraph:
     def __init__(self, *, exists: bool = True) -> None:
         self._exists = exists
 
-    def entity_exists(self, *, entity_id: str) -> bool:
+    def entity_exists(self, *, entity_id: str, namespace_id: str = "default") -> bool:
         return self._exists
 
 
