@@ -767,6 +767,7 @@ class IngestService:
             depends_on_entity_ids=depends,
             open_questions=open_questions,
             hints=hints,
+            namespace_id=namespace_id,
         )
 
     def resolve_plan(
@@ -818,7 +819,15 @@ class IngestService:
             # hints 인자로 _active_hints set/복원을 처리하므로 별도 래핑 없이
             # 넘기기만 하면 재계획 추출이 같은 [ENRICHMENT] 를 본다. replace 가
             # hints 를 덮어쓰지 않아 refined.hints == plan.hints 로 유지된다.
-            refined = self.plan_file(Path(plan.source_path), hints=plan.hints)
+            # namespace_id 도 plan.namespace_id 로 다시 흘려보낸다 — 재계획이 원
+            # 계획의 namespace 에서 동일성 후보를 찾고 그쪽으로만 쓰게 해, default
+            # 로 되돌아가는 격리 깨짐을 막는다 (issue #92). plan_file 이 이 값을
+            # 반환 계획의 namespace_id 에 새기므로 refined.namespace_id 가 보존된다.
+            refined = self.plan_file(
+                Path(plan.source_path),
+                namespace_id=plan.namespace_id,
+                hints=plan.hints,
+            )
         finally:
             self._active_resolutions = prior
 

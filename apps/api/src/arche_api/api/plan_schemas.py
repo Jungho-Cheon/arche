@@ -30,6 +30,15 @@ class PlanIngestRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     path: str = Field(min_length=1, description="적재 계획을 세울 파일의 절대 경로")
+    # ADR-0015 — 이 계획이 속한 namespace. 미지정 시 "default". 진입점이 이 값을
+    # 도메인 plan_file 로 흘려 비-default namespace 계획이 resolve/commit 까지 그
+    # namespace 안에 머물게 한다 (issue #92 — default 하드코딩 제거). resolve 는
+    # 보관된 plan.namespace_id 를 재사용하므로 별도 입력이 필요 없다.
+    namespace_id: str = Field(
+        default="default",
+        min_length=1,
+        description="ADR-0015 — 계획이 속한 namespace. 미지정 시 'default'",
+    )
     hints: str | None = Field(
         default=None,
         max_length=4000,

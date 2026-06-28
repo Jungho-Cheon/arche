@@ -85,6 +85,31 @@ def test_plan_ingest_without_hints_passes_none(fake_service):
     assert fake_service.last_plan_file_hints is None
 
 
+# ---------- Issue #92: 진입점이 요청의 namespace 를 전달 (default 하드코딩 제거) ----------
+
+
+def test_plan_ingest_forwards_namespace_to_service(fake_service):
+    """plan_ingest 가 요청의 namespace_id 를 도메인 plan_file 로 그대로 전달한다."""
+    reg = PlanRegistry()
+    services.plan_ingest(
+        PlanIngestRequest(path="/tmp/a.md", namespace_id="work-a"),
+        service=fake_service,
+        registry=reg,
+    )
+    assert fake_service.last_plan_file_namespace == "work-a"
+
+
+def test_plan_ingest_without_namespace_defaults(fake_service):
+    """namespace 미지정 시 plan_file 에 "default" 가 전달되는지 (회귀 가드)."""
+    reg = PlanRegistry()
+    services.plan_ingest(
+        PlanIngestRequest(path="/tmp/a.md"),
+        service=fake_service,
+        registry=reg,
+    )
+    assert fake_service.last_plan_file_namespace == "default"
+
+
 # ---------- Important 1: preview 직렬화 (writes → view) ----------
 
 
@@ -182,7 +207,7 @@ def test_plan_ingest_counts_open_questions(make_plan):
     """plan_ingest 의 PlanSummary.open_questions 가 plan.open_questions 길이와 일치."""
 
     class _Stub:
-        def plan_file(self, path, *, hints=None):  # noqa: ANN001, ANN202
+        def plan_file(self, path, *, namespace_id="default", hints=None):  # noqa: ANN001, ANN202
             return make_plan(open_questions=[_ambiguous("q1"), _ambiguous("q2")])
 
     reg = PlanRegistry()
@@ -291,7 +316,7 @@ class _StubPlanService:
     def __init__(self, writes: list[RecordedWrite]) -> None:
         self._writes = writes
 
-    def plan_file(self, path, *, hints=None) -> IngestPlan:  # noqa: ANN001
+    def plan_file(self, path, *, namespace_id="default", hints=None) -> IngestPlan:  # noqa: ANN001
         return IngestPlan(
             plan_id="pln_stub",
             source_path=str(path),

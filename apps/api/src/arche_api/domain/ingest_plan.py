@@ -75,3 +75,10 @@ class IngestPlan:
     # 이 값을 그대로 다시 흘려보내 다듬어진 계획도 같은 보강을 유지한다. NORMAL
     # ingest/plan 은 None.
     hints: str | None = None
+    # namespace_id — 이 계획이 속한 namespace (ADR-0015). plan_file 이 자신이 받은
+    # namespace 를 여기에 기록하고, resolve_plan 이 재계획 시 이 값을 그대로 다시
+    # 흘려보낸다. WHY 보존: 계획이 namespace 를 잃으면 resolve 재계획이 "default" 로
+    # 되돌아가, 비-default namespace 로 만든 계획이 엉뚱한 namespace 에서 동일성
+    # 후보를 찾거나 그쪽으로 쓰여 격리가 깨진다 (issue #92). NORMAL ingest 는 이
+    # 자료구조를 만들지 않으므로 기본값 "default" 는 옛 default-only 동작과 같다.
+    namespace_id: str = "default"

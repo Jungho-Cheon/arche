@@ -43,6 +43,9 @@ class _FakeService:
         self.resolve_calls: list[tuple[IngestPlan, dict[str, str]]] = []
         # plan_file 이 받은 hints 를 기록해 서비스가 입력을 그대로 전달하는지 검증.
         self.last_plan_file_hints: str | None = None
+        # plan_file 이 받은 namespace_id 도 기록 (issue #92 — 진입점이 default 를
+        # 하드코딩하지 않고 요청의 namespace 를 그대로 흘리는지 검증).
+        self.last_plan_file_namespace: str = "default"
 
     def plan_file(
         self, path, *, namespace_id: str = "default", hints: str | None = None
@@ -53,6 +56,7 @@ class _FakeService:
         전달하는지만 보는 더블이라, 추출은 흉내내지 않고 인자만 기록한다.
         """
         self.last_plan_file_hints = hints
+        self.last_plan_file_namespace = namespace_id
         return IngestPlan(
             plan_id="pln_fake",
             source_path=str(path),
