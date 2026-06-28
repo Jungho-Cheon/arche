@@ -78,7 +78,7 @@ Arche = LLM·AI 에이전트가 *도메인 지식의 관계* 를 *최소한의 �
 |---|---|---|
 | 소스 입력 (디렉토리 크롤) | 완료 | `arche ingest <dir>` + `.archeignore` + 자동 제외 + `--dry-run` (#2). `--watch` 는 post-MVP |
 | 엔티티/관계 추출 (멀티모달 LLM) | 완료 | `.txt` / `.md` + 청크 분할 (heading→paragraph→sentence + 20% overlap) 완료 (#3). 동일성은 4 단계 + idempotent 차분 완료 (#4). PDF 페이지 텍스트 + 임베디드 이미지 + 단일 이미지 파일 멀티모달 호출 완료 (#5). 파일별 실패 isolation (PRD 2 §8) 적용 |
-| 그래프 적재 (idempotent) | 완료 | 4 단계 동일성 (정규화 / 별칭 / 임베딩 유사도 0.92) + IngestionRun 기반 차분 적용 (#4) + 청크 분할 (#3) 도 동일성 매처가 청크 경계 무관하게 흡수 |
+| 그래프 적재 (idempotent) | 완료 | 4 단계 동일성 (정규화 / 별칭 / 임베딩 유사도 0.92) + IngestionRun 기반 차분 적용 (#4) + 청크 분할 (#3) 도 동일성 매처가 청크 경계 무관하게 흡수. 동일성 매칭·관계 cross-doc 해소는 namespace 안에서만 (#92 계획 자료구조 + #94 매처/repo 후보 검색, ADR-0015 격리) |
 | 그래프 진입점 인덱싱 (어휘 + dense 하이브리드) | 완료 | fulltext + 벡터 인덱스 + 하이브리드 검색 (lexical + dense, RRF k=60). raw 점수는 `include_scores=true` 로 노출 |
 | Graph Primitives REST API | 완료 | 6 primitive 모두 (`get_schema` / `find_entities` 하이브리드 / `get_entity` + edge_counts / `get_neighbors` BFS + 절단 / `find_path` k-shortest / `get_subgraph` multi-source BFS) + `/healthz` + `/admin/ingest`. OpenAPI 는 `/openapi.json` 으로 노출. MCP 어댑터는 #7. cypher relationship 직렬화 hotfix (#27) — UNION/variable-length 결과를 properties-only RETURN 으로 정규화, get_neighbors body+path id 1:1 매핑 |
 | Graph Primitives MCP 서버 | 완료 (stdio) | `arche mcp serve --stdio` 가 6 primitive 를 표준 MCP tool 로 노출 (#7). REST 와 *동일 입출력 schema* (Pydantic 단일 source). HTTP+SSE 는 post-MVP (PRD 3 §8.1) |
@@ -139,12 +139,14 @@ ADR-0016 측정이 제품 방향을 바꾸면서 (에이전트 반복 graph-only
 | ✅ 완료 | API 에러 계약 정규화 | Pydantic 위반(`RequestValidationError`)을 `invalid_input` ErrorEnvelope 으로 정규화. HTTP 코드는 ADR-0013 D2(422)를 따른다 — 이슈 본문의 옛 400 표기(PRD 3 §9)는 ADR-0013 이 422 로 amend 했고 코드/테스트가 이를 잠그고 있어 422 유지로 확정. `details.errors[]` 를 `flatten_validation_errors` 로 평탄화(`loc` 점 표기 + `type` + `msg`, `input`/`ctx` 제외)해 agent 가 위반 필드를 식별. REST/MCP 동일 헬퍼. 단위+통합 테스트 | #26 |
 | 4 🔒 예산 게이트 (코드 슬라이스 완료) | 결정적 측정 하니스 컬럼 (에이전트 반복 graph-only 고정) | **컬럼 코드+단위 테스트 11개 머지 (PR #86, 키 불필요)** — `eval/columns/arche_agentic.py` ReAct 반복 루프(`max_steps` budget + 반복 가드 + 강제 답변, graph-only 격리). 남은 것: 재현 측정으로 94-97% 재확인(예산 게이트) + 다중 컬럼 `run`/보고서 집계 | [#83](https://github.com/Jungho-Cheon/arche/issues/83) |
 | 후순위 🔒 예산 게이트 | Scale·다도메인·외부 비교 (옛 M9) | 1M 한국어 corpus + 외부 도구 비교 | [#84](https://github.com/Jungho-Cheon/arche/issues/84) |
+| ✅ 완료 | 검토형 적재 계획의 namespace 보존 | `IngestPlan.namespace_id` 추가 — `plan_file` 이 받은 namespace 를 기록, `resolve_plan` 이 그 namespace 로 재계획(default 회귀 방지), `ingest_plan` 진입점이 요청 namespace 전달. PR #91 리뷰의 latent 한계 해소 (단위 회귀 락) | #92 |
+| ✅ 완료 | 동일성 매칭의 namespace 격리 | `EntityMatcher` + repo 후보 검색 3종(`find_by_normalized_name`/`vector_search`/`find_entity_id_by_normalized_name`)을 namespace 로 스코프(Neo4j Cypher `coalesce(namespace_id,'default')` 필터). #92 가 남긴 cross-namespace 과병합 가능성 제거 — 생성 쓰기뿐 아니라 매칭·관계 cross-doc 해소도 같은 namespace 안에서만 (단위 4 + 실 Neo4j 통합 1) | #94 |
 
 상세 측정 근거 — `eval/reports/2026-06-22-graphify-mcq-baseline/` (BREAKTHROUGH-AGENTIC-GRAPHONLY / GENERALIZATION-MEDHOP / SCALE-IS-THE-VARIABLE) + ADR-0016/0017.
 
 ### 백로그 갈무리 (2026-06-26)
 
-코드 이슈(#28 / #78 / #26)는 모두 완료·머지됐다. **남은 백로그 3개(우선순위 1·4·후순위)는 종료 조건이 전부 *eval evidence*(실측 정확도·병합률) 라 LLM API 호출 비용이 든다.** 현재 저장소 환경에는 측정용 API 키가 없어 *지금 비용을 들이지 않고* 각 항목을 grab 가능한 자기완결적 이슈로 정의해 파킹했다. 🔒 예산 게이트 표시 = 예산/키 확보(사람 결정, HITL) 전까지 착수 보류.
+코드 이슈(#28 / #78 / #26 + namespace 격리 #92 / #94)는 모두 완료·머지됐다. **남은 백로그 3개(우선순위 1·4·후순위)는 종료 조건이 전부 *eval evidence*(실측 정확도·병합률) 라 LLM API 호출 비용이 든다.** 현재 저장소 환경에는 측정용 API 키가 없어 *지금 비용을 들이지 않고* 각 항목을 grab 가능한 자기완결적 이슈로 정의해 파킹했다. 🔒 예산 게이트 표시 = 예산/키 확보(사람 결정, HITL) 전까지 착수 보류.
 
 - **#82** (우선순위 1) — 추출 단계 cross-doc 동일성 강화. 1 사이클 약 \$15-20, 강화 라운드 약 \$40-70, MedHop-only 축소안 약 \$10/사이클(gpt-4.1 + text-embedding-3-small 기준 실측 추정).
 - **#83** (우선순위 4) — agentic graph-only 재현 컬럼. *컬럼 코드+단위 테스트는 키 없이 선행 가능*, 94-97% 재측정만 예산 게이트.
