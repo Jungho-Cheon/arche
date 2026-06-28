@@ -99,6 +99,8 @@ Registered only when ingest_service + plan_registry are injected (same gating as
 - Missed-merge only (no low-confidence-merge questions, no arbitrary-target merge).
 - Near-miss against a same-plan pending entity is not detected (vector overlay deferred, inherited).
 - `resolve_plan` re-embeds (extraction cached, embeddings not) — acceptable for slice-1 doc sizes.
+- ~~`resolve_plan` re-plans under the hardcoded `default` namespace, so a non-default-namespace plan would resolve against the wrong namespace.~~ **Resolved (issue #92):** `IngestPlan` now carries `namespace_id`; `plan_file` records it and `resolve_plan` re-plans under `plan.namespace_id`.
+- **Open (issue #94):** the identity matcher (`EntityMatcher` / repo `find_by_normalized_name` + `vector_search`) does not filter candidates by namespace, so cross-namespace candidate matching is still possible even though writes carry the right namespace. True per-namespace isolation needs the matcher and repo queries threaded with `namespace_id`.
 
 ## 8. Test strategy
 

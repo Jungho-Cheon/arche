@@ -631,3 +631,66 @@ def test_resolve_preserves_hints(tmp_path: Path):
     refined = service.resolve_plan(plan, {"q1": "keep"})
 
     assert refined.hints == "GLOSSARY X"
+
+
+# ---------- Issue #92: IngestPlan 에 namespace_id 보존 ----------
+#
+# WHY 회귀 락: 계획 자료구조(IngestPlan)가 namespace 를 담지 않으면 resolve_plan 의
+# 재계획이 plan.namespace_id 를 잃고 "default" 로 되돌아간다. 그러면 비-default
+# namespace(ADR-0015)로 만든 계획이 resolve/commit 시점에 *엉뚱한 default namespace*
+# 로 쓰여 동일성/격리가 깨진다. 아래 테스트는 (1) plan_file 이 받은 namespace 를
+# 계획과 생성 쓰기에 기록하고 (2) resolve_plan 이 그 namespace 를 보존하며 (3) 기존
+# default 경로가 불변임을 못박는다.
+
+
+def test_plan_records_namespace_id_on_plan_and_writes(tmp_path: Path):
+    """plan_file(namespace_id="work-a") 는 계획과 생성 쓰기에 그 namespace 를 새긴다."""
+    doc = tmp_path / "a.md"
+    doc.write_text("Acme Corp acquired Beta Inc.", encoding="utf-8")
+
+    plan = _service(FakeGraph()).plan_file(doc, namespace_id="work-a")
+
+    assert plan.namespace_id == "work-a"
+    creates = [w for w in plan.writes if w.method == "create_entity"]
+    assert creates, "신규 엔티티 생성 쓰기가 있어야 한다"
+    # 모든 신규 엔티티가 지정 namespace 로 들어간다 — 기본값 누수 없음.
+    assert all(w.kwargs["entity"].namespace_id == "work-a" for w in creates)
+
+
+def test_plan_defaults_namespace_to_default(tmp_path: Path):
+    """namespace_id 미지정 plan_file 은 종전대로 "default" 다 (회귀 가드)."""
+    doc = tmp_path / "a.md"
+    doc.write_text("Acme Corp acquired Beta Inc.", encoding="utf-8")
+
+    plan = _service(FakeGraph()).plan_file(doc)
+
+    assert plan.namespace_id == "default"
+    creates = [w for w in plan.writes if w.method == "create_entity"]
+    assert creates
+    assert all(w.kwargs["entity"].namespace_id == "default" for w in creates)
+
+
+def test_resolve_preserves_namespace_id(tmp_path: Path):
+    """resolve_plan 은 plan.namespace_id 로 재계획해 그 namespace 를 보존한다.
+
+    이것이 issue #92 의 핵심 회귀: 재계획이 namespace 를 잃으면 다듬어진 계획의
+    생성 쓰기가 default 로 떨어진다. refined.namespace_id 와 모든 생성 쓰기의
+    namespace 가 원 계획과 같아야 한다.
+    """
+    doc = tmp_path / "acme.md"
+    doc.write_text("Acme Inc raised a round.", encoding="utf-8")
+
+    graph = _NearMissGraph(_band_candidate(0.87))
+    llm = _CountingLLM(FakeLLM(_near_miss_extraction()))
+    service = _resolve_service(graph, llm, tmp_path / "cache")
+
+    plan = service.plan_file(doc, namespace_id="work-a")
+    assert plan.namespace_id == "work-a"
+    assert len(plan.open_questions) == 1
+
+    refined = service.resolve_plan(plan, {"q1": "keep"})
+
+    assert refined.namespace_id == "work-a"
+    creates = [w for w in refined.writes if w.method == "create_entity"]
+    assert creates
+    assert all(w.kwargs["entity"].namespace_id == "work-a" for w in creates)

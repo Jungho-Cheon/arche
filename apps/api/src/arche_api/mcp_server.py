@@ -111,7 +111,9 @@ _TOOL_DESCRIPTIONS: dict[str, str] = {
         "Never plan and commit in one breath. Optionally pass `hints` (a "
         "glossary or domain notes) to improve extraction of a poorly-structured "
         "document; hints never modify the stored source, they only guide "
-        "extraction."
+        "extraction. Optionally pass `namespace_id` to plan into a specific "
+        "namespace (default \"default\"); the plan keeps that namespace through "
+        "preview/resolve/commit, so identity matching and writes stay inside it."
     ),
     "ingest_preview": (
         "Expand a planned change set (by `plan_id`) item by item — the new "
