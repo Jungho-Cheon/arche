@@ -133,16 +133,16 @@ class FakeGraph(GraphRepository):
     def apply_relation_diff(self, *, relation_id, source_path):
         return "missing"
 
-    def find_by_keywords_scored(self, *, keywords, limit_per_keyword):
+    def find_by_keywords_scored(self, *, keywords, limit_per_keyword, namespace_id="default"):
         # 모든 keyword 가 A 만 surface — 단순 케이스.
         return [
             KeywordHit(node=self.a, raw_score=1.0, matched_keyword=keywords[0])
         ]
 
-    def find_entities_dense(self, *, query_embedding, matched_keyword, limit):
+    def find_entities_dense(self, *, query_embedding, matched_keyword, limit, namespace_id="default"):
         return []
 
-    def get_schema_summary(self, *, examples_per_type=5):
+    def get_schema_summary(self, *, examples_per_type=5, namespace_id="default"):
         return (
             [
                 EntityTypeStat(type="coupon", count=1, examples=[(self.a.id, self.a.name)]),
@@ -163,7 +163,7 @@ class FakeGraph(GraphRepository):
             ],
         )
 
-    def get_entity_with_counts(self, *, entity_id):
+    def get_entity_with_counts(self, *, entity_id, namespace_id="default"):
         node = self._nodes.get(entity_id)
         if node is None:
             return None
@@ -177,7 +177,7 @@ class FakeGraph(GraphRepository):
         return EntityWithCounts(node=node, outgoing=outgoing, incoming=incoming)
 
     def expand_neighbors(
-        self, *, entry_id, relation_types, direction, hops, max_nodes
+        self, *, entry_id, relation_types, direction, hops, max_nodes, namespace_id="default"
     ) -> NeighborhoodResult:
         # 단순 1-hop 확장 (direction=both): A → B, B → C.
         nodes: list[Node] = []
@@ -218,7 +218,7 @@ class FakeGraph(GraphRepository):
         return NeighborhoodResult(nodes=nodes, edges=edges, truncated=False)
 
     def expand_subgraph(
-        self, *, entry_ids, relation_types, hops, max_nodes
+        self, *, entry_ids, relation_types, hops, max_nodes, namespace_id="default"
     ) -> NeighborhoodResult:
         nodes: dict[str, Node] = {
             i: self._nodes[i] for i in entry_ids if i in self._nodes
@@ -244,7 +244,7 @@ class FakeGraph(GraphRepository):
         )
 
     def find_shortest_paths(
-        self, *, from_id, to_id, max_hops, max_paths, relation_types
+        self, *, from_id, to_id, max_hops, max_paths, relation_types, namespace_id="default"
     ) -> list[PathResult]:
         # 하드코딩 — A → C 는 A→B→C (len=2). 다른 쌍은 없음.
         if from_id == self.a.id and to_id == self.c.id:
@@ -260,7 +260,7 @@ class FakeGraph(GraphRepository):
     def count_entities_by_namespace(self):
         return {}
 
-    def entity_exists(self, *, entity_id) -> bool:
+    def entity_exists(self, *, entity_id, namespace_id="default") -> bool:
         return entity_id in self._nodes
 
     def get_stored_entity(self, *, entity_id):

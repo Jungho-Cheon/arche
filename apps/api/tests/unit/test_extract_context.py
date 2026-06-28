@@ -92,13 +92,13 @@ class _StubGraph(FakeGraph):
         self._entity_stats = entity_stats or []
         self._relation_stats = relation_stats or []
 
-    def find_by_keywords_scored(self, *, keywords, limit_per_keyword):
+    def find_by_keywords_scored(self, *, keywords, limit_per_keyword, namespace_id="default"):
         hits: list[KeywordHit] = []
         for kw in keywords:
             hits.extend(self._kw_results.get(kw, [])[:limit_per_keyword])
         return hits
 
-    def get_schema_summary(self, *, examples_per_type=5):
+    def get_schema_summary(self, *, examples_per_type=5, namespace_id="default"):
         return self._entity_stats, self._relation_stats
 
 

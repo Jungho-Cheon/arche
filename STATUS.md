@@ -80,7 +80,7 @@ Arche = LLM·AI 에이전트가 *도메인 지식의 관계* 를 *최소한의 �
 | 엔티티/관계 추출 (멀티모달 LLM) | 완료 | `.txt` / `.md` + 청크 분할 (heading→paragraph→sentence + 20% overlap) 완료 (#3). 동일성은 4 단계 + idempotent 차분 완료 (#4). PDF 페이지 텍스트 + 임베디드 이미지 + 단일 이미지 파일 멀티모달 호출 완료 (#5). 파일별 실패 isolation (PRD 2 §8) 적용 |
 | 그래프 적재 (idempotent) | 완료 | 4 단계 동일성 (정규화 / 별칭 / 임베딩 유사도 0.92) + IngestionRun 기반 차분 적용 (#4) + 청크 분할 (#3) 도 동일성 매처가 청크 경계 무관하게 흡수. 동일성 매칭·관계 cross-doc 해소는 namespace 안에서만 (#92 계획 자료구조 + #94 매처/repo 후보 검색, ADR-0015 격리) |
 | 그래프 진입점 인덱싱 (어휘 + dense 하이브리드) | 완료 | fulltext + 벡터 인덱스 + 하이브리드 검색 (lexical + dense, RRF k=60). raw 점수는 `include_scores=true` 로 노출 |
-| Graph Primitives REST API | 완료 | 6 primitive 모두 (`get_schema` / `find_entities` 하이브리드 / `get_entity` + edge_counts / `get_neighbors` BFS + 절단 / `find_path` k-shortest / `get_subgraph` multi-source BFS) + `/healthz` + `/admin/ingest`. OpenAPI 는 `/openapi.json` 으로 노출. MCP 어댑터는 #7. cypher relationship 직렬화 hotfix (#27) — UNION/variable-length 결과를 properties-only RETURN 으로 정규화, get_neighbors body+path id 1:1 매핑 |
+| Graph Primitives REST API | 완료 | 6 primitive 모두 (`get_schema` / `find_entities` 하이브리드 / `get_entity` + edge_counts / `get_neighbors` BFS + 절단 / `find_path` k-shortest / `get_subgraph` multi-source BFS) + `/healthz` + `/admin/ingest`. OpenAPI 는 `/openapi.json` 으로 노출. MCP 어댑터는 #7. cypher relationship 직렬화 hotfix (#27) — UNION/variable-length 결과를 properties-only RETURN 으로 정규화, get_neighbors body+path id 1:1 매핑. 읽기 6종 모두 namespace 로 격리 (#98) — REST 는 auth header > body > "default", MCP 는 도구 인자 `namespace_id`, Neo4j Cypher 가 `coalesce(namespace_id,'default')` 로 필터 |
 | Graph Primitives MCP 서버 | 완료 (stdio) | `arche mcp serve --stdio` 가 6 primitive 를 표준 MCP tool 로 노출 (#7). REST 와 *동일 입출력 schema* (Pydantic 단일 source). HTTP+SSE 는 post-MVP (PRD 3 §8.1) |
 | 청크 벡터 RAG 베이스라인 하니스 | 완료 | #15 머지 (eval/). PDF 어댑터 연결 완료 — PDF 텍스트 페이지를 청크 소스로 사용 (#14). 이미지 입력은 PRD 4 §2 의 통제 변수 정책으로 무시 + warning 로그 |
 | Full-context LLM 베이스라인 하니스 | 완료 | #15 머지 (eval/). PDF/이미지 어댑터 연결 완료 — PDF 텍스트는 직렬화 본문에, 이미지 파일 + PDF 이미지 페이지는 멀티모달 user content 로 동봉 (#14) |
@@ -141,12 +141,13 @@ ADR-0016 측정이 제품 방향을 바꾸면서 (에이전트 반복 graph-only
 | 후순위 🔒 예산 게이트 | Scale·다도메인·외부 비교 (옛 M9) | 1M 한국어 corpus + 외부 도구 비교 | [#84](https://github.com/Jungho-Cheon/arche/issues/84) |
 | ✅ 완료 | 검토형 적재 계획의 namespace 보존 | `IngestPlan.namespace_id` 추가 — `plan_file` 이 받은 namespace 를 기록, `resolve_plan` 이 그 namespace 로 재계획(default 회귀 방지), `ingest_plan` 진입점이 요청 namespace 전달. PR #91 리뷰의 latent 한계 해소 (단위 회귀 락) | #92 |
 | ✅ 완료 | 동일성 매칭의 namespace 격리 | `EntityMatcher` + repo 후보 검색 3종(`find_by_normalized_name`/`vector_search`/`find_entity_id_by_normalized_name`)을 namespace 로 스코프(Neo4j Cypher `coalesce(namespace_id,'default')` 필터). #92 가 남긴 cross-namespace 과병합 가능성 제거 — 생성 쓰기뿐 아니라 매칭·관계 cross-doc 해소도 같은 namespace 안에서만 (단위 4 + 실 Neo4j 통합 1) | #94 |
+| ✅ 완료 | 읽기 경로 namespace 격리 | 그래프 primitive 질의 6종(`find_entities`/`get_entity`/`get_neighbors`/`find_path`/`get_subgraph`/`get_schema`) + repo 읽기 메서드 7종을 namespace 로 스코프. REST 는 auth header > body > "default", MCP 는 도구 인자. #92/#94(쓰기·매칭)의 대칭 — 이제 다른 namespace 데이터가 검색·조회·순회에서 새지 않는다. 부분 공유(여러 namespace 동시 가시성)는 범위 밖 (단위 wiring 3 + 실 Neo4j 통합 4) | #98 |
 
 상세 측정 근거 — `eval/reports/2026-06-22-graphify-mcq-baseline/` (BREAKTHROUGH-AGENTIC-GRAPHONLY / GENERALIZATION-MEDHOP / SCALE-IS-THE-VARIABLE) + ADR-0016/0017.
 
 ### 백로그 갈무리 (2026-06-26)
 
-코드 이슈(#28 / #78 / #26 + namespace 격리 #92 / #94)는 모두 완료·머지됐다. **남은 백로그 3개(우선순위 1·4·후순위)는 종료 조건이 전부 *eval evidence*(실측 정확도·병합률) 라 LLM API 호출 비용이 든다.** 현재 저장소 환경에는 측정용 API 키가 없어 *지금 비용을 들이지 않고* 각 항목을 grab 가능한 자기완결적 이슈로 정의해 파킹했다. 🔒 예산 게이트 표시 = 예산/키 확보(사람 결정, HITL) 전까지 착수 보류.
+코드 이슈(#28 / #78 / #26 + namespace 격리 #92 / #94 / #98)는 모두 완료·머지됐다. **남은 백로그 3개(우선순위 1·4·후순위)는 종료 조건이 전부 *eval evidence*(실측 정확도·병합률) 라 LLM API 호출 비용이 든다.** 현재 저장소 환경에는 측정용 API 키가 없어 *지금 비용을 들이지 않고* 각 항목을 grab 가능한 자기완결적 이슈로 정의해 파킹했다. 🔒 예산 게이트 표시 = 예산/키 확보(사람 결정, HITL) 전까지 착수 보류.
 
 - **#82** (우선순위 1) — 추출 단계 cross-doc 동일성 강화. 1 사이클 약 \$15-20, 강화 라운드 약 \$40-70, MedHop-only 축소안 약 \$10/사이클(gpt-4.1 + text-embedding-3-small 기준 실측 추정).
 - **#83** (우선순위 4) — agentic graph-only 재현 컬럼. *컬럼 코드+단위 테스트는 키 없이 선행 가능*, 94-97% 재측정만 예산 게이트.

@@ -139,6 +139,8 @@ class GetNeighborsRequest(BaseModel):
     direction: str = Field(default="both", pattern=r"^(outgoing|incoming|both)$")
     hops: int = Field(default=1, ge=1, le=5)
     max_nodes: int = Field(default=100, ge=1, le=500)
+    # ADR-0015 — 순회할 namespace. 미지정 시 auth 헤더(REST) 또는 "default" (issue #98).
+    namespace_id: str | None = Field(default=None, min_length=1)
 
 
 class GetNeighborsResponse(BaseModel):
@@ -164,6 +166,8 @@ class FindPathRequest(BaseModel):
     max_hops: int = Field(default=4, ge=1, le=6)
     max_paths: int = Field(default=5, ge=1, le=20)
     relation_types: list[str] | None = None
+    # ADR-0015 — 경로를 찾을 namespace. 미지정 시 auth 헤더(REST) 또는 "default" (#98).
+    namespace_id: str | None = Field(default=None, min_length=1)
 
 
 class PathSegment(BaseModel):
@@ -206,6 +210,8 @@ class GetSubgraphRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     entry_ids: list[str] = Field(min_length=1, max_length=20)
+    # ADR-0015 — 순회할 namespace. 미지정 시 auth 헤더(REST) 또는 "default" (issue #98).
+    namespace_id: str | None = Field(default=None, min_length=1)
     hops: int = Field(default=2, ge=1, le=4)
     # 2026-06-22: 상한 1000 → 5000. clamp 수정으로 큰 서브그래프 500 크래시가
     # 사라졌고, max_nodes 300→1000 sweep 에서 정답률이 recall 회복으로 +9pp

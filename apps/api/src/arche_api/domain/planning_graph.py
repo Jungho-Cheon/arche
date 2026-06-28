@@ -140,33 +140,41 @@ class PlanningGraphRepository(GraphRepository):
     def find_latest_succeeded_run(self, *, source_path: str) -> IngestionRunRecord | None:
         return self._real.find_latest_succeeded_run(source_path=source_path)
 
-    def get_schema_summary(self, *, examples_per_type: int = 5
+    def get_schema_summary(self, *, examples_per_type: int = 5,
+                           namespace_id: str = "default"
                            ) -> tuple[list[EntityTypeStat], list[RelationTypeStat]]:
-        return self._real.get_schema_summary(examples_per_type=examples_per_type)
+        return self._real.get_schema_summary(
+            examples_per_type=examples_per_type, namespace_id=namespace_id)
 
-    def get_entity_with_counts(self, *, entity_id: str) -> EntityWithCounts | None:
-        return self._real.get_entity_with_counts(entity_id=entity_id)
+    def get_entity_with_counts(self, *, entity_id: str, namespace_id: str = "default"
+                               ) -> EntityWithCounts | None:
+        return self._real.get_entity_with_counts(
+            entity_id=entity_id, namespace_id=namespace_id)
 
     def expand_neighbors(self, *, entry_id: str, relation_types, direction: str,
-                         hops: int, max_nodes: int) -> NeighborhoodResult:
+                         hops: int, max_nodes: int, namespace_id: str = "default"
+                         ) -> NeighborhoodResult:
         return self._real.expand_neighbors(
             entry_id=entry_id, relation_types=relation_types, direction=direction,
-            hops=hops, max_nodes=max_nodes)
+            hops=hops, max_nodes=max_nodes, namespace_id=namespace_id)
 
     def expand_subgraph(self, *, entry_ids, relation_types, hops: int,
-                        max_nodes: int) -> NeighborhoodResult:
+                        max_nodes: int, namespace_id: str = "default"
+                        ) -> NeighborhoodResult:
         return self._real.expand_subgraph(
             entry_ids=entry_ids, relation_types=relation_types, hops=hops,
-            max_nodes=max_nodes)
+            max_nodes=max_nodes, namespace_id=namespace_id)
 
     def find_shortest_paths(self, *, from_id: str, to_id: str, max_hops: int,
-                            max_paths: int, relation_types) -> list[PathResult]:
+                            max_paths: int, relation_types,
+                            namespace_id: str = "default") -> list[PathResult]:
         return self._real.find_shortest_paths(
             from_id=from_id, to_id=to_id, max_hops=max_hops, max_paths=max_paths,
-            relation_types=relation_types)
+            relation_types=relation_types, namespace_id=namespace_id)
 
-    def entity_exists(self, *, entity_id: str) -> bool:
-        return self._real.entity_exists(entity_id=entity_id)
+    def entity_exists(self, *, entity_id: str, namespace_id: str = "default") -> bool:
+        return self._real.entity_exists(
+            entity_id=entity_id, namespace_id=namespace_id)
 
     def count_entities_by_namespace(self) -> dict[str, int]:
         return self._real.count_entities_by_namespace()
@@ -185,11 +193,13 @@ class PlanningGraphRepository(GraphRepository):
         )
 
     def find_entities_dense(self, *, query_embedding, matched_keyword: str,
-                            limit: int) -> list[DenseHit]:
+                            limit: int, namespace_id: str = "default") -> list[DenseHit]:
         return self._real.find_entities_dense(
-            query_embedding=query_embedding, matched_keyword=matched_keyword, limit=limit)
+            query_embedding=query_embedding, matched_keyword=matched_keyword,
+            limit=limit, namespace_id=namespace_id)
 
-    def find_by_keywords_scored(self, *, keywords, limit_per_keyword: int
-                                ) -> list[KeywordHit]:
+    def find_by_keywords_scored(self, *, keywords, limit_per_keyword: int,
+                                namespace_id: str = "default") -> list[KeywordHit]:
         return self._real.find_by_keywords_scored(
-            keywords=keywords, limit_per_keyword=limit_per_keyword)
+            keywords=keywords, limit_per_keyword=limit_per_keyword,
+            namespace_id=namespace_id)

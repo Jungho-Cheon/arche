@@ -257,6 +257,7 @@ class VectorIndex(ABC):
         query_embedding: list[float],
         matched_keyword: str,
         limit: int,
+        namespace_id: str = "default",
     ) -> list[DenseHit]:
         """단일 query embedding 에 대한 ANN top-k 결과.
 
@@ -266,6 +267,8 @@ class VectorIndex(ABC):
 
         raw_score = cosine similarity (0..1). Neo4j vector index 의 score 가
         cosine 모드면 그대로 사용.
+
+        namespace_id — 검색을 이 namespace 안으로 가둔다 (issue #98 읽기 격리).
         """
 
 
@@ -278,12 +281,18 @@ class LexicalIndex(ABC):
 
     @abstractmethod
     def find_by_keywords_scored(
-        self, *, keywords: list[str], limit_per_keyword: int
+        self,
+        *,
+        keywords: list[str],
+        limit_per_keyword: int,
+        namespace_id: str = "default",
     ) -> list[KeywordHit]:
         """각 keyword 별로 fulltext 매칭 결과를 반환 (raw Lucene 점수 포함).
 
         같은 노드가 여러 keyword 에서 매칭될 수 있으므로 union/dedup 은 호출자
         책임 (PRD 3 §3.5).
+
+        namespace_id — 검색을 이 namespace 안으로 가둔다 (issue #98 읽기 격리).
         """
 
 
@@ -453,18 +462,26 @@ class GraphStore(ABC):
 
     @abstractmethod
     def get_schema_summary(
-        self, *, examples_per_type: int = 5
+        self, *, examples_per_type: int = 5, namespace_id: str = "default"
     ) -> tuple[list[EntityTypeStat], list[RelationTypeStat]]:
         """get_schema 의 entity_types + relation_types 통계.
 
         examples_per_type — 각 엔티티 타입에서 노출할 example 노드 수 (PRD 3 §2.3
         maxItems 5). 결정 (선택 기준) 은 어댑터 내부에 둔다 (id 사전순, 또는 가장
         최근 갱신).
+
+        namespace_id — 통계를 이 namespace 안으로 가둔다 (issue #98 읽기 격리).
         """
 
     @abstractmethod
-    def get_entity_with_counts(self, *, entity_id: str) -> EntityWithCounts | None:
-        """단일 노드 + 인접 엣지의 (방향 × type) 카운트. 없으면 None."""
+    def get_entity_with_counts(
+        self, *, entity_id: str, namespace_id: str = "default"
+    ) -> EntityWithCounts | None:
+        """단일 노드 + 인접 엣지의 (방향 × type) 카운트. 없으면 None.
+
+        namespace_id — 노드가 이 namespace 밖이면 None (id 로 다른 namespace 를
+        우회 조회하지 못하게, issue #98).
+        """
 
     @abstractmethod
     def expand_neighbors(
@@ -475,11 +492,14 @@ class GraphStore(ABC):
         direction: str,
         hops: int,
         max_nodes: int,
+        namespace_id: str = "default",
     ) -> NeighborhoodResult:
         """진입점 1 개의 N-hop 이웃 + 경계 엣지. 진입점 포함.
 
         잘림 정책: 진입점에서 *거리 가까운 순* (BFS hop level) 정렬 후 max_nodes
         에서 절단. 그래프 DB 의 native 한도가 더 작으면 절단도 자연스럽게 그대로.
+
+        namespace_id — 진입점·이웃 모두 이 namespace 안의 노드만 (issue #98).
         """
 
     @abstractmethod
@@ -490,10 +510,13 @@ class GraphStore(ABC):
         relation_types: list[str] | None,
         hops: int,
         max_nodes: int,
+        namespace_id: str = "default",
     ) -> NeighborhoodResult:
         """여러 진입점 N-hop union. 노드/엣지 dedupe.
 
         잘림 정책: 진입점들 중 *최단 거리* 기준 (multi-source BFS) 가까운 순.
+
+        namespace_id — 진입점·이웃 모두 이 namespace 안의 노드만 (issue #98).
         """
 
     @abstractmethod
@@ -505,17 +528,23 @@ class GraphStore(ABC):
         max_hops: int,
         max_paths: int,
         relation_types: list[str] | None,
+        namespace_id: str = "default",
     ) -> list[PathResult]:
         """from → to 의 k-shortest paths. 경로 없으면 빈 리스트.
 
         from/to 의 존재 여부 자체는 호출자가 별도 확인 (entity_not_found 매핑이
         라우터 책임). 본 메서드는 *경로가 없을 때* 와 *노드가 없을 때* 를 둘 다
         빈 리스트로 돌릴 수 있으므로 라우터가 노드 존재 여부를 별도 검증한다.
+
+        namespace_id — 경로의 모든 노드가 이 namespace 안에 있어야 한다 (issue #98).
         """
 
     @abstractmethod
-    def entity_exists(self, *, entity_id: str) -> bool:
-        """단일 ID 가 그래프에 존재하는지 — find_path / get_neighbors 의 사전 검증."""
+    def entity_exists(
+        self, *, entity_id: str, namespace_id: str = "default"
+    ) -> bool:
+        """단일 ID 가 *이 namespace 안에* 존재하는지 — find_path / get_neighbors 의
+        사전 검증. namespace 밖 노드는 없는 것으로 본다 (issue #98)."""
 
     @abstractmethod
     def count_entities_by_namespace(self) -> dict[str, int]:

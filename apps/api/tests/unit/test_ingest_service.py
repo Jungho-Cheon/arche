@@ -316,17 +316,17 @@ class FakeGraph(GraphRepository):
         return "trimmed"
 
     # -- 검색 (현 슬라이스 검증 범위 밖) --
-    def find_by_keywords_scored(self, *, keywords, limit_per_keyword):
+    def find_by_keywords_scored(self, *, keywords, limit_per_keyword, namespace_id="default"):
         return []
 
-    def find_entities_dense(self, *, query_embedding, matched_keyword, limit):
+    def find_entities_dense(self, *, query_embedding, matched_keyword, limit, namespace_id="default"):
         return []
 
     # -- 5 primitive read (ingest 슬라이스 검증 범위 밖) --
-    def get_schema_summary(self, *, examples_per_type=5):
+    def get_schema_summary(self, *, examples_per_type=5, namespace_id="default"):
         return ([], [])
 
-    def get_entity_with_counts(self, *, entity_id):
+    def get_entity_with_counts(self, *, entity_id, namespace_id="default"):
         return None
 
     def expand_neighbors(
@@ -337,6 +337,7 @@ class FakeGraph(GraphRepository):
         direction,
         hops,
         max_nodes,
+        namespace_id="default",
     ):
         from arche_api.domain.ports import NeighborhoodResult
 
@@ -349,6 +350,7 @@ class FakeGraph(GraphRepository):
         relation_types,
         hops,
         max_nodes,
+        namespace_id="default",
     ):
         from arche_api.domain.ports import NeighborhoodResult
 
@@ -362,13 +364,14 @@ class FakeGraph(GraphRepository):
         max_hops,
         max_paths,
         relation_types,
+        namespace_id="default",
     ):
         return []
 
     def count_entities_by_namespace(self):
         return {}
 
-    def entity_exists(self, *, entity_id):
+    def entity_exists(self, *, entity_id, namespace_id="default"):
         return entity_id in self._entities
 
     def get_stored_entity(self, *, entity_id):

@@ -90,9 +90,15 @@ def get_schema(
     *,
     graph: GraphRepository,
     settings: Settings,
+    namespace_id: str = "default",
 ) -> GetSchemaResponse:
-    """그래프 모양 조회 — entity_types / relation_types / embedding_info."""
-    entity_stats, relation_stats = graph.get_schema_summary(examples_per_type=5)
+    """그래프 모양 조회 — entity_types / relation_types / embedding_info.
+
+    namespace_id — 통계를 이 namespace 안으로 가둔다 (issue #98 읽기 격리).
+    """
+    entity_stats, relation_stats = graph.get_schema_summary(
+        examples_per_type=5, namespace_id=namespace_id
+    )
     return GetSchemaResponse(
         entity_types=[
             EntityTypeSummary(
@@ -131,6 +137,7 @@ def find_entities(
     *,
     graph: GraphRepository,
     embedder: EmbeddingProvider,
+    namespace_id: str = "default",
 ) -> FindEntitiesResponse:
     """어휘 + dense 하이브리드 + RRF (k=60).
 
@@ -147,7 +154,7 @@ def find_entities(
     per_kw = min(50, max(body.limit * 2, 10))
 
     lexical_hits = graph.find_by_keywords_scored(
-        keywords=body.keywords, limit_per_keyword=per_kw
+        keywords=body.keywords, limit_per_keyword=per_kw, namespace_id=namespace_id
     )
 
     # dense path — 각 keyword 별 임베딩 1 회 → ANN.
@@ -174,7 +181,10 @@ def find_entities(
     for kw, vec in zip(body.keywords, keyword_vectors, strict=True):
         dense_hits.extend(
             graph.find_entities_dense(
-                query_embedding=vec, matched_keyword=kw, limit=per_kw
+                query_embedding=vec,
+                matched_keyword=kw,
+                limit=per_kw,
+                namespace_id=namespace_id,
             )
         )
 
@@ -318,12 +328,16 @@ def get_entity(
     *,
     entity_id: str,
     graph: GraphRepository,
+    namespace_id: str = "default",
 ) -> GetEntityResponse:
     """ID 로 단일 노드 + 인접 엣지 카운트 조회.
 
-    엔티티 없으면 EntityNotFoundError (REST 404 / MCP entity_not_found).
+    엔티티 없으면 EntityNotFoundError (REST 404 / MCP entity_not_found). 다른
+    namespace 의 노드도 *없는 것* 으로 본다 (issue #98 — id 우회 차단).
     """
-    result = graph.get_entity_with_counts(entity_id=entity_id)
+    result = graph.get_entity_with_counts(
+        entity_id=entity_id, namespace_id=namespace_id
+    )
     if result is None:
         raise EntityNotFoundError(
             f"entity not found: {entity_id}", details={"id": entity_id}
@@ -344,9 +358,10 @@ def get_neighbors(
     entity_id: str,
     body: GetNeighborsRequest,
     graph: GraphRepository,
+    namespace_id: str = "default",
 ) -> GetNeighborsResponse:
-    """진입점의 N-hop 이웃. 진입점 노드 포함."""
-    if not graph.entity_exists(entity_id=entity_id):
+    """진입점의 N-hop 이웃. 진입점 노드 포함. 순회는 이 namespace 안에서만 (#98)."""
+    if not graph.entity_exists(entity_id=entity_id, namespace_id=namespace_id):
         raise EntityNotFoundError(
             f"entity not found: {entity_id}", details={"id": entity_id}
         )
@@ -356,6 +371,7 @@ def get_neighbors(
         direction=body.direction,
         hops=body.hops,
         max_nodes=body.max_nodes,
+        namespace_id=namespace_id,
     )
     return GetNeighborsResponse(
         nodes=result.nodes,
@@ -371,11 +387,12 @@ def find_path(
     body: FindPathRequest,
     *,
     graph: GraphRepository,
+    namespace_id: str = "default",
 ) -> FindPathResponse:
-    """두 노드 사이 k-shortest path.
+    """두 노드 사이 k-shortest path. 양 끝점·경로 모두 이 namespace 안에서만 (#98).
 
     422 unprocessable: from_id == to_id.
-    404 entity_not_found: from 또는 to 가 그래프에 없음.
+    404 entity_not_found: from 또는 to 가 (이 namespace 의) 그래프에 없음.
     200 + paths=[]: 노드는 있지만 max_hops / relation_types 제약 안에서 경로 없음.
     """
     if body.from_id == body.to_id:
@@ -383,11 +400,11 @@ def find_path(
             "from_id and to_id must differ",
             details={"from_id": body.from_id, "to_id": body.to_id},
         )
-    if not graph.entity_exists(entity_id=body.from_id):
+    if not graph.entity_exists(entity_id=body.from_id, namespace_id=namespace_id):
         raise EntityNotFoundError(
             f"entity not found: {body.from_id}", details={"id": body.from_id}
         )
-    if not graph.entity_exists(entity_id=body.to_id):
+    if not graph.entity_exists(entity_id=body.to_id, namespace_id=namespace_id):
         raise EntityNotFoundError(
             f"entity not found: {body.to_id}", details={"id": body.to_id}
         )
@@ -397,6 +414,7 @@ def find_path(
         max_hops=body.max_hops,
         max_paths=body.max_paths,
         relation_types=body.relation_types,
+        namespace_id=namespace_id,
     )
     return FindPathResponse(
         paths=[
@@ -415,17 +433,20 @@ def get_subgraph(
     body: GetSubgraphRequest,
     *,
     graph: GraphRepository,
+    namespace_id: str = "default",
 ) -> GetSubgraphResponse:
-    """여러 진입점 union N-hop. 진입점 echo 포함.
+    """여러 진입점 union N-hop. 진입점 echo 포함. 이 namespace 안에서만 확장 (#98).
 
     진입점 중 일부가 그래프에 없으면 — 별도 entity_not_found 를 raise 하지 않고
     *존재하는 것만* 확장한다 (PRD 3 §11 미정 결정 — 본 PR 의 합리적 결정).
+    namespace 밖 진입점도 같은 정책으로 *조용히 무시* 한다 (issue #98).
     """
     result = graph.expand_subgraph(
         entry_ids=body.entry_ids,
         relation_types=body.relation_types,
         hops=body.hops,
         max_nodes=body.max_nodes,
+        namespace_id=namespace_id,
     )
     return GetSubgraphResponse(
         nodes=result.nodes,

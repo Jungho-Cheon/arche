@@ -336,17 +336,34 @@ def _dispatch_tool(
     ingest_service: IngestService | None = None,
     plan_registry: PlanRegistry | None = None,
 ) -> BaseModel:
-    """단일 tool 호출을 services 로 위임. 입력 검증 실패는 ValidationError 로 전파."""
+    """단일 tool 호출을 services 로 위임. 입력 검증 실패는 ValidationError 로 전파.
+
+    WHY namespace: MCP(stdio)는 HTTP auth 가 없으므로 질의 namespace 를 도구 인자의
+    `namespace_id`(미지정 시 "default")로 받는다 (issue #98 읽기 격리). REST 는 auth
+    header 로 결정 — 두 표면이 같은 services 함수에 namespace 를 흘려보낸다.
+    """
+    # 인자에 실린 namespace (없으면 "default"). 4 body 도구는 검증된 body 에서,
+    # get_schema/get_entity 는 인자 dict 에서 직접 꺼낸다.
+    arg_ns = arguments.get("namespace_id") or "default"
     if name == "get_schema":
-        return services.get_schema(graph=graph, settings=settings)
+        return services.get_schema(
+            graph=graph, settings=settings, namespace_id=arg_ns
+        )
     if name == "find_entities":
         body = FindEntitiesRequest.model_validate(arguments)
-        return services.find_entities(body, graph=graph, embedder=embedder)
+        return services.find_entities(
+            body,
+            graph=graph,
+            embedder=embedder,
+            namespace_id=body.namespace_id or "default",
+        )
     if name == "get_entity":
         entity_id = arguments.get("id")
         if not isinstance(entity_id, str):
             raise ValueError("`id` is required and must be a string")
-        return services.get_entity(entity_id=entity_id, graph=graph)
+        return services.get_entity(
+            entity_id=entity_id, graph=graph, namespace_id=arg_ns
+        )
     if name == "get_neighbors":
         # WHY id 분리: services.get_neighbors 는 entity_id 와 body 를 분리해 받는
         # 다. MCP 입력은 한 객체이므로 id 만 떼어 body 모델에 검증을 맡긴다.
@@ -355,13 +372,22 @@ def _dispatch_tool(
         if not isinstance(entity_id, str):
             raise ValueError("`id` is required and must be a string")
         body = GetNeighborsRequest.model_validate(args)
-        return services.get_neighbors(entity_id=entity_id, body=body, graph=graph)
+        return services.get_neighbors(
+            entity_id=entity_id,
+            body=body,
+            graph=graph,
+            namespace_id=body.namespace_id or "default",
+        )
     if name == "find_path":
         body = FindPathRequest.model_validate(arguments)
-        return services.find_path(body, graph=graph)
+        return services.find_path(
+            body, graph=graph, namespace_id=body.namespace_id or "default"
+        )
     if name == "get_subgraph":
         body = GetSubgraphRequest.model_validate(arguments)
-        return services.get_subgraph(body, graph=graph)
+        return services.get_subgraph(
+            body, graph=graph, namespace_id=body.namespace_id or "default"
+        )
     # reviewable ingest — service/registry 가 주입된 서버에서만 등록되므로, 여기
     # 도달했다면 둘 다 존재한다. 방어적으로 None 을 막는다.
     if name in INGEST_TOOL_NAMES:

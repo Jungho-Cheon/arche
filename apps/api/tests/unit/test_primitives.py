@@ -165,16 +165,16 @@ class PrimitiveStubGraph(GraphRepository):
     def apply_relation_diff(self, *, relation_id, source_path):
         return "missing"
 
-    def find_by_keywords_scored(self, *, keywords, limit_per_keyword):
+    def find_by_keywords_scored(self, *, keywords, limit_per_keyword, namespace_id="default"):
         return []
 
-    def find_entities_dense(self, *, query_embedding, matched_keyword, limit):
+    def find_entities_dense(self, *, query_embedding, matched_keyword, limit, namespace_id="default"):
         return []
 
-    def get_schema_summary(self, *, examples_per_type=5):
+    def get_schema_summary(self, *, examples_per_type=5, namespace_id="default"):
         return (self._entity_type_stats, self._relation_type_stats)
 
-    def get_entity_with_counts(self, *, entity_id):
+    def get_entity_with_counts(self, *, entity_id, namespace_id="default"):
         node = self._nodes_by_id.get(entity_id)
         if node is None:
             return None
@@ -186,14 +186,14 @@ class PrimitiveStubGraph(GraphRepository):
         )
 
     def expand_neighbors(
-        self, *, entry_id, relation_types, direction, hops, max_nodes
+        self, *, entry_id, relation_types, direction, hops, max_nodes, namespace_id="default"
     ) -> NeighborhoodResult:
         if self._neighbors_result is not None:
             return self._neighbors_result
         return NeighborhoodResult(nodes=[], edges=[], truncated=False)
 
     def expand_subgraph(
-        self, *, entry_ids, relation_types, hops, max_nodes
+        self, *, entry_ids, relation_types, hops, max_nodes, namespace_id="default"
     ) -> NeighborhoodResult:
         if self._subgraph_result is not None:
             return self._subgraph_result
@@ -201,14 +201,14 @@ class PrimitiveStubGraph(GraphRepository):
         return NeighborhoodResult(nodes=kept, edges=[], truncated=False)
 
     def find_shortest_paths(
-        self, *, from_id, to_id, max_hops, max_paths, relation_types
+        self, *, from_id, to_id, max_hops, max_paths, relation_types, namespace_id="default"
     ) -> list[PathResult]:
         return self._paths_result
 
     def count_entities_by_namespace(self):
         return {}
 
-    def entity_exists(self, *, entity_id) -> bool:
+    def entity_exists(self, *, entity_id, namespace_id="default") -> bool:
         return entity_id in self._nodes_by_id
 
     def get_stored_entity(self, *, entity_id):
