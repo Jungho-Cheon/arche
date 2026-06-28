@@ -97,17 +97,31 @@ class PlanningGraphRepository(GraphRepository):
 
     # ---------- 읽기: 오버레이 후 위임 ----------
 
-    def find_by_normalized_name(self, *, normalized: str, type_: str) -> StoredEntity | None:
+    def find_by_normalized_name(
+        self, *, normalized: str, type_: str, namespace_id: str = "default"
+    ) -> StoredEntity | None:
+        # 오버레이도 namespace 로 거른다 (issue #94) — 계획은 단일 namespace 라
+        # 보통 일치하지만, cross-namespace 후보를 다리로 쓰지 않도록 명시.
         pend = self._pending_by_norm.get(normalized)
-        if pend is not None and pend.type == type_:
+        if (
+            pend is not None
+            and pend.type == type_
+            and (pend.namespace_id or "default") == namespace_id
+        ):
             return pend
-        return self._real.find_by_normalized_name(normalized=normalized, type_=type_)
+        return self._real.find_by_normalized_name(
+            normalized=normalized, type_=type_, namespace_id=namespace_id
+        )
 
-    def find_entity_id_by_normalized_name(self, *, normalized: str) -> str | None:
+    def find_entity_id_by_normalized_name(
+        self, *, normalized: str, namespace_id: str = "default"
+    ) -> str | None:
         pend = self._pending_by_norm.get(normalized)
-        if pend is not None:
+        if pend is not None and (pend.namespace_id or "default") == namespace_id:
             return pend.id
-        return self._real.find_entity_id_by_normalized_name(normalized=normalized)
+        return self._real.find_entity_id_by_normalized_name(
+            normalized=normalized, namespace_id=namespace_id
+        )
 
     # ---------- 읽기: 순수 위임 (시그니처는 ports.py 와 동일하게 키워드 전용) ----------
 
@@ -163,8 +177,12 @@ class PlanningGraphRepository(GraphRepository):
     def close(self) -> None:
         return self._real.close()
 
-    def vector_search(self, *, embedding, top_k: int, type_: str) -> list[StoredEntity]:
-        return self._real.vector_search(embedding=embedding, top_k=top_k, type_=type_)
+    def vector_search(
+        self, *, embedding, top_k: int, type_: str, namespace_id: str = "default"
+    ) -> list[StoredEntity]:
+        return self._real.vector_search(
+            embedding=embedding, top_k=top_k, type_=type_, namespace_id=namespace_id
+        )
 
     def find_entities_dense(self, *, query_embedding, matched_keyword: str,
                             limit: int) -> list[DenseHit]:

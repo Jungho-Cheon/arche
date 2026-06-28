@@ -88,10 +88,10 @@ class FakeGraph(GraphRepository):
     def healthcheck(self) -> bool:
         return True
 
-    def find_by_normalized_name(self, *, normalized, type_):
+    def find_by_normalized_name(self, *, normalized, type_, namespace_id="default"):
         return None
 
-    def vector_search(self, *, embedding, top_k, type_):
+    def vector_search(self, *, embedding, top_k, type_, namespace_id="default"):
         return []
 
     def create_entity(self, *, entity): ...

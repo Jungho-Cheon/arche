@@ -294,7 +294,7 @@ class _BandEmbedder(EmbeddingProvider):
         return [[1.0, 0.0] for _ in texts]
 
 
-def _band_candidate(sim: float) -> StoredEntity:
+def _band_candidate(sim: float, *, namespace_id: str = "default") -> StoredEntity:
     """모호성 밴드 안의 후보 노드 — 추출 이름과 정규명이 달라 Step 1/2 는 miss."""
     now = now_rfc3339()
     return StoredEntity(
@@ -309,6 +309,7 @@ def _band_candidate(sim: float) -> StoredEntity:
         updated_at=now,
         embedding=[sim, math.sqrt(1 - sim**2)],
         normalized_name=normalize("Acme Corporation"),
+        namespace_id=namespace_id,
     )
 
 
@@ -322,8 +323,10 @@ class _NearMissGraph(FakeGraph):
         # Step 3 임베딩에서만 밴드 근접으로 잡힌다.
         self.create_entity(entity=candidate)
 
-    def vector_search(self, *, embedding, top_k, type_):
-        if self._candidate.type == type_:
+    def vector_search(self, *, embedding, top_k, type_, namespace_id="default"):
+        if self._candidate.type == type_ and (
+            self._candidate.namespace_id or "default"
+        ) == namespace_id:
             return [self._candidate]
         return []
 
@@ -680,7 +683,9 @@ def test_resolve_preserves_namespace_id(tmp_path: Path):
     doc = tmp_path / "acme.md"
     doc.write_text("Acme Inc raised a round.", encoding="utf-8")
 
-    graph = _NearMissGraph(_band_candidate(0.87))
+    # 후보를 *같은* namespace(work-a)에 시드해야 near-miss 가 잡힌다 — issue #94
+    # 격리로 매처는 다른 namespace 후보를 보지 않는다.
+    graph = _NearMissGraph(_band_candidate(0.87, namespace_id="work-a"))
     llm = _CountingLLM(FakeLLM(_near_miss_extraction()))
     service = _resolve_service(graph, llm, tmp_path / "cache")
 

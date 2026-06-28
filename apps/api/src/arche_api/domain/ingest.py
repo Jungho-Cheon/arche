@@ -351,7 +351,9 @@ class IngestService:
         # 않으므로 건너뛴다 (불변: dry-run 은 상태 부작용 0).
         recovered = 0
         if not dry_run:
-            recovered = self._resolve_cross_file_relations(per_file)
+            recovered = self._resolve_cross_file_relations(
+                per_file, namespace_id=namespace_id
+            )
 
         return DirectoryIngestResult(
             directory_path=str(path),
@@ -566,7 +568,13 @@ class IngestService:
                 source_path=source_path, text=main_entity_input_text
             )
 
-            matcher = EntityMatcher(repo=self._graph, embedder=self._embedder)
+            # namespace_id 를 매처에 넘겨 동일성 후보 검색을 이 적재의 namespace
+            # 안으로 가둔다 (issue #94) — cross-namespace 과병합 방지.
+            matcher = EntityMatcher(
+                repo=self._graph,
+                embedder=self._embedder,
+                namespace_id=namespace_id,
+            )
             merger = EntityMerger()
 
             # WHY 청크 단위 누적: 같은 엔티티 이름이 청크 3 개에 등장하면 3 개의
@@ -653,6 +661,7 @@ class IngestService:
                     pending=pending_relations,
                     name_to_id=all_name_to_id,
                     run_id=run_id,
+                    namespace_id=namespace_id,
                 )
             )
 
@@ -1331,6 +1340,7 @@ class IngestService:
         pending: list[tuple[ExtractedRelation, SourceRef]],
         name_to_id: dict[str, str],
         run_id: str,
+        namespace_id: str = "default",
     ) -> tuple[int, int, list[str], list[tuple[ExtractedRelation, SourceRef]]]:
         """모아 둔 관계를 *파일 전체 엔티티 + 그래프* 기준으로 한 번에 해소 (issue #28).
 
@@ -1357,8 +1367,12 @@ class IngestService:
                 norm_index[nkey] = eid
 
         for r, source_ref in pending:
-            from_id = self._resolve_endpoint(r.from_name, name_to_id, norm_index)
-            to_id = self._resolve_endpoint(r.to_name, name_to_id, norm_index)
+            from_id = self._resolve_endpoint(
+                r.from_name, name_to_id, norm_index, namespace_id
+            )
+            to_id = self._resolve_endpoint(
+                r.to_name, name_to_id, norm_index, namespace_id
+            )
             if not from_id or not to_id:
                 dangling += 1
                 # issue #78 — 디렉토리 2-pass 가 나중에 재시도하도록 보존.
@@ -1393,6 +1407,7 @@ class IngestService:
         name: str,
         name_to_id: dict[str, str],
         norm_index: dict[str, str],
+        namespace_id: str = "default",
     ) -> str | None:
         """관계 엔드포인트 이름 → 엔티티 id (issue #28). 못 찾으면 None."""
         # 1. 이번 파일의 정확 이름 일치.
@@ -1407,11 +1422,14 @@ class IngestService:
         if hit:
             return hit
         # 3. 그래프 정규명 lookup — 이전 파일에서 적재된 노드(cross-doc 역방향 참조).
-        #    단일 store 는 유일 매치만 돌려주고, 그 외(기본 포트)는 None.
-        return self._graph.find_entity_id_by_normalized_name(normalized=nkey)
+        #    단일 store 는 유일 매치만 돌려주고, 그 외(기본 포트)는 None. namespace
+        #    안에서만 해소해 cross-namespace 오연결을 막는다 (issue #94).
+        return self._graph.find_entity_id_by_normalized_name(
+            normalized=nkey, namespace_id=namespace_id
+        )
 
     def _resolve_cross_file_relations(
-        self, per_file: list[IngestResult]
+        self, per_file: list[IngestResult], *, namespace_id: str = "default"
     ) -> int:
         """디렉토리 2-pass — 1-pass 에서 떨어진 정방향 cross-file 관계 재해소 (issue #78).
 
@@ -1437,10 +1455,10 @@ class IngestService:
                 continue
             for rel, source_ref in res.unresolved_relations:
                 from_id = self._graph.find_entity_id_by_normalized_name(
-                    normalized=normalize(rel.from_name)
+                    normalized=normalize(rel.from_name), namespace_id=namespace_id
                 )
                 to_id = self._graph.find_entity_id_by_normalized_name(
-                    normalized=normalize(rel.to_name)
+                    normalized=normalize(rel.to_name), namespace_id=namespace_id
                 )
                 if not from_id or not to_id:
                     # 여전히 끝점을 못 찾음 — 진짜 dangling (그래프 어디에도 없음).

@@ -348,17 +348,27 @@ class EntityMatcher:
     """
 
     def __init__(
-        self, *, repo: GraphRepository, embedder: EmbeddingProvider
+        self,
+        *,
+        repo: GraphRepository,
+        embedder: EmbeddingProvider,
+        namespace_id: str = "default",
     ) -> None:
         self._repo = repo
         self._embedder = embedder
+        # 동일성 후보 검색을 이 namespace 안으로 가둔다 (issue #94). 서로 다른
+        # namespace 의 노드가 Step 1-3 매칭으로 잘못 병합되는 것을 막는다. 기본값
+        # "default" 는 옛 단일 namespace 동작과 같다.
+        self._namespace_id = namespace_id
 
     def match(self, e_new: ExtractedEntity) -> MatchResult:
         # Step 1 — 정규화된 이름 정확 일치.
         normalized_name = normalize(e_new.name)
         if normalized_name:
             hit = self._repo.find_by_normalized_name(
-                normalized=normalized_name, type_=e_new.type
+                normalized=normalized_name,
+                type_=e_new.type,
+                namespace_id=self._namespace_id,
             )
             if hit is not None:
                 return MatchResult(existing=hit, step=1)
@@ -376,7 +386,9 @@ class EntityMatcher:
             if _is_non_identifying_normalized(normalized_alias):
                 continue
             hit = self._repo.find_by_normalized_name(
-                normalized=normalized_alias, type_=e_new.type
+                normalized=normalized_alias,
+                type_=e_new.type,
+                namespace_id=self._namespace_id,
             )
             if hit is not None:
                 return MatchResult(existing=hit, step=2)
@@ -389,7 +401,10 @@ class EntityMatcher:
             return MatchResult(existing=None, step=4)
         query_vec = embedding[0]
         candidates = self._repo.vector_search(
-            embedding=query_vec, top_k=5, type_=e_new.type
+            embedding=query_vec,
+            top_k=5,
+            type_=e_new.type,
+            namespace_id=self._namespace_id,
         )
         best_near: tuple[StoredEntity, float] | None = None
         for cand in candidates:

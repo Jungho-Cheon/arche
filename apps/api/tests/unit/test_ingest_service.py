@@ -88,7 +88,9 @@ class FakeGraph(GraphRepository):
 
     def __init__(self) -> None:
         self._entities: dict[str, StoredEntity] = {}
-        self._by_norm: dict[tuple[str, str], str] = {}
+        # (정규명, type, namespace) → id. namespace 를 키에 포함해 동일성 lookup 을
+        # namespace 안으로 가둔다 (issue #94).
+        self._by_norm: dict[tuple[str, str, str], str] = {}
         self._relations: dict[str, tuple[str, str, str]] = {}
         self._rel_paths: dict[str, list[str]] = {}
         self._runs: dict[str, dict] = {}
@@ -100,42 +102,55 @@ class FakeGraph(GraphRepository):
     def healthcheck(self) -> bool:  # noqa: D401
         return True
 
-    # -- 동일성 read --
+    # -- 동일성 read (issue #94 — namespace 안에서만 매칭) --
     def find_by_normalized_name(
-        self, *, normalized: str, type_: str
+        self, *, normalized: str, type_: str, namespace_id: str = "default"
     ) -> StoredEntity | None:
-        # 정규명 우선.
-        eid = self._by_norm.get((normalized, type_))
+        # 정규명 우선 (namespace 포함 키).
+        eid = self._by_norm.get((normalized, type_, namespace_id))
         if eid:
             return self._entities.get(eid)
-        # alias 도 확인 (선형 — 단위 테스트 규모면 충분).
+        # alias 도 확인 (선형 — 단위 테스트 규모면 충분). namespace 일치 필수.
         for e in self._entities.values():
             if e.type != type_:
+                continue
+            if (e.namespace_id or "default") != namespace_id:
                 continue
             if normalized in (e.normalized_aliases or []):
                 return e
         return None
 
     def vector_search(
-        self, *, embedding: list[float], top_k: int, type_: str
+        self,
+        *,
+        embedding: list[float],
+        top_k: int,
+        type_: str,
+        namespace_id: str = "default",
     ) -> list[StoredEntity]:
         # 매처 Step 3 미사용 케이스 — 빈 후보로 무력화.
         return []
 
-    def find_entity_id_by_normalized_name(self, *, normalized: str) -> str | None:
+    def find_entity_id_by_normalized_name(
+        self, *, normalized: str, namespace_id: str = "default"
+    ) -> str | None:
         """타입 무관 정규명 lookup — 실 Neo4j 어댑터(issue #28) 동작을 단위에서 재현.
 
         정규명 또는 정규화 alias 가 일치하는 노드를 찾되 *유일* 할 때만 id 를
         돌려준다. 둘 이상이면 모호 → None. cross-doc 역방향(PR #77) + cross-file
         정방향(issue #78) 2-pass 해소가 단위 테스트에서도 실제처럼 동작하게 한다.
+        namespace 안에서만 해소한다 (issue #94).
         """
         if not normalized:
             return None
         matches = [
             e.id
             for e in self._entities.values()
-            if e.normalized_name == normalized
-            or normalized in (e.normalized_aliases or [])
+            if (e.namespace_id or "default") == namespace_id
+            and (
+                e.normalized_name == normalized
+                or normalized in (e.normalized_aliases or [])
+            )
         ]
         return matches[0] if len(matches) == 1 else None
 
@@ -143,7 +158,8 @@ class FakeGraph(GraphRepository):
     def create_entity(self, *, entity: StoredEntity) -> None:
         self._entities[entity.id] = entity
         if entity.normalized_name:
-            self._by_norm[(entity.normalized_name, entity.type)] = entity.id
+            key = (entity.normalized_name, entity.type, entity.namespace_id or "default")
+            self._by_norm[key] = entity.id
 
     def apply_merge_mutation(self, *, mutation: MergeMutation) -> None:
         e = self._entities[mutation.id]

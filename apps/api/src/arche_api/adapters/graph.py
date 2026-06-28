@@ -227,58 +227,78 @@ class Neo4jGraphRepository(GraphRepository):
     # ---------- 4 단계 동일성 — read + write ----------
 
     def find_by_normalized_name(
-        self, *, normalized: str, type_: str
+        self, *, normalized: str, type_: str, namespace_id: str = "default"
     ) -> StoredEntity | None:
         """정규화 키 lookup — 노드의 정규명 OR 정규화된 alias 중 한 곳이라도 hit.
 
         WHY OR alias 까지: PRD 2 §5.1 Step 1 의 매칭은 *새 엔티티의 이름* 이
         그래프의 *기존 엔티티의 정규명 또는 정규화된 alias* 와 일치해도 같은
         엔티티로 본다. 두 경우를 한 인덱스 쿼리로 처리해 매처를 단순화.
+
+        WHY namespace 필터: 동일성 매칭을 같은 namespace 안으로 가둔다 (issue
+        #94). coalesce 로 namespace 속성 없는 옛 노드는 "default" 로 간주.
         """
         with self._driver.session() as s:
             rec = s.run(
                 f"MATCH (e:{ENTITY_LABEL}) "
                 "WHERE e.type = $t "
+                "  AND coalesce(e.namespace_id, 'default') = $ns "
                 "  AND (e.normalized_name = $n "
                 "       OR $n IN coalesce(e.normalized_aliases, [])) "
                 "RETURN e LIMIT 1",
                 n=normalized,
                 t=type_,
+                ns=namespace_id,
             ).single()
         if rec is None:
             return None
         return _node_to_stored(rec["e"])
 
-    def find_entity_id_by_normalized_name(self, *, normalized: str) -> str | None:
+    def find_entity_id_by_normalized_name(
+        self, *, normalized: str, namespace_id: str = "default"
+    ) -> str | None:
         """타입 무관 정규명 lookup — 관계 엔드포인트 cross-chunk/doc 해소 (issue #28).
 
         정규명 OR 정규화된 alias 가 일치하는 엔티티를 찾되, *유일* 할 때만 id 를
         돌려준다. 두 개 이상이면 모호 → None (잘못된 노드 연결 방지). LIMIT 2 로
         유일성만 판정하고 더 받지 않는다.
+
+        WHY namespace 필터: 관계 cross-doc 재해소도 같은 namespace 안에서만 한다
+        (issue #94) — 다른 namespace 의 동명 노드로 잘못 잇는 것을 막는다.
         """
         if not normalized:
             return None
         with self._driver.session() as s:
             rows = s.run(
                 f"MATCH (e:{ENTITY_LABEL}) "
-                "WHERE e.normalized_name = $n "
-                "   OR $n IN coalesce(e.normalized_aliases, []) "
+                "WHERE coalesce(e.namespace_id, 'default') = $ns "
+                "  AND (e.normalized_name = $n "
+                "       OR $n IN coalesce(e.normalized_aliases, [])) "
                 "RETURN e.id AS id LIMIT 2",
                 n=normalized,
+                ns=namespace_id,
             ).data()
         if len(rows) == 1:
             return rows[0]["id"]
         return None
 
     def vector_search(
-        self, *, embedding: list[float], top_k: int, type_: str
+        self,
+        *,
+        embedding: list[float],
+        top_k: int,
+        type_: str,
+        namespace_id: str = "default",
     ) -> list[StoredEntity]:
-        """ANN top-k 후보. type 사후 필터.
+        """ANN top-k 후보. type + namespace 사후 필터.
 
         WHY 사후 필터: Neo4j 5.15 의 `db.index.vector.queryNodes` 는 라벨/속성
         사전 필터를 직접 받지 않는다 (필터는 별도 MATCH WHERE 단계). 정확도를
-        위해 후보 풀을 *top_k * 4* 로 확보한 뒤 type 으로 줄인다. 코퍼스가
-        작은 MVP 가정에서 비용 차이는 무시 가능.
+        위해 후보 풀을 *top_k * 4* 로 확보한 뒤 type + namespace 로 줄인다.
+        코퍼스가 작은 MVP 가정에서 비용 차이는 무시 가능.
+
+        WHY namespace 필터: 동일성 매칭(Step 3)을 같은 namespace 안으로 가둔다
+        (issue #94). coalesce 로 namespace 없는 옛 노드는 "default" 로 간주.
         """
         if not embedding:
             return []
@@ -289,12 +309,14 @@ class Neo4jGraphRepository(GraphRepository):
                 "YIELD node, score "
                 "WITH node, score "
                 f"WHERE node:{ENTITY_LABEL} AND node.type = $t "
+                "  AND coalesce(node.namespace_id, 'default') = $ns "
                 "RETURN node ORDER BY score DESC LIMIT $limit",
                 parameters={
                     "idx": VECTOR_INDEX,
                     "k": oversample,
                     "vec": embedding,
                     "t": type_,
+                    "ns": namespace_id,
                     "limit": top_k,
                 },
             ).data()
