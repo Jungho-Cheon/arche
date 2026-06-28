@@ -108,7 +108,7 @@ A bundled skill so "ingest this document" triggers the ritual even if the agent 
 - No itemized deletion preview: slice 1 reports a count; commit still performs deletions.
 - No full atomicity: commit's multiple writes are not a single transaction (no contention under local single user). Strengthen via staging-subgraph promote or single transaction when multi-user/networked.
 - Plan volatility, single-file only, no auth: intended slice-1 boundaries.
-- ~~Whole plan path is `default`-namespace only: `IngestPlan` did not carry a namespace, so plan/resolve always ran under `default`.~~ **Resolved (issue #92):** `IngestPlan` carries `namespace_id`; `plan_file` records the namespace it received, `resolve_plan` re-plans under `plan.namespace_id`, and the `ingest_plan` entry point forwards a request-level `namespace_id` (default `"default"`) instead of hardcoding. Note: candidate *matching* is still not namespace-scoped at the matcher/repo layer — that isolation is a separate follow-up (issue #94).
+- ~~Whole plan path is `default`-namespace only: `IngestPlan` did not carry a namespace, so plan/resolve always ran under `default`.~~ **Resolved (issue #92):** `IngestPlan` carries `namespace_id`; `plan_file` records the namespace it received, `resolve_plan` re-plans under `plan.namespace_id`, and the `ingest_plan` entry point forwards a request-level `namespace_id` (default `"default"`) instead of hardcoding. Candidate *matching* is now namespace-scoped too (issue #94): `EntityMatcher` and the three repo lookups (`find_by_normalized_name`, `vector_search`, `find_entity_id_by_normalized_name`) filter by `namespace_id`, so identity matching and relation cross-doc resolution stay inside one namespace.
 
 ## 10. Test strategy
 

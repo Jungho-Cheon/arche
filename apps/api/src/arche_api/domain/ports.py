@@ -234,11 +234,20 @@ class VectorIndex(ABC):
 
     @abstractmethod
     def vector_search(
-        self, *, embedding: list[float], top_k: int, type_: str
+        self,
+        *,
+        embedding: list[float],
+        top_k: int,
+        type_: str,
+        namespace_id: str = "default",
     ) -> list[StoredEntity]:
         """ANN top-k 후보를 *embedding 포함* 으로 반환. cosine 재계산은 도메인.
 
         type 필터는 ANN 사전 필터가 가능하면 사전, 안 되면 사후 필터로 적용.
+
+        namespace_id — 동일성 매칭(Step 3)을 같은 namespace 안으로 가둔다 (issue
+        #94). 후보를 namespace 로 좁혀, 서로 다른 namespace 의 노드를 다리로 잘못
+        병합하는 일을 막는다. 기본값 "default" 는 옛 단일 namespace 동작과 같다.
         """
 
     @abstractmethod
@@ -297,11 +306,17 @@ class GraphStore(ABC):
 
     @abstractmethod
     def find_by_normalized_name(
-        self, *, normalized: str, type_: str
+        self, *, normalized: str, type_: str, namespace_id: str = "default"
     ) -> StoredEntity | None:
-        """`normalized_name == normalized AND type == type_` 정확 일치."""
+        """`normalized_name == normalized AND type == type_` 정확 일치.
 
-    def find_entity_id_by_normalized_name(self, *, normalized: str) -> str | None:
+        namespace_id — 매칭을 같은 namespace 안으로 가둔다 (issue #94). 기본값
+        "default" 는 옛 단일 namespace 동작과 같다.
+        """
+
+    def find_entity_id_by_normalized_name(
+        self, *, normalized: str, namespace_id: str = "default"
+    ) -> str | None:
         """*타입 무관* 정규명 lookup — 관계 엔드포인트 해소용 (issue #28).
 
         WHY 타입 무관: `ExtractedRelation` 의 엔드포인트는 *이름만* 갖고 타입을
@@ -318,6 +333,9 @@ class GraphStore(ABC):
         WHY 기본 구현 None: 능력 포트의 *선택적* 확장점. 단일 store(Neo4j) 만
         오버라이드하면 되고, 다른 store/테스트 더블은 기본 None 으로 동작이 깨지지
         않는다(within-file 해소는 name_to_id 로 이미 충분, graph fallback 만 미적용).
+
+        namespace_id — 관계 엔드포인트 해소도 같은 namespace 안에서만 한다 (issue
+        #94). 기본값 "default" 는 옛 단일 namespace 동작과 같다.
         """
         return None
 

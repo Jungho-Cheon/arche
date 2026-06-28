@@ -206,13 +206,17 @@ class FakeGraph(GraphRepository):
 
     # ----- 아래는 ingest 흐름 — MCP read 경로는 안 부른다. 안전한 no-op. -----
 
-    def find_by_normalized_name(self, *, normalized, type_):
+    def find_by_normalized_name(self, *, normalized, type_, namespace_id="default"):
         for entity in self._entities.values():
-            if entity.normalized_name == normalized and entity.type == type_:
+            if (
+                entity.normalized_name == normalized
+                and entity.type == type_
+                and (entity.namespace_id or "default") == namespace_id
+            ):
                 return entity
         return None
 
-    def vector_search(self, *, embedding, top_k, type_):
+    def vector_search(self, *, embedding, top_k, type_, namespace_id="default"):
         return []
 
     def create_entity(self, *, entity):

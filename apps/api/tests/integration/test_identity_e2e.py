@@ -194,6 +194,40 @@ def test_step1_normalize_hits_existing(repo, tmp_path: Path):
     assert len(nodes) == 1
 
 
+def test_identity_matching_is_scoped_by_namespace(repo, tmp_path: Path):
+    """같은 정규명·type 이라도 namespace 가 다르면 병합되지 않는다 (issue #94).
+
+    실 Neo4j Cypher 의 namespace 필터(coalesce(e.namespace_id,'default')=$ns)가
+    동작함을 잠근다 — FakeGraph 가 실제 쿼리와 갈라지지 않게.
+    """
+    f1 = tmp_path / "a.md"
+    f2 = tmp_path / "b.md"
+    f1.write_text("contents-a", encoding="utf-8")
+    f2.write_text("contents-b", encoding="utf-8")
+
+    # 두 파일이 같은 엔티티("쿠폰 X")를 추출하지만 서로 다른 namespace 로 적재.
+    llm = _LLMScripted(
+        [
+            _make_extracted([{"name": "쿠폰 X", "type": "coupon"}]),
+            _make_extracted([{"name": "쿠폰 X", "type": "coupon"}]),
+        ]
+    )
+    emb = _EmbDeterministic()
+    _make_service(repo, llm, emb).ingest_file(f1, namespace_id="ns-a")
+    result2 = _make_service(repo, llm, emb).ingest_file(f2, namespace_id="ns-b")
+
+    # 다른 namespace — Step 1 정규명 후보를 보지 못해 새 노드를 만든다.
+    assert result2.entities_created == 1
+    assert result2.entities_updated == 0
+    # namespace 별 독립 노드 2 개.
+    with repo._driver.session() as s:
+        rows = s.run(
+            "MATCH (e:Entity) "
+            "RETURN coalesce(e.namespace_id, 'default') AS ns ORDER BY ns"
+        ).data()
+    assert [r["ns"] for r in rows] == ["ns-a", "ns-b"]
+
+
 def test_step2_alias_match(repo, tmp_path: Path):
     """새 엔티티의 alias 가 기존 정규명을 가리키면 Step 2 매칭."""
     f1 = tmp_path / "a.md"

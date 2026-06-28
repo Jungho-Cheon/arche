@@ -28,10 +28,10 @@ class FakeRepo:
     norm_index: dict[tuple[str, str], StoredEntity]
     vector_pool: list[StoredEntity]
 
-    def find_by_normalized_name(self, *, normalized: str, type_: str):
+    def find_by_normalized_name(self, *, normalized: str, type_: str, namespace_id: str = "default"):
         return self.norm_index.get((normalized, type_))
 
-    def vector_search(self, *, embedding, top_k, type_):
+    def vector_search(self, *, embedding, top_k, type_, namespace_id: str = "default"):
         return [c for c in self.vector_pool if c.type == type_][:top_k]
 
 
