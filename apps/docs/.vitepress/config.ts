@@ -21,7 +21,7 @@ export default defineConfig({
         nav: [
           { text: "가이드", link: "/guide/getting-started" },
           { text: "개념", link: "/concepts/why-graph" },
-          { text: "레퍼런스", link: "/reference/primitives" },
+          { text: "그래프 조회 연산", link: "/reference/primitives" },
         ],
         sidebar: {
           "/guide/": [
@@ -50,7 +50,7 @@ export default defineConfig({
             {
               text: "레퍼런스",
               items: [
-                { text: "그래프 프리미티브", link: "/reference/primitives" },
+                { text: "그래프 조회 연산", link: "/reference/primitives" },
                 { text: "에러 코드", link: "/reference/errors" },
                 { text: "환경 변수", link: "/reference/configuration" },
               ],
