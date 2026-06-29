@@ -19,7 +19,7 @@ API 서버는 환경 변수로 설정을 덮어씁니다. 값을 주지 않으�
 | `ARCHE_API_LLM_MODEL` | 적재 추출에 쓰는 LLM. `provider/model` 형식 | `openai/gpt-4.1` |
 | `ARCHE_API_EMBEDDING_MODEL` | 노드 임베딩 모델. `provider/model` 형식 | `openai/text-embedding-3-small` |
 | `ARCHE_API_EMBEDDING_DIMENSION` | 임베딩 출력 차원. Neo4j 벡터 인덱스 생성에 사용 | `1536` |
-| `ARCHE_API_LLM_MODEL_CONTEXT_TOKENS` | 청크 분할을 트리거하는 모델 컨텍스트 한도 | `128000` |
+| `ARCHE_API_LLM_MODEL_CONTEXT_TOKENS` | 청크 분할 기준이 되는 모델 컨텍스트 한도 | `128000` |
 
 임베딩 모델을 바꾸면 출력 차원이 달라질 수 있습니다. `ARCHE_API_EMBEDDING_DIMENSION` 을 맞추고(예: `voyage-3` 은 1024) Neo4j 벡터 인덱스를 다시 만들어야 합니다.
 

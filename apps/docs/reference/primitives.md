@@ -215,7 +215,7 @@ namespace 별 엔티티 수를 봅니다 (운영 가시성).
 | `name` | `string` | (필수) | 최대 200자 |
 | `type` | `string` | (필수) | 최대 64자 |
 | `aliases` | `string[]` | `[]` | 별칭 목록 |
-| `description` | `string \| null` | `null` | 최대 2000자. `null` 이면 응답에서 생략 |
+| `description` | `string \| null` | `null` | 최대 2000자, `null` 허용 (find_entities 응답에서는 생략될 수 있음) |
 | `properties` | `{ [키]: string\|int\|float\|bool }` | `{}` | 속성 |
 | `source_refs` | `SourceRef[]` | `[]` | 출처 |
 | `created_at` | `string` | (필수) | RFC 3339 시각 |
