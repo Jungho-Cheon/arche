@@ -73,7 +73,7 @@ curl http://localhost:8000/entities/01J8XR4K9ZQ2N7M3VB0W4D6TYE
 # {"data":{"node":{...},"edge_counts":{"outgoing":{"APPLIES_TO":3},"incoming":{"REFERS_TO":1}}}}
 ```
 
-`node` 는 `find_entities` 가 돌려준 것과 같은 모양입니다. ID, 이름, 타입, 별칭(`aliases`), 속성(`properties`), 출처(`source_refs`), 생성과 수정 시각을 담습니다. 응답에 임베딩 벡터는 들어 있지 않습니다. `edge_counts` 는 이 노드에서 나가는 관계(`outgoing`)와 들어오는 관계(`incoming`)를 타입별 개수로 보여 줘서, 다음에 어느 방향으로 이웃을 펼쳐 볼지 가늠하게 해 줍니다.
+`node` 는 `find_entities` 가 돌려준 것과 같은 모양입니다. ID, 이름, 타입, 설명(`description`, 없으면 생략), 별칭(`aliases`), 속성(`properties`), 출처(`source_refs`), 생성과 수정 시각을 담습니다. 응답에 임베딩 벡터는 들어 있지 않습니다. `edge_counts` 는 이 노드에서 나가는 관계(`outgoing`)와 들어오는 관계(`incoming`)를 타입별 개수로 보여 줘서, 다음에 어느 방향으로 이웃을 펼쳐 볼지 가늠하게 해 줍니다.
 
 ## 이웃 펼치기 — get_neighbors
 
@@ -120,7 +120,7 @@ curl -X POST http://localhost:8000/subgraph \
 # {"data":{"nodes":[...],"edges":[...],"entry_ids":["01J8XR4K9ZQ2N7M3VB0W4D6TYE"],"truncated":false}}
 ```
 
-`entry_ids` 에 진입점 ID 를(최대 20개) 주면 각각에서 `hops`(기본 2, 1~4)만큼 펼친 노드와 엣지를 합쳐 줍니다. 응답의 `entry_ids` 는 넘긴 진입점을 그대로 되돌려 줘서, 합쳐진 결과 안에서 어디가 출발점이었는지 짚게 해 줍니다. 목록에 그래프에 없는 ID 가 섞여 있으면 오류를 내지 않고 있는 것만 조용히 펼칩니다.
+`entry_ids` 에 진입점 ID 를(최대 20개) 주면 각각에서 `hops`(기본 2, 1~4)만큼 펼친 노드와 `edges`를 합쳐 줍니다. 응답의 `entry_ids` 는 넘긴 진입점을 그대로 되돌려 줘서, 합쳐진 결과 안에서 어디가 출발점이었는지 짚게 해 줍니다. 목록에 그래프에 없는 ID 가 섞여 있으면 오류를 내지 않고 있는 것만 조용히 펼칩니다.
 
 ## 여러 단계를 엮어 답 만들기
 
@@ -134,4 +134,4 @@ curl -X POST http://localhost:8000/subgraph \
 
 ## 더 보기
 
-각 연산의 입력 필드와 응답 필드를 빠짐없이 정리한 표는 [그래프 프리미티브](/reference/primitives)에 있습니다. 노드와 엣지가 담는 모든 필드, 기본값과 허용 범위를 확인할 때 펼쳐 보세요.
+각 연산의 입력 필드와 응답 필드를 빠짐없이 정리한 표는 [조회 연산 참조](/reference/primitives)에 있습니다. 노드와 엣지가 담는 모든 필드, 기본값과 허용 범위를 확인할 때 펼쳐 보세요.
