@@ -93,13 +93,12 @@ curl http://localhost:8000/admin/ingest/a1b2c3/status
       "relations_created": 31,
       "relations_skipped_dangling": 2,
       "chunks_total": 14
-    },
-    "error": null
+    }
   }
 }
 ```
 
-`state` 는 작업이 어디까지 왔는지 알려 줍니다. 도는 중이면 `running`, 끝나면 `succeeded`, 도중에 멈추면 `failed` 입니다. `failed` 일 때만 `error` 에 까닭이 담기고, 그 외에는 `null` 입니다.
+`state` 는 작업이 어디까지 왔는지 알려 줍니다. 도는 중이면 `running`, 끝나면 `succeeded`, 도중에 멈추면 `failed` 입니다. 오류가 없으면 `error` 키 자체가 응답에서 빠지고, `failed` 상태일 때만 `"error": {"code": "...", "message": "..."}` 가 담겨 옵니다.
 
 `progress` 는 파일을 얼마나 처리했는지 보여 줍니다.
 
@@ -139,7 +138,7 @@ curl http://localhost:8000/admin/ingest/a1b2c3/status
 
 1. **`ingest_plan`** — 파일 경로를 주고 계획을 짭니다. 아직 아무것도 쓰지 않습니다. 새로 생길 점, 합쳐질 점, 새로 생길 선의 개수를 요약해 돌려줍니다.
 2. **`ingest_preview`** — 짠 계획을 사람이 읽을 수 있게 펼쳐 봅니다. 새 점, 합쳐지는 점의 합치기 전과 후, 새 선, 지워질 개수를 보여 줍니다.
-3. **`ingest_resolve`** — 미리 보기에 확인할 질문(`questions`)이 딸려 오면 먼저 풉니다. 질문 하나하나에 결정을 모아 `ingest_resolve` 로 넘긴 뒤 다시 미리 보기로 돌아갑니다. 질문이 없으면 이 단계는 건너뜁니다.
+3. **`ingest_resolve`** — 미리 보기에 확인할 질문(`questions`)이 딸려 오면 먼저 풉니다. 질문 하나하나에 결정을 모아 `ingest_resolve` 로 넘긴 뒤 다시 미리 보기로 돌아갑니다. 새 미리 보기에도 질문이 남아 있으면 이 단계를 다시 반복합니다. 질문이 없으면 이 단계는 건너뜁니다.
 4. **확정 여부 묻기** — 사람에게 "이대로 반영할까요?" 라고 묻고 분명한 동의를 받습니다. 미심쩍게 합쳐진 점이나 이상한 점이 있으면 먼저 짚어 줍니다.
 5. **`ingest_commit`** — 동의를 받으면 그제야 그래프에 씁니다. 반영된 개수를 보고합니다.
 
