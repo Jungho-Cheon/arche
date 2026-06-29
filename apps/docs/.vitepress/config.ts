@@ -21,7 +21,7 @@ export default defineConfig({
         nav: [
           { text: "가이드", link: "/guide/getting-started" },
           { text: "개념", link: "/concepts/why-graph" },
-          { text: "그래프 조회 연산", link: "/reference/primitives" },
+          { text: "레퍼런스", link: "/reference/primitives" },
         ],
         sidebar: {
           "/guide/": [
