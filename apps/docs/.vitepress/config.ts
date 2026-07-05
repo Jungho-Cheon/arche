@@ -21,7 +21,7 @@ export default defineConfig({
         nav: [
           { text: "소개", link: "/intro" },
           { text: "가이드", link: "/guide/getting-started" },
-          { text: "에이전트 연동", link: "/guide/agent-integration" },
+          { text: "에이전트에 연결하기", link: "/guide/agent-integration" },
           { text: "개념", link: "/concepts/why-graph" },
           { text: "레퍼런스", link: "/reference/primitives" },
         ],

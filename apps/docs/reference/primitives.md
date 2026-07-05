@@ -147,6 +147,82 @@ ID 로 노드 한 개와 타입별 인접 관계 수를 봅니다.
 | `entry_ids` | `string[]` | 넘긴 진입점을 그대로 되돌림 |
 | `truncated` | `bool` | `max_nodes` 에 걸려 잘렸으면 `true` |
 
+## 검토형 적재 연산 (4개)
+
+문서에서 점과 선을 뽑아 그래프에 넣는 적재 도구 네 개입니다. 위 조회 연산과 달리 이 넷은 **MCP 도구로만** 노출되며, 대응하는 REST 주소가 없습니다. 그래서 아래 표에는 "메서드 + 주소" 칸이 없습니다. 정해진 차례(계획 → 미리 보기 → 질문 해소 → 확정)로만 써야 하고, 개념 흐름은 [문서를 그래프에 넣기](/guide/ingest)에서 다룹니다. 적재 기능까지 갖춰 띄운 서버에서만 이 네 도구가 함께 붙습니다.
+
+응답은 조회 연산과 같은 규칙을 따릅니다. REST 통로는 `{ "data": ... }` 봉투로 감싸지만, MCP 는 그 안 payload 만 봉투 없이 돌려줍니다. 아래 "응답" 칸은 payload 기준입니다.
+
+## ingest_plan
+
+파일 하나를 그래프에 쓰지 않고 추출만 돌려 변경 묶음을 만들고, 이후 호출에 쓸 계획 식별자를 돌려줍니다.
+
+| 요청 필드 | 타입 | 기본값 | 범위/제약 |
+| --- | --- | --- | --- |
+| `path` | `string` | (필수) | 계획을 세울 파일의 절대 경로 (최소 1자) |
+| `namespace_id` | `string` | `default` | 계획이 속한 namespace. 빈 문자열 불가 |
+| `hints` | `string \| null` | `null` | 추출 품질을 높이는 선택 입력 (용어/약어 풀이 등). 최대 4000자. 저장된 원문은 바꾸지 않고 추출만 돕습니다 |
+
+응답: `{ plan_id, source_path, entities_created, entities_merged, relations_created, deletion_count, open_questions }`
+
+| 필드 | 타입 | 설명 |
+| --- | --- | --- |
+| `plan_id` | `string` | 이후 preview/resolve/commit 호출에 쓰는 계획 식별자 |
+| `source_path` | `string` | 계획을 세운 파일 경로 |
+| `entities_created` | `int` | 새로 만들 엔티티 수 |
+| `entities_merged` | `int` | 기존 엔티티에 병합할 수 |
+| `relations_created` | `int` | 새로 만들 관계 수 |
+| `deletion_count` | `int` | 차분으로 삭제/트림될 엔티티나 관계 수 |
+| `open_questions` | `int` | 사람 판단을 기다리는 병합 후보 질문 수 (임계 바로 아래 유사도) |
+
+## ingest_preview
+
+계획 식별자로 변경 묶음을 항목 단위로 펼쳐 사람이 검토하게 합니다. 이 호출이 계획을 "미리보기 완료"로 표시해, commit 의 안전 잠금을 풉니다.
+
+| 요청 필드 | 타입 | 기본값 | 범위/제약 |
+| --- | --- | --- | --- |
+| `plan_id` | `string` | (필수) | ingest_plan 이 돌려준 식별자 (최소 1자) |
+
+응답: `{ new_entities[], merges[], new_relations[], deletion_count, questions[] }`
+
+| 필드 | 타입 | 설명 |
+| --- | --- | --- |
+| `new_entities[]` | 객체 목록 | 새로 만들 엔티티. 각 항목 `{ name, type, aliases[] }` |
+| `merges[]` | 객체 목록 | 기존 엔티티 병합. 각 항목 `{ target_id, before_name, after_aliases[] }` — `target_id` 는 살아남는 엔티티 id, `before_name` 은 병합 전 이름(없으면 빈 문자열) |
+| `new_relations[]` | 객체 목록 | 새로 만들 관계. 각 항목 `{ from_id, to_id, type }` |
+| `deletion_count` | `int` | 삭제/트림될 항목 수 |
+| `questions[]` | 객체 목록 | 사람 판단을 기다리는 병합 후보 질문. 비어 있지 않으면 resolve 로 답해야 함. 각 항목 `{ question_id, extracted_name, extracted_type, candidate_id, candidate_name, similarity, kind }` |
+
+`questions[]` 각 항목은 추출된 엔티티(`extracted_name`/`extracted_type`)가 기존 노드(`candidate_id`/`candidate_name`)와 임계 바로 아래 `similarity`(0~1)라 자동 병합되지 못한 경우입니다. `kind` 는 질문 종류를 나타내는 문자열이며, 취할 수 있는 값의 목록은 소스에 명시돼 있지 않습니다.
+
+## ingest_resolve
+
+미리보기가 물은 질문에 사람의 결정을 반영해 같은 `plan_id` 로 계획을 다듬습니다. 이 호출은 안전 잠금을 다시 잠그므로, 이후 ingest_preview 를 한 번 더 불러야 commit 할 수 있습니다.
+
+| 요청 필드 | 타입 | 기본값 | 범위/제약 |
+| --- | --- | --- | --- |
+| `plan_id` | `string` | (필수) | 다듬을 계획 식별자 (최소 1자) |
+| `resolutions[]` | 객체 목록 | (필수) | 질문별 결정. 각 항목 `{ question_id, decision }` — `decision` 은 `merge`(같은 대상) 또는 `keep`(다른 대상) |
+
+응답: ingest_plan 과 같은 모양 `{ plan_id, source_path, entities_created, entities_merged, relations_created, deletion_count, open_questions }` — 다듬은 계획의 요약(남은 질문 수 포함)을 돌려줍니다.
+
+## ingest_commit
+
+미리보기를 거친 계획을 그래프에 실제로 반영합니다. 미리보기 전이면 `unprocessable` 로, 계획을 세운 뒤 그래프가 바뀌어 계획이 어긋났으면 다시 계획하라는 오류로 끊습니다.
+
+| 요청 필드 | 타입 | 기본값 | 범위/제약 |
+| --- | --- | --- | --- |
+| `plan_id` | `string` | (필수) | 반영할 계획 식별자 (최소 1자) |
+
+응답: `{ entities_created, entities_updated, relations_created, deletions }`
+
+| 필드 | 타입 | 설명 |
+| --- | --- | --- |
+| `entities_created` | `int` | 실제로 만든 엔티티 수 |
+| `entities_updated` | `int` | 실제로 고친 엔티티 수 |
+| `relations_created` | `int` | 실제로 만든 관계 수 |
+| `deletions` | `int` | 실제로 지운 항목 수 |
+
 ## 관리 및 운영 연산
 
 healthz 와 admin 엔드포인트는 그래프 조회가 아니라 서버 상태 확인과 적재 관리에 씁니다.

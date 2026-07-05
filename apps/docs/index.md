@@ -34,4 +34,4 @@ Arche 는 문서를 미리 관계 지도(그래프)로 바꿔 둡니다. 에이�
 
 ---
 
-코드를 몰라도 무엇을 왜 어떤 가치로 만드는지부터 따라가고 싶다면 [소개 문서](https://github.com/Jungho-Cheon/arche/blob/main/docs/overview.md)를 먼저 보세요. 바로 손으로 해보고 싶다면 [시작하기](/guide/getting-started)로 넘어가면 됩니다.
+코드를 몰라도 무엇을 왜 만드는지부터 보고 싶다면 [Arche 소개](/intro)를 먼저 읽어 보세요. 바로 손으로 해보고 싶다면 [시작하기](/guide/getting-started)로 넘어가면 됩니다.
