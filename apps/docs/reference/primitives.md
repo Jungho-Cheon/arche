@@ -8,6 +8,8 @@ REST 는 성공 응답을 `{ "data": ... }` 봉투에 감싸 돌려줍니다. MC
 
 `namespace_id` 를 받는 연산은 그 값을 명시하지 않으면 인증 헤더의 namespace 를 쓰고, 그마저 없으면 `default` 로 떨어집니다. 호출 주소는 로컬 API(`http://localhost:8000`) 기준입니다.
 
+MCP 호출에는 HTTP 헤더가 없으므로 조회 도구 6개 모두 `namespace_id` 를 도구 인자로 받습니다(미지정 시 `default`). 아래 표에서 `get_schema` 와 `get_entity` 에는 `namespace_id` 필드가 안 보이지만, 이건 REST 가 그 값을 인증 헤더로 받기 때문입니다. MCP 에서는 이 둘도 `namespace_id` 인자를 받습니다.
+
 ## get_schema
 
 그래프에 담긴 엔티티 타입과 관계 타입을 개수와 함께 돌려줍니다.
@@ -149,7 +151,9 @@ ID 로 노드 한 개와 타입별 인접 관계 수를 봅니다.
 
 ## 검토형 적재 연산 (4개)
 
-문서에서 점과 선을 뽑아 그래프에 넣는 적재 도구 네 개입니다. 위 조회 연산과 달리 이 넷은 **MCP 도구로만** 노출되며, 대응하는 REST 주소가 없습니다. 그래서 아래 표에는 "메서드 + 주소" 칸이 없습니다. 정해진 차례(계획 → 미리 보기 → 질문 해소 → 확정)로만 써야 하고, 개념 흐름은 [문서를 그래프에 넣기](/guide/ingest)에서 다룹니다. 적재 기능까지 갖춰 띄운 서버에서만 이 네 도구가 함께 붙습니다.
+문서에서 점과 선을 뽑아 그래프에 넣는 적재 도구 네 개입니다. 위 조회 연산과 달리 이 넷은 **MCP 도구로만** 노출되며, 대응하는 REST 주소가 없습니다. 그래서 아래 표에는 "메서드 + 주소" 칸이 없습니다. 정해진 차례(계획 → 미리 보기 → 질문 해소 → 확정)로만 써야 하고, 개념 흐름은 [문서를 그래프에 넣기](/guide/ingest)에서 다룹니다.
+
+이 네 도구는 적재 기능을 켜서 띄운 서버에서만 나옵니다. 지금 배포된 CLI 명령 `arche mcp serve --stdio` 는 적재 기능을 켜지 않으므로 이 도구들이 붙지 않습니다. 그래서 평소 문서를 그래프에 넣을 때는 CLI 의 `arche ingest` 나 REST 의 `/admin/ingest` 를 씁니다. 아래 표는 도구의 입력과 응답 모양을 정리한 참조용입니다.
 
 응답은 조회 연산과 같은 규칙을 따릅니다. REST 통로는 `{ "data": ... }` 봉투로 감싸지만, MCP 는 그 안 payload 만 봉투 없이 돌려줍니다. 아래 "응답" 칸은 payload 기준입니다.
 
@@ -193,7 +197,7 @@ ID 로 노드 한 개와 타입별 인접 관계 수를 봅니다.
 | `deletion_count` | `int` | 삭제/트림될 항목 수 |
 | `questions[]` | 객체 목록 | 사람 판단을 기다리는 병합 후보 질문. 비어 있지 않으면 resolve 로 답해야 함. 각 항목 `{ question_id, extracted_name, extracted_type, candidate_id, candidate_name, similarity, kind }` |
 
-`questions[]` 각 항목은 추출된 엔티티(`extracted_name`/`extracted_type`)가 기존 노드(`candidate_id`/`candidate_name`)와 임계 바로 아래 `similarity`(0~1)라 자동 병합되지 못한 경우입니다. `kind` 는 질문 종류를 나타내는 문자열이며, 취할 수 있는 값의 목록은 소스에 명시돼 있지 않습니다.
+`questions[]` 각 항목은 추출된 엔티티(`extracted_name`/`extracted_type`)가 기존 노드(`candidate_id`/`candidate_name`)와 임계 바로 아래 `similarity`(0~1)라 자동 병합되지 못한 경우입니다. `kind` 는 질문 종류를 나타내는 문자열입니다. 현재 버전에서 `kind` 는 `"possible_missed_merge"` 한 가지입니다 — 새 항목이 기존 항목과 비슷해 보여 합쳐야 할지 확인이 필요하다는 뜻입니다. 앞으로 버전이 올라가면 종류가 늘 수 있지만 지금은 이 값 하나뿐입니다.
 
 ## ingest_resolve
 
