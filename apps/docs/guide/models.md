@@ -67,3 +67,8 @@ uv sync --extra providers
 ::: warning 임베딩 모델을 바꾸면 벡터 차원이 달라집니다
 임베딩 모델마다 출력하는 벡터 차원이 다릅니다. 기본 `text-embedding-3-small` 은 1536 차원이지만 `voyage-3` 은 1024 차원입니다. 차원이 달라지면 `ARCHE_API_EMBEDDING_DIMENSION` 을 새 모델의 차원에 맞추고, 이미 만들어 둔 벡터 인덱스를 다시 만들어야 합니다. 그러지 않으면 차원이 어긋나 검색이 깨집니다. 환경 변수 전체 목록은 [환경 변수](/reference/configuration)에서 봅니다.
 :::
+
+## 다음으로
+
+- [환경 변수](/reference/configuration) — 모델 식별자를 포함한 API 설정 변수 전체 목록.
+- [에이전트에 연결하기](/guide/agent-integration) — 바꾼 모델로 에이전트를 연결하는 흐름.

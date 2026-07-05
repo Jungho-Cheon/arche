@@ -3,7 +3,8 @@
 Arche 를 처음 띄워 보고 작은 문서 폴더를 그래프에 넣는 데까지 한 번에 가는 길잡이입니다. 명령은 위에서 아래로 그대로 따라 하면 됩니다.
 
 ::: tip 준비물
-- **Docker** — 그래프 DB(Neo4j) 와 API 를 컨테이너로 한 번에 띄웁니다.
+- **Docker** — 그래프 DB(Neo4j) 와 API 서버를 컨테이너로 한 번에 띄웁니다.
+- **uv** — 파이썬 패키지/실행 도구입니다. 4단계의 `uv run ...` 명령을 내 머신에서 바로 실행할 때 씁니다. 설치는 [https://docs.astral.sh/uv/](https://docs.astral.sh/uv/) 를 참고하세요.
 - **AI 모델 API 키 하나** — 기본 설정은 OpenAI 키(`OPENAI_API_KEY`) 하나로 추출과 임베딩을 모두 처리합니다. 추출은 문서에서 점과 선을 뽑는 작업이고, 임베딩은 검색의 출발점을 찾기 위해 글을 숫자 벡터로 바꾸는 작업입니다.
 
 OpenAI 말고 Claude(Anthropic) 와 Voyage 조합으로도 돌릴 수 있습니다. 모델 이름 접두사만 바꾸면 되고, 자세한 방법은 [모델 갈아끼우기](/guide/models)에 있습니다. 처음에는 파일 몇 개짜리 작은 폴더로 시작하길 권합니다.
@@ -57,7 +58,13 @@ curl http://localhost:8000/healthz
 uv run --project apps/api arche ingest ./내문서폴더
 ```
 
+이 명령은 **내 머신에서** 실행합니다. Docker 가 API 서버와 그래프 DB 를 띄우는 동안, `uv run` 명령은 로컬에서 실행해 `localhost:8000` API 를 거쳐 그래프에 씁니다.
+
 폴더 안의 글과 PDF, 이미지를 읽어 점(엔티티) 과 선(관계) 을 뽑아 그래프에 저장합니다. 같은 폴더를 다시 넣으면 바뀐 부분만 갱신합니다.
+
+::: tip 보안 모델
+현재 버전의 API 에는 별도 인증이 없습니다. `Authorization: Bearer ns:<이름>` 헤더는 로그인 수단이 아니라 namespace(칸막이) 를 지정하는 라우팅 힌트입니다. 관리 엔드포인트(`/admin/*`) 도 열려 있으니, 로컬 테스트 외의 환경에서 쓸 때는 API 앞에 자체 프록시를 두어 접근을 제한하세요.
+:::
 
 ## 다음으로
 
@@ -66,3 +73,4 @@ uv run --project apps/api arche ingest ./내문서폴더
 - [문서를 그래프에 넣기](/guide/ingest) — 적재를 더 다루는 법, 미리 보고 확정하는 흐름, 추출이 빈약할 때 보강하는 법.
 - [그래프에 질의하기](/guide/query) — 6가지 그래프 기본 조회로 답에 필요한 연결을 따라가는 법.
 - [팀별 지식 격리 (namespace)](/guide/namespace) — 한 그래프 DB 안에서 팀이나 프로젝트별로 지식을 나눠 담는 법.
+- 처음 실행에서 문제가 생겼다면 [에러 코드](/reference/errors)와 [환경 변수](/reference/configuration)를 참고하세요.

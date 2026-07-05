@@ -66,3 +66,8 @@ curl http://localhost:8000/admin/namespaces
 ::: warning 아직 안 되는 것 — 칸 일부만 공유
 지금 namespace 는 단단한 경계입니다. 한 질의가 여러 칸을 한꺼번에 보거나, 특정 칸 일부만 다른 칸과 공유하는 식은 아직 안 됩니다. 칸을 넘나드는 질의가 필요하면 칸마다 따로 호출해 결과를 직접 합쳐야 합니다. 경계를 이렇게 잡은 까닭과 칸이 데이터 위에서 어떻게 표현되는지는 [namespace 격리 모델](/concepts/namespace-model)에서 다룹니다.
 :::
+
+## 다음으로
+
+- [namespace 격리 모델](/concepts/namespace-model) — 경계를 이렇게 잡은 이유와 데이터 표현 방식.
+- [환경 변수](/reference/configuration) — namespace 관련 설정을 포함한 API 환경 변수 전체 목록.

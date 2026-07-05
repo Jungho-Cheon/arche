@@ -151,3 +151,8 @@ curl http://localhost:8000/admin/ingest/a1b2c3/status
 ::: warning hints 는 추출만 거들 뿐, 원문을 고치지 않습니다
 `hints` 는 계획이 제안하는 그래프의 모양에만 영향을 줍니다. 디스크에 있는 원본 파일도, 저장된 원문도 적힌 그대로 보존되며 절대 다시 쓰이지 않습니다.
 :::
+
+## 다음으로
+
+- [그래프에 질의하기](/guide/query) — 적재한 그래프를 6가지 조회로 탐색하는 법.
+- [에이전트에 연결하기](/guide/agent-integration) — MCP 로 AI 에이전트를 Arche 에 붙이는 흐름.

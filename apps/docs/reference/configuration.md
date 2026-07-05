@@ -30,3 +30,7 @@ API 서버는 환경 변수로 설정을 덮어씁니다. 값을 주지 않으�
 | `NEO4J_URI` | Neo4j 접속 주소 | `bolt://localhost:7687` |
 | `NEO4J_USER` | Neo4j 사용자 | `neo4j` |
 | `NEO4J_PASSWORD` | Neo4j 비밀번호. 운영 환경은 충분히 강한 값으로 교체 | `arche` |
+
+## 다음으로
+
+- [모델 갈아끼우기](/guide/models) — 모델 식별자 형식과 공급자별 설정 방법.
