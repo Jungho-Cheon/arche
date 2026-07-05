@@ -19,11 +19,21 @@ export default defineConfig({
       lang: "ko-KR",
       themeConfig: {
         nav: [
+          { text: "소개", link: "/intro" },
           { text: "가이드", link: "/guide/getting-started" },
+          { text: "에이전트 연동", link: "/guide/agent-integration" },
           { text: "개념", link: "/concepts/why-graph" },
           { text: "레퍼런스", link: "/reference/primitives" },
         ],
         sidebar: {
+          "/intro": [
+            {
+              text: "소개",
+              items: [
+                { text: "Arche 소개", link: "/intro" },
+              ],
+            },
+          ],
           "/guide/": [
             {
               text: "사용 가이드",
@@ -32,7 +42,8 @@ export default defineConfig({
                 { text: "문서를 그래프에 넣기", link: "/guide/ingest" },
                 { text: "그래프에 질의하기", link: "/guide/query" },
                 { text: "팀별 지식 격리 (namespace)", link: "/guide/namespace" },
-                { text: "모델 갈아끼우기", link: "/guide/models" },
+                { text: "모델 교체하기", link: "/guide/models" },
+                { text: "에이전트에 연결하기", link: "/guide/agent-integration" },
               ],
             },
           ],
@@ -53,6 +64,7 @@ export default defineConfig({
                 { text: "그래프 조회 연산", link: "/reference/primitives" },
                 { text: "에러 코드", link: "/reference/errors" },
                 { text: "환경 변수", link: "/reference/configuration" },
+                { text: "용어집", link: "/reference/glossary" },
               ],
             },
           ],
