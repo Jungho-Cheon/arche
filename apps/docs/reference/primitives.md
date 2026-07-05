@@ -79,7 +79,7 @@ ID 로 노드 한 개와 타입별 인접 관계 수를 봅니다.
 
 | 요청 필드 | 타입 | 기본값 | 범위/제약 |
 | --- | --- | --- | --- |
-| `id` | `string \| null` | `null` | ULID. 경로 `entity_id` 와 다르면 `invalid_input` |
+| `id` | `string \| null` | `null` | 26자리 식별자(ULID). 경로 `entity_id` 와 다르면 `invalid_input` |
 | `relation_types` | `string[] \| null` | `null` | 따라갈 관계 타입 필터 |
 | `direction` | `string` | `both` | `outgoing` \| `incoming` \| `both` |
 | `hops` | `int` | `1` | 1~5 |

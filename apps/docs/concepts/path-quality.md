@@ -2,7 +2,7 @@
 
 두 노드 사이를 잇는 경로를 찾는 `find_path` 는 경로마다 `hub_score` 라는 숫자를 함께 돌려줍니다. 두 점이 경로로 이어졌다는 사실과 그 연결이 믿을 만하다는 사실은 다릅니다. 경로는 분명히 닿는데 의미가 거의 없는 가짜 연결일 수 있습니다. `hub_score` 는 그 차이를 한 숫자로 알려 주는 신호입니다.
 
-이 글은 그 숫자가 무엇을 재고 어떻게 계산되며, 호출하는 쪽이 이를 어떻게 읽어야 하는지를 다룹니다. `find_path` 의 기본 사용법은 [그래프에 질의하기](/guide/query)에 있고, 이 점수를 도입한 근거는 [ADR-0017](https://github.com/Jungho-Cheon/arche/blob/main/docs/adr/0017-hub-aware-path-scoring.md)에 측정과 함께 기록돼 있습니다.
+이 글은 그 숫자가 무엇을 재고 어떻게 계산되며, 호출하는 쪽이 이를 어떻게 읽어야 하는지를 다룹니다. `find_path` 의 기본 사용법은 [그래프에 질의하기](/guide/query)에 있고, 이 점수를 도입한 근거는 [설계 결정 기록](https://github.com/Jungho-Cheon/arche/blob/main/docs/adr/0017-hub-aware-path-scoring.md)에 측정과 함께 기록돼 있습니다.
 
 ## 닿지만 의미가 약한 연결
 
