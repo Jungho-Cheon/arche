@@ -2,7 +2,7 @@
 
 조회 연산 열 개의 호출 주소, 요청 필드, 응답 모양을 한자리에 모은 참조표입니다. 개념과 예시 흐름은 [그래프에 질의하기](/guide/query)에서 다루고, 여기서는 필드와 범위만 빠르게 찾아봅니다.
 
-REST 는 성공 응답을 `{ "data": ... }` 봉투에 감싸 돌려줍니다. MCP 어댑터는 같은 payload 를 봉투 없이 그대로 돌려줍니다. 아래 "응답" 칸은 모두 봉투 안 payload 기준입니다. MCP(Model Context Protocol, AI 에이전트가 도구를 호출하는 규약)에서 부르는 연산 이름은 각 절 제목 뒤에 적었습니다.
+REST 는 성공 응답을 `{ "data": ... }` 봉투에 감싸 돌려줍니다. MCP 어댑터는 같은 payload 를 봉투 없이 그대로 돌려줍니다. 아래 "응답" 칸은 모두 봉투 안 payload 기준입니다. 아래 여섯 연산의 절 제목(`get_schema` 등)이 곧 MCP(Model Context Protocol, AI 에이전트가 도구를 호출하는 규약)에서 부르는 도구 이름입니다. MCP 로 에이전트를 붙이는 법은 [에이전트에 연결하기](/guide/agent-integration)에서 다룹니다.
 
 `namespace_id` 를 받는 연산은 그 값을 명시하지 않으면 인증 헤더의 namespace 를 쓰고, 그마저 없으면 `default` 로 떨어집니다. 호출 주소는 로컬 API(`http://localhost:8000`) 기준입니다.
 
