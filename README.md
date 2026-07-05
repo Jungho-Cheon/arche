@@ -20,7 +20,8 @@
   <a href="./docs/overview.md"><b>소개</b></a> &nbsp;•&nbsp;
   <a href="#-직접-해보기"><b>직접 해보기</b></a> &nbsp;•&nbsp;
   <a href="./apps/api/ARCHITECTURE.md"><b>아키텍처</b></a> &nbsp;•&nbsp;
-  <a href="./docs/adr/"><b>결정 기록</b></a>
+  <a href="./docs/adr/"><b>결정 기록</b></a> &nbsp;•&nbsp;
+  <a href="./apps/docs/"><b>사용 가이드</b></a>
 </p>
 
 </div>
@@ -107,6 +108,8 @@ MCP 클라이언트(예: Claude Desktop) 설정:
 ```
 
 자세한 흐름과 용어 풀이는 [`docs/overview.md`](./docs/overview.md), 개발자용 구조는 [`apps/api/ARCHITECTURE.md`](./apps/api/ARCHITECTURE.md) 참조.
+
+처음부터 끝까지 따라가는 단계별 안내는 [`apps/docs/`](./apps/docs/) 사용 가이드에 있다 — 로컬에서 `pnpm --dir apps/docs dev` 로 띄운다.
 
 ## 그래프 프리미티브
 

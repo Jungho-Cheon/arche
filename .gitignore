@@ -73,3 +73,8 @@ graphify-out/.graphify_root
 
 # poc-amcor 코퍼스는 financebench-2026-06-20 의 중복본 (재현 가능)
 eval/datasets/poc-amcor/
+
+# VitePress docs site
+apps/docs/node_modules
+apps/docs/.vitepress/dist
+apps/docs/.vitepress/cache
