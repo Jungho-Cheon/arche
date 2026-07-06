@@ -36,13 +36,21 @@ def embedding_provider_dep(request: Request) -> EmbeddingProvider:
     return request.app.state.embedding_provider
 
 
-def ingest_service_dep(
-    request: Request,
-    llm: LLMProvider = Depends(llm_provider_dep),
-    embedder: EmbeddingProvider = Depends(embedding_provider_dep),
-    graph: GraphRepository = Depends(graph_repo_dep),
+def build_ingest_service(
+    settings: Settings,
+    *,
+    llm: LLMProvider,
+    embedder: EmbeddingProvider,
+    graph: GraphRepository,
 ) -> IngestService:
-    settings = get_settings()
+    """추출 파이프라인(IngestService) 을 한 곳에서 조립.
+
+    WHY 단일 출처: 같은 IngestService 구성이 REST 의존성(ingest_service_dep),
+    stdio MCP serve(cli.py), HTTP MCP mount(main.py lifespan) 세 진입점에서
+    필요하다. 세 곳이 서로 다른 파라미터로 조립하면 REST 와 MCP 가 *같은 적재
+    동작* 을 노출한다는 계약(ARCHITECTURE.md §1)이 깨진다. 조립을 이 함수 하나로
+    모아 어느 진입점이든 같은 파이프라인을 쓰게 한다.
+    """
     return IngestService(
         llm=llm,
         embedder=embedder,
@@ -55,6 +63,17 @@ def ingest_service_dep(
         extraction_cache=ExtractionCache(root=DEFAULT_CACHE_DIR),
         extract_batch_size=8,
         llm_model_id=settings.llm_model_id,
+    )
+
+
+def ingest_service_dep(
+    request: Request,
+    llm: LLMProvider = Depends(llm_provider_dep),
+    embedder: EmbeddingProvider = Depends(embedding_provider_dep),
+    graph: GraphRepository = Depends(graph_repo_dep),
+) -> IngestService:
+    return build_ingest_service(
+        get_settings(), llm=llm, embedder=embedder, graph=graph
     )
 
 

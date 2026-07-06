@@ -51,16 +51,17 @@ def mcp_serve(
         bool,
         typer.Option(
             "--stdio/--no-stdio",
-            help="stdio transport 사용 여부 (현재는 stdio 만 지원, post-MVP 에서 HTTP+SSE).",
+            help="이 명령은 stdio 전송만 띄운다. 네트워크 너머 HTTP(SSE) 로 붙이려면 API 서버(arche_api.main:app)의 /mcp/v1 을 쓴다.",
         ),
     ] = True,
 ) -> None:
-    """6 graph primitive 를 MCP 표준 tool 로 노출 (PRD 3 §8).
+    """graph 조회 6개 + 검토형 적재 4개를 MCP 표준 tool 로 노출 (PRD 3 §8, ADR-0006).
 
     동작:
     1. `.env` 로드 + Settings / Neo4jGraphRepository / 임베딩 provider
        (팩토리가 모델 접두사로 선택, ADR-0019) 구성.
-    2. `build_mcp_server` 로 6 tool 등록.
+    2. `build_mcp_server` 로 조회 6 tool + (LLM/IngestService 구성 시) 검토형 적재
+       4 tool 등록.
     3. stdio transport 에서 JSON-RPC 핸드셰이크 (initialize / list_tools /
        call_tool) 를 처리.
 
@@ -70,15 +71,23 @@ def mcp_serve(
           "arche": { "command": "arche", "args": ["mcp", "serve", "--stdio"] }
         }
 
-    WHY stdio 만: PRD 3 §8.1 — MVP 범위 결정. HTTP+SSE 는 post-MVP.
+    전송(transport) 선택:
+    - **stdio** — 이 명령. 에이전트와 Arche 가 *같은 기계* 에 있을 때 프로세스를
+      파이프로 잇는다.
+    - **HTTP(SSE) / Streamable HTTP** — *네트워크 너머* 원격/클라우드 에이전트용.
+      이 명령이 아니라 API 서버가 띄운다 — `uvicorn arche_api.main:app` 이 부팅
+      시 `/mcp/v1` 에 자동 마운트한다 (ADR-0014). 두 전송은 같은 도구 집합을
+      노출한다.
     """
     import asyncio
 
     if not stdio:
-        # PRD 3 §8.1 — MVP 는 stdio 만 지원. 다른 transport 요청은 명시적 에러.
+        # 이 명령은 stdio 전용 진입점이다. HTTP(SSE) 는 API 서버(main:app)의 lifespan
+        # 이 /mcp/v1 에 마운트하므로(ADR-0014), --no-stdio 로는 여기서 띄우지 않는다.
         typer.echo(
-            "[error] only --stdio transport is supported in MVP "
-            "(HTTP+SSE is post-MVP, ADR-0006).",
+            "[error] `arche mcp serve` 는 stdio 전송 전용입니다. "
+            "HTTP(SSE) 로 붙이려면 API 서버를 띄우세요: "
+            "`uvicorn arche_api.main:app` → /mcp/v1 (ADR-0014).",
             err=True,
         )
         raise typer.Exit(code=2)
