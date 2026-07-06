@@ -108,6 +108,10 @@ def test_post_admin_ingest_rejects_missing_directory(tmp_path: Path):
     body = r.json()
     # ErrorEnvelope 안에 directory_not_found 코드.
     assert "directory_not_found" in str(body)
+    # #110 — 컨테이너 경로 힌트를 details 로 짚어 준다.
+    err = body["detail"]["error"]
+    assert err["details"]["hint"]
+    assert "컨테이너" in err["message"]
 
 
 def test_post_admin_ingest_rejects_path_that_is_a_file(tmp_path: Path):
