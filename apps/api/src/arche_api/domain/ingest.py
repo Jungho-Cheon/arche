@@ -135,21 +135,33 @@ class IngestResult:
 class DirectoryIngestResult:
     """디렉토리 모드 — 파일별 IngestResult 묶음 + 집계 (PRD 2 §7.2 의 메트릭).
 
-    `pending_skipped` / `unsupported_skipped` 는 *크롤* 단계에서 걸러진 수치.
-    실제 ingest 단계의 `files_skipped` (= short-circuit 한 파일 수) 와 분리한다 —
-    의미가 다르고 사용자 보고에도 두 신호가 모두 필요.
+    카운터 세 종류의 발생 단계와 조건이 다르다.
+
+      files_skipped            : **ingest 단계** — SUPPORTED_EXTS 파일 중 (경로,
+                                 SHA-256, 추출기 버전) 이 일치하는 성공 회차가 이미
+                                 그래프에 있어 LLM/임베딩 호출을 short-circuit 한
+                                 파일 수. 예: 내용이 바뀌지 않은 파일을 재실행.
+      files_pending_skipped    : **crawl 단계** — 확장자가 PENDING_EXTS 에 속하는
+                                 파일 수. PENDING_EXTS 가 현재 비어 있어 항상 0.
+                                 오디오/동영상 등 지원 예정 형식 자리.
+      files_unsupported_skipped: **crawl 단계** — 확장자가 SUPPORTED_EXTS 와
+                                 PENDING_EXTS 어느 쪽에도 없는 파일 수.
+                                 예: .json, .py, .csv.
     """
 
     directory_path: str
     files_total: int
     files_processed: int
+    # ingest 단계 short-circuit 파일 수 (crawl 통과 후 내용 미변경으로 재추출 생략).
     files_skipped: int
     # WHY 별도 카운터: PRD 2 §8 의 파일별 isolation 결과 — 한 파일이 깨져도
     # 전체 디렉토리는 끝까지 처리한다. 사용자 보고 시 "처리 / short-circuit /
     # 실패 / 미지원" 4 개 신호를 분리해서 보여줘야 의사결정이 가능하다 (어느
     # 파일을 다시 봐야 하는지).
     files_failed: int = 0
+    # crawl 단계 PENDING_EXTS 분류 — 현재 PENDING_EXTS 가 비어 항상 0.
     files_pending_skipped: int = 0
+    # crawl 단계 미지원 확장자 분류 — 예: .json, .py, .csv.
     files_unsupported_skipped: int = 0
     per_file: list[IngestResult] = field(default_factory=list)
     # issue #78 — 디렉토리 2-pass 가 회수한 정방향 cross-file 관계 수. 1-pass 에서
