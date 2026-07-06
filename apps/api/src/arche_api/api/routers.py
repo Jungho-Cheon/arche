@@ -263,12 +263,24 @@ def admin_ingest(
     """
     directory = Path(body.directory_path)
     if not directory.exists():
+        # #110 — API 는 컨테이너 안에서 돌므로 directory_path 는 *컨테이너에서 보이는*
+        # 경로여야 한다. 호스트 경로를 그대로 넣어 실패하는 사례가 잦아, 메시지와
+        # details.hint 로 원인을 짚어 준다 (호스트 폴더는 볼륨으로 마운트해야 컨테
+        # 이너 경로로 접근 가능).
         raise HTTPException(
             status_code=422,
             detail=ErrorEnvelope(
                 error=ErrorBody(
                     code="directory_not_found",
-                    message=f"Directory not found: {directory}",
+                    message=(
+                        f"Directory not found: {directory}. "
+                        "이 경로는 API 컨테이너 안에서 보이는 경로여야 합니다. "
+                        "호스트 폴더라면 볼륨으로 마운트한 뒤 컨테이너 경로로 넣으세요."
+                    ),
+                    details={
+                        "path": str(directory),
+                        "hint": "directory_path must be accessible from inside the API container (mount host folders as a volume).",
+                    },
                 )
             ).model_dump(),
         )
