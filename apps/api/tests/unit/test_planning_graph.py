@@ -1,4 +1,4 @@
-from arche_api.domain.models import StoredEntity, MergeMutation, SourceRef
+from arche_api.domain.models import MergeMutation, SourceRef, StoredEntity
 from arche_api.domain.planning_graph import PlanningGraphRepository
 from arche_api.test_support import FakeGraph  # existing GraphRepository double
 
