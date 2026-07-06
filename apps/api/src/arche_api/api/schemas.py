@@ -160,13 +160,43 @@ class AdminIngestResponse(BaseModel):
 
 
 class AdminIngestProgress(BaseModel):
+    """ingest 작업 진행 상태 — GET /admin/ingest/{task_id}/status 의 progress 필드.
+
+    세 카운터는 발생 단계와 조건이 다르다.
+
+    files_skipped             : ingest 단계에서 short-circuit 된 파일 수. 확장자는
+                                지원하지만 (path, SHA-256, 추출기 버전) 이 일치하는
+                                성공 회차가 이미 그래프에 있어 LLM 호출을 생략.
+    files_pending_skipped     : crawl 단계에서 PENDING_EXTS 로 분류된 파일 수.
+                                PENDING_EXTS 가 현재 비어 있어 항상 0. 계약 필드로
+                                유지하며 오디오/동영상 등 지원 예정 형식을 위해 예약.
+    files_unsupported_skipped : crawl 단계에서 SUPPORTED_EXTS 와 PENDING_EXTS 어느
+                                쪽에도 속하지 않는 확장자로 분류된 파일 수.
+                                예: .json, .py, .csv.
+    """
+
     model_config = ConfigDict(extra="forbid")
 
-    files_total: int
-    files_processed: int
-    files_skipped: int
-    files_pending_skipped: int
-    files_unsupported_skipped: int
+    files_total: int = Field(description="crawl 이 수집한 지원 파일 총 수 (ingest 시도 대상).")
+    files_processed: int = Field(description="ingest 를 완료한 파일 수 (short-circuit 제외).")
+    files_skipped: int = Field(
+        description=(
+            "ingest 단계 short-circuit 파일 수 — 내용(SHA-256) + 추출기 버전이 같아 "
+            "재추출 없이 건너뛴 파일. 예: 내용 변경 없이 동일 디렉토리를 재실행."
+        )
+    )
+    files_pending_skipped: int = Field(
+        description=(
+            "crawl 단계 PENDING_EXTS 분류 파일 수. PENDING_EXTS 가 현재 비어 있어 "
+            "항상 0 — 오디오/동영상 등 지원 예정 형식을 위한 예약 필드."
+        )
+    )
+    files_unsupported_skipped: int = Field(
+        description=(
+            "crawl 단계 미지원 확장자 파일 수 — SUPPORTED_EXTS 와 PENDING_EXTS "
+            "어느 쪽에도 속하지 않는 확장자. 예: .json, .py, .csv."
+        )
+    )
 
 
 class AdminIngestMetrics(BaseModel):

@@ -59,12 +59,23 @@ IGNORE_FILE_NAME = ".archeignore"
 class CrawlSummary:
     """크롤 결과 요약 — 호출자가 stdout 진행률에 쓰는 신호.
 
-    `files_pending_skipped` 는 PDF/이미지를 만나 skip 한 파일 수 — #5 가 들어오면
-    재처리 대상이 된다는 신호로 명시 노출.
+    세 카운터는 *확장자 기준* 의 crawl 단계 분류다. ingest 단계의 short-circuit
+    (= files_skipped) 와 무관하며, 아래 조건은 상호 배타적이다.
+
+      files_collected       : SUPPORTED_EXTS 에 속하는 파일 — ingest 대상.
+      files_pending_skipped : PENDING_EXTS 에 속하는 파일 — 현재 PENDING_EXTS 가
+                              비어 있어 항상 0. 오디오/동영상 등 지원 예정 형식이
+                              추가될 때 채워질 자리.
+      files_unsupported_skipped : 위 두 집합 어디에도 속하지 않는 확장자 — 예:
+                              .json, .py, .csv. debug 로그만 남기고 무음 skip.
     """
 
     files_collected: list[Path]
+    # PENDING_EXTS 는 현재 frozenset() — 이 카운터는 항상 0.
+    # 오디오/동영상 등 미래 형식이 PENDING_EXTS 에 들어오면 증가한다.
     files_pending_skipped: int
+    # SUPPORTED_EXTS 와 PENDING_EXTS 양쪽에 없는 확장자 파일 수.
+    # 예: .json, .py, .csv — debug 로그만 남기고 수집하지 않는다.
     files_unsupported_skipped: int
 
 
@@ -101,13 +112,17 @@ def crawl(
     for path in candidates:
         ext = path.suffix.lower()
         if ext in SUPPORTED_EXTS:
+            # SUPPORTED_EXTS: .txt .md .pdf .jpg .jpeg .png .webp
             collected.append(path)
         elif ext in PENDING_EXTS:
+            # PENDING_EXTS 는 현재 비어 있어 이 분기는 실행되지 않는다.
+            # 오디오/동영상 등 지원 예정 형식이 추가되면 여기서 증가한다.
             pending_skipped += 1
             logger.warning(
-                "skip %s (PDF/image — follow-up issue #5): %s", ext, path
+                "skip %s (지원 예정 형식, PENDING_EXTS 등록): %s", ext, path
             )
         else:
+            # SUPPORTED / PENDING 어느 쪽도 아닌 확장자 — 예: .json, .py, .csv
             unsupported_skipped += 1
             logger.debug("skip unsupported extension %s: %s", ext, path)
 

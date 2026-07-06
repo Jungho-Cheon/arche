@@ -112,3 +112,45 @@ def test_raises_on_file_instead_of_directory(tmp_path: Path):
 def test_supported_and_pending_ext_constants_are_disjoint():
     """동일 확장자가 양쪽에 안 잡혀야 함 (혼선 방지)."""
     assert not (SUPPORTED_EXTS & PENDING_EXTS)
+
+
+def test_three_skip_counters_are_distinct(tmp_path: Path):
+    """세 카운터가 서로 다른 조건에서 정확히 증가함을 고정하는 회귀 테스트.
+
+    조건 요약:
+      files_collected       — SUPPORTED_EXTS 확장자 파일 (.md, .txt, .pdf 등).
+      files_pending_skipped — PENDING_EXTS 확장자 파일. 현재 PENDING_EXTS 는
+                              frozenset() 이므로 항상 0. 별도 케이스로 보장.
+      files_unsupported_skipped — SUPPORTED / PENDING 어느 쪽도 아닌 확장자.
+                              예: .json, .py, .csv.
+
+    이 테스트가 깨지면 카운터의 의미 또는 PENDING_EXTS 의 내용이 바뀐 것이다.
+    """
+    # 지원 파일 2개
+    _touch(tmp_path / "note.md")
+    _touch(tmp_path / "readme.txt")
+    # 미지원 확장자 3개 — files_unsupported_skipped 가 3이 되어야 한다
+    _touch(tmp_path / "config.json")
+    _touch(tmp_path / "script.py")
+    _touch(tmp_path / "data.csv")
+
+    summary = crawl(tmp_path)
+
+    # 수집 파일
+    collected_names = sorted(p.name for p in summary.files_collected)
+    assert collected_names == ["note.md", "readme.txt"]
+
+    # PENDING_EXTS 가 비어 있는 한 항상 0
+    assert summary.files_pending_skipped == 0, (
+        "PENDING_EXTS 가 비어 있으면 files_pending_skipped 는 0 이어야 한다. "
+        "PENDING_EXTS 에 확장자가 추가됐다면 이 테스트를 함께 갱신할 것."
+    )
+
+    # 미지원 확장자는 정확히 3개
+    assert summary.files_unsupported_skipped == 3
+
+    # PENDING_EXTS 가 비어 있음을 상수로 직접 검증
+    assert frozenset() == PENDING_EXTS, (
+        "PENDING_EXTS 가 채워졌다. crawl 분기와 files_pending_skipped 의미를 "
+        "함께 검토한 뒤 이 단언을 갱신할 것."
+    )
