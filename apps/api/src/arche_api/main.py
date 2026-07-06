@@ -55,16 +55,33 @@ async def lifespan(app: FastAPI):
 
     # ADR-0014 D1/D2 — MCP HTTP transports 마운트 (lifespan 안에서 lazy import
     # 로 stdio-only 환경에서 SDK 호환성 부담 없도록).
+    #
+    # #107 — 검토형 적재 도구까지 HTTP 로 노출하려면 IngestService + PlanRegistry
+    # 가 필요하다. REST 의존성(deps.build_ingest_service)과 *같은* 조립을 써서
+    # HTTP MCP 가 stdio serve 와 같은 10개 도구를 노출하게 한다. plan_registry 는
+    # 앱 수명 동안 하나만 두어, plan 을 만든 뒤 같은 세션에서 resolve/commit 로
+    # 이어갈 수 있게 한다.
     try:
+        from .api.deps import build_ingest_service
+        from .api.plan_registry import PlanRegistry
         from .mcp_http import mount_mcp_routes
 
+        ingest_service = build_ingest_service(
+            settings,
+            llm=components["llm_provider"],
+            embedder=components["embedding_provider"],
+            graph=components["graph_repo"],
+        )
+        app.state.mcp_plan_registry = PlanRegistry()
         mount_mcp_routes(
             app,
             graph=components["graph_repo"],
             embedder=components["embedding_provider"],
             settings=settings,
+            ingest_service=ingest_service,
+            plan_registry=app.state.mcp_plan_registry,
         )
-        logger.info("MCP HTTP routes mounted at /mcp/v1")
+        logger.info("MCP HTTP routes mounted at /mcp/v1 (6 read + 4 ingest tools)")
     except Exception as e:  # noqa: BLE001
         logger.warning("MCP HTTP mount failed (stdio still available): %s", e)
 
