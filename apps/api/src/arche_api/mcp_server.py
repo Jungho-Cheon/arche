@@ -16,9 +16,9 @@ WHY `$defs` 평탄화: MCP 클라이언트 (Claude Desktop 포함) 는 *flat JSO
 
 WHY write tool 노출 제한: ADR-0006 D3 — `create_entity` / `delete_relation`
 같은 *직접 그래프 변형* write 는 MCP 에 노출하지 않는다 (CLI 와 admin REST
-전용). 단 reviewable ingest 의 3 tool (ingest_plan / ingest_preview /
-ingest_commit) 은 예외다: 사람의 미리보기 + 확인 latch 를 강제하므로, LLM 이
-검토 없이 그래프를 바꾸지 못한다. 이 세 tool 은 `ingest_service` 와
+전용). 단 reviewable ingest 의 4 tool (ingest_plan / ingest_preview /
+ingest_resolve / ingest_commit) 은 예외다: 사람의 미리보기 + 확인 latch 를
+강제하므로, LLM 이 검토 없이 그래프를 바꾸지 못한다. 이 네 tool 은 `ingest_service` 와
 `plan_registry` 가 *함께 주입된* 서버에서만 등록된다 (production serve 경로).
 LLM 이 없는 read-only fake-boot 경로는 6 read tool 만 노출한다.
 """
@@ -143,8 +143,8 @@ _TOOL_DESCRIPTIONS: dict[str, str] = {
 }
 
 
-# reviewable ingest tool 이름 — service 주입 시에만 등록되는 plan/preview/commit.
-# WRITE_TOOL_NAMES_EXCLUDED (등록 금지 목록) 와는 *별개* 다: 이 세 tool 은 사람
+# reviewable ingest tool 이름 — service 주입 시에만 등록되는 plan/preview/resolve/commit.
+# WRITE_TOOL_NAMES_EXCLUDED (등록 금지 목록) 와는 *별개* 다: 이 네 tool 은 사람
 # 검토 latch 를 통과한 변경만 반영하므로 허용된다.
 INGEST_TOOL_NAMES: tuple[str, ...] = (
     "ingest_plan",
@@ -487,7 +487,7 @@ def build_mcp_server(
     """MCP Server 객체 생성 + tool 등록.
 
     기본은 6 read tool 만 등록한다. `ingest_service` 와 `plan_registry` 가 *둘 다*
-    주입되면 reviewable ingest 의 3 tool (plan/preview/commit) 을 추가로 등록한다.
+    주입되면 reviewable ingest 의 4 tool (plan/preview/resolve/commit) 을 추가로 등록한다.
     어느 한쪽이 None 이면 추가하지 않는다 — LLM 이 없는 read-only fake-boot 경로
     (CLI 의 ARCHE_TEST_FAKE_GRAPH) 를 보호하기 위함이다.
 
