@@ -20,6 +20,7 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from ..domain.ingest_plan import PlanQuestionKind
 
 # ---------- plan ----------
 
@@ -126,7 +127,9 @@ class QuestionView(BaseModel):
     candidate_id: str
     candidate_name: str
     similarity: float
-    kind: str
+    # #105 — 닫힌 목록. 응답 스키마에 enum 으로 노출돼 소비자가 값 집합을 계약으로
+    # 삼는다. 도메인의 PlanQuestionKind 를 단일 출처로 재사용.
+    kind: PlanQuestionKind
 
 
 class PlanPreview(BaseModel):
