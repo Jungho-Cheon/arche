@@ -8,6 +8,9 @@ export default defineConfig({
   lang: "ko-KR",
   cleanUrls: true,
   lastUpdated: true,
+  // _generated 아래 파일은 문서에 @include 로 끼워 넣는 조각이다. 독립 페이지로
+  // 빌드하지 않도록 라우팅에서 제외한다 (#111 — 코드 스키마에서 자동 생성).
+  srcExclude: ["**/_generated/**"],
   themeConfig: {
     socialLinks: [
       { icon: "github", link: "https://github.com/Jungho-Cheon/arche" },
