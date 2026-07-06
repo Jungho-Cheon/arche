@@ -295,41 +295,14 @@ namespace 별 엔티티 수를 봅니다 (운영 가시성).
 
 ## 공통 모델
 
-여러 응답이 같은 `Node` 와 `Edge` 모양을 공유합니다.
+여러 응답이 같은 `Node` 와 `Edge` 모양을 공유합니다. 아래 표는 코드의 스키마에서 자동으로 뽑아 옵니다. 표 아래 설명 문단은 사람이 쓴 것으로, 표에 담기 어려운 뜻(ULID 가 무엇인지, 시각 형식, 임베딩이 왜 빠지는지)을 덧붙입니다.
 
-### Node
+<!-- @include: ./_generated/schema-models.md -->
 
-| 필드 | 타입 | 기본값 | 제약 |
-| --- | --- | --- | --- |
-| `id` | `string` | (필수) | ULID (26자리, 숫자와 대문자) |
-| `name` | `string` | (필수) | 최대 200자 |
-| `type` | `string` | (필수) | 최대 64자 |
-| `aliases` | `string[]` | `[]` | 별칭 목록 |
-| `description` | `string \| null` | `null` | 최대 2000자. 값이 없으면 키가 빠집니다 |
-| `properties` | `{ [키]: string\|int\|float\|bool }` | `{}` | 속성 |
-| `source_refs` | `SourceRef[]` | `[]` | 출처 |
-| `created_at` | `string` | (필수) | RFC 3339 시각 |
-| `updated_at` | `string` | (필수) | RFC 3339 시각 |
+읽는 데 필요한 몇 가지를 덧붙입니다.
 
-응답 `Node` 에는 임베딩 벡터가 들어가지 않습니다.
-
-### Edge
-
-| 필드 | 타입 | 기본값 | 제약 |
-| --- | --- | --- | --- |
-| `id` | `string` | (필수) | ULID |
-| `from` | `string` | (필수) | ULID. 출발 노드 |
-| `to` | `string` | (필수) | ULID. 도착 노드 |
-| `type` | `string` | (필수) | 최대 64자 |
-| `properties` | `object` | `{}` | 속성 |
-| `source_refs` | `SourceRef[]` | `[]` | 출처 |
-| `created_at` | `string` | (필수) | RFC 3339 시각 |
-| `updated_at` | `string` | (필수) | RFC 3339 시각 |
-
-### SourceRef
-
-| 필드 | 타입 | 기본값 | 설명 |
-| --- | --- | --- | --- |
-| `source_path` | `string` | (필수) | 출처 문서 경로 |
-| `chunk_index` | `int \| null` | `null` | 청크 순번 |
-| `total_chunks` | `int \| null` | `null` | 전체 청크 수 |
+- `id` / `from` / `to` 의 pattern `^[0-9A-Z]{26}$` 는 ULID 를 뜻합니다. 숫자와 대문자로 된 26자리 식별자입니다.
+- `created_at` / `updated_at` 은 RFC 3339 시각 문자열입니다(예: `2026-07-06T09:00:00Z`).
+- `properties` 의 값은 문자열, 정수, 실수, 불리언만 담습니다.
+- 응답 `Node` 에는 임베딩 벡터가 들어가지 않습니다.
+- `SourceRef` 는 `Node` 와 `Edge` 가 출처를 가리킬 때 쓰는 모양으로, 어느 문서 어느 청크에서 왔는지를 담습니다.

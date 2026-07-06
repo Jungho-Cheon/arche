@@ -36,6 +36,13 @@ mcp_app = typer.Typer(
 )
 app.add_typer(mcp_app, name="mcp")
 
+docs_app = typer.Typer(
+    no_args_is_help=True,
+    add_completion=False,
+    help="문서 생성 명령 — 레퍼런스 표를 코드 스키마에서 생성.",
+)
+app.add_typer(docs_app, name="docs")
+
 
 @app.command()
 def version() -> None:
@@ -182,6 +189,37 @@ def reindex() -> None:
         )
     finally:
         graph.close()
+
+
+@docs_app.command("gen-reference")
+def docs_gen_reference(
+    check: Annotated[
+        bool,
+        typer.Option(
+            "--check",
+            help="생성만 하고 쓰지 않는다. 커밋된 파일이 코드 스키마와 어긋나면 종료 코드 1.",
+        ),
+    ] = False,
+) -> None:
+    """레퍼런스의 기계적 표(필드, 타입, 기본값, 범위)를 코드 스키마에서 생성한다 (#111).
+
+    Node/Edge/SourceRef 같은 공유 모델의 표를 pydantic JSON Schema 에서 만들어
+    `apps/docs/reference/_generated/schema-models.md` 에 쓴다. 문서(primitives.md)는
+    이 파일을 `<!-- @include: -->` 로 끼워 넣으므로, 모델을 바꾸고 이 명령을 다시
+    실행하면 문서가 따라온다.
+
+    `--check` 는 CI/pre-commit 용이다 — 다시 생성한 결과가 커밋된 파일과 다르면
+    (누군가 모델만 바꾸고 문서를 갱신 안 했으면) 종료 코드 1 로 어긋남을 알린다.
+    """
+    from . import docs_gen
+
+    if check:
+        ok, message = docs_gen.check()
+        typer.echo(message, err=not ok)
+        raise typer.Exit(code=0 if ok else 1)
+
+    target = docs_gen.write()
+    typer.echo(f"generated: {target}")
 
 
 @app.command()
