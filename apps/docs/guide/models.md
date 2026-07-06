@@ -65,7 +65,15 @@ uv sync --extra providers
 :::
 
 ::: warning 임베딩 모델을 바꾸면 벡터 차원이 달라집니다
-임베딩 모델마다 출력하는 벡터 차원이 다릅니다. 기본 `text-embedding-3-small` 은 1536 차원이지만 `voyage-3` 은 1024 차원입니다. 차원이 달라지면 `ARCHE_API_EMBEDDING_DIMENSION` 을 새 모델의 차원에 맞추고 이미 만들어 둔 벡터 인덱스를 다시 만들어야 합니다. 그러지 않으면 차원이 어긋나 검색이 깨집니다. 인덱스를 다시 만드는 방법과 환경 변수 전체 목록은 [환경 변수](/reference/configuration)에서 확인하세요.
+임베딩 모델마다 출력하는 벡터 차원이 다릅니다. 기본 `text-embedding-3-small` 은 1536 차원이지만 `voyage-3` 은 1024 차원입니다. 차원이 달라지면 `ARCHE_API_EMBEDDING_DIMENSION` 을 새 모델의 차원에 맞추고 이미 만들어 둔 벡터 인덱스를 다시 만들어야 합니다. 그러지 않으면 차원이 어긋나 검색이 깨집니다.
+
+인덱스는 아래 명령으로 다시 만듭니다. 옛 인덱스를 지우고 `ARCHE_API_EMBEDDING_DIMENSION` 값에 맞춰 새로 만듭니다.
+
+```bash
+uv run --project apps/api arche reindex
+```
+
+이 명령은 인덱스 구조만 새로 만들 뿐, 이미 저장된 노드의 임베딩 값은 다시 계산하지 않습니다. 옛 차원의 벡터가 노드에 그대로 남아 있으니, 모델을 바꾼 문서의 벡터까지 새 차원으로 채우려면 그 문서를 다시 적재해야 합니다. 환경 변수 전체 목록은 [환경 변수](/reference/configuration)에서 확인하세요.
 :::
 
 ## 다음으로

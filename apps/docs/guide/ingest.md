@@ -69,6 +69,10 @@ curl -X POST http://localhost:8000/admin/ingest \
 }
 ```
 
+::: warning directory_path 는 API 컨테이너 안에서 보이는 경로여야 합니다
+API 는 컨테이너 안에서 돌기 때문에 `directory_path` 도 그 안에서 열리는 경로여야 합니다. 호스트(내 컴퓨터)에만 있는 경로를 그대로 주면 컨테이너가 찾지 못해 `directory_not_found` 로 막힙니다. 호스트 폴더를 넣으려면 그 폴더를 컨테이너에 볼륨으로 연결해 두고, 컨테이너 안에서 보이는 경로를 적으세요.
+:::
+
 받은 주소로 상태를 조회합니다. 끝날 때까지 짧은 간격을 두고 몇 번 다시 부르면 됩니다.
 
 ```bash
@@ -106,9 +110,9 @@ curl http://localhost:8000/admin/ingest/a1b2c3/status
 | --- | --- |
 | `files_total` | 훑어서 처리 대상으로 잡은 파일 수 |
 | `files_processed` | 그래프에 반영을 끝낸 파일 수 |
-| `files_skipped` | 처리 중 건너뛴 파일 수 |
-| `files_pending_skipped` | 아직 받을 수 없는 형식이라 건너뛴 파일 수 |
-| `files_unsupported_skipped` | 지원하지 않는 확장자라 건너뛴 파일 수 |
+| `files_skipped` | 적재 단계에서 건너뛴 파일 수. 받는 형식인데 (경로, SHA-256, 추출기 버전)이 똑같이 성공한 회차가 이미 그래프에 있어, 다시 뽑지 않고 넘긴 경우입니다. 다시 넣을 때 안 바뀐 파일이 여기에 잡힙니다 |
+| `files_pending_skipped` | 훑는 단계에서 `PENDING_EXTS` 목록에 든 확장자라 건너뛴 파일 수. 이 목록은 지금 비어 있어 늘 0 입니다. 오디오나 동영상 같은 나중에 받을 형식을 위해 자리만 잡아 둔 필드입니다 |
+| `files_unsupported_skipped` | 훑는 단계에서 받는 형식도 나중에 받을 형식도 아니라 건너뛴 파일 수. 예를 들어 `.json`, `.py`, `.csv` 가 여기에 잡힙니다 |
 
 `metrics` 는 그래프가 얼마나 채워졌는지 보여 줍니다.
 

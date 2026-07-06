@@ -8,7 +8,7 @@ REST 는 성공 응답을 `{ "data": ... }` 봉투에 감싸 돌려줍니다. MC
 
 `namespace_id` 를 받는 연산은 그 값을 명시하지 않으면 인증 헤더의 namespace 를 쓰고, 그마저 없으면 `default` 로 떨어집니다. 호출 주소는 로컬 API(`http://localhost:8000`) 기준입니다.
 
-MCP 호출에는 HTTP 헤더가 없으므로 조회 도구 6개 모두 `namespace_id` 를 도구 인자로 받습니다(미지정 시 `default`). 아래 표에서 `get_schema` 와 `get_entity` 에는 `namespace_id` 필드가 안 보이지만, 이건 REST 가 그 값을 인증 헤더로 받기 때문입니다. MCP 에서는 이 둘도 `namespace_id` 인자를 받습니다.
+MCP 호출에는 HTTP 헤더가 없으므로 조회 도구 6개 모두 `namespace_id` 를 도구 인자로 받습니다(미지정 시 `default`). REST 도 6개 모두 헤더 없이 namespace 를 지정할 수 있습니다. 본문을 받는 네 연산은 본문의 `namespace_id` 로, 본문이 없는 `GET /schema` 와 `GET /entities/{entity_id}` 는 `namespace_id` 질의 변수(query parameter)로 받습니다. 셋의 우선순위는 질의 변수(또는 본문) → 인증 헤더 → `default` 순입니다.
 
 ## get_schema
 
@@ -17,7 +17,7 @@ MCP 호출에는 HTTP 헤더가 없으므로 조회 도구 6개 모두 `namespac
 | 항목 | 값 |
 | --- | --- |
 | 메서드 + 주소 | `GET /schema` |
-| 요청 본문 | 없음 (namespace 는 인증 헤더에서 결정) |
+| 요청 | 본문 없음. namespace 는 `?namespace_id=` 질의 변수 → 인증 헤더 → `default` 순으로 결정 |
 
 응답: `{ entity_types[], relation_types[], embedding_info }`
 
@@ -59,7 +59,7 @@ ID 로 노드 한 개와 타입별 인접 관계 수를 봅니다.
 | 항목 | 값 |
 | --- | --- |
 | 메서드 + 주소 | `GET /entities/{entity_id}` |
-| 요청 | 경로 변수 `entity_id` (namespace 는 인증 헤더에서 결정) |
+| 요청 | 경로 변수 `entity_id`. namespace 는 `?namespace_id=` 질의 변수 → 인증 헤더 → `default` 순으로 결정 |
 
 응답: `{ node, edge_counts }`
 

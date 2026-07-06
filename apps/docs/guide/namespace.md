@@ -33,8 +33,8 @@ curl -X POST http://localhost:8000/entities/find \
 ::: tip 결정 순서
 한 요청의 namespace 는 다음 우선순위로 정해집니다.
 
-1. **요청 본문의 `namespace_id`** — 본문을 받는 연산(`find_entities`, `get_neighbors`, `find_path`, `get_subgraph`, 적재)에서 `namespace_id` 를 직접 적으면 그 값이 가장 셉니다.
-2. **`Bearer ns:` 헤더** — 본문에 `namespace_id` 가 없으면 헤더의 칸을 씁니다.
+1. **요청 본문의 `namespace_id`** — 본문을 받는 연산(`find_entities`, `get_neighbors`, `find_path`, `get_subgraph`, 적재)에서 `namespace_id` 를 직접 적으면 그 값이 가장 셉니다. 본문이 없는 `GET /schema` 와 `GET /entities/{id}` 는 대신 `?namespace_id=` 질의 변수(query parameter)로 같은 자리를 채웁니다.
+2. **`Bearer ns:` 헤더** — 본문이나 질의 변수에 `namespace_id` 가 없으면 헤더의 칸을 씁니다.
 3. **`default`** — 둘 다 없으면 `default` 칸으로 갑니다.
 
 헤더를 아예 안 실으면 그 요청은 전부 `default` 로 갑니다. 칸을 따로 나누지 않은 채로도 그냥 쓸 수 있도록 한 기본값입니다.
