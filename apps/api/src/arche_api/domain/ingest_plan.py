@@ -7,11 +7,28 @@ WHY domain 에 둠: PlanningGraphRepository 와 IngestService.plan_file 둘 다
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from enum import Enum
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     from .ingest import IngestResult
     from .models import StoredEntity
+
+
+class PlanQuestionKind(str, Enum):
+    """검토형 적재 질문의 종류 — 닫힌 목록 (#105).
+
+    WHY enum: `kind` 를 열린 str 로 두면 문서와 클라이언트가 "올 수 있는 값"
+    전체를 신뢰하지 못한다. 닫힌 목록으로 고정하면 응답 스키마(plan_schemas)에
+    `enum` 으로 노출돼 소비자가 값 집합을 계약으로 삼고 분기할 수 있다. str 상속
+    이라 JSON 직렬화는 값 문자열 그대로. 새 종류 추가 = 여기 한 줄 + 소비자 갱신.
+
+    - POSSIBLE_MISSED_MERGE: 추출된 새 항목이 기존 노드와 임계 바로 아래
+      유사도라 자동 병합되지 않고 새 점으로 떨어졌다 — 같은 대상인지 사람에게
+      묻는다. 현재 유일한 종류.
+    """
+
+    POSSIBLE_MISSED_MERGE = "possible_missed_merge"
 
 
 @dataclass(frozen=True)
@@ -29,7 +46,7 @@ class AmbiguousMatch:
     candidate_id: str
     candidate_name: str
     similarity: float
-    kind: str = "possible_missed_merge"
+    kind: PlanQuestionKind = PlanQuestionKind.POSSIBLE_MISSED_MERGE
 
 
 @dataclass(frozen=True)

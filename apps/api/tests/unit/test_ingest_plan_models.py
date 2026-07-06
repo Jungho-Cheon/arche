@@ -1,6 +1,40 @@
+import pytest
+from pydantic import ValidationError
+
 from arche_api.api.plan_registry import PlanRegistry
+from arche_api.api.plan_schemas import QuestionView
 from arche_api.domain.ingest import IngestResult
-from arche_api.domain.ingest_plan import IngestPlan, RecordedWrite
+from arche_api.domain.ingest_plan import IngestPlan, PlanQuestionKind, RecordedWrite
+
+
+def _question(kind: object) -> dict:
+    return {
+        "question_id": "q1",
+        "extracted_name": "A",
+        "extracted_type": "Company",
+        "candidate_id": "01H",
+        "candidate_name": "A Inc",
+        "similarity": 0.9,
+        "kind": kind,
+    }
+
+
+def test_plan_question_kind_is_closed_set():
+    # #105 — kind 는 닫힌 목록. 현재 유일한 값만 허용된다.
+    assert [k.value for k in PlanQuestionKind] == ["possible_missed_merge"]
+
+
+def test_plan_question_accepts_known_kind():
+    q = QuestionView(**_question("possible_missed_merge"))
+    assert q.kind is PlanQuestionKind.POSSIBLE_MISSED_MERGE
+    # str 상속이라 값 문자열과도 동등 — 기존 소비자 호환.
+    assert q.kind == "possible_missed_merge"
+
+
+def test_plan_question_rejects_unknown_kind():
+    # 목록에 없는 종류는 스키마 검증에서 거부된다 (계약 고정).
+    with pytest.raises(ValidationError):
+        QuestionView(**_question("something_else"))
 
 
 def _plan(plan_id: str = "pln_1") -> IngestPlan:
