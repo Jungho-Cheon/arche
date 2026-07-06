@@ -92,6 +92,13 @@ def healthz(graph: GraphRepository = Depends(graph_repo_dep)) -> HealthzResponse
     # WHY response_model_exclude_none: PRD 3 §3.4 의 `scores` 는 *include_scores
     # =true 일 때만 노출* . pydantic 기본 직렬화는 None 키도 포함하므로 응답
     # 단에서 None 필드를 제외해 contract 를 충족.
+    #
+    # #109 — 값이 없는 필드(None)를 다루는 규칙을 *모든* 조회·관리 응답에서
+    # 하나로 통일한다: None 은 키 자체를 뺀다. 예전에는 이 엔드포인트와
+    # ingest status 만 None 을 뺐고, get_entity 등 나머지는 `description: null`
+    # 처럼 빈 값을 그대로 실어 보내, 문서와 소비 코드가 엔드포인트마다 다른
+    # 규칙을 설명·처리해야 했다. 모든 응답이 같은 규칙을 따르도록 아래 조회
+    # 라우터에도 같은 플래그를 단다.
     response_model_exclude_none=True,
 )
 def find_entities(
@@ -117,6 +124,7 @@ def find_entities(
 @schema_router.get(
     "/schema",
     response_model=DataEnvelope[GetSchemaResponse],
+    response_model_exclude_none=True,  # #109 — None 은 키 제외 (응답 전체 통일)
 )
 def get_schema(
     namespace_id: str | None = Query(
@@ -145,6 +153,7 @@ def get_schema(
 @entities_router.get(
     "/{entity_id}",
     response_model=DataEnvelope[GetEntityResponse],
+    response_model_exclude_none=True,  # #109 — None 은 키 제외 (응답 전체 통일)
 )
 def get_entity(
     entity_id: str,
@@ -172,6 +181,7 @@ def get_entity(
 @entities_router.post(
     "/{entity_id}/neighbors",
     response_model=DataEnvelope[GetNeighborsResponse],
+    response_model_exclude_none=True,  # #109 — None 은 키 제외 (응답 전체 통일)
 )
 def get_neighbors(
     entity_id: str,
@@ -205,6 +215,7 @@ def get_neighbors(
 @paths_router.post(
     "/find",
     response_model=DataEnvelope[FindPathResponse],
+    response_model_exclude_none=True,  # #109 — None 은 키 제외 (응답 전체 통일)
 )
 def find_path(
     body: FindPathRequest,
@@ -226,6 +237,7 @@ def find_path(
 @subgraph_router.post(
     "",
     response_model=DataEnvelope[GetSubgraphResponse],
+    response_model_exclude_none=True,  # #109 — None 은 키 제외 (응답 전체 통일)
 )
 def get_subgraph(
     body: GetSubgraphRequest,
@@ -248,6 +260,7 @@ def get_subgraph(
     "/ingest",
     status_code=202,
     response_model=DataEnvelope[AdminIngestResponse],
+    response_model_exclude_none=True,  # #109 — None 은 키 제외 (응답 전체 통일)
 )
 def admin_ingest(
     body: AdminIngestRequest,
@@ -316,6 +329,7 @@ def admin_ingest(
 @admin_router.get(
     "/namespaces",
     response_model=DataEnvelope[AdminNamespacesResponse],
+    response_model_exclude_none=True,  # #109 — None 은 키 제외 (응답 전체 통일)
 )
 def admin_namespaces(
     graph: GraphRepository = Depends(graph_repo_dep),

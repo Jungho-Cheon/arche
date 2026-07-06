@@ -525,3 +525,73 @@ def test_get_entity_query_overrides_header():
     )
     assert r.status_code == 200
     assert g.last_entity_namespace == "work-a"
+
+
+# ---------- #109 — 빈 값(None) 처리 규칙 통일 ----------
+#
+# 규칙: 모든 조회·관리 응답에서 값이 None 인 필드는 *키 자체를 뺀다*. 예전에는
+# find_entities / ingest status 만 뺐고 나머지는 `null` 을 실어 보냈다. 아래
+# 테스트가 이 규칙을 엔드포인트별로 고정한다. `_make_node` 가 description=None
+# 인 노드를 만드므로, 통일 후에는 어떤 조회 응답에도 `description: null` 이 없어야
+# 한다.
+
+
+def test_get_entity_omits_none_description():
+    """get_entity — node.description 이 None 이면 키 자체가 빠진다 (#109)."""
+    n = _make_node()  # description=None
+    g = StubGraph(nodes=[n])
+    r = _client_with(g).get(f"/entities/{n.id}")
+    assert r.status_code == 200
+    node = r.json()["data"]["node"]
+    assert "description" not in node
+
+
+def test_get_neighbors_omits_none_description():
+    """get_neighbors — 반환 노드의 description(None)도 키 제외 (#109)."""
+    node = _make_node(node_id="01HZX0G7M8N0RT0V0COUPON000")
+    client = _client_with(StubGraph(nodes=[node]))
+    r = client.post(
+        "/entities/01HZX0G7M8N0RT0V0COUPON000/neighbors",
+        json={"hops": 1},
+    )
+    assert r.status_code == 200
+    for n in r.json()["data"]["nodes"]:
+        assert "description" not in n
+
+
+def test_get_subgraph_omits_none_description():
+    """get_subgraph — union 결과 노드의 description(None)도 키 제외 (#109)."""
+    node = _make_node(node_id="01HZX0G7M8N0RT0V0COUPON000")
+    client = _client_with(StubGraph(nodes=[node]))
+    r = client.post(
+        "/subgraph",
+        json={"entry_ids": ["01HZX0G7M8N0RT0V0COUPON000"], "hops": 1},
+    )
+    assert r.status_code == 200
+    for n in r.json()["data"]["nodes"]:
+        assert "description" not in n
+
+
+def test_find_entities_omits_none_description():
+    """find_entities — matches[].node.description(None)도 키 제외 (#109 회귀 가드).
+
+    이 엔드포인트는 예전부터 None 을 뺐다. 통일 규칙이 이 동작을 계속 유지하는지
+    함께 고정한다.
+    """
+    n = _make_node()  # description=None
+    client = _client_with(StubGraph(nodes=[n]))
+    r = client.post("/entities/find", json={"keywords": ["여름"]})
+    assert r.status_code == 200
+    node = r.json()["data"]["matches"][0]["node"]
+    assert "description" not in node
+
+
+def test_get_entity_present_description_is_kept():
+    """대칭 확인 — description 에 값이 있으면 그대로 실린다 (#109 는 None 만 뺀다)."""
+    n = _make_node()
+    n = n.model_copy(update={"description": "여름 한정 10% 쿠폰"})
+    g = StubGraph(nodes=[n])
+    r = _client_with(g).get(f"/entities/{n.id}")
+    assert r.status_code == 200
+    node = r.json()["data"]["node"]
+    assert node["description"] == "여름 한정 10% 쿠폰"

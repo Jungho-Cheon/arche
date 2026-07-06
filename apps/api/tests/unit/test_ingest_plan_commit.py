@@ -12,6 +12,7 @@ from __future__ import annotations
 import math
 from pathlib import Path
 
+from arche_api.adapters.extract_cache import ExtractionCache
 from arche_api.domain.identity import normalize
 from arche_api.domain.ingest import IngestResult, IngestService
 from arche_api.domain.ingest_plan import IngestPlan, RecordedWrite
@@ -22,7 +23,6 @@ from arche_api.domain.models import (
     StoredEntity,
     now_rfc3339,
 )
-from arche_api.adapters.extract_cache import ExtractionCache
 from arche_api.domain.ports import EmbeddingProvider, LLMProvider
 
 # 검증된 ingest 흐름 더블을 그대로 재사용 (DRY — 새 더블 금지).

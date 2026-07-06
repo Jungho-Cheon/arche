@@ -4,6 +4,10 @@
 
 REST 는 성공 응답을 `{ "data": ... }` 봉투에 감싸 돌려줍니다. MCP 어댑터는 같은 payload 를 봉투 없이 그대로 돌려줍니다. 아래 "응답" 칸은 모두 봉투 안 payload 기준입니다. 아래 여섯 조회 연산의 절 제목(`get_schema` 등)이 곧 MCP(Model Context Protocol, AI 에이전트가 도구를 호출하는 규약)에서 부르는 도구 이름입니다. MCP 로 에이전트를 붙이는 법은 [에이전트에 연결하기](/guide/agent-integration)에서 다룹니다.
 
+::: tip 값이 없는 필드는 키가 빠집니다
+값이 없는 필드는 `null` 로 실려 오지 않고 응답에서 키 자체가 빠집니다. 조회든 관리든 모든 응답이 이 규칙을 똑같이 따릅니다. 예를 들어 노드에 설명이 없으면 `description` 키가 아예 없고, 작업이 성공하면 상태 응답에 `error` 키가 없습니다. 그래서 어느 연산을 부르든 응답 파싱을 한 방식으로 짜면 됩니다. 아래 표에서 타입에 `| null` 이 붙은 응답 필드는 "값이 없을 수 있다"는 뜻이고, 값이 없을 때는 키가 빠진다고 읽으면 됩니다.
+:::
+
 ## 그래프 조회 연산 (6개)
 
 `namespace_id` 를 받는 연산은 그 값을 명시하지 않으면 인증 헤더의 namespace 를 쓰고, 그마저 없으면 `default` 로 떨어집니다. 호출 주소는 로컬 API(`http://localhost:8000`) 기준입니다.
@@ -301,7 +305,7 @@ namespace 별 엔티티 수를 봅니다 (운영 가시성).
 | `name` | `string` | (필수) | 최대 200자 |
 | `type` | `string` | (필수) | 최대 64자 |
 | `aliases` | `string[]` | `[]` | 별칭 목록 |
-| `description` | `string \| null` | `null` | 최대 2000자, `null` 허용 (find_entities 응답에서는 생략될 수 있음) |
+| `description` | `string \| null` | `null` | 최대 2000자. 값이 없으면 키가 빠집니다 |
 | `properties` | `{ [키]: string\|int\|float\|bool }` | `{}` | 속성 |
 | `source_refs` | `SourceRef[]` | `[]` | 출처 |
 | `created_at` | `string` | (필수) | RFC 3339 시각 |
