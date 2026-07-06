@@ -19,7 +19,7 @@ from __future__ import annotations
 import logging
 from pathlib import Path
 
-from fastapi import APIRouter, Depends, HTTPException, Response
+from fastapi import APIRouter, Depends, HTTPException, Query, Response
 
 from arche_api.domain.ports import EmbeddingProvider, GraphRepository
 
@@ -119,14 +119,23 @@ def find_entities(
     response_model=DataEnvelope[GetSchemaResponse],
 )
 def get_schema(
+    namespace_id: str | None = Query(
+        default=None,
+        min_length=1,
+        description="질의할 namespace. 미지정 시 auth 헤더 또는 'default'",
+    ),
     graph: GraphRepository = Depends(graph_repo_dep),
     settings=Depends(settings_dep),
     auth: AuthContext = Depends(auth_context_dep),
 ) -> DataEnvelope[GetSchemaResponse]:
-    """그래프 모양 조회 — services.get_schema 위임. namespace = auth header (issue #98)."""
-    payload = services.get_schema(
-        graph=graph, settings=settings, namespace_id=auth.namespace_id
-    )
+    """그래프 모양 조회 — services.get_schema 위임.
+
+    #104 — namespace 결정: query 명시 > auth header > "default". GET 이라 본문이
+    없으므로 다른 4 조회 도구(본문 namespace_id)와 대칭이 되도록 query 로 받는다.
+    MCP 표면은 이미 6 도구 모두 인자로 받아 대칭이다 — REST 의 두 GET 만 예외였다.
+    """
+    ns = namespace_id or auth.namespace_id
+    payload = services.get_schema(graph=graph, settings=settings, namespace_id=ns)
     return DataEnvelope(data=payload)
 
 
@@ -139,16 +148,21 @@ def get_schema(
 )
 def get_entity(
     entity_id: str,
+    namespace_id: str | None = Query(
+        default=None,
+        min_length=1,
+        description="조회할 namespace. 미지정 시 auth 헤더 또는 'default'",
+    ),
     graph: GraphRepository = Depends(graph_repo_dep),
     auth: AuthContext = Depends(auth_context_dep),
 ) -> DataEnvelope[GetEntityResponse]:
     """ID 로 단일 노드 + 인접 엣지 카운트 — services.get_entity 위임.
 
-    namespace = auth header. 다른 namespace 의 id 는 404 (issue #98 — 우회 차단).
+    #104 — namespace 결정: query 명시 > auth header > "default" (다른 조회 도구와
+    대칭). 결정된 namespace 밖의 id 는 404 (issue #98 — 우회 차단).
     """
-    payload = services.get_entity(
-        entity_id=entity_id, graph=graph, namespace_id=auth.namespace_id
-    )
+    ns = namespace_id or auth.namespace_id
+    payload = services.get_entity(entity_id=entity_id, graph=graph, namespace_id=ns)
     return DataEnvelope(data=payload)
 
 

@@ -47,6 +47,9 @@ class StubGraph(GraphRepository):
         self._hits_by_keyword = hits_by_keyword
         # 읽기 경로가 어떤 namespace 로 검색했는지 기록 (issue #98 wiring 검증).
         self.last_search_namespace: str | None = None
+        # #104 — get_schema / get_entity 가 받은 namespace 기록 (query 대칭 검증).
+        self.last_schema_namespace: str | None = None
+        self.last_entity_namespace: str | None = None
 
     def ensure_indexes(self) -> None:
         pass
@@ -134,9 +137,11 @@ class StubGraph(GraphRepository):
         return []
 
     def get_schema_summary(self, *, examples_per_type=5, namespace_id="default"):  # noqa: D401
+        self.last_schema_namespace = namespace_id
         return ([], [])
 
     def get_entity_with_counts(self, *, entity_id, namespace_id="default"):  # noqa: D401
+        self.last_entity_namespace = namespace_id
         for n in self._nodes:
             if n.id == entity_id:
                 return EntityWithCounts(node=n, outgoing={}, incoming={})
@@ -461,3 +466,62 @@ def test_get_neighbors_rejects_unknown_extra_field():
         json={"id": "01HZX0G7M8N0RT0V0COUPON000", "bogus": 1},
     )
     assert r.status_code == 422
+
+
+# ---------- #104 — get_schema / get_entity namespace query 대칭 ----------
+
+
+def test_get_schema_namespace_defaults_without_query_or_header():
+    g = StubGraph()
+    r = _client_with(g).get("/schema")
+    assert r.status_code == 200
+    assert g.last_schema_namespace == "default"
+
+
+def test_get_schema_namespace_from_query():
+    g = StubGraph()
+    r = _client_with(g).get("/schema", params={"namespace_id": "work-a"})
+    assert r.status_code == 200
+    assert g.last_schema_namespace == "work-a"
+
+
+def test_get_schema_query_overrides_header():
+    g = StubGraph()
+    r = _client_with(g).get(
+        "/schema",
+        params={"namespace_id": "work-a"},
+        headers={"Authorization": "Bearer ns:work-b"},
+    )
+    assert r.status_code == 200
+    assert g.last_schema_namespace == "work-a"
+
+
+def test_get_schema_namespace_from_header_when_no_query():
+    g = StubGraph()
+    r = _client_with(g).get(
+        "/schema", headers={"Authorization": "Bearer ns:work-b"}
+    )
+    assert r.status_code == 200
+    assert g.last_schema_namespace == "work-b"
+
+
+def test_get_entity_namespace_from_query():
+    n = _make_node()
+    g = StubGraph(nodes=[n])
+    r = _client_with(g).get(
+        f"/entities/{n.id}", params={"namespace_id": "work-a"}
+    )
+    assert r.status_code == 200
+    assert g.last_entity_namespace == "work-a"
+
+
+def test_get_entity_query_overrides_header():
+    n = _make_node()
+    g = StubGraph(nodes=[n])
+    r = _client_with(g).get(
+        f"/entities/{n.id}",
+        params={"namespace_id": "work-a"},
+        headers={"Authorization": "Bearer ns:work-b"},
+    )
+    assert r.status_code == 200
+    assert g.last_entity_namespace == "work-a"
