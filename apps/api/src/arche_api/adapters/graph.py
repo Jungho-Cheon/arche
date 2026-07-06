@@ -195,6 +195,42 @@ class Neo4jGraphRepository(GraphRepository):
             # 받아 클라이언트에서 normalize 한 뒤 한 transaction 에 batch SET.
             self._backfill_normalized_names(s)
 
+    def reindex_vector(self) -> dict[str, Any]:
+        """벡터 색인을 DROP 후 현재 차원으로 다시 만든다 (임베딩 모델 교체 대응).
+
+        WHY DROP 먼저: ensure_indexes 는 `CREATE VECTOR INDEX ... IF NOT EXISTS`
+        라 이미 색인이 있으면 아무 일도 하지 않는다. 임베딩 모델이 바뀌어 차원이
+        달라져도(예: 1536 → 1024) 옛 차원의 색인이 그대로 살아남아 검색이
+        깨진다. 그래서 재생성은 반드시 기존 색인을 먼저 DROP 하고 다시 CREATE
+        해야 새 차원이 반영된다.
+
+        WHY 이 메서드가 하는 일 / 하지 않는 일 구분:
+        - 한다: 벡터 *색인 구조* 를 현재 `settings.embedding_dimension` 으로
+          다시 만든다. 색인이 없던 상태에서 호출해도 안전하다(DROP 은
+          IF EXISTS, CREATE 는 IF NOT EXISTS 라 idempotent).
+        - 하지 않는다: 이미 저장된 노드의 `embedding` 값을 다시 계산하지 않는다.
+          모델을 바꿨다면 옛 차원의 벡터가 노드에 그대로 남아 있으므로, 노드
+          재임베딩은 재적재(reingest)로 해결할 별개 관심사다.
+
+        반환: CLI 가 출력할 짧은 결과 요약(색인 이름 + 차원).
+        """
+        dim = int(self._settings.embedding_dimension)
+        with self._driver.session() as s:
+            # 옛 차원의 색인 제거. 없으면 no-op (IF EXISTS).
+            s.run(f"DROP INDEX {VECTOR_INDEX} IF EXISTS").consume()
+            # ensure_indexes 의 생성 구문과 동일 — 백틱 키/인라인 dim 이유는
+            # ensure_indexes 의 WHY 코멘트 참조.
+            s.run(
+                f"CREATE VECTOR INDEX {VECTOR_INDEX} IF NOT EXISTS "
+                f"FOR (e:{ENTITY_LABEL}) ON (e.embedding) "
+                f"OPTIONS {{ indexConfig: {{ "
+                f"`vector.dimensions`: {dim}, "
+                f"`vector.similarity_function`: 'cosine' "
+                f"}} }}"
+            ).consume()
+        logger.info("rebuilt vector index %s at dimension %d", VECTOR_INDEX, dim)
+        return {"index": VECTOR_INDEX, "dimension": dim}
+
     def _backfill_normalized_names(self, session: Any) -> None:
         from ..domain.identity import normalize
 
