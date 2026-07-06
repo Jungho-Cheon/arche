@@ -22,7 +22,6 @@ from pydantic import BaseModel, ConfigDict, Field
 
 from ..domain.ingest_plan import PlanQuestionKind
 
-
 # ---------- plan ----------
 
 
