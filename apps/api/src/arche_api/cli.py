@@ -145,6 +145,37 @@ def mcp_serve(
 
 
 @app.command()
+def reindex() -> None:
+    """벡터 색인을 현재 임베딩 차원으로 다시 만든다 (모델 교체 후 복구).
+
+    임베딩 모델을 바꾸면 벡터 차원이 달라지는데, 부팅 시의 `ensure_indexes` 는
+    `IF NOT EXISTS` 라 옛 색인을 그대로 두어 차원 변경을 반영하지 못한다. 이
+    명령은 벡터 색인을 DROP 후 `ARCHE_API_EMBEDDING_DIMENSION` 값으로 다시
+    만든다.
+
+    주의: 이미 저장된 노드의 임베딩 값은 다시 계산하지 않는다. 색인 구조만
+    새로 만든다. 옛 차원의 벡터가 노드에 남아 있으면 모델을 바꾼 문서는 다시
+    적재(`arche ingest`)해야 새 차원의 벡터가 채워진다.
+    """
+    load_dotenv()
+    settings = get_settings()
+
+    graph = Neo4jGraphRepository(settings)
+    try:
+        result = graph.reindex_vector()
+        typer.echo(
+            f"reindex: rebuilt vector index '{result['index']}' "
+            f"at dimension {result['dimension']}"
+        )
+        typer.echo(
+            "  note: stored node embeddings are NOT recomputed; "
+            "reingest documents to refill vectors at the new dimension."
+        )
+    finally:
+        graph.close()
+
+
+@app.command()
 def ingest(
     path: Annotated[
         Path,
