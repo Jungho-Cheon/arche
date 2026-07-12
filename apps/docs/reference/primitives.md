@@ -39,13 +39,7 @@ MCP 호출에는 HTTP 헤더가 없으므로 조회 도구 6개 모두 `namespac
 | --- | --- |
 | 메서드 + 주소 | `POST /entities/find` |
 
-| 요청 필드 | 타입 | 기본값 | 범위/제약 |
-| --- | --- | --- | --- |
-| `keywords` | `string[]` | (필수) | 1~32개 |
-| `types` | `string[] \| null` | `null` | 결과 노드 타입 필터 |
-| `limit` | `int` | `10` | 1~50 |
-| `include_scores` | `bool` | `false` | `true` 면 매치마다 원점수 동봉 |
-| `namespace_id` | `string \| null` | `null` | 빈 문자열 불가 (최소 1자) |
+<!-- @include: ./_generated/requests/find_entities.md -->
 
 응답: `{ matches[] }`
 
@@ -83,14 +77,9 @@ ID 로 노드 한 개와 타입별 인접 관계 수를 봅니다.
 | --- | --- |
 | 메서드 + 주소 | `POST /entities/{entity_id}/neighbors` |
 
-| 요청 필드 | 타입 | 기본값 | 범위/제약 |
-| --- | --- | --- | --- |
-| `id` | `string \| null` | `null` | 26자리 식별자(ULID). 경로 `entity_id` 와 다르면 `invalid_input` |
-| `relation_types` | `string[] \| null` | `null` | 따라갈 관계 타입 필터 |
-| `direction` | `string` | `both` | `outgoing` \| `incoming` \| `both` |
-| `hops` | `int` | `1` | 1~5 |
-| `max_nodes` | `int` | `100` | 1~500 |
-| `namespace_id` | `string \| null` | `null` | 빈 문자열 불가 |
+<!-- @include: ./_generated/requests/get_neighbors.md -->
+
+REST 에서는 진입점을 경로 변수 `entity_id` 로 주므로 본문의 `id` 는 비워 둡니다(MCP 에서만 본문 `id` 가 진입점입니다). REST 에서 본문 `id` 를 굳이 넣으면 경로 `entity_id` 와 값이 같아야 하고, 다르면 `invalid_input` 으로 끊습니다.
 
 응답: `{ nodes[], edges[], truncated }`
 
@@ -108,14 +97,9 @@ ID 로 노드 한 개와 타입별 인접 관계 수를 봅니다.
 | --- | --- |
 | 메서드 + 주소 | `POST /paths/find` |
 
-| 요청 필드 | 타입 | 기본값 | 범위/제약 |
-| --- | --- | --- | --- |
-| `from_id` | `string` | (필수) | ULID. `to_id` 와 같으면 `unprocessable` 422 |
-| `to_id` | `string` | (필수) | ULID |
-| `max_hops` | `int` | `4` | 1~6 |
-| `max_paths` | `int` | `5` | 1~20 |
-| `relation_types` | `string[] \| null` | `null` | 따라갈 관계 타입 필터 |
-| `namespace_id` | `string \| null` | `null` | 빈 문자열 불가 |
+<!-- @include: ./_generated/requests/find_path.md -->
+
+`from_id` 와 `to_id` 를 같게 주면 `unprocessable`(422)로 끊습니다.
 
 응답: `{ paths[] }`
 
@@ -136,13 +120,9 @@ ID 로 노드 한 개와 타입별 인접 관계 수를 봅니다.
 | --- | --- |
 | 메서드 + 주소 | `POST /subgraph` |
 
-| 요청 필드 | 타입 | 기본값 | 범위/제약 |
-| --- | --- | --- | --- |
-| `entry_ids` | `string[]` | (필수) | 1~20개, 각 원소 ULID |
-| `hops` | `int` | `2` | 1~4 |
-| `max_nodes` | `int` | `200` | 1~5000 |
-| `relation_types` | `string[] \| null` | `null` | 따라갈 관계 타입 필터 |
-| `namespace_id` | `string \| null` | `null` | 빈 문자열 불가 |
+<!-- @include: ./_generated/requests/get_subgraph.md -->
+
+`entry_ids` 의 각 원소는 ULID 여야 합니다(아니면 `invalid_input`).
 
 응답: `{ nodes[], edges[], entry_ids[], truncated }`
 
@@ -165,11 +145,9 @@ ID 로 노드 한 개와 타입별 인접 관계 수를 봅니다.
 
 파일 하나를 그래프에 쓰지 않고 추출만 돌려 변경 묶음을 만들고, 이후 호출에 쓸 계획 식별자를 돌려줍니다.
 
-| 요청 필드 | 타입 | 기본값 | 범위/제약 |
-| --- | --- | --- | --- |
-| `path` | `string` | (필수) | 계획을 세울 파일의 절대 경로 (최소 1자) |
-| `namespace_id` | `string` | `default` | 계획이 속한 namespace. 빈 문자열 불가 |
-| `hints` | `string \| null` | `null` | 추출 품질을 높이는 선택 입력 (용어/약어 풀이 등). 최대 4000자. 저장된 원문은 바꾸지 않고 추출만 돕습니다 |
+<!-- @include: ./_generated/requests/ingest_plan.md -->
+
+`hints` 는 저장된 원문을 바꾸지 않고 추출만 돕습니다.
 
 응답: `{ plan_id, source_path, entities_created, entities_merged, relations_created, deletion_count, open_questions }`
 
@@ -187,9 +165,7 @@ ID 로 노드 한 개와 타입별 인접 관계 수를 봅니다.
 
 계획 식별자로 변경 묶음을 항목 단위로 펼쳐 사람이 검토하게 합니다. 이 호출이 계획을 "미리보기 완료"로 표시해, commit 의 안전 잠금을 풉니다.
 
-| 요청 필드 | 타입 | 기본값 | 범위/제약 |
-| --- | --- | --- | --- |
-| `plan_id` | `string` | (필수) | ingest_plan 이 돌려준 식별자 (최소 1자) |
+<!-- @include: ./_generated/requests/ingest_preview.md -->
 
 응답: `{ new_entities[], merges[], new_relations[], deletion_count, questions[] }`
 
@@ -207,10 +183,9 @@ ID 로 노드 한 개와 타입별 인접 관계 수를 봅니다.
 
 미리보기가 물은 질문에 사람의 결정을 반영해 같은 `plan_id` 로 계획을 다듬습니다. 이 호출은 안전 잠금을 다시 잠그므로, 이후 ingest_preview 를 한 번 더 불러야 commit 할 수 있습니다.
 
-| 요청 필드 | 타입 | 기본값 | 범위/제약 |
-| --- | --- | --- | --- |
-| `plan_id` | `string` | (필수) | 다듬을 계획 식별자 (최소 1자) |
-| `resolutions[]` | 객체 목록 | (필수) | 질문별 결정. 각 항목 `{ question_id, decision }` — `decision` 은 `merge`(같은 대상) 또는 `keep`(다른 대상) |
+<!-- @include: ./_generated/requests/ingest_resolve.md -->
+
+`resolutions` 의 각 항목은 `{ question_id, decision }` 이고, `decision` 은 `merge`(같은 대상) 또는 `keep`(다른 대상)입니다.
 
 응답: ingest_plan 과 같은 모양 `{ plan_id, source_path, entities_created, entities_merged, relations_created, deletion_count, open_questions }` — 다듬은 계획의 요약(남은 질문 수 포함)을 돌려줍니다.
 
@@ -218,9 +193,7 @@ ID 로 노드 한 개와 타입별 인접 관계 수를 봅니다.
 
 미리보기를 거친 계획을 그래프에 실제로 반영합니다. 미리보기 전이면 `unprocessable` 로, 계획을 세운 뒤 그래프가 바뀌어 계획이 어긋났으면(stale) 역시 `unprocessable`("plan is stale; re-plan")로 끊으니, 이 코드를 받으면 `ingest_plan` 부터 다시 시작합니다.
 
-| 요청 필드 | 타입 | 기본값 | 범위/제약 |
-| --- | --- | --- | --- |
-| `plan_id` | `string` | (필수) | 반영할 계획 식별자 (최소 1자) |
+<!-- @include: ./_generated/requests/ingest_commit.md -->
 
 응답: `{ entities_created, entities_updated, relations_created, deletions }`
 
@@ -254,11 +227,7 @@ healthz 와 admin 엔드포인트는 그래프 조회가 아니라 서버 상태
 | --- | --- |
 | 메서드 + 주소 | `POST /admin/ingest` |
 
-| 요청 필드 | 타입 | 기본값 | 범위/제약 |
-| --- | --- | --- | --- |
-| `directory_path` | `string` | (필수) | 디렉토리 절대 경로 (최소 1자) |
-| `dry_run` | `bool` | `false` | `true` 면 그래프에 쓰지 않고 추출만 |
-| `namespace_id` | `string \| null` | `null` | 적재할 namespace |
+<!-- @include: ./_generated/requests/admin-ingest.md -->
 
 응답(202): `{ task_id, status_url }` — `status_url` 로 상태를 조회합니다. 경로가 없으면 `directory_not_found` 422, 파일을 디렉토리로 주면 `not_a_directory` 422.
 
