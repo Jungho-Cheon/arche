@@ -10,7 +10,7 @@ API 서버는 환경 변수로 설정을 덮어씁니다. 값을 주지 않으�
 | `ANTHROPIC_API_KEY` | Anthropic 키. LLM 모델을 `anthropic/*` 로 바꿀 때만 필요 | (없음) |
 | `VOYAGE_API_KEY` | Voyage 키. 임베딩 모델을 `voyage/*` 로 바꿀 때만 필요 | (없음) |
 
-쓰지 않는 provider 의 키는 비워 둬도 됩니다. 어느 키가 필요한지는 아래 모델 식별자의 provider 접두사가 정합니다.
+`claude-code/*` 추출 모델은 머신에 깔린 Claude Code 구독 인증을 그대로 써서 별도 API 키가 필요 없습니다(자세한 내용은 [모델 갈아끼우기](/guide/models)). 쓰지 않는 provider 의 키는 비워 둬도 됩니다. 어느 키가 필요한지는 아래 모델 식별자의 provider 접두사가 정합니다.
 
 ## 모델
 
@@ -30,6 +30,8 @@ API 서버는 환경 변수로 설정을 덮어씁니다. 값을 주지 않으�
 | `NEO4J_URI` | Neo4j 접속 주소 | `bolt://localhost:7687` |
 | `NEO4J_USER` | Neo4j 사용자 | `neo4j` |
 | `NEO4J_PASSWORD` | Neo4j 비밀번호. 운영 환경은 충분히 강한 값으로 교체 | `arche` |
+
+기본 Docker 이미지는 Neo4j 5.15 커뮤니티 판입니다. 사내 Neo4j 로 대체하려면 벡터 인덱스를 지원하는 5.11 이상이어야 합니다(적재한 노드를 임베딩으로 검색할 때 씁니다).
 
 ## 다음으로
 
