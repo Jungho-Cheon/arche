@@ -22,25 +22,9 @@
 
 ## 코드 카탈로그
 
-| 코드 | HTTP | 뜻 |
-| --- | --- | --- |
-| `invalid_input` | 422 | 필드 형식이 틀렸거나 누락 |
-| `unprocessable` | 422 | 형식은 맞지만 의미상 처리할 수 없음. 예: `find_path` 에 `from_id` 와 `to_id` 를 같게 준 경우, 미리 보기를 거치지 않은 `ingest_commit`, 계획을 세운 뒤 그래프가 바뀌어 계획이 어긋난(stale) 경우 |
-| `unsupported_file_type` | 400 | 받지 않는 형식의 파일을 적재하려 함 |
-| `entity_not_found` | 404 | 해당 ID 의 노드가 없음 |
-| `task_not_found` | 404 | 해당 `task_id` 의 작업이 없음 |
-| `not_authorized` | 401 | 인증 헤더가 없거나 잘못됨 |
-| `permission_denied` | 403 | namespace 나 리소스 권한 없음 |
-| `rate_limited` | 429 | 호출 한도 초과 |
-| `conflict` | 409 | 동시 적재 등 충돌 |
-| `directory_not_found` | 422 | 적재 디렉토리가 없음 |
-| `not_a_directory` | 422 | 파일을 디렉토리로 줌 |
-| `dependency_unavailable` | 503 | Neo4j 나 LLM provider 가 내려감 |
-| `extraction_failed` | 500 | LLM 응답 파싱 실패 등 |
-| `internal_error` | 500 | 알려지지 않은 예외 |
-| `timeout` | 504 | 백엔드 timeout |
+<!-- @include: ./_generated/error-catalog.md -->
 
-`unprocessable` 과 `unsupported_file_type` 은 형식 검증(`invalid_input`)을 통과한 뒤 의미 단계에서 걸리는 코드라, 나머지와 같은 `error` 봉투로 똑같이 옵니다. MCP 로 부를 때도 `data.code` 에 같은 값이 실립니다.
+위 표는 코드의 에러 코드 정의에서 자동 생성됩니다(코드/HTTP/뜻이 언제나 실제 코드와 일치). `unprocessable` 과 `unsupported_file_type` 은 형식 검증(`invalid_input`)을 통과한 뒤 의미 단계에서 걸리는 코드라, 나머지와 같은 `error` 봉투로 똑같이 옵니다. MCP 로 부를 때도 `data.code` 에 같은 값이 실립니다.
 
 지금 버전에는 자체 인증이 없습니다. 그래서 `not_authorized`(401)와 `permission_denied`(403)는 보통 Arche 자체에서 나오지 않습니다. Arche 를 인증 프록시 뒤에 두거나 나중에 인증 계층을 붙일 때를 위해 코드만 미리 정해 둔 것입니다.
 
