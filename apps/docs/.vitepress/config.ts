@@ -12,6 +12,9 @@ export default defineConfig({
   // 빌드하지 않도록 라우팅에서 제외한다 (#111 — 코드 스키마에서 자동 생성).
   srcExclude: ["**/_generated/**"],
   themeConfig: {
+    // 로컬 검색 — 명령어/에러코드/필드명 같은 영숫자 토큰을 잘 잡는다. 별도 서비스
+    // 없이 빌드 타임에 색인을 만든다.
+    search: { provider: "local" },
     socialLinks: [
       { icon: "github", link: "https://github.com/Jungho-Cheon/arche" },
     ],
@@ -23,25 +26,44 @@ export default defineConfig({
       themeConfig: {
         nav: [
           { text: "소개", link: "/intro" },
-          { text: "가이드", link: "/guide/getting-started" },
-          { text: "에이전트에 연결하기", link: "/guide/agent-integration" },
-          { text: "개념", link: "/concepts/why-graph" },
+          { text: "시작하기", link: "/guide/getting-started" },
+          { text: "가이드", link: "/guide/ingest" },
+          {
+            text: "개념",
+            items: [
+              { text: "왜 그래프인가", link: "/concepts/why-graph" },
+              { text: "namespace 격리 모델", link: "/concepts/namespace-model" },
+              { text: "경로 품질과 hub_score", link: "/concepts/path-quality" },
+            ],
+          },
           { text: "레퍼런스", link: "/reference/primitives" },
         ],
         sidebar: {
           "/intro": [
             {
-              text: "소개",
+              text: "이해 트랙 (코드 없이 읽기)",
               items: [
                 { text: "Arche 소개", link: "/intro" },
+                { text: "왜 그래프인가", link: "/concepts/why-graph" },
+              ],
+            },
+            {
+              text: "직접 해보기",
+              items: [
+                { text: "시작하기 (개발자)", link: "/guide/getting-started" },
               ],
             },
           ],
           "/guide/": [
             {
-              text: "사용 가이드",
+              text: "따라 하며 익히기 (튜토리얼)",
               items: [
-                { text: "시작하기", link: "/guide/getting-started" },
+                { text: "시작하기 — 설치에서 첫 질의까지", link: "/guide/getting-started" },
+              ],
+            },
+            {
+              text: "과업별 가이드 (how-to)",
+              items: [
                 { text: "문서를 그래프에 넣기", link: "/guide/ingest" },
                 { text: "그래프에 질의하기", link: "/guide/query" },
                 { text: "팀별 지식 격리 (namespace)", link: "/guide/namespace" },
