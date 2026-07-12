@@ -24,7 +24,7 @@ export default defineConfig({
         nav: [
           { text: "소개", link: "/intro" },
           { text: "가이드", link: "/guide/getting-started" },
-          { text: "에이전트 연동", link: "/guide/agent-integration" },
+          { text: "에이전트에 연결하기", link: "/guide/agent-integration" },
           { text: "개념", link: "/concepts/why-graph" },
           { text: "레퍼런스", link: "/reference/primitives" },
         ],
@@ -45,7 +45,7 @@ export default defineConfig({
                 { text: "문서를 그래프에 넣기", link: "/guide/ingest" },
                 { text: "그래프에 질의하기", link: "/guide/query" },
                 { text: "팀별 지식 격리 (namespace)", link: "/guide/namespace" },
-                { text: "모델 교체하기", link: "/guide/models" },
+                { text: "모델 갈아끼우기", link: "/guide/models" },
                 { text: "에이전트에 연결하기", link: "/guide/agent-integration" },
               ],
             },

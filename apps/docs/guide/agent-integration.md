@@ -6,6 +6,10 @@ MCP(Model Context Protocol)는 AI 에이전트가 외부 도구를 표준 방식
 
 ## MCP 서버 띄우기
 
+::: warning 먼저 환경이 준비돼 있어야 합니다
+이 아래 내용은 그래프 DB(Neo4j)와 `.env` 가 이미 준비된 상태를 전제합니다. `arche mcp serve` 로 띄운 MCP 서버는 그래프 DB 에 **직접** 붙고(API 서버를 거치지 않습니다), 문서를 넣을 때는 `.env` 의 AI 모델 키를 씁니다. 아직 안 띄웠다면 [시작하기](/guide/getting-started)로 Neo4j 를 올리고 키를 채운 뒤 돌아오세요.
+:::
+
 Arche 저장소 안에서 아래 명령으로 MCP 서버를 띄웁니다.
 
 ```bash
@@ -27,29 +31,62 @@ uv run --project apps/api arche mcp serve --stdio
 
 ## 에이전트에 등록하기
 
-에이전트(클라이언트) 쪽에는 이 서버를 어떻게 띄울지 한 조각만 적어 주면 됩니다. Claude Desktop 을 예로 들면, 설정 파일에 다음을 더합니다.
-
-```json
-{ "mcpServers": { "arche": { "command": "arche", "args": ["mcp", "serve", "--stdio"] } } }
-```
-
-`command` 와 `args` 는 방금 본 그 명령 그대로입니다. 에이전트는 이 설정을 읽어 `arche mcp serve --stdio` 를 자식 프로세스로 띄우고, 그 표준 입출력에 붙어 도구 목록을 받아 옵니다. 위 첫 번째 형태는 `arche` 명령이 실행 경로(PATH)에 있어야 동작합니다. `arche` 가 설치돼 바로 불리는 환경을 전제하기 때문입니다.
-
-`arche` 를 PATH 에 올리려면 `uv tool install` 로 전역에 설치하거나, 저장소를 클론했다면 위의 `uv run` 실행 형태를 그대로 쓰면 됩니다. `arche` 가 PATH 에 없다면, 저장소를 내려받아 `uv` 로 감싸 실행하는 두 번째 형태를 씁니다. `/path/to/arche` 를 실제로 내려받은 경로로 바꿔 적으면 됩니다.
+에이전트(클라이언트) 쪽에는 이 서버를 어떻게 띄울지 한 조각만 적어 주면 됩니다. 저장소를 클론해 쓴다면 아래 형태를 권합니다. 저장소 경로를 직접 가리켜서, 별도 설치 없이 그 저장소의 `.env`(시작하기에서 채운 그 파일)를 그대로 씁니다. Claude Desktop 을 예로 들면 설정 파일에 다음을 더합니다.
 
 ```json
 { "mcpServers": { "arche": { "command": "uv", "args": ["run", "--project", "/path/to/arche/apps/api", "arche", "mcp", "serve", "--stdio"] } } }
 ```
 
-Cursor 같은 다른 MCP 클라이언트도 형식만 조금 다를 뿐 적는 값은 같습니다. 서버를 어떤 명령으로 띄울지 알려 주는 것이 전부입니다.
+`/path/to/arche` 를 실제로 내려받은 경로로 바꿔 적으면 됩니다. 에이전트는 이 설정을 읽어 명령을 자식 프로세스로 띄우고, 그 표준 입출력에 붙어 도구 목록을 받아 옵니다.
+
+`arche` 를 명령으로 바로 부르고 싶다면 전역에 설치할 수도 있습니다. 저장소 안에서 `uv tool install ./apps/api` 를 한 번 돌리면 `arche` 가 실행 경로(PATH)에 올라, `command` 를 `"arche"` 로 짧게 적을 수 있습니다. 다만 이때는 실행 폴더가 정해지지 않아 `.env` 를 못 찾을 수 있으니, 접속 정보를 아래 [접속 정보(키)를 어떻게 넘기나](#접속-정보-키-를-어떻게-넘기나)의 `env` 블록으로 직접 넘기세요.
+
+```json
+{ "mcpServers": { "arche": { "command": "arche", "args": ["mcp", "serve", "--stdio"] } } }
+```
+
+이 설정을 적는 파일은 클라이언트마다 정해져 있습니다. Claude Desktop 은 아래 파일을 열어(없으면 새로 만들어) `mcpServers` 항목을 더합니다.
+
+- **macOS** — `~/Library/Application Support/Claude/claude_desktop_config.json`
+- **Windows** — `%APPDATA%\Claude\claude_desktop_config.json`
+
+파일을 저장한 뒤 Claude Desktop 을 완전히 껐다 다시 켜야 설정이 반영됩니다. 다시 켜면 대화창의 도구 목록에 Arche 도구가 올라옵니다. 안 올라오면 대개 셋 중 하나입니다. 설정 파일의 JSON 문법이 틀렸거나(쉼표/괄호), `command` 의 경로가 맞지 않거나, 접속 정보(`.env` 또는 `env` 블록)가 없어 서버가 뜨자마자 죽은 경우입니다. Claude Desktop 의 MCP 로그(설정 화면의 로그 보기)에서 `arche` 서버의 오류 메시지를 확인하면 원인이 잡힙니다. Cursor 같은 다른 MCP 클라이언트도 형식만 조금 다를 뿐 적는 값은 같습니다. 서버를 어떤 명령으로 띄울지, 접속 정보를 어떻게 넘길지 알려 주는 것이 전부입니다.
+
+### 접속 정보(키)를 어떻게 넘기나
+
+에이전트가 띄운 `arche` 프로세스도 그래프 DB 주소와 AI 모델 키가 있어야 합니다. 두 가지 방법이 있습니다.
+
+- **`.env` 파일** — `arche` 는 실행된 작업 폴더의 `.env` 를 읽습니다. 위 두 번째 형태처럼 `--project /path/to/arche/apps/api` 로 저장소를 가리키면, 그 저장소의 `.env`(시작하기에서 채운 그 파일)를 그대로 씁니다. 로컬에서 가장 간단한 방법입니다.
+- **`env` 블록** — 클라이언트 설정에서 프로세스에 환경 변수를 직접 넘길 수도 있습니다. `.env` 를 두기 어려운 환경(전역 설치형 등)에서 씁니다.
+
+```json
+{
+  "mcpServers": {
+    "arche": {
+      "command": "arche",
+      "args": ["mcp", "serve", "--stdio"],
+      "env": {
+        "NEO4J_URI": "bolt://localhost:7687",
+        "NEO4J_USER": "neo4j",
+        "NEO4J_PASSWORD": "arche",
+        "OPENAI_API_KEY": "sk-..."
+      }
+    }
+  }
+}
+```
+
+넘겨야 할 변수의 전체 목록과 기본값은 [환경 변수](/reference/configuration)에 있습니다. `OPENAI_API_KEY` 는 문서를 넣는 적재 도구가 추출과 임베딩에 씁니다. 조회만 할 거라면 그래프 DB 접속 정보(`NEO4J_*`)만 있어도 도구는 뜹니다.
 
 ## 원격에서 붙기 (HTTP 전송)
 
 에이전트가 다른 기계나 클라우드에서 돌아 Arche 를 자식 프로세스로 띄울 수 없다면, 네트워크 너머로 붙는 HTTP 전송을 씁니다. 이건 `arche mcp serve` 가 아니라 **API 서버**가 띄웁니다. API 서버를 올리면 MCP 도구가 `/mcp/v1` 주소에 자동으로 함께 마운트됩니다.
 
 ```bash
-uv run --project apps/api uvicorn arche_api.main:app --host 0.0.0.0 --port 8000
+uv run --project apps/api uvicorn arche_api.main:app --host 127.0.0.1 --port 8000
 ```
+
+여기서 `--host 127.0.0.1` 은 이 기계에서만 접속을 받습니다. 다른 기계에서 붙게 하려면 `0.0.0.0` 으로 바꾸는데, 그러면 **같은 네트워크의 모든 호스트**에 API 가 열립니다. Arche 는 자체 인증이 없으므로 `0.0.0.0` 노출은 아래 경고대로 반드시 프록시 뒤에서만 하세요.
 
 올라오는 주소는 세 개입니다.
 
@@ -65,8 +102,11 @@ uv run --project apps/api uvicorn arche_api.main:app --host 0.0.0.0 --port 8000
 
 HTTP 전송도 stdio 와 **같은 도구 열 개**를 노출합니다. 조회 여섯 개와 검토형 적재 네 개가 그대로 올라오므로, 원격 에이전트도 이 연결 하나로 문서를 넣고 질의합니다. 어느 전송을 쓰든 도구 이름과 입출력은 같습니다.
 
-::: warning 쓰기 도구를 네트워크에 여는 일
-HTTP 전송을 열면 검토형 적재 도구(문서를 그래프에 넣는 네 개)까지 네트워크 너머로 열립니다. 시제품 단계의 `ns:<namespace>` 토큰은 접근을 namespace 로 가르기만 할 뿐 그 자체로는 강한 인증이 아닙니다. 사내망 밖에 노출한다면 게이트웨이나 사내 인증(SSO) 뒤에 두는 배치를 전제로 삼으세요.
+::: warning 네트워크에 열기 전에 — 인증과 암호화
+HTTP 전송을 열면 검토형 적재 도구(문서를 그래프에 넣는 네 개)까지 네트워크 너머로 열립니다. 두 가지를 반드시 앞단에서 챙기세요.
+
+- **인증** — 시제품 단계의 `ns:<namespace>` 토큰은 접근을 namespace 로 가르기만 할 뿐 그 자체로는 강한 인증이 아닙니다. 게이트웨이나 사내 인증(SSO) 뒤에 두어 실제 인증을 거세요.
+- **전송 암호화(TLS)** — 위 예시는 평문 HTTP 입니다. 평문으로 노출하면 `ns:` 토큰과 문서 내용이 회선에서 그대로 새어 나갑니다. HTTPS/TLS 를 종단하는 리버스 프록시(nginx 등) 뒤에 두고, Arche 자체는 프록시만 바라보는 로컬 주소로 묶으세요.
 :::
 
 ## 도구 이름표
@@ -93,7 +133,7 @@ MCP 로 노출되는 도구는 두 묶음입니다. 그래프를 읽기만 하�
 | `ingest_resolve` | 미리 보기가 물은 질문(닮은 점을 합칠지 따로 둘지)에 사람의 결정을 반영한다. |
 | `ingest_commit` | 사람이 확인한 계획을 그제야 그래프에 반영한다. |
 
-이 도구들의 입력과 출력 형식은 REST 와 완전히 같습니다. 같은 값을 받고 같은 모양을 돌려줍니다. 딱 한 가지가 다릅니다. **응답 봉투**입니다. REST 는 성공 결과를 `{ "data": ... }` 로 한 겹 감싸 돌려주지만, MCP 는 그 안의 payload 만 봉투 없이 그대로 돌려줍니다. 예를 들어 `find_entities` 를 부르면 REST 는 이렇게 옵니다.
+조회 도구 여섯 개는 REST 에도 같은 주소가 있어 입력과 출력이 그대로 대응합니다. 검토형 적재 도구 네 개는 MCP 로만 노출되고 똑같이 대응하는 REST 주소는 없습니다(REST 로 문서를 넣는 건 `POST /admin/ingest` 라는 별도 경로입니다). 어느 쪽이든 도구가 받는 값과 돌려주는 모양은 [그래프 조회 연산](/reference/primitives) 참조표에 정의된 그대로이고, MCP 와 REST 를 가르는 차이는 딱 하나, **응답 봉투**입니다. REST 는 성공 결과를 `{ "data": ... }` 로 한 겹 감싸 돌려주지만, MCP 는 그 안의 payload 만 봉투 없이 그대로 돌려줍니다. 예를 들어 `find_entities` 를 부르면 REST 는 이렇게 옵니다.
 
 ```json
 { "data": { "matches": [ { "node": { "...": "..." }, "score": 1.0 } ] } }
