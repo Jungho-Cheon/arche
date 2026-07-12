@@ -69,6 +69,7 @@ export default defineConfig({
                 { text: "팀별 지식 격리 (namespace)", link: "/guide/namespace" },
                 { text: "모델 갈아끼우기", link: "/guide/models" },
                 { text: "에이전트에 연결하기", link: "/guide/agent-integration" },
+                { text: "코드로 에이전트에 붙이기", link: "/guide/programmatic-integration" },
               ],
             },
           ],
