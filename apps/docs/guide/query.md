@@ -36,7 +36,20 @@
 
 ```bash
 curl http://localhost:8000/schema
-# {"data":{"entity_types":[{"type":"Policy","count":12,"examples":[{"id":"01J...","name":"환불 정책"}]}],"relation_types":[{"type":"APPLIES_TO","count":8,"common_pairs":[{"from_type":"Policy","to_type":"Product","count":5}]}],"embedding_info":{"model":"text-embedding-3-small","dimension":1536}}}
+```
+
+```json
+{
+  "data": {
+    "entity_types": [
+      { "type": "Policy", "count": 12, "examples": [{ "id": "01J...", "name": "환불 정책" }] }
+    ],
+    "relation_types": [
+      { "type": "APPLIES_TO", "count": 8, "common_pairs": [{ "from_type": "Policy", "to_type": "Product", "count": 5 }] }
+    ],
+    "embedding_info": { "model": "text-embedding-3-small", "dimension": 1536 }
+  }
+}
 ```
 
 `entity_types` 와 `relation_types` 로 그래프에 어떤 타입이 얼마나 있는지 한눈에 잡고, `examples` 에 딸려 오는 실제 ID 로 곧장 다음 조회를 이어갈 수 있습니다. `embedding_info` 는 진입점 검색에 쓰인 임베딩 모델과 벡터 차원을 알려 줍니다. 임베딩은 글을 숫자 벡터로 바꿔 의미가 가까운 노드를 찾게 해 주는 표현입니다.
@@ -49,7 +62,29 @@ curl http://localhost:8000/schema
 curl -X POST http://localhost:8000/entities/find \
   -H "Content-Type: application/json" \
   -d '{"keywords": ["환불", "정책"], "limit": 5}'
-# {"data":{"matches":[{"node":{"id":"01J8XR4K9ZQ2N7M3VB0W4D6TYE","name":"환불 정책","type":"Policy","aliases":[],"properties":{},"source_refs":[{"source_path":"policies/refund.md"}],"created_at":"2026-06-29T10:00:00Z","updated_at":"2026-06-29T10:00:00Z"},"score":1.0,"matched_keyword":"환불"}]}}
+```
+
+```json
+{
+  "data": {
+    "matches": [
+      {
+        "node": {
+          "id": "01J8XR4K9ZQ2N7M3VB0W4D6TYE",
+          "name": "환불 정책",
+          "type": "Policy",
+          "aliases": [],
+          "properties": {},
+          "source_refs": [{ "source_path": "policies/refund.md" }],
+          "created_at": "2026-06-29T10:00:00Z",
+          "updated_at": "2026-06-29T10:00:00Z"
+        },
+        "score": 1.0,
+        "matched_keyword": "환불"
+      }
+    ]
+  }
+}
 ```
 
 응답의 `matches` 는 점수 높은 순으로 정렬돼 있고, 각 항목은 이렇게 읽습니다.
@@ -58,7 +93,7 @@ curl -X POST http://localhost:8000/entities/find \
 - `score` — 0 에서 1 사이로 맞춰진 적합도. 1 에 가까울수록 잘 맞은 결과입니다.
 - `matched_keyword` — 그 노드를 가장 세게 끌어올린 입력 키워드.
 
-점수는 두 갈래 검색을 합쳐 냅니다. 키워드마다 글자가 겹치는 노드를 찾는 어휘 검색과 임베딩 벡터로 의미가 가까운 노드를 찾는 의미 검색을 따로 돌린 뒤, 두 결과를 순위 기반으로 합쳐(k=60 은 순위를 합칠 때 쓰는 안정화 상수로, 값이 클수록 상위 순위의 영향이 완만해집니다) 합산 점수를 0~1 로 정규화한 값이 `score` 입니다. 두 갈래를 같이 쓰므로 표기가 조금 달라도(예: "환불" 대 "반품") 의미가 통하면 걸립니다. 다만 임베딩 호출이 실패하면 어휘 검색만으로 슬그머니 답하지 않고 그대로 오류로 끊습니다. 반쪽짜리 결과를 정상처럼 돌려주지 않으려는 선택입니다.
+점수는 두 갈래 검색을 합쳐 냅니다. 키워드마다 글자가 겹치는 노드를 찾는 어휘 검색과 임베딩 벡터로 의미가 가까운 노드를 찾는 의미 검색을 따로 돌린 뒤, 두 결과를 순위 기반으로 합쳐(k=60 은 순위를 합칠 때 쓰는 안정화 상수로, 값이 클수록 상위 순위의 영향이 완만해집니다) 합산 점수를 0~1 로 정규화한 값이 `score` 입니다. 두 갈래를 같이 쓰므로 표기가 조금 달라도(예: "환불" 대 "반품") 의미가 통하면 걸립니다. 다만 임베딩 호출이 실패하면 어휘 검색만으로 슬그머니 답하지 않고 그대로 오류로 끊습니다. 반쪽짜리 결과를 정상처럼 돌려주지 않으려는 선택입니다. 이때 오류 코드는 `dependency_unavailable`(503)이라, 임베딩 공급자의 일시적 장애라면 잠시 뒤 그대로 다시 부르면 됩니다. 이건 빈 결과(`matches` 가 `[]`)와는 다릅니다. 빈 결과는 그래프에 걸리는 노드가 없다는 뜻(다른 낱말로 다시)이고, `dependency_unavailable` 은 검색 자체가 못 돌았다는 뜻(재시도)입니다.
 
 ::: tip 원점수가 필요하면 include_scores
 요청에 `include_scores: true` 를 넣으면 각 매치에 `scores: {lexical, dense}` 가 함께 옵니다. 어휘(`lexical`)와 의미(`dense`) 각각의 원점수라, 직접 다시 순위를 매기거나 왜 이 노드가 올라왔는지 따져 볼 때 씁니다.
@@ -72,7 +107,15 @@ ID 를 손에 쥐었으면 `get_entity` 로 그 노드 한 개와, 거기에 붙
 
 ```bash
 curl http://localhost:8000/entities/01J8XR4K9ZQ2N7M3VB0W4D6TYE
-# {"data":{"node":{...},"edge_counts":{"outgoing":{"APPLIES_TO":3},"incoming":{"REFERS_TO":1}}}}
+```
+
+```json
+{
+  "data": {
+    "node": { "...": "..." },
+    "edge_counts": { "outgoing": { "APPLIES_TO": 3 }, "incoming": { "REFERS_TO": 1 } }
+  }
+}
 ```
 
 `node` 는 `find_entities` 가 돌려준 것과 같은 모양입니다. ID, 이름, 타입, 설명(`description`, 없으면 생략), 별칭(`aliases`), 속성(`properties`), 출처(`source_refs`), 생성과 수정 시각을 담습니다. 응답에 임베딩 벡터는 들어 있지 않습니다. `edge_counts` 는 이 노드에서 나가는 관계(`outgoing`)와 들어오는 관계(`incoming`)를 타입별 개수로 보여 줘서, 다음에 어느 방향으로 이웃을 펼쳐 볼지 가늠하게 해 줍니다.
@@ -85,7 +128,10 @@ curl http://localhost:8000/entities/01J8XR4K9ZQ2N7M3VB0W4D6TYE
 curl -X POST http://localhost:8000/entities/01J8XR4K9ZQ2N7M3VB0W4D6TYE/neighbors \
   -H "Content-Type: application/json" \
   -d '{"hops": 1, "direction": "both", "max_nodes": 50}'
-# {"data":{"nodes":[...],"edges":[...],"truncated":false}}
+```
+
+```json
+{ "data": { "nodes": ["..."], "edges": ["..."], "truncated": false } }
 ```
 
 - `hops` — 몇 단계까지 펼칠지(기본 1, 1~5).
@@ -102,7 +148,10 @@ curl -X POST http://localhost:8000/entities/01J8XR4K9ZQ2N7M3VB0W4D6TYE/neighbors
 curl -X POST http://localhost:8000/paths/find \
   -H "Content-Type: application/json" \
   -d '{"from_id": "01J8XR4K9ZQ2N7M3VB0W4D6TYE", "to_id": "01J8YS5M0AB3P8N4WC1XE7FZGH", "max_hops": 4}'
-# {"data":{"paths":[{"nodes":[...],"edges":[...],"length":2,"hub_score":0.0}]}}
+```
+
+```json
+{ "data": { "paths": [{ "nodes": ["..."], "edges": ["..."], "length": 2, "hub_score": 0.0 }] } }
 ```
 
 `from_id` 에서 `to_id` 까지 `max_hops`(기본 4, 1~6) 안에 닿는 경로를 짧은 순으로 돌려줍니다. 각 경로의 `length` 는 단계 수고, `nodes` 와 `edges` 로 경로를 그대로 되짚을 수 있습니다. 두 점이 그래프에 있어도 제약 안에서 길이 없으면 `paths` 가 빈 목록으로 올 뿐 오류는 아닙니다.
@@ -119,7 +168,10 @@ curl -X POST http://localhost:8000/paths/find \
 curl -X POST http://localhost:8000/subgraph \
   -H "Content-Type: application/json" \
   -d '{"entry_ids": ["01J8XR4K9ZQ2N7M3VB0W4D6TYE"], "hops": 2, "max_nodes": 200}'
-# {"data":{"nodes":[...],"edges":[...],"entry_ids":["01J8XR4K9ZQ2N7M3VB0W4D6TYE"],"truncated":false}}
+```
+
+```json
+{ "data": { "nodes": ["..."], "edges": ["..."], "entry_ids": ["01J8XR4K9ZQ2N7M3VB0W4D6TYE"], "truncated": false } }
 ```
 
 `entry_ids` 에 진입점 ID 를(최대 20개) 주면 각각에서 `hops`(기본 2, 1~4)만큼 펼친 노드와 `edges`를 합쳐 줍니다. 응답의 `entry_ids` 는 넘긴 진입점을 그대로 되돌려 줘서, 합쳐진 결과 안에서 어디가 출발점이었는지 짚게 해 줍니다. 목록에 그래프에 없는 ID 가 섞여 있으면 오류를 내지 않고 있는 것만 조용히 펼칩니다.
