@@ -32,6 +32,7 @@ export default defineConfig({
             text: "개념",
             items: [
               { text: "왜 그래프인가", link: "/concepts/why-graph" },
+              { text: "아키텍처 안에서 Arche 의 자리", link: "/concepts/positioning" },
               { text: "namespace 격리 모델", link: "/concepts/namespace-model" },
               { text: "경로 품질과 hub_score", link: "/concepts/path-quality" },
             ],
@@ -78,6 +79,7 @@ export default defineConfig({
               text: "개념",
               items: [
                 { text: "왜 그래프인가", link: "/concepts/why-graph" },
+                { text: "아키텍처 안에서 Arche 의 자리", link: "/concepts/positioning" },
                 { text: "namespace 격리 모델", link: "/concepts/namespace-model" },
                 { text: "경로 품질과 hub_score", link: "/concepts/path-quality" },
               ],
