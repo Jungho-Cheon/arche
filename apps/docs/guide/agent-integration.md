@@ -31,7 +31,7 @@ uv run --project apps/api arche mcp serve --stdio
 
 ## 에이전트에 등록하기
 
-에이전트(클라이언트) 쪽에는 이 서버를 어떻게 띄울지 한 조각만 적어 주면 됩니다. 저장소를 클론해 쓴다면 아래 형태를 권합니다. 저장소 경로를 직접 가리켜서, 별도 설치 없이 그 저장소의 `.env`(시작하기에서 채운 그 파일)를 그대로 씁니다. Claude Desktop 을 예로 들면 설정 파일에 다음을 더합니다.
+에이전트(클라이언트) 쪽에는 이 서버를 어떻게 띄울지 한 조각만 적어 주면 됩니다. 저장소를 클론해 쓴다면 아래 형태를 권합니다. 저장소 경로를 직접 가리켜 별도 설치 없이 그 저장소의 코드로 서버를 띄웁니다. 다만 접속 정보(`.env`)는 `--project` 경로가 아니라 프로세스가 실제로 실행되는 작업 폴더를 기준으로 찾으므로(아래 [접속 정보(키)를 어떻게 넘기나](#접속-정보-키-를-어떻게-넘기나) 참고), 키까지 확실히 넘기려면 `env` 블록을 함께 쓰는 편이 안전합니다. Claude Desktop 을 예로 들면 설정 파일에 다음을 더합니다.
 
 ```json
 { "mcpServers": { "arche": { "command": "uv", "args": ["run", "--project", "/path/to/arche/apps/api", "arche", "mcp", "serve", "--stdio"] } } }
@@ -56,8 +56,8 @@ uv run --project apps/api arche mcp serve --stdio
 
 에이전트가 띄운 `arche` 프로세스도 그래프 DB 주소와 AI 모델 키가 있어야 합니다. 두 가지 방법이 있습니다.
 
-- **`.env` 파일** — `arche` 는 실행된 작업 폴더의 `.env` 를 읽습니다. 위 두 번째 형태처럼 `--project /path/to/arche/apps/api` 로 저장소를 가리키면, 그 저장소의 `.env`(시작하기에서 채운 그 파일)를 그대로 씁니다. 로컬에서 가장 간단한 방법입니다.
-- **`env` 블록** — 클라이언트 설정에서 프로세스에 환경 변수를 직접 넘길 수도 있습니다. `.env` 를 두기 어려운 환경(전역 설치형 등)에서 씁니다.
+- **`env` 블록 (권장)** — 클라이언트 설정에서 프로세스에 환경 변수를 직접 넘깁니다. 아래 예시처럼 접속 정보를 설정에 박아 넘기면 작업 폴더가 어디든 확실히 잡힙니다. MCP 로 붙일 때 가장 안전한 방법입니다.
+- **`.env` 파일** — `arche` 는 프로세스가 실행되는 작업 폴더에서 위로 올라가며 `.env` 를 찾습니다. 여기서 기준은 `--project` 경로가 아니라 프로세스의 작업 폴더입니다. 그런데 MCP 클라이언트가 서버를 자식 프로세스로 띄울 때의 작업 폴더는 대개 저장소가 아니라 홈 폴더처럼 엉뚱한 곳이라, 이 방식만 믿으면 키를 못 찾아 서버가 뜨자마자 죽기 쉽습니다(도구 목록이 안 올라오는 흔한 원인입니다). 클라이언트가 작업 폴더를 저장소 루트로 지정할 수 있을 때만 기대세요.
 
 ```json
 {
@@ -98,7 +98,11 @@ uv run --project apps/api uvicorn arche_api.main:app --host 127.0.0.1 --port 800
 
 에이전트 프레임워크가 Streamable HTTP 를 지원하면 `POST /mcp/v1/` 하나만 있으면 됩니다. 예전 방식만 지원하면 `GET /sse` 와 `POST /message` 짝을 씁니다.
 
-인증과 namespace 는 `Authorization` 헤더로 넘깁니다. 시제품 단계 토큰은 `ns:<namespace>` 형태입니다. 예를 들어 `Authorization: Bearer ns:work-a` 로 부르면 그 호출은 `work-a` namespace 안만 봅니다. 헤더가 없으면 `default` 로 떨어지고, 형식이 어긋난 토큰은 `not_authorized` 로 거부됩니다.
+인증과 namespace 는 `Authorization` 헤더로 넘깁니다. 시제품 단계 토큰은 `ns:<namespace>` 형태입니다. 예를 들어 `Authorization: Bearer ns:work-a` 로 부르면 그 호출은 `work-a` namespace 안만 봅니다. 헤더가 없으면 `default` 로 떨어집니다. `Bearer` 스킴이 아니면 `not_authorized`(401)로 거부되지만, 여기서 한 가지 주의할 점이 있습니다. `Bearer` 스킴이면서 `ns:` 접두사가 없는 토큰(예: 사내 SSO 가 발급한 JWT)은 거부되지 않고 조용히 `default` namespace 로 처리됩니다.
+
+::: warning ns: 접두사 없는 토큰은 조용히 default 로 갑니다
+게이트웨이가 사내 JWT 같은 임의의 Bearer 토큰을 그대로 Arche 로 흘려보내면, 그 요청은 오류 없이 전부 `default` 칸으로 갑니다. namespace 격리를 기대하고 붙였다면 격리가 조용히 무력화됩니다(오류가 안 나 원인 추적도 더딥니다). 그래서 namespace 로 갈라야 한다면 게이트웨이가 인증을 마친 뒤 `Authorization: Bearer ns:<허용된-namespace>` 형태로 헤더를 직접 써서 넘겨야 합니다. 이 앞단 통합 패턴은 [팀별 지식 격리 (namespace)](/guide/namespace)에서 더 다룹니다.
+:::
 
 HTTP 전송도 stdio 와 **같은 도구 열 개**를 노출합니다. 조회 여섯 개와 검토형 적재 네 개가 그대로 올라오므로, 원격 에이전트도 이 연결 하나로 문서를 넣고 질의합니다. 어느 전송을 쓰든 도구 이름과 입출력은 같습니다.
 
