@@ -3,6 +3,8 @@
 Status: accepted
 Date: 2026-06-15
 
+> **Amendment (ADR-0020, 2026-07-13)**: 본 ADR 의 "별도 벡터 DB 없이 그래프 DB 내장 인덱스" 원칙은 유지된다. 다만 그 내장 인덱스를 담는 컴포넌트가 Neo4j 하나로 고정됐던 것을 두 갈래로 연다. 체험/단일 사용자는 임베디드(Kuzu, 서버 없이 pip install), 프로덕션(동시성/namespace 공유/규모)은 Neo4j. 자세한 근거와 경계는 [ADR-0020 — 투 트랙 저장소](./0020-two-track-storage-embedded-kuzu-neo4j.md).
+
 ## TL;DR
 
 dense 임베딩 (ADR-0003) 은 *그래프 DB 가 내장 제공하는 벡터 인덱스* 에 저장한다. Pinecone · Qdrant · Weaviate · Milvus 같은 별도 벡터 DB 서비스는 *도입하지 않는다* . 핵심 논증은 "벡터 검색 ≠ 별도 벡터 DB" — 2026 년 시점에 Neo4j 5.13+, ArangoDB, PostgreSQL+pgvector, MongoDB Atlas Vector Search 등 주류 데이터베이스가 모두 벡터 인덱스를 *내장* 한다. 도메인 확장 시 dense 신호가 더 많이 필요해질 확률 (생물학/AI 연구 등에서 50-70%) 은 *별도 서비스 필요 확률* 이 아니라 *그래프 DB 내 인덱스 활용도 증가 확률* 이다.
