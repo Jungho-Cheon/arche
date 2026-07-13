@@ -43,6 +43,7 @@ ADR 은 *불변에 가깝게* 다룬다. 결정이 바뀌면 *기존 ADR 을 수
 | 17 | [ADR-0017 — 허브 인지 경로 점수](./0017-hub-aware-path-scoring.md) | MedHop 30% 천장의 다수는 병합 부족이 아니라 *정밀도* — promiscuous 허브를 다리로 쓴 가짜 경로. find_path 가 같은 길이면 허브를 덜 거치는 구체적 경로를 우선하고 hub_score 를 노출(끝점 제외 → 금융 무회귀). RELATES_TO 경로 제한으로 출처 노드 경유 크래시/가짜 다리 제거. ADR-0016 D4 교정. |
 | 18 | [ADR-0018 — monorepo 구조 + agnostic 경계](./0018-monorepo-and-agnostic-boundaries.md) | 검증 안정화 후 구조 확정. monorepo (apps/api·docs·web-ui + packages 공유 클라이언트), 기업 web-ui 는 OSS/상용 경계 구체화 시 분리. apps/api 의 agnostic 이음매를 코드로: GraphRepository 를 능력별 포트(GraphStore/VectorIndex/LexicalIndex)로 분리, 추출 계약을 도메인으로 끌어올림. 소비 표면은 이미 Agent-agnostic(REST+MCP), 워크스페이스=namespace, auth seam=SSO 대비. |
 | 19 | [ADR-0019 — 모델 provider 팩토리 + Anthropic/Voyage 어댑터](./0019-multi-provider-factory.md) | ADR-0018 D3 의 LLM-agnostic 이음매를 두 번째 구현으로 실증. 모델 식별자 접두사(openai/anthropic/voyage)로 어댑터를 고르는 팩토리. Anthropic 추출(중립 계약을 tool-use 로 번역) + Voyage 임베딩(Anthropic 은 임베딩 API 없음). 설정만으로 provider 교체 = OpenAI-free 경로. SDK 는 선택적 의존성 + 지연 import. |
+| 20 | [ADR-0020 — 투 트랙 저장소 (임베디드 Kuzu + Neo4j)](./0020-two-track-storage-embedded-kuzu-neo4j.md) | ADR-0004 amend. 내장 인덱스를 담는 컴포넌트를 두 갈래로: 체험/단일 사용자는 임베디드(Kuzu, 서버 없이 pip install), 프로덕션(동시성/namespace 공유/규모)은 Neo4j. 능력별 포트(ADR-0018)로 어댑터 추가만 하면 됨. Kuzu 는 유일하게 진짜 in-process + 그래프/벡터/풀텍스트/경로를 한 컴포넌트로 충족(단 upstream 아카이브 → 0.11.3 고정 + 포크 경로). "설정만 교체" 는 포트 계약 수준이고 어댑터/질의는 백엔드별 별개. #146 unblock. |
 
 ---
 
@@ -59,6 +60,7 @@ ADR 은 *불변에 가깝게* 다룬다. 결정이 바뀌면 *기존 ADR 을 수
 ### Retrieval / 인덱싱
 
 - [ADR-0003 — 그래프 진입점 선정 전략](./0003-graph-entry-point-strategy-hybrid-lexical-dense.md)
+- [ADR-0020 — 투 트랙 저장소 (임베디드 Kuzu + Neo4j)](./0020-two-track-storage-embedded-kuzu-neo4j.md) — ADR-0004 amend. 임베디드 기본값 + Neo4j 프로덕션 이중 트랙
 - [ADR-0004 — 벡터 인프라 결정](./0004-vector-infra-graph-db-internal-index.md)
 
 ### 측정 / 평가
