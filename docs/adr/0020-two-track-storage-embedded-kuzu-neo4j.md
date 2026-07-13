@@ -1,6 +1,6 @@
 # ADR-0020: 투 트랙 저장소 — 임베디드 기본값(Kuzu) + Neo4j 프로덕션
 
-Status: proposed
+Status: accepted
 Date: 2026-07-13
 
 ## TL;DR
