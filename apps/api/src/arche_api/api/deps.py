@@ -94,7 +94,27 @@ def build_default_components(settings: Settings) -> dict:
     `ARCHE_API_LLM_MODEL=anthropic/...`, `ARCHE_API_EMBEDDING_MODEL=voyage/...` 처럼
     환경 변수만 바꾸면 코드 변경 없이 교체된다.
     """
-    graph = Neo4jGraphRepository(settings)
+    graph = build_graph_repository(settings)
     llm = build_llm_provider(settings)
     embedder = build_embedding_provider(settings)
     return {"graph_repo": graph, "llm_provider": llm, "embedding_provider": embedder}
+
+
+def build_graph_repository(settings: Settings) -> GraphRepository:
+    """ADR-0020 투 트랙 — 설정 플래그로 그래프 백엔드를 고른다.
+
+    기본값 `embedded` 는 Kuzu(서버 없이 pip install). `neo4j` 는 프로덕션
+    (동시성/namespace 공유/규모). 두 어댑터 모두 같은 GraphRepository 계약을 만족해
+    도메인/서비스 코드는 어느 쪽인지 모른다(ADR-0018 능력별 포트).
+    """
+    backend = (settings.graph_backend or "embedded").lower()
+    if backend in ("neo4j", "server"):
+        return Neo4jGraphRepository(settings)
+    if backend in ("embedded", "kuzu"):
+        from ..adapters.kuzu_graph import KuzuGraphRepository
+
+        return KuzuGraphRepository(settings)
+    raise ValueError(
+        f"unknown ARCHE_API_GRAPH_BACKEND: {settings.graph_backend!r} "
+        "(expected 'embedded'/'kuzu' or 'neo4j')"
+    )

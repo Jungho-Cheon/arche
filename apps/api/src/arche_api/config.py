@@ -58,6 +58,13 @@ class Settings(BaseSettings):
         default=DEFAULT_EMBEDDING_MODEL, alias="ARCHE_API_EMBEDDING_MODEL"
     )
 
+    # 그래프 저장소 백엔드 선택 (ADR-0020 투 트랙). 기본값은 임베디드(Kuzu) —
+    # 서버 없이 pip install 만으로 돈다. 동시성/namespace 공유/규모가 필요하면
+    # `neo4j` 로 바꾼다. 값에 따라 build_default_components 가 어댑터를 고른다.
+    graph_backend: str = Field(default="embedded", alias="ARCHE_API_GRAPH_BACKEND")
+    # 임베디드(Kuzu) DB 파일 경로. `:memory:` 면 프로세스 수명 동안만 유지.
+    kuzu_db_path: str = Field(default="./arche_kuzu_db", alias="ARCHE_API_KUZU_DB_PATH")
+
     # Neo4j
     neo4j_uri: str = Field(default="bolt://localhost:7687", alias="NEO4J_URI")
     neo4j_user: str = Field(default="neo4j", alias="NEO4J_USER")
