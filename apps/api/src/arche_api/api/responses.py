@@ -23,10 +23,16 @@ import re
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from ..domain.models import Edge, Node
+from .security import validate_namespace_id, validate_relation_types
 
 # WHY 모듈 상수: 여러 곳에서 같은 패턴 — 한 곳에 정의해 ADR / PRD 변경 시 단일
 # 갱신.
 _ULID_PATTERN = re.compile(r"^[0-9A-Z]{26}$")
+
+
+def _validate_optional_namespace(v: str | None) -> str | None:
+    """namespace_id 필드 검증 — 미지정(None)은 통과, 값이 있으면 형식 검사(#142)."""
+    return v if v is None else validate_namespace_id(v)
 
 
 # ---------- get_schema (PRD 3 §2) ----------
@@ -142,6 +148,9 @@ class GetNeighborsRequest(BaseModel):
     # ADR-0015 — 순회할 namespace. 미지정 시 auth 헤더(REST) 또는 "default" (issue #98).
     namespace_id: str | None = Field(default=None, min_length=1)
 
+    _ns_check = field_validator("namespace_id")(_validate_optional_namespace)
+    _rel_check = field_validator("relation_types")(validate_relation_types)
+
 
 class GetNeighborsResponse(BaseModel):
     """PRD 3 §5.4 응답. truncated 는 max_nodes 초과 여부."""
@@ -168,6 +177,9 @@ class FindPathRequest(BaseModel):
     relation_types: list[str] | None = None
     # ADR-0015 — 경로를 찾을 namespace. 미지정 시 auth 헤더(REST) 또는 "default" (#98).
     namespace_id: str | None = Field(default=None, min_length=1)
+
+    _ns_check = field_validator("namespace_id")(_validate_optional_namespace)
+    _rel_check = field_validator("relation_types")(validate_relation_types)
 
 
 class PathSegment(BaseModel):
@@ -219,6 +231,9 @@ class GetSubgraphRequest(BaseModel):
     # (gpt-4.1 1M) 가정 — 직렬화가 윈도우를 넘으면 호출자가 조절.
     max_nodes: int = Field(default=200, ge=1, le=5000)
     relation_types: list[str] | None = None
+
+    _ns_check = field_validator("namespace_id")(_validate_optional_namespace)
+    _rel_check = field_validator("relation_types")(validate_relation_types)
 
     @field_validator("entry_ids")
     @classmethod

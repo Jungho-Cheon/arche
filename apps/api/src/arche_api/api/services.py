@@ -45,6 +45,7 @@ from .plan_schemas import (
     RelationView,
     ResolveRequest,
 )
+from .security import ensure_entity_id, ensure_namespace_id
 
 if TYPE_CHECKING:
     from ..domain.ingest import IngestService
@@ -96,6 +97,9 @@ def get_schema(
 
     namespace_id — 통계를 이 namespace 안으로 가둔다 (issue #98 읽기 격리).
     """
+    # 헤더/쿼리에서 해소된 namespace 는 요청 모델을 거치지 않으므로 여기서 형식
+    # 검증 (#142). 위반은 InvalidInputError(400).
+    namespace_id = ensure_namespace_id(namespace_id)
     entity_stats, relation_stats = graph.get_schema_summary(
         examples_per_type=5, namespace_id=namespace_id
     )
@@ -149,6 +153,8 @@ def find_entities(
     *graceful fallback 없음* — 임베딩 의존성이 죽으면 503 dependency_unavailable
     을 그대로 raise. lexical-only silent fallback 은 측정 무결성을 해친다.
     """
+    # 헤더/쿼리 해소 namespace 형식 검증 (#142) — 요청 모델 밖 경로 초크포인트.
+    namespace_id = ensure_namespace_id(namespace_id)
     # WHY limit_per_keyword 가 입력 limit 보다 크게: 여러 keyword 가 같은 노드를
     # surface 시키는 경우를 흡수하려면 keyword 별 풀이 입력 limit 보다 넉넉해야.
     per_kw = min(50, max(body.limit * 2, 10))
@@ -335,6 +341,10 @@ def get_entity(
     엔티티 없으면 EntityNotFoundError (REST 404 / MCP entity_not_found). 다른
     namespace 의 노드도 *없는 것* 으로 본다 (issue #98 — id 우회 차단).
     """
+    # 헤더/쿼리 해소 namespace + REST path / MCP 인자 id 형식 검증 (#142) —
+    # 요청 모델을 거치지 않는 경로의 초크포인트.
+    namespace_id = ensure_namespace_id(namespace_id)
+    entity_id = ensure_entity_id(entity_id)
     result = graph.get_entity_with_counts(
         entity_id=entity_id, namespace_id=namespace_id
     )
@@ -361,6 +371,8 @@ def get_neighbors(
     namespace_id: str = "default",
 ) -> GetNeighborsResponse:
     """진입점의 N-hop 이웃. 진입점 노드 포함. 순회는 이 namespace 안에서만 (#98)."""
+    # 헤더/쿼리 해소 namespace 형식 검증 (#142) — 요청 모델 밖 경로 초크포인트.
+    namespace_id = ensure_namespace_id(namespace_id)
     if not graph.entity_exists(entity_id=entity_id, namespace_id=namespace_id):
         raise EntityNotFoundError(
             f"entity not found: {entity_id}", details={"id": entity_id}
@@ -395,6 +407,8 @@ def find_path(
     404 entity_not_found: from 또는 to 가 (이 namespace 의) 그래프에 없음.
     200 + paths=[]: 노드는 있지만 max_hops / relation_types 제약 안에서 경로 없음.
     """
+    # 헤더/쿼리 해소 namespace 형식 검증 (#142) — 요청 모델 밖 경로 초크포인트.
+    namespace_id = ensure_namespace_id(namespace_id)
     if body.from_id == body.to_id:
         raise UnprocessableError(
             "from_id and to_id must differ",
@@ -441,6 +455,8 @@ def get_subgraph(
     *존재하는 것만* 확장한다 (PRD 3 §11 미정 결정 — 본 PR 의 합리적 결정).
     namespace 밖 진입점도 같은 정책으로 *조용히 무시* 한다 (issue #98).
     """
+    # 헤더/쿼리 해소 namespace 형식 검증 (#142) — 요청 모델 밖 경로 초크포인트.
+    namespace_id = ensure_namespace_id(namespace_id)
     result = graph.expand_subgraph(
         entry_ids=body.entry_ids,
         relation_types=body.relation_types,
