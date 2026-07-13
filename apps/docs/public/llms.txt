@@ -1,0 +1,38 @@
+# Arche
+
+> 흩어진 문서를 관계 그래프로 바꿔, AI 에이전트가 적은 비용으로 정확히 답하게 하는 지식 베이스 도구입니다. 에이전트는 MCP(Model Context Protocol, 에이전트가 외부 도구를 표준 방식으로 부르는 규약) 연결 하나로 문서를 그래프에 넣고, 여섯 개의 작은 조회 연산을 엮어 답에 필요한 연결을 따라갑니다.
+
+핵심만 먼저: 에이전트를 붙이는 가장 빠른 길은 [에이전트에 5줄로 붙이기](/guide/agent-quickstart)입니다. MCP 도구 목록은 `get_schema` / `find_entities` / `get_entity` / `get_neighbors` / `find_path` / `get_subgraph` 여섯 개의 조회와, 문서를 넣는 검토형 적재 네 개입니다. 거의 모든 흐름은 키워드를 노드 ID 로 바꾸는 `find_entities` 에서 출발합니다.
+
+## 에이전트로 시작
+
+- [에이전트에 5줄로 붙이기](/guide/agent-quickstart): MCP 설정 한 조각으로 붙이고 첫 `find_entities` 를 부르는 최소 경로.
+- [에이전트에 연결하기](/guide/agent-integration): MCP 서버 띄우기, 클라이언트 등록, stdio 와 HTTP 전송, 도구 이름표, 질문을 푸는 호출 흐름 전체.
+- [코드로 에이전트에 붙이기](/guide/programmatic-integration): 직접 짠 에이전트나 오케스트레이터에 MCP 클라이언트로 붙이는 예제 코드.
+
+## 목표별 예시 (레시피)
+
+- [상품에 적용 가능한 프로모션 찾기](/cookbook/applicable-promotions): `find_entities` 로 상품 노드를 잡고 `get_neighbors` 로 걸린 프로모션을 펼치는 조합.
+- [두 개념이 어떻게 이어지는지 밝히기](/cookbook/connect-two-concepts): 두 노드를 `find_entities` 로 찾아 `find_path` 로 잇고 `hub_score` 로 연결을 판단하는 조합.
+
+## 시작과 가이드
+
+- [Arche 소개](/intro): 무엇을 왜 만드는지 코드 없이 읽는 개요.
+- [시작하기 — 설치에서 첫 질의까지](/guide/getting-started): Docker 로 Neo4j 와 API 서버를 띄우고 문서 폴더를 그래프에 넣는 길잡이.
+- [문서를 그래프에 넣기](/guide/ingest): 검토형 적재 네 단계(계획, 미리 보기, 질문 해소, 확정)와 재적재 차분.
+- [그래프에 질의하기](/guide/query): 여섯 조회 연산을 실제 호출과 응답으로 하나씩.
+- [팀별 지식 격리 (namespace)](/guide/namespace): 한 그래프 DB 안에서 팀이나 프로젝트별로 지식을 나누는 방법과 앞단 인증 통합.
+- [모델 갈아끼우기](/guide/models): 모델 이름 접두사만 바꿔 추출과 임베딩 공급자를 교체.
+
+## 개념
+
+- [왜 그래프인가](/concepts/why-graph): full-context 와 청크 검색의 한계, 그래프가 답하는 지점, 측정값과 한계.
+- [namespace 격리 모델](/concepts/namespace-model): namespace 로 데이터를 가르는 규칙과 경계.
+- [경로 품질과 hub_score](/concepts/path-quality): `find_path` 가 돌려주는 경로를 hub_score 로 읽는 법.
+
+## 레퍼런스
+
+- [그래프 조회 연산](/reference/primitives): 여섯 조회와 검토형 적재 도구가 받는 입력 필드와 응답 필드 참조표.
+- [에러 코드](/reference/errors): 코드별 뜻과 HTTP 상태.
+- [환경 변수](/reference/configuration): 접속 정보와 모델 설정 변수의 전체 목록과 기본값.
+- [용어집](/reference/glossary): 엔티티, 관계, ULID, 임베딩 같은 용어 정리.
