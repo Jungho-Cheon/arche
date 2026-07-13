@@ -27,6 +27,8 @@ export default defineConfig({
         nav: [
           { text: "소개", link: "/intro" },
           { text: "시작하기", link: "/guide/getting-started" },
+          { text: "에이전트 붙이기", link: "/guide/agent-quickstart" },
+          { text: "레시피", link: "/cookbook/applicable-promotions" },
           { text: "가이드", link: "/guide/ingest" },
           {
             text: "개념",
@@ -51,10 +53,17 @@ export default defineConfig({
               text: "직접 해보기",
               items: [
                 { text: "시작하기 (개발자)", link: "/guide/getting-started" },
+                { text: "에이전트에 5줄로 붙이기", link: "/guide/agent-quickstart" },
               ],
             },
           ],
           "/guide/": [
+            {
+              text: "에이전트로 5줄만에 시작",
+              items: [
+                { text: "에이전트에 5줄로 붙이기", link: "/guide/agent-quickstart" },
+              ],
+            },
             {
               text: "따라 하며 익히기 (튜토리얼)",
               items: [
@@ -70,6 +79,29 @@ export default defineConfig({
                 { text: "모델 갈아끼우기", link: "/guide/models" },
                 { text: "에이전트에 연결하기", link: "/guide/agent-integration" },
                 { text: "코드로 에이전트에 붙이기", link: "/guide/programmatic-integration" },
+              ],
+            },
+            {
+              text: "목표별 예시 (레시피)",
+              items: [
+                { text: "상품에 적용 가능한 프로모션 찾기", link: "/cookbook/applicable-promotions" },
+                { text: "두 개념이 어떻게 이어지는지 밝히기", link: "/cookbook/connect-two-concepts" },
+              ],
+            },
+          ],
+          "/cookbook/": [
+            {
+              text: "목표별 예시 (레시피)",
+              items: [
+                { text: "상품에 적용 가능한 프로모션 찾기", link: "/cookbook/applicable-promotions" },
+                { text: "두 개념이 어떻게 이어지는지 밝히기", link: "/cookbook/connect-two-concepts" },
+              ],
+            },
+            {
+              text: "먼저 볼 것",
+              items: [
+                { text: "에이전트에 5줄로 붙이기", link: "/guide/agent-quickstart" },
+                { text: "에이전트에 연결하기", link: "/guide/agent-integration" },
               ],
             },
           ],
