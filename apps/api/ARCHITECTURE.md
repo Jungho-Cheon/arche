@@ -239,3 +239,41 @@ uv run pytest tests/integration -q
 # 로컬 기동
 uv run uvicorn arche_api.main:app --reload
 ```
+
+---
+
+## 8. 보안 — 입력 하드닝 (Cypher 인젝션 감사, #142)
+
+Arche 는 신뢰할 수 없는 외부 문서를 적재하고, 그래프 질의(Neo4j Cypher)를
+REST/MCP 프리미티브로 노출한다. 입력(키워드, `namespace_id`, 관계 타입, 노드
+id)이 질의로 흘러드는 경로에 문자열 결합이 있으면 **Cypher 인젝션**(공격자가
+질의를 탈출해 임의 그래프 조작) 위험이 생긴다.
+
+**감사 결과 — clean.** `adapters/graph.py` 의 모든 질의는 파라미터 바인딩
+(`$param`)만 쓴다. 사용자 입력을 질의 문자열에 이어 붙이는 경로는 없다.
+
+- 키워드는 fulltext 파서로 가기 전에 `_lucene_escape` 로 특수문자를 중립화한다.
+- 관계 타입·namespace·노드 id 는 모두 `$rel_types` / `$ns` / `$id` 로 바인딩된다.
+- 질의 문자열에 삽입되는 조각은 *모듈 상수* (라벨 `Entity` / `RELATES_TO`,
+  인덱스명)뿐이다. 라벨·인덱스명은 Cypher 가 파라미터화할 수 없고, 사용자
+  입력도 아니다. 정수(`max_hops` / 벡터 차원)는 `int()` 로 캐스팅해 삽입한다.
+
+**심층 방어 — `api/security.py`.** 파라미터 바인딩이 인젝션을 이미 막지만, 그
+위에 형식 관문을 얹어 신뢰 불가 입력이 비정상 형태일 때 질의에 닿기 전에
+걸러낸다. 미래의 리팩터링으로 바인딩이 뚫려도 악성 페이로드가 이미 걸러지도록
+하는 2 차 가드다. namespace 격리(#98)가 데이터 분리라면 여기는 입력 위생 — 별개 축.
+
+| 입력 | 검증 | 위반 응답 |
+|---|---|---|
+| `namespace_id` | 형식 `[A-Za-z0-9._:-]`, 길이 ≤ 128 | body: 422 / 헤더·쿼리·MCP 인자: 400 |
+| `relation_types` | 개수 ≤ 32, 항목 길이 ≤ 64, 제어 문자 금지 | 422 |
+| 엔티티 id | ULID 패턴 `[0-9A-Z]{26}` | 422(프리미티브 body) / 400(get_entity) |
+
+검증은 두 계층에서 건다. 요청 모델(`field_validator`)이 body 입력을 잡고,
+서비스 진입점(`ensure_namespace_id` / `ensure_entity_id`)이 헤더·쿼리처럼 요청
+모델을 거치지 않는 경로까지 덮는 최종 초크포인트다. REST 와 MCP 가 같은 서비스
+함수로 위임하므로 두 표면이 같은 검증을 공유한다.
+
+회귀 잠금: `tests/unit/test_input_hardening.py` — 형식 관문(REST body 422 /
+헤더·쿼리·MCP 400)과, 질의 탈출을 노린 문자열이 형식 관문을 통과하더라도
+그래프에 *파라미터로만* 전달됨(실행되지 않음)을 확인한다.
