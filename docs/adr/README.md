@@ -44,6 +44,7 @@ ADR 은 *불변에 가깝게* 다룬다. 결정이 바뀌면 *기존 ADR 을 수
 | 18 | [ADR-0018 — monorepo 구조 + agnostic 경계](./0018-monorepo-and-agnostic-boundaries.md) | 검증 안정화 후 구조 확정. monorepo (apps/api·docs·web-ui + packages 공유 클라이언트), 기업 web-ui 는 OSS/상용 경계 구체화 시 분리. apps/api 의 agnostic 이음매를 코드로: GraphRepository 를 능력별 포트(GraphStore/VectorIndex/LexicalIndex)로 분리, 추출 계약을 도메인으로 끌어올림. 소비 표면은 이미 Agent-agnostic(REST+MCP), 워크스페이스=namespace, auth seam=SSO 대비. |
 | 19 | [ADR-0019 — 모델 provider 팩토리 + Anthropic/Voyage 어댑터](./0019-multi-provider-factory.md) | ADR-0018 D3 의 LLM-agnostic 이음매를 두 번째 구현으로 실증. 모델 식별자 접두사(openai/anthropic/voyage)로 어댑터를 고르는 팩토리. Anthropic 추출(중립 계약을 tool-use 로 번역) + Voyage 임베딩(Anthropic 은 임베딩 API 없음). 설정만으로 provider 교체 = OpenAI-free 경로. SDK 는 선택적 의존성 + 지연 import. |
 | 20 | [ADR-0020 — 투 트랙 저장소 (임베디드 Kuzu + Neo4j)](./0020-two-track-storage-embedded-kuzu-neo4j.md) | ADR-0004 amend. 내장 인덱스를 담는 컴포넌트를 두 갈래로: 체험/단일 사용자는 임베디드(Kuzu, 서버 없이 pip install), 프로덕션(동시성/namespace 공유/규모)은 Neo4j. 능력별 포트(ADR-0018)로 어댑터 추가만 하면 됨. Kuzu 는 유일하게 진짜 in-process + 그래프/벡터/풀텍스트/경로를 한 컴포넌트로 충족(단 upstream 아카이브 → 0.11.3 고정 + 포크 경로). "설정만 교체" 는 포트 계약 수준이고 어댑터/질의는 백엔드별 별개. #146 unblock. |
+| 21 | [ADR-0021 — bi-temporal 유효기간 데이터 모델 (경계 확정)](./0021-bitemporal-validity-boundary.md) | 유효 시각(도메인 사실이 참인 구간)을 트랜잭션 시각(`created_at`/`updated_at`)과 audit(ADR-0002 D5 미도입)에서 가른다. MVP 슬라이스 = `Edge.properties` 예약 키 `valid_from`/`valid_to`(RFC3339) 규약만 — 스키마/질의/무효화 변경 0, 전방호환 훅. 정식 필드 승격 / `as_of` 시점 질의 / 삭제 대신 무효화는 post-MVP(코드 적재 ADR 과 묶음)로 미룸. #141. |
 | 22 | [ADR-0022 — 전역/주제 질문 지원 경계 (탐지-only 방향 확정)](./0022-global-query-community-detection-boundary.md) | "코퍼스 전체 주제/패턴" 같은 전역 질문은 MVP 미지원. 나중에 지원하면 형태는 커뮤니티 탐지-only — 어떤 노드가 한 군집인지 구조 정보만 프리미티브로, 요약은 에이전트가 서브그래프로 직접(ADR-0016 답변 외부화 유지). GraphRAG 식 커뮤니티 요약 사전 생성은 정체성 위반이라 영구 제외. 재빌드 비용/idempotent 상호작용은 지원 확정 시점 후속 ADR 로. #143. |
 
 ---
@@ -54,6 +55,7 @@ ADR 은 *불변에 가깝게* 다룬다. 결정이 바뀌면 *기존 ADR 을 수
 
 - [ADR-0001 — 프로젝트 정체성과 MVP 검증 가설](./0001-project-identity-and-mvp-validation-hypothesis.md)
 - [ADR-0002 — MVP 범위 경계](./0002-mvp-scope-boundaries.md)
+- [ADR-0021 — bi-temporal 유효기간 데이터 모델 (경계 확정)](./0021-bitemporal-validity-boundary.md) — 유효 시각을 audit/트랜잭션 시각과 가름. MVP 는 예약 키 규약만, 정식 필드 승격 / `as_of` / 무효화는 post-MVP
 - [ADR-0007 — Combined RAG 채택 (정체성 피벗)](./0007-combined-rag-pivot.md) — **superseded by ADR-0016**. 역사적 기록 (chunk·graph 오답 비중첩 측정)
 - [ADR-0008 — EntityConsolidator gating (M6.5 1M 결과)](./0008-entity-consolidator-gating.md) — **superseded by ADR-0016/0017**. 역사적 기록 (1M over-merge 진단)
 - [ADR-0016 — 에이전트 반복 graph-only + 정량 추출](./0016-agentic-graphonly-and-quantitative-extraction.md) — **현재 제품 방향 (accepted)**. graph-only 가 graphify 압도, 답변 LLM 외부화, 정체성=그래프 KB
