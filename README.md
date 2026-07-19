@@ -12,8 +12,8 @@
 <p>
 <img alt="status" src="https://img.shields.io/badge/status-MVP-E8A33D?style=flat-square&labelColor=1a1008">
 <img alt="python" src="https://img.shields.io/badge/python-3.12+-8a7a66?style=flat-square&labelColor=1a1008">
-<img alt="neo4j" src="https://img.shields.io/badge/Neo4j-5.x-8a7a66?style=flat-square&labelColor=1a1008">
-<img alt="interface" src="https://img.shields.io/badge/interface-REST%20%2B%20MCP-8a7a66?style=flat-square&labelColor=1a1008">
+<img alt="storage" src="https://img.shields.io/badge/storage-embedded%20Kuzu%20%7C%20Neo4j-8a7a66?style=flat-square&labelColor=1a1008">
+<img alt="interface" src="https://img.shields.io/badge/interface-MCP%20%2B%20REST-8a7a66?style=flat-square&labelColor=1a1008">
 </p>
 
 <p>
@@ -59,9 +59,9 @@ Arche 는 문서를 미리 **관계 지도(그래프)** 로 바꿔 두고, 에�
    문서 더미                  Arche                          AI 에이전트
  (md/pdf/이미지)                                            (질문하는 쪽)
       │              ┌──────────────────────────┐
-      │   ① 적재      │  ② 그래프 저장 (Neo4j)    │   ④ 두 통로로 질의
-      └─────────────▶│   점(엔티티)+선(관계)     │◀──── REST API (HTTP)
-                     │   + 진입점 검색 인덱스     │◀──── MCP (AI 도구 표준)
+      │   ① 적재      │  ② 그래프 저장            │   ④ 두 통로로 질의
+      └─────────────▶│   점(엔티티)+선(관계)     │◀──── MCP (AI 도구 표준)
+                     │   + 진입점 검색 인덱스     │◀──── REST API (HTTP)
                      └────────────┬─────────────┘
                                   │ ③ 추출 완전성/동일성 품질
                                   ▼
@@ -71,33 +71,27 @@ Arche 는 문서를 미리 **관계 지도(그래프)** 로 바꿔 두고, 에�
 | | 구성요소 | 하는 일 |
 |---|---|---|
 | ① | **적재 (ingest)** | 폴더의 문서(글/PDF/이미지)를 읽어 점과 선을 뽑아 그래프에 넣는다. 다시 넣으면 바뀐 부분만 갱신(델타). |
-| ② | **그래프 저장 + 진입점 검색** | Neo4j 에 저장. 키워드로 출발점을 빠르게 찾도록 어휘 + 의미(벡터) 검색을 함께. |
+| ② | **그래프 저장 + 진입점 검색** | 그래프 DB 에 저장 (기본은 서버 없는 임베디드 Kuzu, 팀 공유가 필요하면 Neo4j). 키워드로 출발점을 빠르게 찾도록 어휘 + 의미(벡터) 검색을 함께. |
 | ③ | **추출/동일성 품질** | 같은 대상을 한 점으로 모으고, 숫자와 표를 빠짐없이 보존하며, 잘못 뭉친 점을 걸러낸다 — 정확도의 핵심 레버. |
 | ④ | **프리미티브 표면 (REST + MCP)** | 6가지 조회 동작을 두 표준 통로로 노출. 에이전트는 이것만 조합해 답을 찾는다. |
 | ⑤ | **평가 하베스 (eval)** | 위 가치를 *증명* 하는 측정 장치. 같은 질문을 여러 방식으로 풀어 정확도와 비용을 비교. |
 
 ## 직접 해보기
 
-> 준비물: **Docker** 와 **AI 모델 API 키**. 기본값은 OpenAI 키 하나로 추출과 임베딩을 모두 쓴다. OpenAI 대신 Claude(Anthropic) + Voyage 로도 돌릴 수 있다 (모델 접두사만 변경, [ADR-0019](./docs/adr/0019-multi-provider-factory.md)). 처음엔 파일 몇 개짜리 작은 폴더로 시작하길 권한다.
+> 준비물: **Python 3.12** 와 **AI 모델 API 키** (임베딩용 OpenAI 키). 기본은 서버 없이 도는 임베디드 그래프라 Docker 가 필요 없다. 추출은 OpenAI 대신 설치된 Claude Code 의 구독 인증(별도 키 없이)이나 Anthropic 으로도 돌릴 수 있다 (모델 접두사만 변경, [ADR-0019](./docs/adr/0019-multi-provider-factory.md)). 처음엔 파일 몇 개짜리 작은 폴더로 시작하길 권한다.
 
 ```bash
-# 1) 내려받고 환경 변수 채우기
+# 1) 내려받고 키 채우기 (Docker 불필요 — 기본은 서버 없는 임베디드 그래프)
 git clone https://github.com/Jungho-Cheon/arche.git
 cd arche
-cp .env.example .env          # .env 를 열어 OPENAI_API_KEY 를 채운다 (기본 경로 필수)
+cp .env.example .env          # .env 에 OPENAI_API_KEY 를 채운다 (임베딩에 필요)
 
-# 2) 그래프 DB(Neo4j) + API 를 한 번에 띄운다 (첫 실행은 이미지 빌드로 몇 분)
-docker compose up -d
-#   API 를 코드 없이 클릭으로 호출:  http://localhost:8000/docs
-#   그래프를 눈으로 보기:            http://localhost:7474  (id: neo4j / pw: .env 의 NEO4J_PASSWORD)
-
-# 3) 내 문서 폴더를 그래프로 적재한다
+# 2) 내 문서 폴더를 그래프로 적재 — 임베디드 Kuzu 파일에 바로 저장, 서버 없음
 uv run --project apps/api arche ingest ./내문서폴더
 
-# 4) 질의 — 코드 없이 :8000/docs 에서 POST /entities/find 를 누르거나,
-#    에이전트(Claude Desktop / Cursor 등)에 MCP 도구로 연결한다:
+# 3) 질의 — 에이전트(Claude Desktop / Cursor 등)에 MCP 도구로 연결한다
 uv run --project apps/api arche mcp serve --stdio
-#    에이전트로 적재할 때는 reviewable-ingest 스킬이 plan, preview, (모호하면 질문 해소) 확정, commit 순서를 안내한다.
+#    에이전트로 적재할 때는 reviewable ingest 흐름이 plan, preview, (모호하면 질문 해소) 확정, commit 순서를 안내한다.
 #    추출이 빈약하면 ingest_plan 에 hints(용어 풀이/도메인 메모)를 실어 추출만 보강할 수 있다 — 원문은 그대로 보존된다.
 ```
 
@@ -106,6 +100,8 @@ MCP 클라이언트(예: Claude Desktop) 설정:
 ```json
 { "mcpServers": { "arche": { "command": "arche", "args": ["mcp", "serve", "--stdio"] } } }
 ```
+
+**팀에서 공유하려면 (선택):** 여러 사람이 같은 그래프를 함께 보려면 `docker compose` 로 Neo4j + API 서버를 띄우고 `ARCHE_API_GRAPH_BACKEND=neo4j` 로 바꾼다. 임베디드는 단일 사용자용이고, 공유는 이 서버 형태로 연다 ([ADR-0023](./docs/adr/0023-embedded-default-shared-destination.md)).
 
 자세한 흐름과 용어 풀이는 [`docs/overview.md`](./docs/overview.md), 개발자용 구조는 [`apps/api/ARCHITECTURE.md`](./apps/api/ARCHITECTURE.md) 참조.
 

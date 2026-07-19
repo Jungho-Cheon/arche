@@ -46,6 +46,7 @@ ADR 은 *불변에 가깝게* 다룬다. 결정이 바뀌면 *기존 ADR 을 수
 | 20 | [ADR-0020 — 투 트랙 저장소 (임베디드 Kuzu + Neo4j)](./0020-two-track-storage-embedded-kuzu-neo4j.md) | ADR-0004 amend. 내장 인덱스를 담는 컴포넌트를 두 갈래로: 체험/단일 사용자는 임베디드(Kuzu, 서버 없이 pip install), 프로덕션(동시성/namespace 공유/규모)은 Neo4j. 능력별 포트(ADR-0018)로 어댑터 추가만 하면 됨. Kuzu 는 유일하게 진짜 in-process + 그래프/벡터/풀텍스트/경로를 한 컴포넌트로 충족(단 upstream 아카이브 → 0.11.3 고정 + 포크 경로). "설정만 교체" 는 포트 계약 수준이고 어댑터/질의는 백엔드별 별개. #146 unblock. |
 | 21 | [ADR-0021 — bi-temporal 유효기간 데이터 모델 (경계 확정)](./0021-bitemporal-validity-boundary.md) | 유효 시각(도메인 사실이 참인 구간)을 트랜잭션 시각(`created_at`/`updated_at`)과 audit(ADR-0002 D5 미도입)에서 가른다. MVP 슬라이스 = `Edge.properties` 예약 키 `valid_from`/`valid_to`(RFC3339) 규약만 — 스키마/질의/무효화 변경 0, 전방호환 훅. 정식 필드 승격 / `as_of` 시점 질의 / 삭제 대신 무효화는 post-MVP(코드 적재 ADR 과 묶음)로 미룸. #141. |
 | 22 | [ADR-0022 — 전역/주제 질문 지원 경계 (탐지-only 방향 확정)](./0022-global-query-community-detection-boundary.md) | "코퍼스 전체 주제/패턴" 같은 전역 질문은 MVP 미지원. 나중에 지원하면 형태는 커뮤니티 탐지-only — 어떤 노드가 한 군집인지 구조 정보만 프리미티브로, 요약은 에이전트가 서브그래프로 직접(ADR-0016 답변 외부화 유지). GraphRAG 식 커뮤니티 요약 사전 생성은 정체성 위반이라 영구 제외. 재빌드 비용/idempotent 상호작용은 지원 확정 시점 후속 ADR 로. #143. |
+| 23 | [ADR-0023 — 임베디드 기본, 공유 서버가 목적지 (보존 이음매 계약)](./0023-embedded-default-shared-destination.md) | 개인은 서버 없는 임베디드(Kuzu)로 바로 쓰고, 목적지는 사내 공유 세컨드브레인(ADR-0015)이다. 둘은 같은 코어의 두 토폴로지라 임베디드 기본이 공유를 닫지 않는다. 보존할 이음매 셋: GraphRepository 포트, `namespace_id` 테넌시, 교체 가능한 MCP 전송(stdio↔HTTP). 서버 이미지 배포/인증/SSO/어드민은 미룸(닫는 게 아니라 나중에 여는 것). 문서도 임베디드 우선으로 재배치. |
 
 ---
 
@@ -64,6 +65,7 @@ ADR 은 *불변에 가깝게* 다룬다. 결정이 바뀌면 *기존 ADR 을 수
 
 - [ADR-0003 — 그래프 진입점 선정 전략](./0003-graph-entry-point-strategy-hybrid-lexical-dense.md)
 - [ADR-0020 — 투 트랙 저장소 (임베디드 Kuzu + Neo4j)](./0020-two-track-storage-embedded-kuzu-neo4j.md) — ADR-0004 amend. 임베디드 기본값 + Neo4j 프로덕션 이중 트랙
+- [ADR-0023 — 임베디드 기본, 공유 서버가 목적지](./0023-embedded-default-shared-destination.md) — 개인 임베디드 기본과 팀 공유 서버는 같은 코어의 두 토폴로지. 보존 이음매(포트/namespace/MCP 전송) 명시, 서버 배포/인증은 미룸
 - [ADR-0004 — 벡터 인프라 결정](./0004-vector-infra-graph-db-internal-index.md)
 
 ### 측정 / 평가
