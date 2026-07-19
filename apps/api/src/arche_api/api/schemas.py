@@ -7,14 +7,9 @@ from typing import Any, Generic, TypeVar
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from ..domain.models import Node
-from .security import validate_namespace_id
+from .security import validate_optional_namespace_id
 
 T = TypeVar("T")
-
-
-def _validate_optional_namespace(v: str | None) -> str | None:
-    """namespace_id 필드 검증 — 미지정(None)은 통과, 값이 있으면 형식 검사(#142)."""
-    return v if v is None else validate_namespace_id(v)
 
 
 class ErrorBody(BaseModel):
@@ -64,7 +59,7 @@ class FindEntitiesRequest(BaseModel):
         description="질의할 namespace. 미지정 시 auth 헤더 또는 'default'",
     )
 
-    _ns_check = field_validator("namespace_id")(_validate_optional_namespace)
+    _ns_check = field_validator("namespace_id")(validate_optional_namespace_id)
 
 
 class MatchScores(BaseModel):
@@ -125,7 +120,7 @@ class AdminIngestRequest(BaseModel):
         description="entity 의 namespace. 미지정 시 'default' 또는 auth 헤더 추출",
     )
 
-    _ns_check = field_validator("namespace_id")(_validate_optional_namespace)
+    _ns_check = field_validator("namespace_id")(validate_optional_namespace_id)
 
 
 # ---------- admin/namespaces ----------

@@ -288,15 +288,7 @@ class Neo4jGraphRepository(GraphRepository):
     def create_entity(self, *, entity: StoredEntity) -> None:
         """새 엔티티 생성. Neo4j list 속성은 null 원소를 못 담아 chunk_index 는 -1
         sentinel 로 저장하고 응답 직렬화에서 None 으로 복원한다."""
-        source_chunks = [
-            sr.chunk_index if sr.chunk_index is not None else -1
-            for sr in entity.source_refs
-        ]
-        # total_chunks 도 같은 -1 sentinel.
-        source_totals = [
-            sr.total_chunks if sr.total_chunks is not None else -1
-            for sr in entity.source_refs
-        ]
+        source_paths, source_chunks, source_totals = _source_ref_arrays(entity.source_refs)
         with self._driver.session() as s:
             s.run(
                 f"""
@@ -321,7 +313,7 @@ class Neo4jGraphRepository(GraphRepository):
                 description=entity.description or "",
                 embedding=entity.embedding,
                 namespace_id=entity.namespace_id or "default",
-                source_paths=[sr.source_path for sr in entity.source_refs],
+                source_paths=source_paths,
                 source_chunk_indexes=source_chunks,
                 source_total_chunks=source_totals,
                 created_at=entity.created_at,
@@ -331,14 +323,7 @@ class Neo4jGraphRepository(GraphRepository):
     def apply_merge_mutation(self, *, mutation: MergeMutation) -> None:
         """병합 — aliases/description/source_refs/updated_at 만 갱신한다. source_refs 는
         도메인이 이미 dedupe 한 최종 리스트라 어댑터는 통째로 교체만 한다."""
-        source_chunks = [
-            sr.chunk_index if sr.chunk_index is not None else -1
-            for sr in mutation.source_refs
-        ]
-        source_totals = [
-            sr.total_chunks if sr.total_chunks is not None else -1
-            for sr in mutation.source_refs
-        ]
+        source_paths, source_chunks, source_totals = _source_ref_arrays(mutation.source_refs)
         with self._driver.session() as s:
             s.run(
                 f"""
@@ -355,7 +340,7 @@ class Neo4jGraphRepository(GraphRepository):
                 aliases=mutation.aliases,
                 normalized_aliases=list(mutation.normalized_aliases or []),
                 description=mutation.description,
-                source_paths=[sr.source_path for sr in mutation.source_refs],
+                source_paths=source_paths,
                 source_chunk_indexes=source_chunks,
                 source_total_chunks=source_totals,
                 updated_at=mutation.updated_at,
@@ -1208,6 +1193,16 @@ def _node_to_response(node: Any) -> Node:
         created_at=node["created_at"],
         updated_at=node["updated_at"],
     )
+
+
+def _source_ref_arrays(source_refs: list[SourceRef]) -> tuple[list[str], list[int], list[int]]:
+    """SourceRef 리스트를 그래프 저장용 세 배열(paths/chunk_indexes/total_chunks)로.
+    그래프 list 속성은 null 원소를 못 담아 None 은 -1 sentinel 로 바꾸고, 세 배열은
+    같은 인덱스로 짝진다."""
+    paths = [sr.source_path for sr in source_refs]
+    chunks = [sr.chunk_index if sr.chunk_index is not None else -1 for sr in source_refs]
+    totals = [sr.total_chunks if sr.total_chunks is not None else -1 for sr in source_refs]
+    return paths, chunks, totals
 
 
 def _extract_source_refs(node: Any) -> list[SourceRef]:

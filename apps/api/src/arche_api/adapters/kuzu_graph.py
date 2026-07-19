@@ -50,6 +50,7 @@ from .graph import (
     _node_to_stored,
     _order_rows_by_degree,
     _record_to_edge,
+    _source_ref_arrays,
     _to_run_record,
 )
 
@@ -340,14 +341,7 @@ class KuzuGraphRepository(GraphRepository):
         return hits
 
     def create_entity(self, *, entity: StoredEntity) -> None:
-        source_chunks = [
-            sr.chunk_index if sr.chunk_index is not None else -1
-            for sr in entity.source_refs
-        ]
-        source_totals = [
-            sr.total_chunks if sr.total_chunks is not None else -1
-            for sr in entity.source_refs
-        ]
+        source_paths, source_chunks, source_totals = _source_ref_arrays(entity.source_refs)
         self._exec(
             f"""CREATE (e:{ENTITY_LABEL} {{
                 id: $id, name: $name, normalized_name: $normalized_name,
@@ -367,7 +361,7 @@ class KuzuGraphRepository(GraphRepository):
             normalized_aliases=list(entity.normalized_aliases or []),
             embedding=self._emb_param(entity.embedding),
             namespace_id=entity.namespace_id or "default",
-            source_paths=[sr.source_path for sr in entity.source_refs],
+            source_paths=source_paths,
             source_chunk_indexes=source_chunks,
             source_total_chunks=source_totals,
             created_at=entity.created_at,
@@ -376,14 +370,7 @@ class KuzuGraphRepository(GraphRepository):
         self._mark_dirty()
 
     def apply_merge_mutation(self, *, mutation: MergeMutation) -> None:
-        source_chunks = [
-            sr.chunk_index if sr.chunk_index is not None else -1
-            for sr in mutation.source_refs
-        ]
-        source_totals = [
-            sr.total_chunks if sr.total_chunks is not None else -1
-            for sr in mutation.source_refs
-        ]
+        source_paths, source_chunks, source_totals = _source_ref_arrays(mutation.source_refs)
         # search_text 는 병합된 aliases 를 반영해 갱신(이름은 병합에서 안 바뀜).
         # 이름을 다시 읽어 name + 새 aliases 로 재구성.
         name_rows = self._fetch(
@@ -405,7 +392,7 @@ class KuzuGraphRepository(GraphRepository):
             normalized_aliases=list(mutation.normalized_aliases or []),
             search_text=self._search_text(name, mutation.aliases),
             description=mutation.description or "",
-            source_paths=[sr.source_path for sr in mutation.source_refs],
+            source_paths=source_paths,
             source_chunk_indexes=source_chunks,
             source_total_chunks=source_totals,
             updated_at=mutation.updated_at,

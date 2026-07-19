@@ -11,14 +11,9 @@ import re
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from ..domain.models import Edge, Node
-from .security import validate_namespace_id, validate_relation_types
+from .security import validate_optional_namespace_id, validate_relation_types
 
 _ULID_PATTERN = re.compile(r"^[0-9A-Z]{26}$")
-
-
-def _validate_optional_namespace(v: str | None) -> str | None:
-    """namespace_id 필드 검증 — 미지정(None)은 통과, 값이 있으면 형식 검사(#142)."""
-    return v if v is None else validate_namespace_id(v)
 
 
 # ---------- get_schema ----------
@@ -118,7 +113,7 @@ class GetNeighborsRequest(BaseModel):
     # 순회할 namespace. 미지정 시 auth 헤더(REST) 또는 "default".
     namespace_id: str | None = Field(default=None, min_length=1)
 
-    _ns_check = field_validator("namespace_id")(_validate_optional_namespace)
+    _ns_check = field_validator("namespace_id")(validate_optional_namespace_id)
     _rel_check = field_validator("relation_types")(validate_relation_types)
 
 
@@ -148,7 +143,7 @@ class FindPathRequest(BaseModel):
     # 경로를 찾을 namespace. 미지정 시 auth 헤더(REST) 또는 "default".
     namespace_id: str | None = Field(default=None, min_length=1)
 
-    _ns_check = field_validator("namespace_id")(_validate_optional_namespace)
+    _ns_check = field_validator("namespace_id")(validate_optional_namespace_id)
     _rel_check = field_validator("relation_types")(validate_relation_types)
 
 
@@ -192,7 +187,7 @@ class GetSubgraphRequest(BaseModel):
     max_nodes: int = Field(default=200, ge=1, le=5000)
     relation_types: list[str] | None = None
 
-    _ns_check = field_validator("namespace_id")(_validate_optional_namespace)
+    _ns_check = field_validator("namespace_id")(validate_optional_namespace_id)
     _rel_check = field_validator("relation_types")(validate_relation_types)
 
     @field_validator("entry_ids")
@@ -235,7 +230,7 @@ class FindRelatedRequest(BaseModel):
     # 확장할 namespace. 미지정 시 auth 헤더(REST) 또는 "default".
     namespace_id: str | None = Field(default=None, min_length=1)
 
-    _ns_check = field_validator("namespace_id")(_validate_optional_namespace)
+    _ns_check = field_validator("namespace_id")(validate_optional_namespace_id)
     _rel_check = field_validator("relation_types")(validate_relation_types)
 
     @field_validator("seeds")

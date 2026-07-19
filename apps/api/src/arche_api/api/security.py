@@ -61,6 +61,11 @@ def validate_namespace_id(namespace_id: str) -> str:
     return namespace_id
 
 
+def validate_optional_namespace_id(v: str | None) -> str | None:
+    """namespace_id 요청 필드 검증 — None(미지정)은 통과, 값이 있으면 형식 검사."""
+    return v if v is None else validate_namespace_id(v)
+
+
 def ensure_namespace_id(namespace_id: str) -> str:
     """서비스 진입점용 — 위반을 InvalidInputError(400)로 변환.
 
