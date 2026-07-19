@@ -1,18 +1,8 @@
-"""그래프 저장소 어댑터 — Neo4j 5.15+ 내장 인덱스 사용 (ADR-0004 D1).
+"""그래프 저장소 어댑터 — GraphRepository 포트의 Neo4j 5.15+ 구현.
 
-핵심 책임:
-- ensure_indexes() — 부팅 시 idempotent 하게 인덱스 + 백필 보장
-- create_entity() / apply_merge_mutation() — 4 단계 동일성 (PRD 2 §5.1) 흐름의
-  *write* 분기 두 가지. 결정은 도메인 (`EntityMatcher` + `EntityMerger`) 이,
-  적용은 어댑터가.
-- find_by_normalized_name() — Step 1·2 의 정규화 키 lookup.
-- vector_search() — Step 3 의 임베딩 ANN 후보 반환.
-- upsert_relation() — (from_id, type, to_id) 3-튜플 유일성 (PRD 2 §5.5).
-- IngestionRun CRUD + diff 적용 — PRD 2 §5.4 의 차분 알고리즘.
-- find_by_keywords_scored() — fulltext 인덱스로 진입점 검색 (lexical-only),
-  keyword 별 raw 점수 동봉 (PRD 3 §3.4 의 matched_keyword + score 산출용)
-- find_entities_dense() — *stub* . 하이브리드는 #6 의 후속.
-"""
+부팅 시 인덱스 보장, 4 단계 동일성의 write 분기(create/merge), 정규명/벡터/fulltext
+lookup, 관계 upsert, IngestionRun 기록과 차분을 Cypher 로 수행한다. 동일성/병합
+결정은 도메인이 하고 이 어댑터는 적용만 한다."""
 
 from __future__ import annotations
 
@@ -69,9 +59,7 @@ from ..domain.ports import (
 logger = logging.getLogger(__name__)
 
 
-# WHY 인덱스 이름 고정: ADR-0006 D6 — Neo4j MCP 와 *같은 DB 에 공존* 가능해야
-# 한다. Arche 가 만드는 인덱스는 prefix 없이 의도가 드러나는 이름으로
-# 둔다 (MCP 가 인덱스 충돌을 일으키지 않는 한 prefix 는 over-engineering).
+# 인덱스 이름은 의도가 드러나게 고정한다(Neo4j MCP 와 같은 DB 공존 가능, ADR-0006).
 FULLTEXT_INDEX = "entity_name_idx"
 VECTOR_INDEX = "entity_embedding_idx"
 NORMALIZED_NAME_INDEX = "entity_normalized_name_idx"
@@ -91,11 +79,8 @@ EMITTED_IN = "EMITTED_IN"
 
 
 class Neo4jGraphRepository(GraphRepository):
-    """Neo4j 5.15+ 어댑터.
-
-    WHY driver 1 개 보존: bolt 커넥션 풀은 driver 내부에서 관리된다. 매 요청
-    재생성하면 풀이 의미 없어지고 latency 가 늘어난다.
-    """
+    """Neo4j 5.15+ 어댑터. driver 1 개를 유지한다(bolt 커넥션 풀이 driver 내부에 있어
+    매 요청 재생성하면 풀이 무의미)."""
 
     def __init__(self, settings: Settings) -> None:
         self._settings = settings
@@ -124,27 +109,12 @@ class Neo4jGraphRepository(GraphRepository):
     def ensure_indexes(self) -> None:
         """부팅 시 idempotent 하게 인덱스 + 백필 보장.
 
-        인덱스 구성:
-        - fulltext (name + aliases): find_by_keywords_scored 의 lexical 신호.
-        - vector (embedding): 4 단계 동일성 Step 3 의 ANN 후보 풀.
-        - btree on name: 인간이 직접 조회할 때 빠른 lookup (관찰가능성).
-        - btree on `normalized_name`: 4 단계 동일성 Step 1·2 의 정확 일치 lookup.
-        - btree on `IngestionRun.source_path`: 차분 알고리즘의 "직전 성공 run"
-          조회.
-
-        백필: 본 함수는 PR #16 의 기존 노드 (즉 `normalized_name` 이 비어있는
-        엔티티) 를 idempotent 하게 채운다 — 두 번 호출되어도 두 번째는 no-op.
-        백필 자체는 단순 SET 이므로 트랜잭션 한 건이면 충분 (코퍼스가 작은
-        MVP 가정).
-        """
+        인덱스 — fulltext(name+aliases), vector(embedding), btree(name),
+        btree(normalized_name), btree(IngestionRun.source_path). normalized_name 이
+        비어 있는 옛 노드는 백필로 채운다(두 번째 호출은 no-op)."""
         dim = self._settings.embedding_dimension
         with self._driver.session() as s:
-            # UNIQUE constraint — DB-level id 가드 + 자동 인덱스 생성.
-            # WHY: walking skeleton 까지 application-level 만 보장이었음 (ULID
-            # 충돌 확률 사실상 0). 단 동시 ingest / 버그 / migration 시 graph
-            # 부패의 두 번째 가드. 2026-06-20 catastrophic over-merge 같은 *부패
-            # 카테고리* 의 DB-level 방어. 자동 인덱스 덕에 id IN $ids 핫패스
-            # (expand_subgraph, get_entity, mark_emitted) 도 같이 빨라진다.
+            # UNIQUE constraint — DB-level id 가드. 자동 인덱스라 id IN $ids 핫패스도 빨라진다.
             s.run(
                 f"CREATE CONSTRAINT entity_id_unique IF NOT EXISTS "
                 f"FOR (e:{ENTITY_LABEL}) REQUIRE e.id IS UNIQUE"
@@ -162,13 +132,8 @@ class Neo4jGraphRepository(GraphRepository):
                 f"CREATE FULLTEXT INDEX {FULLTEXT_INDEX} IF NOT EXISTS "
                 f"FOR (e:{ENTITY_LABEL}) ON EACH [e.name, e.aliases]"
             ).consume()
-            # Neo4j 5.15+ 표준 vector index 구문.
-            # WHY 인라인 dim: OPTIONS 의 indexConfig 는 parameter 바인딩을
-            # 받지 않으므로 (Cypher 가 리터럴만 허용) 정수를 직접 삽입한다.
-            # dim 은 Settings 에서 온 신뢰 가능 값.
-            # WHY 백틱 키: Neo4j 5.15 의 Cypher 파서는 map literal 안에서 점이
-            # 포함된 key 를 *backtick* 으로 감싸야 받아들인다 (single-quoted
-            # string 키는 SyntaxError). 즉 `\`vector.dimensions\`: 1536` 형태.
+            # indexConfig 는 파라미터 바인딩을 안 받아 dim 을 리터럴로 박고, 점 포함
+            # key 는 백틱으로 감싼다(Neo4j 5.15 Cypher 제약).
             s.run(
                 f"CREATE VECTOR INDEX {VECTOR_INDEX} IF NOT EXISTS "
                 f"FOR (e:{ENTITY_LABEL}) ON (e.embedding) "
@@ -189,37 +154,20 @@ class Neo4jGraphRepository(GraphRepository):
                 f"CREATE INDEX {INGESTION_RUN_SOURCE_INDEX} IF NOT EXISTS "
                 f"FOR (r:{INGESTION_RUN_LABEL}) ON (r.source_path)"
             ).consume()
-            # 백필 — normalize 결과를 직접 계산해 Cypher 에 박는다.
-            # WHY 두 단계 (조회 → 업데이트): Neo4j Cypher 에는 Python 함수가
-            # 없어 normalize 를 server-side 로 실행할 수 없다. 노드 리스트를
-            # 받아 클라이언트에서 normalize 한 뒤 한 transaction 에 batch SET.
+            # normalize 는 server-side 로 못 돌려, 노드를 받아 클라이언트에서 계산 후 batch SET.
             self._backfill_normalized_names(s)
 
     def reindex_vector(self) -> dict[str, Any]:
-        """벡터 색인을 DROP 후 현재 차원으로 다시 만든다 (임베딩 모델 교체 대응).
+        """벡터 색인을 DROP 후 현재 차원으로 다시 만든다(임베딩 모델 교체 대응).
 
-        WHY DROP 먼저: ensure_indexes 는 `CREATE VECTOR INDEX ... IF NOT EXISTS`
-        라 이미 색인이 있으면 아무 일도 하지 않는다. 임베딩 모델이 바뀌어 차원이
-        달라져도(예: 1536 → 1024) 옛 차원의 색인이 그대로 살아남아 검색이
-        깨진다. 그래서 재생성은 반드시 기존 색인을 먼저 DROP 하고 다시 CREATE
-        해야 새 차원이 반영된다.
-
-        WHY 이 메서드가 하는 일 / 하지 않는 일 구분:
-        - 한다: 벡터 *색인 구조* 를 현재 `settings.embedding_dimension` 으로
-          다시 만든다. 색인이 없던 상태에서 호출해도 안전하다(DROP 은
-          IF EXISTS, CREATE 는 IF NOT EXISTS 라 idempotent).
-        - 하지 않는다: 이미 저장된 노드의 `embedding` 값을 다시 계산하지 않는다.
-          모델을 바꿨다면 옛 차원의 벡터가 노드에 그대로 남아 있으므로, 노드
-          재임베딩은 재적재(reingest)로 해결할 별개 관심사다.
-
-        반환: CLI 가 출력할 짧은 결과 요약(색인 이름 + 차원).
-        """
+        CREATE IF NOT EXISTS 는 기존 색인이 있으면 no-op 이라, 차원이 바뀌면 먼저
+        DROP 해야 새 차원이 반영된다. 색인 구조만 다시 만들고 저장된 embedding 값은
+        재계산하지 않는다(그건 재적재의 몫). 반환은 색인 이름 + 차원 요약."""
         dim = int(self._settings.embedding_dimension)
         with self._driver.session() as s:
             # 옛 차원의 색인 제거. 없으면 no-op (IF EXISTS).
             s.run(f"DROP INDEX {VECTOR_INDEX} IF EXISTS").consume()
-            # ensure_indexes 의 생성 구문과 동일 — 백틱 키/인라인 dim 이유는
-            # ensure_indexes 의 WHY 코멘트 참조.
+            # ensure_indexes 와 동일 구문.
             s.run(
                 f"CREATE VECTOR INDEX {VECTOR_INDEX} IF NOT EXISTS "
                 f"FOR (e:{ENTITY_LABEL}) ON (e.embedding) "
@@ -265,15 +213,8 @@ class Neo4jGraphRepository(GraphRepository):
     def find_by_normalized_name(
         self, *, normalized: str, type_: str, namespace_id: str = "default"
     ) -> StoredEntity | None:
-        """정규화 키 lookup — 노드의 정규명 OR 정규화된 alias 중 한 곳이라도 hit.
-
-        WHY OR alias 까지: PRD 2 §5.1 Step 1 의 매칭은 *새 엔티티의 이름* 이
-        그래프의 *기존 엔티티의 정규명 또는 정규화된 alias* 와 일치해도 같은
-        엔티티로 본다. 두 경우를 한 인덱스 쿼리로 처리해 매처를 단순화.
-
-        WHY namespace 필터: 동일성 매칭을 같은 namespace 안으로 가둔다 (issue
-        #94). coalesce 로 namespace 속성 없는 옛 노드는 "default" 로 간주.
-        """
+        """정규화 키 lookup — 노드의 정규명 또는 정규화된 alias 중 하나라도 일치하면
+        hit(두 경우를 한 쿼리로 처리). namespace 안에서만 매칭한다(issue #94)."""
         with self._driver.session() as s:
             rec = s.run(
                 f"MATCH (e:{ENTITY_LABEL}) "
@@ -293,15 +234,9 @@ class Neo4jGraphRepository(GraphRepository):
     def find_entity_id_by_normalized_name(
         self, *, normalized: str, namespace_id: str = "default"
     ) -> str | None:
-        """타입 무관 정규명 lookup — 관계 엔드포인트 cross-chunk/doc 해소 (issue #28).
-
-        정규명 OR 정규화된 alias 가 일치하는 엔티티를 찾되, *유일* 할 때만 id 를
-        돌려준다. 두 개 이상이면 모호 → None (잘못된 노드 연결 방지). LIMIT 2 로
-        유일성만 판정하고 더 받지 않는다.
-
-        WHY namespace 필터: 관계 cross-doc 재해소도 같은 namespace 안에서만 한다
-        (issue #94) — 다른 namespace 의 동명 노드로 잘못 잇는 것을 막는다.
-        """
+        """타입 무관 정규명 lookup — 관계 엔드포인트 해소용. 정규명 또는 정규화 alias 가
+        일치하는 노드를 유일할 때만(LIMIT 2 로 판정) 돌려주고, 둘 이상이면 모호해 None.
+        namespace 안에서만 해소한다."""
         if not normalized:
             return None
         with self._driver.session() as s:
@@ -326,16 +261,8 @@ class Neo4jGraphRepository(GraphRepository):
         type_: str,
         namespace_id: str = "default",
     ) -> list[StoredEntity]:
-        """ANN top-k 후보. type + namespace 사후 필터.
-
-        WHY 사후 필터: Neo4j 5.15 의 `db.index.vector.queryNodes` 는 라벨/속성
-        사전 필터를 직접 받지 않는다 (필터는 별도 MATCH WHERE 단계). 정확도를
-        위해 후보 풀을 *top_k * 4* 로 확보한 뒤 type + namespace 로 줄인다.
-        코퍼스가 작은 MVP 가정에서 비용 차이는 무시 가능.
-
-        WHY namespace 필터: 동일성 매칭(Step 3)을 같은 namespace 안으로 가둔다
-        (issue #94). coalesce 로 namespace 없는 옛 노드는 "default" 로 간주.
-        """
+        """ANN top-k 후보. queryNodes 가 라벨/속성 사전 필터를 못 받아, top_k*4 로
+        oversample 한 뒤 type + namespace 로 사후 필터한다."""
         if not embedding:
             return []
         oversample = max(top_k * 4, top_k)
@@ -359,18 +286,13 @@ class Neo4jGraphRepository(GraphRepository):
         return [_node_to_stored(r["node"]) for r in rows]
 
     def create_entity(self, *, entity: StoredEntity) -> None:
-        """새 엔티티 — `normalized_name` 포함. id 충돌 시 IntegrityError 가 정상.
-
-        WHY chunk_index sentinel: Neo4j 의 list 속성은 null 원소를 허용하지
-        않는다. PR #16 부터 사용 중인 -1 sentinel 을 그대로 보존 — 응답 직렬화
-        는 -1 → None 으로 복원.
-        """
+        """새 엔티티 생성. Neo4j list 속성은 null 원소를 못 담아 chunk_index 는 -1
+        sentinel 로 저장하고 응답 직렬화에서 None 으로 복원한다."""
         source_chunks = [
             sr.chunk_index if sr.chunk_index is not None else -1
             for sr in entity.source_refs
         ]
-        # WHY total_chunks 도 동일 sentinel: chunk_index 와 같이 -1 → None 복원.
-        # 분할 안 된 파일은 둘 다 None 으로 들어와 양쪽 모두 -1 로 저장된다.
+        # total_chunks 도 같은 -1 sentinel.
         source_totals = [
             sr.total_chunks if sr.total_chunks is not None else -1
             for sr in entity.source_refs
@@ -407,12 +329,8 @@ class Neo4jGraphRepository(GraphRepository):
             ).consume()
 
     def apply_merge_mutation(self, *, mutation: MergeMutation) -> None:
-        """병합 — aliases/description/source_refs/updated_at 만 갱신.
-
-        WHY source_refs 를 *기존 + 새 ref 합집합* 전체 교체로 set: domain
-        EntityMerger 가 이미 dedupe 한 최종 리스트를 만들어 준다. 어댑터가
-        다시 dedup 시도하면 두 자리에 dedupe 로직이 살아 fragile 해진다.
-        """
+        """병합 — aliases/description/source_refs/updated_at 만 갱신한다. source_refs 는
+        도메인이 이미 dedupe 한 최종 리스트라 어댑터는 통째로 교체만 한다."""
         source_chunks = [
             sr.chunk_index if sr.chunk_index is not None else -1
             for sr in mutation.source_refs
@@ -451,21 +369,14 @@ class Neo4jGraphRepository(GraphRepository):
         rel_type: str,
         source_ref: SourceRef,
     ) -> tuple[str, bool]:
-        """3-튜플 유일성 (PRD 2 §5.5) — MERGE on (from_id, type, to_id).
-
-        WHY 동적 라벨이 아닌 단일 RELATES_TO 라벨 + type 속성: Cypher 의 관계
-        라벨은 파라미터화 불가하고, 라벨이 폭발하면 인덱스 관리가 복잡해진다.
-        walking skeleton 은 단일 라벨에 type 속성으로 시작. post-MVP 에서 라벨
-        승격은 측정 후 결정.
-        """
+        """(from_id, type, to_id) 3-튜플 유일성으로 MERGE 한다. 관계 라벨은 Cypher 에서
+        파라미터화가 안 되고 폭발하면 관리가 어려워, 단일 RELATES_TO 라벨 + type 속성으로 둔다."""
         from ulid import ULID
 
         new_id = str(ULID())
         now = now_rfc3339()
-        # WHY 별도 created_flag: created_at 가 second precision 이라 두 호출이 같은
-        # 초에 일어나면 r.created_at == $now 가 두 분기 모두에서 True. 결정적인
-        # created 신호는 *MERGE 결과* 자체에서 받아야 한다. 여기서는 별도 dummy
-        # property 를 SetOnCreate 로 박아 그 존재를 확인.
+        # created 판정은 _just_created 플래그로. created_at 는 초 단위라 같은 초의
+        # 두 호출을 구분 못 해, ON CREATE 에서만 세우는 별도 플래그가 필요하다.
         with self._driver.session() as s:
             result = s.run(
                 f"""
@@ -505,10 +416,8 @@ class Neo4jGraphRepository(GraphRepository):
         self, *, source_path: str, source_hash: str, extractor_version: str
     ) -> IngestionRunRecord | None:
         with self._driver.session() as s:
-            # WHY extractor_version 일치 요구: 같은 파일 내용이라도 추출 프롬프트/
-            # 스키마/모델/파이프라인이 바뀌면 *그래프 출력이 달라진다*. 옛 회차는
-            # 이 속성이 없어(null) `r.extractor_version = $v` (v 비어있지 않음) 가
-            # null=string → 불일치 → 재추출 (의도). 빈 버전끼리는 일치 가능(테스트).
+            # extractor_version 까지 일치해야 short-circuit. 추출 로직이 바뀌면 같은
+            # 파일도 재추출된다. 옛 회차는 이 값이 없어(null) 불일치 → 재추출.
             rec = s.run(
                 f"MATCH (r:{INGESTION_RUN_LABEL}) "
                 "WHERE r.source_path = $p AND r.source_hash = $h "
@@ -572,9 +481,7 @@ class Neo4jGraphRepository(GraphRepository):
             ).consume()
 
     def mark_relation_emitted(self, *, relation_id: str, run_id: str) -> None:
-        # WHY relation 은 edge property 로: Neo4j 의 property graph 모델은 edge
-        # 에 edge 를 달 수 없다. 대안으로 relation 의 array property 에 run_id
-        # 를 append (dedupe).
+        # edge 에 edge 를 못 달아, run_id 를 relation 의 array property 에 append(dedupe)한다.
         with self._driver.session() as s:
             s.run(
                 f"""
@@ -646,13 +553,9 @@ class Neo4jGraphRepository(GraphRepository):
     ) -> str:
         """이번 회차가 손대지 않은 이전 emitted entity 처리.
 
-        - 노드의 source_paths 가 *오직 source_path 만* 들어있으면 노드 + 인접
-          관계 모두 삭제 (DETACH DELETE).
-        - 그 외는 해당 source_path 항목을 source_paths/source_chunk_indexes 의
-          *동일 인덱스* 에서 한 번에 제거. EMITTED_IN 의 *이번 회차가 아닌*
-          이전 회차 엣지는 그대로 둔다 — 회차 히스토리는 다른 회차의 추적에도
-          쓰이므로 일괄 삭제는 위험.
-        """
+        - source_paths 가 오직 source_path 뿐이면 노드 + 인접 관계 삭제(DETACH DELETE).
+        - 그 외는 source_paths/source_chunk_indexes 에서 그 항목만 제거한다. 이전 회차
+          EMITTED_IN 엣지는 회차 히스토리라 건드리지 않는다."""
         with self._driver.session() as s:
             row = s.run(
                 f"MATCH (e:{ENTITY_LABEL} {{id: $id}}) "
@@ -675,9 +578,7 @@ class Neo4jGraphRepository(GraphRepository):
                 ).consume()
                 return "deleted"
             # 다른 소스도 들어 있음 — 해당 source_path 만 잘라낸다.
-            # WHY 세 array 동시 trim: 세 배열이 동일 인덱스 단위로 이어 있어야
-            # `_extract_source_refs` 가 올바른 (path, chunk_index, total_chunks)
-            # 묶음을 복원할 수 있다. 한 array 만 trim 하면 인덱스가 어긋난다.
+            # 세 배열은 같은 인덱스로 짝지어 있어 함께 trim 해야 (path, chunk, total) 복원이 맞는다.
             new_paths: list[str] = []
             new_chunks: list[int] = []
             new_totals: list[int] = []
@@ -746,22 +647,9 @@ class Neo4jGraphRepository(GraphRepository):
         limit_per_keyword: int,
         namespace_id: str = "default",
     ) -> list[KeywordHit]:
-        """fulltext 인덱스를 *keyword 별로* 따로 호출.
-
-        WHY keyword 별 분리: PRD 3 §3.4 의 `matched_keyword` 는 *어느 input
-        keyword 가 이 노드를 surface 시켰는지* 를 정확히 보고해야 한다. 모든
-        keyword 를 하나의 OR 쿼리로 보내면 점수는 받지만 어느 항이 매칭됐는지
-        파서가 알려주지 않는다. keyword 단위로 호출하고 결과에 keyword 를
-        태깅한 뒤, 상위 레이어가 노드 ID 로 union 하면서 점수 max 유지하는
-        구조로 둔다.
-
-        WHY 어댑터는 raw 점수만: 0..1 정규화 (PRD 3 §3.4) 는 *전체 결과 집합*
-        을 봐야 하므로 (예: max-normalize) 라우터에서 수행. 어댑터는 단일
-        Lucene/BM25 의 raw 점수만 책임.
-
-        성능 노트: keyword 수만큼 query 가 늘어남. walking skeleton 단계 비용
-        은 무시 가능. #6 의 dense + RRF 도입 시 fusion 단계에서 함께 재검토.
-        """
+        """fulltext 인덱스를 keyword 별로 따로 호출한다. 한 OR 쿼리로 보내면 어느
+        keyword 가 노드를 surface 시켰는지 알 수 없어, keyword 단위로 부르고 결과에
+        태깅한다. 점수 정규화는 전체 집합을 보는 상위 레이어의 몫이라 여기선 raw 점수만."""
         if not keywords:
             return []
         hits: list[KeywordHit] = []
@@ -801,15 +689,8 @@ class Neo4jGraphRepository(GraphRepository):
         limit: int,
         namespace_id: str = "default",
     ) -> list[DenseHit]:
-        """단일 keyword 의 dense ANN — PRD 3 §3.5 의 dense path.
-
-        Neo4j 5.15 의 vector index 에서 cosine similarity 모드의 score 는 0..1
-        범위로 직접 비교 가능 (정확히는 (1 + cos)/2 가 아니라 cos 자체. Neo4j
-        5.15 문서 기준 cosine 모드 score 는 cosine similarity 그대로).
-
-        WHY 별도 한도 검증 없이 limit 그대로: ANN 호출은 빠르고 결과는 어차피
-        fusion 단계에서 다시 잘려 나가므로 적당한 후보 풀 (limit) 을 그대로 사용.
-        """
+        """단일 query embedding 의 dense ANN. cosine 모드 score 는 그대로 0..1 이라
+        바로 쓴다. 결과는 fusion 에서 다시 잘리므로 limit 을 그대로 후보 풀로 둔다."""
         if not query_embedding:
             return []
         with self._driver.session() as s:
@@ -830,34 +711,24 @@ class Neo4jGraphRepository(GraphRepository):
         return [
             DenseHit(
                 node=_node_to_response(r["node"]),
-                # WHY clamp [0, 1]: 부동소수 오차로 1.0 을 살짝 넘는 경우 PRD 3
-                # §3.4 의 maximum 1 위반. 0 미만은 cosine 정의상 가능 (반대 방향)
-                # 이지만 우리 응답 계약은 0..1 이라 동일하게 clamp.
+                # 부동소수 오차와 반대 방향 cosine 을 응답 계약(0..1)에 맞춰 clamp.
                 raw_score=max(0.0, min(1.0, float(r["score"]))),
                 matched_keyword=matched_keyword,
             )
             for r in rows
         ]
 
-    # ---------- 5 primitive read (PRD 3 §2-7) ----------
+    # ---------- read primitive ----------
 
     def get_schema_summary(
         self, *, examples_per_type: int = 5, namespace_id: str = "default"
     ) -> tuple[list[EntityTypeStat], list[RelationTypeStat]]:
-        """엔티티/관계 통계 + 타입별 example 노드.
-
-        WHY 한 메서드에 두 통계: get_schema 가 한 번 호출되면 두 통계 모두 필요
-        (PRD 3 §2.3). 두 쿼리를 분리하면 라우터에서 다시 묶어야 함 — 어댑터에서
-        한 번에 묶어 반환.
-
-        Examples 선택 기준: 각 type 별 가장 최근에 갱신된 노드 5 개 (updated_at
-        DESC). WHY: 그래프 운영자가 "지금 살아있는 데이터" 의 모양을 확인하려는
-        목적에 가장 가까운 신호.
-        """
+        """엔티티/관계 통계 + 타입별 example 노드를 한 번에 묶어 반환한다. example 은
+        type 별 가장 최근 갱신 노드(updated_at DESC)를 고른다."""
         entity_stats: list[EntityTypeStat] = []
         relation_stats: list[RelationTypeStat] = []
         with self._driver.session() as s:
-            # 엔티티 타입 카운트 (namespace 안에서만, issue #98)
+            # 엔티티 타입 카운트(namespace 안).
             type_rows = s.run(
                 f"MATCH (n:{ENTITY_LABEL}) "
                 "WHERE coalesce(n.namespace_id, 'default') = $ns "
@@ -883,8 +754,7 @@ class Neo4jGraphRepository(GraphRepository):
                     )
                 )
 
-            # 관계 타입 카운트 — 단일 RELATES_TO 라벨 + type 속성 (graph.py 상단
-            # WHY 라벨 단일화 코멘트 참조).
+            # 관계 타입 카운트 — 단일 RELATES_TO 라벨 + type 속성.
             rel_rows = s.run(
                 f"MATCH (a:{ENTITY_LABEL})-[r:{RELATION_TYPE_LABEL_DEFAULT}]->(b:{ENTITY_LABEL}) "
                 "WHERE coalesce(a.namespace_id, 'default') = $ns "
@@ -940,12 +810,8 @@ class Neo4jGraphRepository(GraphRepository):
     def find_overmerged_entities(
         self, *, max_aliases: int = 30, max_distinct_ids: int = 2
     ) -> list:
-        """ADR-0017 방향 6 — 기존 그래프에서 과잉 병합 의심 노드를 탐지.
-
-        그래프의 모든 Entity 의 (id, name, aliases) 를 읽어 결정적 detector
-        (`detect_overmerged_entities`) 를 적용. 운영자 검토용 진단 메서드라 ABC 가
-        아닌 구현체에만 둔다(서비스 read 경로 아님). 반환: OverMergeFlag 리스트.
-        """
+        """기존 그래프의 과잉 병합 의심 노드를 탐지한다. 모든 Entity 의 (id, name,
+        aliases)에 결정적 detector 를 적용한다. 운영자 검토용이라 포트가 아닌 구현체에만 둔다."""
         from ..domain.identity import detect_overmerged_entities
 
         with self._driver.session() as s:
@@ -973,15 +839,10 @@ class Neo4jGraphRepository(GraphRepository):
     def get_entity_with_counts(
         self, *, entity_id: str, namespace_id: str = "default"
     ) -> EntityWithCounts | None:
-        """단일 노드 + outgoing/incoming relation type 카운트.
-
-        WHY 한 트랜잭션 / 세 쿼리: pydantic 모델 변환은 라우터가 하지만, neo4j
-        의 한 세션 안에서 3 호출을 묶어 일관된 스냅샷을 본다 (이론적으로 다른
-        트랜잭션이 끼면 카운트가 노드와 어긋날 수 있지만 MVP 단일 사용자 가정
-        아래에서는 비결정적 결과가 발생할 가능성 매우 낮음).
-        """
+        """단일 노드 + outgoing/incoming relation type 카운트. 한 세션 안에서 세
+        쿼리를 묶어 일관된 스냅샷을 본다."""
         with self._driver.session() as s:
-            # 노드가 이 namespace 밖이면 없는 것으로 (issue #98 — id 우회 차단).
+            # namespace 밖 노드는 없는 것으로 본다.
             node_row = s.run(
                 f"MATCH (n:{ENTITY_LABEL} {{id: $id}}) "
                 "WHERE coalesce(n.namespace_id, 'default') = $ns "
@@ -1022,20 +883,15 @@ class Neo4jGraphRepository(GraphRepository):
         max_nodes: int,
         namespace_id: str = "default",
     ) -> NeighborhoodResult:
-        """N-hop BFS — 진입점에서 거리 가까운 순으로 max_nodes 절단.
-
-        WHY variable-length match 가 아닌 BFS 직접 구현 (Python side): Cypher 의
-        `*1..N` 패턴은 "한 노드를 여러 번 방문" 하는 경로를 모두 돌려준다. 우리
-        에게 필요한 건 *고유 노드 집합* 이고 그것을 *거리 순* 으로 절단하는 것.
-        Python BFS 가 가장 직관적이고 변동 없는 잘림 정책을 보장.
-        """
+        """N-hop BFS — 진입점에서 거리 가까운 순으로 max_nodes 절단. Cypher `*1..N` 은
+        노드를 여러 번 방문한 경로를 다 돌려줘, 고유 노드 집합을 거리 순으로 자르려면
+        Python BFS 가 잘림 정책을 더 확실히 보장한다."""
         # 진입점 노드부터 시작 — 존재 확인은 호출자 책임.
         visited_nodes: dict[str, Node] = {}
         boundary_edges: dict[str, Edge] = {}
         # frontier 는 (id, level) 튜플들의 리스트 — BFS 의 한 레벨씩 확장.
         with self._driver.session() as s:
-            # 진입점 노드 자체 — PRD 3 §5.4 의 "nodes 에 진입점 포함" 충족.
-            # 진입점이 요청 namespace 밖이면 빈 결과 (issue #98 — id 우회 차단).
+            # 진입점 노드부터. namespace 밖이면 빈 결과.
             row = s.run(
                 f"MATCH (n:{ENTITY_LABEL} {{id: $id}}) "
                 "WHERE coalesce(n.namespace_id, 'default') = $ns "
@@ -1060,9 +916,8 @@ class Neo4jGraphRepository(GraphRepository):
                     use_rel_filter=bool(relation_types),
                     ns=namespace_id,
                 ).data()
-                # 허브 인지 절단 (ADR-0017 방향 3): max_nodes 초과 시 *낮은 degree
-                # (구체적) 이웃을 우선* 남긴다. degree 오름차순으로 처리해 절단이
-                # promiscuous 허브부터 버리도록. 같은 degree 내 순서는 안정.
+                # 허브 인지 절단 — max_nodes 초과 시 낮은 degree(구체적) 이웃을 우선
+                # 남기려고 degree 오름차순으로 처리한다. 배경은 ADR-0017.
                 rows = _order_rows_by_degree(rows)
                 next_frontier: list[str] = []
                 for r in rows:
@@ -1122,8 +977,7 @@ class Neo4jGraphRepository(GraphRepository):
         visited_nodes: dict[str, Node] = {}
         boundary_edges: dict[str, Edge] = {}
         with self._driver.session() as s:
-            # 진입점 노드들 (PRD 3 §7.4 — 진입점 포함, dedupe). namespace 밖 진입점은
-            # 무시 (issue #98 — id 우회 차단).
+            # 진입점 노드들(dedupe). namespace 밖 진입점은 무시.
             rows = s.run(
                 f"MATCH (n:{ENTITY_LABEL}) WHERE n.id IN $ids "
                 "  AND coalesce(n.namespace_id, 'default') = $ns RETURN n",
@@ -1146,7 +1000,7 @@ class Neo4jGraphRepository(GraphRepository):
                     use_rel_filter=bool(relation_types),
                     ns=namespace_id,
                 ).data()
-                # 허브 인지 절단 (ADR-0017 방향 3) — expand_neighbors 와 동일 원리.
+                # 허브 인지 절단 — expand_neighbors 와 동일 원리.
                 rows = _order_rows_by_degree(rows)
                 next_frontier: list[str] = []
                 for r in rows:
@@ -1195,39 +1049,16 @@ class Neo4jGraphRepository(GraphRepository):
         relation_types: list[str] | None,
         namespace_id: str = "default",
     ) -> list[PathResult]:
-        """k-shortest paths — Cypher `allShortestPaths` + 길이 정렬.
-
-        WHY allShortestPaths (variable-length): native 단일 호출로 *모든* 최단
-        경로를 받는다. 더 긴 경로까지 필요할 가능성이 있어 별도 *2..N* hop 패스
-        를 추가하는 옵션도 있지만, MVP 는 단일 cypher 로 시작 — 측정 결과 부족
-        하면 본 메서드만 교체 (라우터 인터페이스 불변).
-
-        relation_types 가 비어 있지 않으면 경로의 *모든* 엣지가 그 타입에 포함
-        되어야 한다. Cypher 의 list 비교로 표현.
-        """
-        # WHY apoc.algo.allSimplePaths 가 아닌 native shortestPath 변형: APOC 가
-        # 없을 수 있음. 5.15 native 만으로 동작 보장. allShortestPath 는 다중 결과
-        # 를 반환 (모두 같은 길이). 더 긴 경로는 max_hops 안에서 별도 패턴 추가
-        # 호출로 보충.
-        #
-        # WHY relationship 을 *properties-only* 로 RETURN: 이슈 #27 회귀 2 와
-        # 동일 원인. driver 가 relationships(p) 리스트를 dict/객체 어느 한 형태
-        # 로 일관 직렬화하지 않을 수 있다. 노드 → 노드 사이의 엣지 속성만 꺼내
-        # 원시 값으로 묶는다.
-        # WHY internal fetch limit > max_paths (ADR-0017): allShortestPaths 는
-        # 같은 *최단* 길이의 경로를 여러 개 돌려준다. 그중 promiscuous 허브를
-        # 경유하지 *않는* (구체적인) 경로를 골라 max_paths 만큼 돌려주려면, 먼저
-        # 넉넉히 받아 (fetch_limit) hub_score 로 재정렬한 뒤 잘라야 한다. Cypher
-        # 의 LIMIT 만으로 자르면 허브 경로가 임의로 먼저 잘려 들어온다.
+        """k-shortest paths — allShortestPaths 로 모든 최단 경로를 받아 길이순 정렬한다.
+        relation_types 가 있으면 경로의 모든 엣지가 그 타입이어야 한다."""
+        # relationships(p) 를 properties-only 로 RETURN 한다 — driver 가 relationship
+        # 리스트를 일관 직렬화하지 않을 수 있어 엣지 속성만 원시 값으로 꺼낸다.
+        # fetch_limit 을 max_paths 보다 넉넉히 잡아, 허브를 안 거치는 구체적 경로를
+        # hub_score 로 재정렬한 뒤 자른다(Cypher LIMIT 만으론 허브 경로가 먼저 잘려 든다).
         fetch_limit = min(50, max(max_paths * 5, 10))
-        # WHY [:RELATES_TO*] 로 관계 타입 제한 (2026-06-23, ADR-0017): 무제한
-        # `-[*1..N]-` 는 EMITTED_IN (Entity→IngestionRun provenance) 엣지까지 타고
-        # 들어가 (1) name 없는 IngestionRun 노드에서 직렬화 크래시 (KeyError),
-        # (2) "같은 적재 run 에서 나왔다" 는 무의미한 다리로 두 엔티티를 잇는
-        # 가짜 경로를 만든다. 의미 그래프 경로는 *엔티티 간 관계* (RELATES_TO)
-        # 만 따라야 한다 — 크래시 회귀와 가짜 다리를 한 번에 제거.
-        # namespace 격리 (issue #98): 양 끝점 + 경로의 모든 노드가 요청 namespace
-        # 안에 있어야 한다. 다른 namespace 노드를 다리로 쓰는 경로는 제외.
+        # 관계는 RELATES_TO 만 따라간다. 무제한 확장은 EMITTED_IN provenance 엣지까지
+        # 타고 들어가 직렬화 크래시와 "같은 run 에서 나옴" 가짜 다리를 만든다.
+        # 양 끝점과 경로의 모든 노드는 같은 namespace 안이어야 한다.
         cypher = """
         MATCH (a:Entity {id: $from_id}), (b:Entity {id: $to_id})
         WHERE coalesce(a.namespace_id, 'default') = $ns
@@ -1261,10 +1092,8 @@ class Neo4jGraphRepository(GraphRepository):
                 fetch_limit=fetch_limit,
             ).data()
 
-            # 경로의 *중간* 노드 degree 를 한 쿼리로 조회 (끝점 from/to 는 제외).
-            # WHY COUNT{} 최상위 바인딩: 리스트 comprehension 안의 변수에 묶인
-            # 서브쿼리 degree 는 5.x 에서 동작 보장이 모호하므로, intermediate id
-            # 를 모아 단일 MATCH 로 안전하게 degree 를 받는다.
+            # 중간 노드 degree 를 한 쿼리로 조회한다(끝점 제외). comprehension 안의
+            # 서브쿼리 degree 는 5.x 에서 불안정해, id 를 모아 단일 MATCH 로 받는다.
             endpoints = {from_id, to_id}
             intermediate_ids = {
                 n["id"]
@@ -1284,10 +1113,8 @@ class Neo4jGraphRepository(GraphRepository):
         paths: list[PathResult] = []
         for row in rows:
             node_objs = [_node_to_response(n) for n in row["nodes"]]
-            # 엣지 방향 정규화 — Cypher 의 양방향 패턴 (-[]-) 은 r 의 start/end
-            # 가 path 의 traversal 방향과 어긋날 수 있다. PRD 3 §6.4 의
-            # "edges[i] 는 nodes[i] → nodes[i+1]" 보장을 위해 traversal 시
-            # from/to 를 path 순서로 재정의한다.
+            # 엣지 방향 정규화 — 양방향 패턴은 r 의 start/end 가 traversal 방향과
+            # 어긋날 수 있어, edges[i] 가 nodes[i]→nodes[i+1] 이 되게 재정의한다.
             edges: list[Edge] = []
             for i, rel_props in enumerate(row["rels"]):
                 edges.append(
@@ -1356,18 +1183,11 @@ def _to_run_record(node: Any) -> IngestionRunRecord:
 
 
 def _clamp(value: str | None, max_length: int) -> str | None:
-    """문자열을 응답 모델의 max_length 로 자른다 (None 은 그대로).
+    """문자열을 응답 모델의 max_length 로 자른다(None 은 그대로).
 
-    WHY 읽기 단계 clamp: ingest 시점의 LLM 추출이 드물게 모델 상한을 넘는
-    문자열 (예: 64 자 초과 관계 라벨, 200 자 초과 엔티티 이름) 을 만든다.
-    이 값이 그래프에 *이미 저장* 돼 있으면, get_subgraph / get_neighbors 의
-    BFS 가 그 노드·엣지에 닿는 순간 pydantic `string_too_long` 으로 응답
-    *전체* 가 500 으로 죽는다 (한 엣지가 서브그래프 전체를 무효화). 2026-06-22
-    max_nodes=1000 sweep 에서 Edge.type 64 자 초과로 /subgraph 가 6 문항에서
-    500 — 부분 손실이 아니라 전면 실패. 재적재는 비싸므로 *읽기 경계에서*
-    모델 상한으로 잘라 프리미티브가 어떤 데이터에도 깨지지 않도록 보장한다.
-    라벨/이름이 잘려도 엣지·노드 자체는 보존된다 (정보 손실 최소).
-    """
+    이미 저장된 값이 모델 상한을 넘으면 BFS 가 그 노드/엣지에 닿는 순간 pydantic
+    string_too_long 으로 응답 전체가 500 으로 죽는다. 재적재는 비싸므로 읽기 경계에서
+    잘라 프리미티브가 어떤 데이터에도 안 깨지게 한다(노드/엣지 자체는 보존)."""
     if value is None:
         return None
     return value if len(value) <= max_length else value[:max_length]
@@ -1398,7 +1218,7 @@ def _extract_source_refs(node: Any) -> list[SourceRef]:
     for i, p in enumerate(paths):
         ci = chunks[i] if i < len(chunks) else None
         tc = totals[i] if i < len(totals) else None
-        # -1 sentinel → None (PRD 3 §1.3 의 nullable chunk_index/total_chunks 복원).
+        # -1 sentinel → None 복원.
         if ci == -1:
             ci = None
         if tc == -1:
@@ -1408,52 +1228,28 @@ def _extract_source_refs(node: Any) -> list[SourceRef]:
 
 
 def _order_rows_by_degree(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
-    """이웃 확장 row 들을 `other_degree` 오름차순으로 안정 정렬.
-
-    WHY (ADR-0017 방향 3): BFS 가 max_nodes 에서 잘릴 때, *연결 수가 적은 구체적
-    이웃* 을 먼저 채우고 promiscuous 허브(수많은 노드와 연결된 노드)를 나중에 — 즉
-    절단 시 *허브부터 버린다*. find_path 의 hub_score 와 같은 원리를 이웃/서브그래프
-    확장에 적용. degree 없는 row(레거시 쿼리 호환)는 0 으로 본다(맨 앞).
-    """
+    """이웃 확장 row 를 other_degree 오름차순으로 안정 정렬한다. 절단 시 낮은
+    degree(구체적) 이웃을 남기고 허브부터 버린다. degree 없는 row 는 0(맨 앞)."""
     return sorted(rows, key=lambda r: r.get("other_degree") or 0)
 
 
 def _build_neighbor_expand_cypher(direction: str) -> str:
     """frontier 노드 집합에서 한 hop 을 확장하는 cypher.
 
-    WHY pattern 을 direction 별로 분기: Cypher 의 `-[r]-` (양방향) 은 *어느 쪽이
-    a* 인지 결정적이지 않다. outgoing / incoming 이 의미를 가지려면 명시적
-    화살표가 필요.
-
-    relation_types 필터는 cypher 파라미터 `use_rel_filter` (bool) 와 `rel_types`
-    (list) 를 함께 받아 조건문에서 분기 — list 가 비었을 때 IN 검사가 항상 false
-    가 되는 함정을 피한다.
-
-    WHY 관계를 *properties-only select* 로: `s.run(...).data()` 가 relationship
-    객체를 dict 로 일관 직렬화하지 않는 경로가 있다 (특히 UNION 쿼리). 특히
-    Neo4j 5.x + neo4j-driver 5.x 에서 UNION 결과의 relationship 이 tuple 로
-    변환되어 `_record_to_edge` 가 `TypeError: tuple indices must be integers`
-    로 깨졌다 (이슈 #27 회귀 2). 해결: cypher 가 *원시 값* 만 RETURN 한다.
-    driver 의 객체 직렬화 quirk 가 사라진다.
-
-    출력 컬럼: a_id (from 쪽), b_id (to 쪽), other (확장 대상 노드 raw),
-    rel_id / rel_type / rel_created_at / rel_updated_at / rel_source_paths
-    (relationship 속성을 풀어둠).
-    """
+    방향(outgoing/incoming)이 의미를 가지려면 명시적 화살표가 필요해 direction 별로
+    패턴을 분기한다. relationship 은 properties-only 로 RETURN 한다 — driver 가 UNION
+    결과의 relationship 을 tuple 로 직렬화하는 경로가 있어, 원시 값만 꺼내 그 quirk 를
+    피한다. 출력은 a_id/b_id/other + relationship 속성들."""
     rel_select = (
         "r.id AS rel_id, r.type AS rel_type, "
         "r.created_at AS rel_created_at, r.updated_at AS rel_updated_at, "
         "r.source_paths AS rel_source_paths"
     )
-    # other_degree: 확장 대상 노드의 연결 수 — max_nodes 절단 시 *낮은 degree
-    # (구체적) 이웃을 우선* 남기고 promiscuous 허브를 먼저 버리기 위한 정렬 키
-    # (ADR-0017 방향 3, hub_score 와 동일 원리). 진입점은 절단 대상이 아니므로
-    # 여기엔 등장하지 않는다(끝점 면제와 정합).
+    # other_degree: 확장 대상 노드의 연결 수. 절단 시 낮은 degree 를 우선 남기는 정렬 키.
     deg_out = f"COUNT {{ (b)-[:{RELATION_TYPE_LABEL_DEFAULT}]-() }} AS other_degree"
     deg_in = f"COUNT {{ (a)-[:{RELATION_TYPE_LABEL_DEFAULT}]-() }} AS other_degree"
-    # namespace 격리 (issue #98): 확장 대상(other) 노드가 요청 namespace 안일 때만
-    # 따라간다. frontier 는 이미 in-namespace(진입점 검증 + in-namespace 노드만
-    # frontier 에 추가)라 other 만 거르면 순회가 namespace 를 넘지 않는다.
+    # 확장 대상(other) 노드가 요청 namespace 안일 때만 따라간다. frontier 는 이미
+    # in-namespace 라 other 만 거르면 순회가 namespace 를 안 넘는다.
     if direction == "outgoing":
         pattern = f"(a:{ENTITY_LABEL})-[r:{RELATION_TYPE_LABEL_DEFAULT}]->(b:{ENTITY_LABEL})"
         select = f"a.id AS a_id, b.id AS b_id, b AS other, {rel_select}, {deg_out}"
@@ -1494,24 +1290,13 @@ def _record_to_edge(
     from_id: str,
     to_id: str,
 ) -> Edge:
-    """relationship properties → 응답 Edge.
-
-    WHY *키워드 전용 primitive 인자* 로 단순화: 이전엔 neo4j Relationship 객체
-    (`r.get`/`r.start_node` 등) 를 그대로 받았으나, `s.run(...).data()` 가 일부
-    경로에서 relationship 을 tuple 로 직렬화해 `TypeError: tuple indices must be
-    integers` 가 발생했다 (이슈 #27 회귀 2). 이제 cypher 가 properties-only
-    select 로 *원시 값* 만 RETURN 하고, 호출자가 그 값을 그대로 전달한다.
-    driver 의 객체 직렬화 quirk 가 완전히 사라진다.
-
-    from_id / to_id 는 호출자가 명시 — 양방향 path traversal 에서 *진행 방향* 에
-    맞춰 from/to 를 재정의할 때도 같은 함수를 쓰기 위함.
-    """
+    """relationship 속성(원시 값) → 응답 Edge. from_id/to_id 를 호출자가 명시하는 건
+    양방향 traversal 에서 진행 방향에 맞춰 from/to 를 재정의하기 위함이다."""
     return Edge(
         id=rel_id,
         **{"from": from_id},
         to=to_id,
-        # Edge.type 상한 64 — 초과 관계 라벨이 서브그래프 전체를 500 으로
-        # 죽이지 않도록 clamp (위 _clamp WHY 참조).
+        # Edge.type 상한 64 로 clamp — 초과 라벨이 서브그래프 전체를 500 으로 죽이지 않게.
         type=_clamp(rel_type or RELATION_TYPE_LABEL_DEFAULT, 64) or RELATION_TYPE_LABEL_DEFAULT,
         properties={},
         source_refs=[SourceRef(source_path=sp) for sp in (rel_source_paths or [])],
@@ -1522,20 +1307,14 @@ def _record_to_edge(
 
 _LUCENE_SPECIAL = '+-&|!(){}[]^"~*?:\\/'
 
-# Lucene classic 파서의 boolean 연산자 — *대문자 토큰만* 연산자로 해석된다.
-# 엔티티 이름/키워드에 "Valuation AND Qualifying" 같은 대문자 AND 가 들어오면
-# 파서가 `db.index.fulltext.queryNodes` 에서 ParseException (column 0 의 <AND>).
-# _lucene_escape 가 이 토큰을 소문자화해 일반 term 으로 중립화한다 (인덱스 분석기도
-# 소문자화하므로 매칭 동일). 2026-06-22 전체 코퍼스 ingest 실패에서 발견.
+# Lucene 은 대문자 AND/OR/NOT 를 boolean 연산자로 해석해 ParseException 을 낸다.
+# _lucene_escape 가 이 토큰을 소문자화해 일반 term 으로 중립화한다(분석기도 소문자화).
 _LUCENE_RESERVED_WORDS = {"AND", "OR", "NOT"}
 
 
 def _lucene_escape(s: str) -> str:
-    """Lucene 특수 문자 escape — fulltext 쿼리 안전성.
-
-    WHY: keyword 에 콜론 / 따옴표가 섞이면 fulltext 파서가 깨진다. 모든 특수
-    문자를 백슬래시로 escape. 결과는 phrase 매칭이 아니라 token 매칭에 가깝다.
-    """
+    """Lucene 특수 문자 escape — keyword 의 콜론/따옴표가 파서를 깨뜨리지 않게 모두
+    백슬래시로 escape 한다."""
     out: list[str] = []
     for ch in s:
         if ch in _LUCENE_SPECIAL:
