@@ -1,6 +1,6 @@
 # ADR-0022: 전역/주제 질문 지원 경계 — 커뮤니티 탐지-only 방향 확정, MVP 미지원
 
-Status: proposed
+Status: accepted
 Date: 2026-07-19
 
 ## TL;DR
