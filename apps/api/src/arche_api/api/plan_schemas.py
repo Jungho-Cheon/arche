@@ -50,6 +50,39 @@ class PlanIngestRequest(BaseModel):
     )
 
 
+class PlanContentRequest(BaseModel):
+    """plan 입력 (콘텐츠판, #155) — 파일 경로 대신 에이전트가 넘긴 텍스트.
+
+    에이전트가 외부 소스(Jira/Confluence 등)를 자기 MCP 로 읽어와 그 내용을 파일로
+    떨구지 않고 곧장 적재 계획을 세울 때 쓴다. 이후 preview/resolve/commit 은 파일
+    경로판과 완전히 같은 plan_id 흐름을 탄다.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    content: str = Field(min_length=1, description="적재할 텍스트 본문")
+    # source_id 는 파일 경로 자리를 대신하는 논리적 출처 라벨. idempotent
+    # short-circuit / 차분이 이 라벨 기준으로 동작하므로, 같은 소스의 재적재는 같은
+    # 값을 준다 (예: "confluence:PAGE-123", 문서 URL).
+    source_id: str = Field(
+        min_length=1,
+        description="출처 라벨 — 파일 경로 대신 idempotent/차분의 기준 (예: confluence:PAGE-123, URL)",
+    )
+    namespace_id: str = Field(
+        default="default",
+        min_length=1,
+        description="ADR-0015 — 계획이 속한 namespace. 미지정 시 'default'",
+    )
+    hints: str | None = Field(
+        default=None,
+        max_length=4000,
+        description=(
+            "추출 품질을 끌어올리는 선택 입력 — 도메인 용어/약어 풀이, 대상 엔티티 "
+            "강조 등. max_length 로 프롬프트 예산을 제한한다."
+        ),
+    )
+
+
 class PlanSummary(BaseModel):
     """plan 응답 — 만들 변경의 *개수* 요약. 세부는 preview 가 펼친다."""
 
@@ -60,9 +93,7 @@ class PlanSummary(BaseModel):
     entities_created: int = Field(ge=0, description="새로 만들 엔티티 수")
     entities_merged: int = Field(ge=0, description="기존 엔티티에 병합할 수")
     relations_created: int = Field(ge=0, description="새로 만들 관계 수")
-    deletion_count: int = Field(
-        ge=0, description="차분으로 삭제/트림될 엔티티·관계 수"
-    )
+    deletion_count: int = Field(ge=0, description="차분으로 삭제/트림될 엔티티/관계 수")
     open_questions: int = Field(
         default=0,
         ge=0,

@@ -57,16 +57,34 @@ class _FakeService:
         """
         self.last_plan_file_hints = hints
         self.last_plan_file_namespace = namespace_id
+        return self._fake_plan(str(path))
+
+    def plan_content(
+        self,
+        *,
+        content: str,
+        source_id: str,
+        namespace_id: str = "default",
+        hints: str | None = None,
+    ) -> IngestPlan:
+        """plan_content 대역 (#155) — plan_ingest_content 가 인자를 그대로 흘리는지 기록."""
+        self.last_plan_content_body = content
+        self.last_plan_content_source_id = source_id
+        self.last_plan_content_namespace = namespace_id
+        self.last_plan_content_hints = hints
+        return self._fake_plan(source_id)
+
+    def _fake_plan(self, source_path: str) -> IngestPlan:
         return IngestPlan(
             plan_id="pln_fake",
-            source_path=str(path),
+            source_path=source_path,
             source_hash="deadbeef",
             extractor_version="p2:test",
             created_at="2026-06-27T00:00:00Z",
             previewed=False,
             writes=[],
             result=IngestResult(
-                source_path=str(path),
+                source_path=source_path,
                 entities_created=0,
                 entities_updated=0,
                 relations_created=0,
@@ -87,9 +105,7 @@ class _FakeService:
             relations_deleted=0,
         )
 
-    def resolve_plan(
-        self, plan: IngestPlan, resolutions: dict[str, str]
-    ) -> IngestPlan:
+    def resolve_plan(self, plan: IngestPlan, resolutions: dict[str, str]) -> IngestPlan:
         """해소된 정제 계획 대역 — 같은 plan_id 로 질문을 비운 계획을 돌려준다.
 
         실제 IngestService.resolve_plan 은 plan_file 을 재실행하지만, 서비스

@@ -62,13 +62,13 @@ def mcp_serve(
         ),
     ] = True,
 ) -> None:
-    """graph 조회 7개 + 검토형 적재 4개를 MCP 표준 tool 로 노출 (PRD 3 §8, ADR-0006).
+    """graph 조회 7개 + 검토형 적재 5개를 MCP 표준 tool 로 노출 (PRD 3 §8, ADR-0006).
 
     동작:
     1. `.env` 로드 + Settings / 그래프 저장소(설정이 embedded Kuzu / neo4j 선택,
        ADR-0020) / 임베딩 provider (팩토리가 모델 접두사로 선택, ADR-0019) 구성.
     2. `build_mcp_server` 로 조회 7 tool + (LLM/IngestService 구성 시) 검토형 적재
-       4 tool 등록.
+       5 tool 등록.
     3. stdio transport 에서 JSON-RPC 핸드셰이크 (initialize / list_tools /
        call_tool) 를 처리.
 
@@ -183,8 +183,7 @@ def reindex() -> None:
     try:
         result = graph.reindex_vector()
         typer.echo(
-            f"reindex: rebuilt vector index '{result['index']}' "
-            f"at dimension {result['dimension']}"
+            f"reindex: rebuilt vector index '{result['index']}' at dimension {result['dimension']}"
         )
         typer.echo(
             "  note: stored node embeddings are NOT recomputed; "
@@ -283,9 +282,7 @@ def _format_progress_line(event: FileProgressEvent) -> str:
 
     단일 청크면 `(1 chunks)` 표기를 생략해 가독성을 높인다.
     """
-    chunks_suffix = (
-        f" ({event.chunks_total} chunks)" if event.chunks_total > 1 else ""
-    )
+    chunks_suffix = f" ({event.chunks_total} chunks)" if event.chunks_total > 1 else ""
     skip_marker = " [skip]" if event.result.short_circuited else ""
     return (
         f"[{event.index}/{event.total}] {event.path}{chunks_suffix}{skip_marker} "
@@ -308,8 +305,7 @@ def _print_summary(
     typer.echo("")
     typer.echo("ingest summary:")
     typer.echo(
-        f"  files: {files_processed} processed, {files_skipped} skipped "
-        f"(of {files_total} total)"
+        f"  files: {files_processed} processed, {files_skipped} skipped (of {files_total} total)"
     )
     typer.echo(
         f"  graph: +{entities_total} entities, +{relations_total} relations "

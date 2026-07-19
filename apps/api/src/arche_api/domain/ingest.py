@@ -120,9 +120,7 @@ class IngestResult:
     # issue #78 — 1-pass 에서 해소 실패한 관계 (정방향 cross-file 후보). 디렉토리
     # 모드가 모든 파일 적재 후 그래프 전체 기준으로 재해소한다. 단일 파일 ingest
     # 호출자는 이 필드를 무시 (그 경우는 진짜 dangling 이라 회수 대상 없음).
-    unresolved_relations: list[tuple[ExtractedRelation, SourceRef]] = field(
-        default_factory=list
-    )
+    unresolved_relations: list[tuple[ExtractedRelation, SourceRef]] = field(default_factory=list)
     # ask-human-on-ambiguity — Step 3 에서 병합 임계 *바로 아래* 밴드의 후보가
     # 잡혔지만 새 노드로 떨어진 건들(놓친 병합 후보). question_id 는 이 레이어에선
     # "" 로 두고, plan_file 이 정렬·cap·번호 부여 후 IngestPlan.open_questions 로
@@ -261,9 +259,7 @@ class IngestService:
         # ADR-0017 코드-델타 — short-circuit 게이트에 들어갈 추출기 버전.
         # 파이프라인 버전 + LLM 지문(프롬프트/스키마/모델)의 결합. 프롬프트를
         # 바꾸면 지문이 바뀌어 같은 파일도 재적재된다.
-        self._extractor_version = (
-            f"p{INGEST_PIPELINE_VERSION}:{llm.extraction_fingerprint()}"
-        )
+        self._extractor_version = f"p{INGEST_PIPELINE_VERSION}:{llm.extraction_fingerprint()}"
         # ask-human-on-ambiguity (해소 엔진) — resolve_plan 이 재계획 동안 켜 두는
         # 강제 매칭 힌트 맵. 키는 추출 엔티티 서명("<정규명>\x00<type>"), 값은
         # "merge:<candidate_id>" 또는 "keep". plan_file 의 self._graph 스왑/복원과
@@ -333,9 +329,7 @@ class IngestService:
                 # 중단되면 사용자가 일괄 재처리하기 어렵다 (PRD 2 §7.2 의 신뢰성
                 # 요구).
                 files_failed += 1
-                logger.warning(
-                    "ingest_directory skip path=%s err=%s", fp, e
-                )
+                logger.warning("ingest_directory skip path=%s err=%s", fp, e)
                 continue
             elapsed = time.perf_counter() - t0
 
@@ -363,9 +357,7 @@ class IngestService:
         # 않으므로 건너뛴다 (불변: dry-run 은 상태 부작용 0).
         recovered = 0
         if not dry_run:
-            recovered = self._resolve_cross_file_relations(
-                per_file, namespace_id=namespace_id
-            )
+            recovered = self._resolve_cross_file_relations(per_file, namespace_id=namespace_id)
 
         return DirectoryIngestResult(
             directory_path=str(path),
@@ -408,9 +400,7 @@ class IngestService:
                 model_context_tokens=self._model_context_tokens,
                 budget_tokens=self._extraction_chunk_tokens,
             )
-            main_entity = self._detect_main_entity(
-                source_path=source_path, text=text
-            )
+            main_entity = self._detect_main_entity(source_path=source_path, text=text)
             for chunk in chunks:
                 ctx = self._build_chunk_context(
                     source_path=source_path,
@@ -487,9 +477,8 @@ class IngestService:
             chunks_total=chunks_total,
         )
 
-    def ingest_file(
-        self, path: Path, *, namespace_id: str = "default"
-    ) -> IngestResult:
+    def ingest_file(self, path: Path, *, namespace_id: str = "default") -> IngestResult:
+        """단일 파일 → 엔티티/관계 추출 → 적재. 파일을 읽어 `_ingest_core` 로 위임."""
         path = path.resolve()
         if path.is_dir():
             # WHY 명시 거부: 디렉토리는 `ingest_directory` 가 처리한다. ingest_file
@@ -512,10 +501,61 @@ class IngestService:
                 f"{sorted(SUPPORTED_EXTS)} only."
             )
 
-        source_path = str(path)
         raw_bytes = path.read_bytes()
-        source_hash = hashlib.sha256(raw_bytes).hexdigest()
+        return self._ingest_core(
+            source_path=str(path),
+            raw_bytes=raw_bytes,
+            source_hash=hashlib.sha256(raw_bytes).hexdigest(),
+            ext=ext,
+            namespace_id=namespace_id,
+            path=path,
+        )
 
+    def ingest_content(
+        self, *, content: str, source_id: str, namespace_id: str = "default"
+    ) -> IngestResult:
+        """콘텐츠 문자열 → 엔티티/관계 추출 → 적재 (파일 없이, #155).
+
+        에이전트가 외부 소스(Jira/Confluence 등)를 자기 MCP 로 읽어와 넘긴 텍스트를
+        파일로 떨구지 않고 곧장 그래프화한다. `source_id` 는 파일 경로 자리를 대신하는
+        논리적 출처 라벨(예: `confluence:PAGE-123`, URL) — idempotent short-circuit
+        과 차분이 이 라벨 기준으로 동작하므로, 같은 소스의 재적재는 라벨을 같게 준다.
+
+        텍스트 전용이다 — 콘텐츠를 `.md` 텍스트로 취급해 기존 청크→추출→병합 코어를
+        그대로 탄다. (PDF/이미지는 파일 경로 기반 `ingest_file` 로.)
+        """
+        if not content.strip():
+            raise InvalidInputError("ingest_content requires non-empty content")
+        if not source_id.strip():
+            raise InvalidInputError("ingest_content requires a non-empty source_id")
+        raw_bytes = content.encode("utf-8")
+        return self._ingest_core(
+            source_path=source_id,
+            raw_bytes=raw_bytes,
+            source_hash=hashlib.sha256(raw_bytes).hexdigest(),
+            ext=".md",
+            namespace_id=namespace_id,
+            # path 는 텍스트 경로(_build_llm_inputs)에서 쓰이지 않는다 — 자리표시.
+            path=Path(source_id),
+        )
+
+    def _ingest_core(
+        self,
+        *,
+        source_path: str,
+        raw_bytes: bytes,
+        source_hash: str,
+        ext: str,
+        namespace_id: str,
+        path: Path,
+    ) -> IngestResult:
+        """파일/콘텐츠 공통 적재 코어 — source_path/bytes/hash/ext 가 정해진 뒤부터.
+
+        WHY 분리: ingest_file(파일 읽기)과 ingest_content(#155, 문자열)이 *앞단만*
+        다르고 short-circuit / run 기록 / 청크 추출 / 매칭 / 병합 / 차분은 완전히
+        같다. `path` 는 PDF/이미지 모달의 `_build_llm_inputs` 에서만 쓰이고 텍스트
+        경로에서는 참조되지 않는다.
+        """
         # Short-circuit — 같은 (path, hash, extractor_version) 의 성공 회차가 이미
         # 있다면 LLM/임베딩 호출 자체를 건너뛴다. PRD 2 §5.4 의 1 번 조건 +
         # ADR-0017 코드-델타(추출기 버전이 다르면 재추출).
@@ -554,9 +594,7 @@ class IngestService:
         )
 
         # 이전 성공 회차 (hash 가 다른) 를 차분 비교 대상으로 캐싱.
-        prior_for_diff = self._graph.find_latest_succeeded_run(
-            source_path=source_path
-        )
+        prior_for_diff = self._graph.find_latest_succeeded_run(source_path=source_path)
 
         try:
             # WHY 모달별 input 시퀀스 통일: 텍스트 / PDF / 이미지가 *서로 다른
@@ -565,9 +603,7 @@ class IngestService:
             # 동일 형태로 들어와야 한다. 모달별 어댑터가 각자의 분할을 끝내고
             # 동일 형태로 정규화 — IngestionRun 안에서 매칭/병합/diff 로직은
             # 모달에 무관하게 한 줄기로 흐른다.
-            llm_inputs = self._build_llm_inputs(
-                path=path, raw_bytes=raw_bytes, ext=ext
-            )
+            llm_inputs = self._build_llm_inputs(path=path, raw_bytes=raw_bytes, ext=ext)
 
             # ADR-0009 D3 — 문서당 1 회 main_entity 식별. 결과를 모든 청크 build
             # 에 전달. text 가 None 인 모달 (단일 이미지 파일) 은 None 유지.
@@ -760,21 +796,16 @@ class IngestService:
             self._active_hints = None
 
         depends = [
-            w.kwargs["mutation"].id
-            for w in planning.writes
-            if w.method == "apply_merge_mutation"
+            w.kwargs["mutation"].id for w in planning.writes if w.method == "apply_merge_mutation"
         ]
 
         # ask-human-on-ambiguity — 적재가 보고한 놓친 병합 후보를 사람 질문으로
         # 가공한다. 유사도 내림차순(병합 가능성 높은 후보 우선)으로 정렬한 뒤 상위
         # MAX_OPEN_QUESTIONS 건만 남기고, 안정적 question_id("q1"..) 를 부여한다.
-        ambiguities = sorted(
-            result.ambiguities, key=lambda a: a.similarity, reverse=True
-        )[:MAX_OPEN_QUESTIONS]
-        open_questions = [
-            replace(a, question_id=f"q{i + 1}")
-            for i, a in enumerate(ambiguities)
+        ambiguities = sorted(result.ambiguities, key=lambda a: a.similarity, reverse=True)[
+            :MAX_OPEN_QUESTIONS
         ]
+        open_questions = [replace(a, question_id=f"q{i + 1}") for i, a in enumerate(ambiguities)]
 
         return IngestPlan(
             plan_id=f"pln_{ULID()}",
@@ -791,9 +822,55 @@ class IngestService:
             namespace_id=namespace_id,
         )
 
-    def resolve_plan(
-        self, plan: IngestPlan, resolutions: dict[str, str]
+    def plan_content(
+        self,
+        *,
+        content: str,
+        source_id: str,
+        namespace_id: str = "default",
+        hints: str | None = None,
     ) -> IngestPlan:
+        """콘텐츠 문자열로 변경 묶음(IngestPlan)을 만든다 — plan_file 의 콘텐츠판 (#155).
+
+        plan_file 과 같은 방식으로 PlanningGraphRepository 오버레이 위에서
+        ingest_content 를 돌려 그래프에 쓰지 않고 계획만 만든다. 이후 preview /
+        resolve / commit 은 plan_id 기반이라 파일 경로판과 완전히 같은 흐름을 탄다.
+        """
+        planning = PlanningGraphRepository(self._graph)
+        real = self._graph
+        self._graph = planning
+        self._active_hints = hints
+        try:
+            result = self.ingest_content(
+                content=content, source_id=source_id, namespace_id=namespace_id
+            )
+        finally:
+            self._graph = real
+            self._active_hints = None
+
+        depends = [
+            w.kwargs["mutation"].id for w in planning.writes if w.method == "apply_merge_mutation"
+        ]
+        ambiguities = sorted(result.ambiguities, key=lambda a: a.similarity, reverse=True)[
+            :MAX_OPEN_QUESTIONS
+        ]
+        open_questions = [replace(a, question_id=f"q{i + 1}") for i, a in enumerate(ambiguities)]
+        return IngestPlan(
+            plan_id=f"pln_{ULID()}",
+            source_path=result.source_path,
+            source_hash=result.source_hash,
+            extractor_version=self._extractor_version,
+            created_at=now_rfc3339(),
+            previewed=False,
+            writes=planning.writes,
+            result=result,
+            depends_on_entity_ids=depends,
+            open_questions=open_questions,
+            hints=hints,
+            namespace_id=namespace_id,
+        )
+
+    def resolve_plan(self, plan: IngestPlan, resolutions: dict[str, str]) -> IngestPlan:
         """사람이 답한 모호성 질문을 적용해 *같은 plan_id* 로 재계획한다.
 
         resolutions 는 {question_id: "merge" | "keep"}. plan.open_questions 로
@@ -898,9 +975,7 @@ class IngestService:
                 continue
             if w.method == "append_emitted_relations":
                 kwargs = dict(w.kwargs)
-                kwargs["relation_ids"] = [
-                    _translate(rid) for rid in kwargs.get("relation_ids", [])
-                ]
+                kwargs["relation_ids"] = [_translate(rid) for rid in kwargs.get("relation_ids", [])]
                 self._graph.append_emitted_relations(**kwargs)
                 continue
             if w.method == "finalize_run":
@@ -932,9 +1007,7 @@ class IngestService:
 
     # ---------- 모달별 LLM 호출 input 정규화 ----------
 
-    def _build_llm_inputs(
-        self, *, path: Path, raw_bytes: bytes, ext: str
-    ) -> list[_LLMCallInput]:
+    def _build_llm_inputs(self, *, path: Path, raw_bytes: bytes, ext: str) -> list[_LLMCallInput]:
         """확장자에 따라 LLM 호출 단위 시퀀스를 생성.
 
         WHY 단일 진입점: ingest_file 본 루프는 *모달이 무엇인지 모른다* . 본
@@ -948,10 +1021,7 @@ class IngestService:
                 budget_tokens=self._extraction_chunk_tokens,
             )
             return [
-                _LLMCallInput(
-                    text=c.text, images=[], chunk_index=c.chunk_index
-                )
-                for c in chunks
+                _LLMCallInput(text=c.text, images=[], chunk_index=c.chunk_index) for c in chunks
             ]
         if ext in PDF_EXTS:
             pages = extract_pdf(path)
@@ -972,9 +1042,7 @@ class IngestService:
             "Modality dispatch is out of sync — see ingest._build_llm_inputs."
         )
 
-    def _build_pdf_extract_inputs(
-        self, pages: list[PdfPage]
-    ) -> list[_LLMCallInput]:
+    def _build_pdf_extract_inputs(self, pages: list[PdfPage]) -> list[_LLMCallInput]:
         """PDF 페이지 시퀀스를 평탄화된 LLM 호출 input 시퀀스로 변환.
 
         결정 규칙 (PRD 2 §3.4):
@@ -1063,15 +1131,11 @@ class IngestService:
             enrichment=self._active_hints,
         )
 
-    def _detect_main_entity(
-        self, *, source_path: str, text: str | None
-    ) -> MainEntity | None:
+    def _detect_main_entity(self, *, source_path: str, text: str | None) -> MainEntity | None:
         """문서 1 회 main_entity 추출 — extractor 가 없거나 텍스트가 없으면 None."""
         if self._main_entity_extractor is None or not text:
             return None
-        return self._main_entity_extractor.extract(
-            source_path=source_path, text=text
-        )
+        return self._main_entity_extractor.extract(source_path=source_path, text=text)
 
     def _extract_inputs_parallel(
         self,
@@ -1207,9 +1271,7 @@ class IngestService:
                 sig = normalize(e_new.name) + "\x00" + e_new.type
                 decision = self._active_resolutions.get(sig)
                 if decision is not None and decision.startswith("merge:"):
-                    e_new = replace(
-                        e_new, matched_existing_id=decision[len("merge:"):]
-                    )
+                    e_new = replace(e_new, matched_existing_id=decision[len("merge:") :])
                 elif decision == "keep":
                     force_keep = True
 
@@ -1217,9 +1279,7 @@ class IngestService:
             # 매처를 *skip* 하고 직접 merge. id 가 실제로 존재하는지 검증해
             # *환각* (없는 id) 케이스는 fallback.
             if e_new.matched_existing_id:
-                survivor = self._graph.get_stored_entity(
-                    entity_id=e_new.matched_existing_id
-                )
+                survivor = self._graph.get_stored_entity(entity_id=e_new.matched_existing_id)
                 if survivor is not None:
                     # ADR-0009 D2 — LLM 이 *기존 entity 와 같은 대상* 으로 판단한
                     # 새 표면형 (e_new.name) 도 alias 로 흡수해야 표기 흔들림이
@@ -1240,12 +1300,9 @@ class IngestService:
                     name_to_id[e_new.name] = survivor.id
                     updated += 1
                     by_step[0] += 1
-                    self._graph.mark_entity_emitted(
-                        entity_id=survivor.id, run_id=run_id
-                    )
+                    self._graph.mark_entity_emitted(entity_id=survivor.id, run_id=run_id)
                     logger.debug(
-                        "entity matched by LLM (ADR-0009) existing_id=%s "
-                        "new_name=%s",
+                        "entity matched by LLM (ADR-0009) existing_id=%s new_name=%s",
                         survivor.id,
                         e_new.name,
                     )
@@ -1259,11 +1316,7 @@ class IngestService:
                     )
 
             result = matcher.match(e_new)
-            if (
-                not force_keep
-                and result.existing is not None
-                and result.step in (1, 2, 3)
-            ):
+            if not force_keep and result.existing is not None and result.step in (1, 2, 3):
                 # 병합 분기.
                 mutation = EntityMerger.merge(
                     existing=result.existing,
@@ -1275,9 +1328,7 @@ class IngestService:
                 name_to_id[e_new.name] = result.existing.id
                 updated += 1
                 by_step[result.step] += 1
-                self._graph.mark_entity_emitted(
-                    entity_id=result.existing.id, run_id=run_id
-                )
+                self._graph.mark_entity_emitted(entity_id=result.existing.id, run_id=run_id)
                 logger.debug(
                     "entity merged step=%d existing_id=%s new_name=%s",
                     result.step,
@@ -1293,9 +1344,7 @@ class IngestService:
             # threshold 0.92 의 의미를 바꾸기 때문에 같은 PR 에 묶지 않는다.
             embed_out = self._embedder.embed([e_new.name])
             if not embed_out:
-                raise RuntimeError(
-                    f"embedding returned empty for name={e_new.name!r}"
-                )
+                raise RuntimeError(f"embedding returned empty for name={e_new.name!r}")
             new_id = str(ULID())
             stored = StoredEntity(
                 id=new_id,
@@ -1313,8 +1362,7 @@ class IngestService:
                 normalized_aliases=[
                     normalize(a)
                     for a in (e_new.aliases or [])
-                    if normalize(a)
-                    and normalize(a) not in NON_IDENTIFYING_ALIAS_STOPLIST
+                    if normalize(a) and normalize(a) not in NON_IDENTIFYING_ALIAS_STOPLIST
                 ],
             )
             self._graph.create_entity(entity=stored)
@@ -1379,12 +1427,8 @@ class IngestService:
                 norm_index[nkey] = eid
 
         for r, source_ref in pending:
-            from_id = self._resolve_endpoint(
-                r.from_name, name_to_id, norm_index, namespace_id
-            )
-            to_id = self._resolve_endpoint(
-                r.to_name, name_to_id, norm_index, namespace_id
-            )
+            from_id = self._resolve_endpoint(r.from_name, name_to_id, norm_index, namespace_id)
+            to_id = self._resolve_endpoint(r.to_name, name_to_id, norm_index, namespace_id)
             if not from_id or not to_id:
                 dangling += 1
                 # issue #78 — 디렉토리 2-pass 가 나중에 재시도하도록 보존.
@@ -1484,12 +1528,8 @@ class IngestService:
                 if not rid:
                     continue
                 # provenance — 원 파일 run 에 귀속 (edge + run 노드 양쪽).
-                self._graph.mark_relation_emitted(
-                    relation_id=rid, run_id=res.run_id
-                )
-                self._graph.append_emitted_relations(
-                    run_id=res.run_id, relation_ids=[rid]
-                )
+                self._graph.mark_relation_emitted(relation_id=rid, run_id=res.run_id)
+                self._graph.append_emitted_relations(run_id=res.run_id, relation_ids=[rid])
                 # 원 파일 카운터 제자리 보정 — 더는 dangling 아님.
                 if res.relations_skipped_dangling > 0:
                     res.relations_skipped_dangling -= 1
@@ -1497,8 +1537,7 @@ class IngestService:
                     res.relations_created += 1
                 recovered += 1
                 logger.info(
-                    "cross-file relation recovered from=%s to=%s type=%s "
-                    "source=%s run=%s",
+                    "cross-file relation recovered from=%s to=%s type=%s source=%s run=%s",
                     rel.from_name,
                     rel.to_name,
                     rel.type,
@@ -1532,9 +1571,7 @@ class IngestService:
         for rid in prior.emitted_relation_ids:
             if rid in new_relation_ids:
                 continue
-            outcome = self._graph.apply_relation_diff(
-                relation_id=rid, source_path=source_path
-            )
+            outcome = self._graph.apply_relation_diff(relation_id=rid, source_path=source_path)
             if outcome == "deleted":
                 metrics["relations_deleted"] += 1
             elif outcome == "trimmed":
