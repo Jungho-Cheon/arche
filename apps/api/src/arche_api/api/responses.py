@@ -253,3 +253,63 @@ class GetSubgraphResponse(BaseModel):
     edges: list[Edge]
     entry_ids: list[str]
     truncated: bool
+
+
+# ---------- find_related (#140, ADR-0006 amend) ----------
+
+
+class FindRelatedRequest(BaseModel):
+    """find_related 입력 — 시드 노드 집합에서 구조적으로 가까운 관련 노드 top-k.
+
+    HippoRAG(arXiv 2405.14831)의 Personalized PageRank 착상을 이식 가능한 형태로
+    구현한다. 시드에서 감쇠 확산한 근접도로 관련 노드를 *한 번에* 회수해, 에이전트가
+    get_neighbors 를 여러 번 왕복하며 중간 결과를 매번 다시 싣는 비용을 없앤다.
+
+    damping — 한 홉 멀어질 때마다 기여가 곱해지는 감쇠 계수(0<d<1). 작을수록 시드
+    바로 옆을 강하게 선호하고, 클수록 멀리까지 완만하게 퍼진다. 파라미터의 최적값은
+    측정으로 정하며(#140/#83), 기본값은 보수적으로 0.5.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    seeds: list[str] = Field(min_length=1, max_length=20)
+    top_k: int = Field(default=10, ge=1, le=100)
+    max_hops: int = Field(default=2, ge=1, le=4)
+    damping: float = Field(default=0.5, gt=0.0, lt=1.0)
+    relation_types: list[str] | None = None
+    # ADR-0015 — 확장할 namespace. 미지정 시 auth 헤더(REST) 또는 "default" (#98).
+    namespace_id: str | None = Field(default=None, min_length=1)
+
+    _ns_check = field_validator("namespace_id")(_validate_optional_namespace)
+    _rel_check = field_validator("relation_types")(validate_relation_types)
+
+    @field_validator("seeds")
+    @classmethod
+    def _check_seeds(cls, v: list[str]) -> list[str]:
+        for seed in v:
+            if not _ULID_PATTERN.match(seed):
+                raise ValueError(f"seed is not ULID: {seed}")
+        return v
+
+
+class RelatedNode(BaseModel):
+    """find_related 결과 한 항목 — 관련 노드 + 근접 점수 + 시드까지의 최단 거리."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    node: Node
+    # 0..1 로 정규화된 근접 점수 (top-1 = 1.0). 여러 시드에 가까울수록, 가까운
+    # 홉일수록 높다. 절대값이 아니라 *이 응답 안에서의 상대 순위* 로 해석한다.
+    score: float = Field(ge=0.0, le=1.0)
+    # 어느 시드로부터든 가장 가까운 홉 수 (>=1 — 시드 자신은 결과에서 제외).
+    distance: int = Field(ge=1)
+
+
+class FindRelatedResponse(BaseModel):
+    """find_related 응답. seeds 는 echo, truncated 는 후보가 top_k 초과로 잘렸는지."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    related: list[RelatedNode]
+    seeds: list[str]
+    truncated: bool

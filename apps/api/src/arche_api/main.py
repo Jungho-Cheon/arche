@@ -22,6 +22,7 @@ from .api.routers import (
     entities_router,
     health_router,
     paths_router,
+    related_router,
     schema_router,
     subgraph_router,
 )
@@ -107,6 +108,7 @@ def create_app() -> FastAPI:
     app.include_router(entities_router)
     app.include_router(paths_router)
     app.include_router(subgraph_router)
+    app.include_router(related_router)
     app.include_router(admin_router)
     # ADR-0013 D8 — /v1/ versioning alias. 기존 path 유지 + /v1/ prefix 동시 노출.
     # deprecation 시점에 기존 path 에 Deprecation 헤더 추가 예정.
@@ -115,6 +117,7 @@ def create_app() -> FastAPI:
     app.include_router(entities_router, prefix="/v1")
     app.include_router(paths_router, prefix="/v1")
     app.include_router(subgraph_router, prefix="/v1")
+    app.include_router(related_router, prefix="/v1")
     app.include_router(admin_router, prefix="/v1")
 
     @app.exception_handler(ArcheError)

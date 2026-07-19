@@ -171,9 +171,7 @@ def render_model_table(
         type_str = _escape_cell(_render_type(prop))
         default_str = _render_default(field_name, prop, required)
         constraints = _render_constraints(prop)
-        lines.append(
-            f"| `{field_name}` | `{type_str}` | {default_str} | {constraints} |"
-        )
+        lines.append(f"| `{field_name}` | `{type_str}` | {default_str} | {constraints} |")
     return "\n".join(lines) + "\n"
 
 
@@ -208,9 +206,7 @@ def render_request_table(op_title: str, model: type[BaseModel]) -> str:
         default_str = _render_default(field_name, prop, required)
         constraints = _render_constraints(prop)
         desc = _render_description(prop)
-        lines.append(
-            f"| `{field_name}` | `{type_str}` | {default_str} | {constraints} | {desc} |"
-        )
+        lines.append(f"| `{field_name}` | `{type_str}` | {default_str} | {constraints} | {desc} |")
     return "\n".join(lines) + "\n"
 
 
@@ -243,6 +239,7 @@ def _request_specs() -> list[tuple[str, str, type[BaseModel]]]:
     )
     from .api.responses import (
         FindPathRequest,
+        FindRelatedRequest,
         GetNeighborsRequest,
         GetSubgraphRequest,
     )
@@ -253,6 +250,7 @@ def _request_specs() -> list[tuple[str, str, type[BaseModel]]]:
         ("get_neighbors", "get_neighbors", GetNeighborsRequest),
         ("find_path", "find_path", FindPathRequest),
         ("get_subgraph", "get_subgraph", GetSubgraphRequest),
+        ("find_related", "find_related", FindRelatedRequest),
         ("ingest_plan", "ingest_plan", PlanIngestRequest),
         ("ingest_preview", "ingest_preview", PreviewRequest),
         ("ingest_resolve", "ingest_resolve", ResolveRequest),
@@ -282,6 +280,7 @@ _TOOL_GLOSS_KO: dict[str, str] = {
     "get_neighbors": "한 노드에서 N 단계 안에 닿는 이웃을 펼친다.",
     "find_path": "두 노드 사이를 잇는 짧은 경로 몇 개를 찾는다.",
     "get_subgraph": "여러 출발점 주변을 한꺼번에 펼쳐 하나로 합친다.",
+    "find_related": "시드 노드들과 구조적으로 가까운 관련 노드를 한 번에 근접 순위로 회수한다.",
     "ingest_plan": "파일 하나의 변화를 계획만 하고 그래프에는 쓰지 않는다. 계획 번호를 돌려준다.",
     "ingest_preview": "계획 번호로 바뀔 내용을 항목별로 펼쳐 사람이 검토하게 한다.",
     "ingest_resolve": "미리 보기가 물은 질문(닮은 점을 합칠지 따로 둘지)에 사람의 결정을 반영한다.",

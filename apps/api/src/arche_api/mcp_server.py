@@ -1,4 +1,7 @@
-"""MCP stdio 어댑터 — 6 graph primitive 를 표준 MCP tool 로 노출 (PRD 3 §8).
+"""MCP stdio 어댑터 — 7 graph primitive 를 표준 MCP tool 로 노출 (PRD 3 §8).
+
+find_related 는 PRD 3 §2-7 의 6 primitive 에 이은 파생 read primitive (#140,
+ADR-0006 amend) — 기존 get_subgraph 순회 위에 근접 랭킹을 얹은 형태다.
 
 WHY 본 모듈의 존재: PRD 3 §0.1 — REST 와 MCP 는 *같은 입출력 스키마* . 본 어댑터
 는 `api/services.py` 의 순수 함수를 직접 호출해 REST 라우터와 동일한 결과를
@@ -20,7 +23,7 @@ WHY write tool 노출 제한: ADR-0006 D3 — `create_entity` / `delete_relation
 ingest_resolve / ingest_commit) 은 예외다: 사람의 미리보기 + 확인 latch 를
 강제하므로, LLM 이 검토 없이 그래프를 바꾸지 못한다. 이 네 tool 은 `ingest_service` 와
 `plan_registry` 가 *함께 주입된* 서버에서만 등록된다 (production serve 경로).
-LLM 이 없는 read-only fake-boot 경로는 6 read tool 만 노출한다.
+LLM 이 없는 read-only fake-boot 경로는 7 read tool 만 노출한다.
 """
 
 from __future__ import annotations
@@ -46,6 +49,7 @@ from .api.plan_schemas import (
 )
 from .api.responses import (
     FindPathRequest,
+    FindRelatedRequest,
     GetNeighborsRequest,
     GetSubgraphRequest,
 )
@@ -99,6 +103,20 @@ _TOOL_DESCRIPTIONS: dict[str, str] = {
         "Extract a subgraph centered on multiple entry-point nodes, expanded "
         "N hops. Returns deduplicated nodes and edges within the radius."
     ),
+    "find_related": (
+        "Given a set of seed node IDs, return the top-k nodes structurally "
+        "CLOSEST to them, ranked by a proximity score, in ONE call. Use this "
+        "instead of walking `get_neighbors` hop by hop when you want 'what else "
+        "is related to these entities' — it folds a multi-hop exploration into a "
+        "single request so intermediate results never re-enter your context. "
+        "Each result carries `score` (0..1, relative rank within this response; "
+        "higher = closer to more seeds and via shorter hops) and `distance` (the "
+        "shortest hop count to any seed). Seeds are the entry points you already "
+        "know (e.g. from `find_entities`); they are excluded from the results. "
+        "TUNING: raise `max_hops` to reach farther, lower `damping` to prefer "
+        "immediate neighbors, and pass `relation_types` to restrict the spread "
+        "to specific edges."
+    ),
     # reviewable ingest (plan -> preview -> commit). 이 세 tool 은 LLM 이 사람의
     # 검토를 *건너뛰고* 그래프를 바꾸지 못하도록 다음 행동 지침을 description 에
     # 명시한다. ingest_service + plan_registry 가 주입된 서버에서만 등록된다.
@@ -112,7 +130,7 @@ _TOOL_DESCRIPTIONS: dict[str, str] = {
         "glossary or domain notes) to improve extraction of a poorly-structured "
         "document; hints never modify the stored source, they only guide "
         "extraction. Optionally pass `namespace_id` to plan into a specific "
-        "namespace (default \"default\"); the plan keeps that namespace through "
+        'namespace (default "default"); the plan keeps that namespace through '
         "preview/resolve/commit, so identity matching and writes stay inside it."
     ),
     "ingest_preview": (
@@ -127,9 +145,9 @@ _TOOL_DESCRIPTIONS: dict[str, str] = {
     ),
     "ingest_resolve": (
         "Apply the human's answers to a plan's open `questions` (by `plan_id`). "
-        "Each resolution pairs a `question_id` with a `decision`: \"merge\" "
+        'Each resolution pairs a `question_id` with a `decision`: "merge" '
         "means the new entity is the SAME as the suggested existing entity, "
-        "\"keep\" means it is genuinely new and distinct. This refines the same "
+        '"keep" means it is genuinely new and distinct. This refines the same '
         "plan_id in place and clears the safety latch, so you MUST call "
         "ingest_preview again afterwards (and review any remaining questions) "
         "before ingest_commit."
@@ -226,7 +244,7 @@ def _inline_defs(schema: dict[str, Any]) -> dict[str, Any]:
 
 
 def _build_tools() -> list[mcp_types.Tool]:
-    """6 tool 의 등록 manifest — PRD 3 §0.1 의 1:1 매핑 표."""
+    """7 read tool 의 등록 manifest — PRD 3 §0.1 의 6 primitive + find_related(#140)."""
     return [
         mcp_types.Tool(
             name="get_schema",
@@ -257,9 +275,7 @@ def _build_tools() -> list[mcp_types.Tool]:
             # PRD 3 §5.3 — MCP 입력은 body 필드 + id 를 *한 객체* 로 합친 형태.
             # REST 는 URL path 가 id 를 받지만 MCP 는 단일 입력 객체이므로 id 를
             # 풀어서 포함.
-            inputSchema=_merge_id_into_schema(
-                _build_input_schema(GetNeighborsRequest)
-            ),
+            inputSchema=_merge_id_into_schema(_build_input_schema(GetNeighborsRequest)),
         ),
         mcp_types.Tool(
             name="find_path",
@@ -270,6 +286,11 @@ def _build_tools() -> list[mcp_types.Tool]:
             name="get_subgraph",
             description=_TOOL_DESCRIPTIONS["get_subgraph"],
             inputSchema=_build_input_schema(GetSubgraphRequest),
+        ),
+        mcp_types.Tool(
+            name="find_related",
+            description=_TOOL_DESCRIPTIONS["find_related"],
+            inputSchema=_build_input_schema(FindRelatedRequest),
         ),
     ]
 
@@ -346,9 +367,7 @@ def _dispatch_tool(
     # get_schema/get_entity 는 인자 dict 에서 직접 꺼낸다.
     arg_ns = arguments.get("namespace_id") or "default"
     if name == "get_schema":
-        return services.get_schema(
-            graph=graph, settings=settings, namespace_id=arg_ns
-        )
+        return services.get_schema(graph=graph, settings=settings, namespace_id=arg_ns)
     if name == "find_entities":
         body = FindEntitiesRequest.model_validate(arguments)
         return services.find_entities(
@@ -361,9 +380,7 @@ def _dispatch_tool(
         entity_id = arguments.get("id")
         if not isinstance(entity_id, str):
             raise ValueError("`id` is required and must be a string")
-        return services.get_entity(
-            entity_id=entity_id, graph=graph, namespace_id=arg_ns
-        )
+        return services.get_entity(entity_id=entity_id, graph=graph, namespace_id=arg_ns)
     if name == "get_neighbors":
         # WHY id 분리: services.get_neighbors 는 entity_id 와 body 를 분리해 받는
         # 다. MCP 입력은 한 객체이므로 id 만 떼어 body 모델에 검증을 맡긴다.
@@ -380,14 +397,13 @@ def _dispatch_tool(
         )
     if name == "find_path":
         body = FindPathRequest.model_validate(arguments)
-        return services.find_path(
-            body, graph=graph, namespace_id=body.namespace_id or "default"
-        )
+        return services.find_path(body, graph=graph, namespace_id=body.namespace_id or "default")
     if name == "get_subgraph":
         body = GetSubgraphRequest.model_validate(arguments)
-        return services.get_subgraph(
-            body, graph=graph, namespace_id=body.namespace_id or "default"
-        )
+        return services.get_subgraph(body, graph=graph, namespace_id=body.namespace_id or "default")
+    if name == "find_related":
+        body = FindRelatedRequest.model_validate(arguments)
+        return services.find_related(body, graph=graph, namespace_id=body.namespace_id or "default")
     # reviewable ingest — service/registry 가 주입된 서버에서만 등록되므로, 여기
     # 도달했다면 둘 다 존재한다. 방어적으로 None 을 막는다.
     if name in INGEST_TOOL_NAMES:
@@ -395,9 +411,7 @@ def _dispatch_tool(
             raise ValueError(f"tool `{name}` requires an ingest service")
         if name == "ingest_plan":
             plan_body = PlanIngestRequest.model_validate(arguments)
-            return services.plan_ingest(
-                plan_body, service=ingest_service, registry=plan_registry
-            )
+            return services.plan_ingest(plan_body, service=ingest_service, registry=plan_registry)
         if name == "ingest_preview":
             preview_body = PreviewRequest.model_validate(arguments)
             return services.preview_plan(preview_body, registry=plan_registry)
@@ -408,9 +422,7 @@ def _dispatch_tool(
             )
         # ingest_commit
         commit_body = CommitRequest.model_validate(arguments)
-        return services.commit_plan(
-            commit_body, service=ingest_service, registry=plan_registry
-        )
+        return services.commit_plan(commit_body, service=ingest_service, registry=plan_registry)
     # 등록되지 않은 이름 — MCP 클라이언트의 잘못된 호출.
     raise ValueError(f"unknown tool: {name}")
 
@@ -497,7 +509,9 @@ def build_mcp_server(
     instructions = (
         "Arche graph primitives. Use `get_schema` first to inspect the graph "
         "shape, then `find_entities` to anchor user keywords to nodes, and "
-        "traverse with `get_neighbors` / `find_path` / `get_subgraph`."
+        "traverse with `get_neighbors` / `find_path` / `get_subgraph`. To pull "
+        "everything related to a set of anchor nodes in one call, use "
+        "`find_related` instead of walking neighbors hop by hop."
     )
     register_ingest = ingest_service is not None and plan_registry is not None
     if register_ingest:
@@ -537,9 +551,7 @@ def build_mcp_server(
         return tools
 
     @server.call_tool()
-    async def _call_tool(
-        name: str, arguments: dict[str, Any]
-    ) -> mcp_types.CallToolResult:
+    async def _call_tool(name: str, arguments: dict[str, Any]) -> mcp_types.CallToolResult:
         """MCP tool 호출 — payload (PRD 3 §0.4: envelope 없음) 를 JSON text 로 반환.
 
         WHY CallToolResult 직접 반환: MCP SDK 의 call_tool 데코레이터는 핸들러가
@@ -575,9 +587,7 @@ def build_mcp_server(
             }
             return mcp_types.CallToolResult(
                 content=[
-                    mcp_types.TextContent(
-                        type="text", text=json.dumps(body, ensure_ascii=False)
-                    )
+                    mcp_types.TextContent(type="text", text=json.dumps(body, ensure_ascii=False))
                 ],
                 isError=True,
             )
@@ -599,9 +609,7 @@ def _assert_no_write_tools(tools: list[mcp_types.Tool]) -> None:
     names = {t.name for t in tools}
     leaked = names & WRITE_TOOL_NAMES_EXCLUDED
     if leaked:
-        raise RuntimeError(
-            f"refusing to register write tools (ADR-0006 D3): {sorted(leaked)}"
-        )
+        raise RuntimeError(f"refusing to register write tools (ADR-0006 D3): {sorted(leaked)}")
 
 
 # ---------- stdio 실행 진입점 (CLI 에서 호출) ----------

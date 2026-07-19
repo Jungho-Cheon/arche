@@ -82,3 +82,7 @@ apps/docs/.vitepress/cache
 # 임베디드(Kuzu) 그래프 DB 파일 (ADR-0020, 기본 경로)
 arche_kuzu_db/
 apps/api/arche_kuzu_db/
+
+# Kuzu embedded db (file form created by tests using a default path)
+arche_kuzu_db
+apps/api/arche_kuzu_db

@@ -42,6 +42,8 @@ from .deps import (
 from .responses import (
     FindPathRequest,
     FindPathResponse,
+    FindRelatedRequest,
+    FindRelatedResponse,
     GetEntityResponse,
     GetNeighborsRequest,
     GetNeighborsResponse,
@@ -74,6 +76,7 @@ admin_router = APIRouter(prefix="/admin", tags=["admin"])
 schema_router = APIRouter(tags=["schema"])
 paths_router = APIRouter(prefix="/paths", tags=["paths"])
 subgraph_router = APIRouter(prefix="/subgraph", tags=["subgraph"])
+related_router = APIRouter(prefix="/related", tags=["related"])
 
 
 @health_router.get("/healthz", response_model=HealthzResponse)
@@ -253,6 +256,28 @@ def get_subgraph(
     return DataEnvelope(data=payload)
 
 
+# ---------- find_related (#140 — 단일 스텝 multi-hop, ADR-0006 amend) ----------
+
+
+@related_router.post(
+    "/find",
+    response_model=DataEnvelope[FindRelatedResponse],
+    response_model_exclude_none=True,  # #109 — None 은 키 제외 (응답 전체 통일)
+)
+def find_related(
+    body: FindRelatedRequest,
+    graph: GraphRepository = Depends(graph_repo_dep),
+    auth: AuthContext = Depends(auth_context_dep),
+) -> DataEnvelope[FindRelatedResponse]:
+    """시드 집합에서 구조적으로 가까운 관련 노드 top-k — services.find_related 위임.
+
+    ADR-0015 — namespace 결정: body 명시 > auth header > "default" (issue #98).
+    """
+    namespace_id = body.namespace_id or auth.namespace_id
+    payload = services.find_related(body, graph=graph, namespace_id=namespace_id)
+    return DataEnvelope(data=payload)
+
+
 # ---------- admin/ingest (M1 슬라이스 — 본 PR 무관, 그대로 유지) ----------
 
 
@@ -371,10 +396,6 @@ def admin_ingest_status(
             state=body["state"],
             progress=AdminIngestProgress(**body["progress"]),
             metrics=AdminIngestMetrics(**body["metrics"]),
-            error=(
-                AdminIngestError(**body["error"])
-                if body["error"] is not None
-                else None
-            ),
+            error=(AdminIngestError(**body["error"]) if body["error"] is not None else None),
         )
     )

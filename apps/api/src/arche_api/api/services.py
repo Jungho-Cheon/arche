@@ -19,6 +19,7 @@ payload 만* (envelope 없음). REST 라우터가 envelope 으로 감싸는 책�
 from __future__ import annotations
 
 import logging
+from collections import deque
 from pathlib import Path
 from typing import TYPE_CHECKING
 
@@ -31,7 +32,7 @@ from ..domain.errors import (
     InvalidInputError,
     UnprocessableError,
 )
-from ..domain.models import Node
+from ..domain.models import Edge, Node
 from .plan_schemas import (
     CommitRequest,
     IngestCommitResponse,
@@ -58,6 +59,8 @@ from .responses import (
     EntityTypeSummary,
     FindPathRequest,
     FindPathResponse,
+    FindRelatedRequest,
+    FindRelatedResponse,
     GetEntityResponse,
     GetNeighborsRequest,
     GetNeighborsResponse,
@@ -65,6 +68,7 @@ from .responses import (
     GetSubgraphRequest,
     GetSubgraphResponse,
     PathSegment,
+    RelatedNode,
     RelationTypePair,
     RelationTypeSummary,
 )
@@ -108,10 +112,7 @@ def get_schema(
             EntityTypeSummary(
                 type=stat.type,
                 count=stat.count,
-                examples=[
-                    EntityTypeExample(id=eid, name=name)
-                    for eid, name in stat.examples
-                ],
+                examples=[EntityTypeExample(id=eid, name=name) for eid, name in stat.examples],
             )
             for stat in entity_stats
         ],
@@ -290,9 +291,7 @@ def _fuse_with_rrf(
                 best_raw_dense = raw_dense_kw
         if fused_total == 0.0:
             continue
-        fused_rows.append(
-            (fused_total, best_kw, node, best_raw_lex, best_raw_dense)
-        )
+        fused_rows.append((fused_total, best_kw, node, best_raw_lex, best_raw_dense))
 
     if not fused_rows:
         return []
@@ -345,18 +344,12 @@ def get_entity(
     # 요청 모델을 거치지 않는 경로의 초크포인트.
     namespace_id = ensure_namespace_id(namespace_id)
     entity_id = ensure_entity_id(entity_id)
-    result = graph.get_entity_with_counts(
-        entity_id=entity_id, namespace_id=namespace_id
-    )
+    result = graph.get_entity_with_counts(entity_id=entity_id, namespace_id=namespace_id)
     if result is None:
-        raise EntityNotFoundError(
-            f"entity not found: {entity_id}", details={"id": entity_id}
-        )
+        raise EntityNotFoundError(f"entity not found: {entity_id}", details={"id": entity_id})
     return GetEntityResponse(
         node=result.node,
-        edge_counts=EdgeCounts(
-            outgoing=result.outgoing, incoming=result.incoming
-        ),
+        edge_counts=EdgeCounts(outgoing=result.outgoing, incoming=result.incoming),
     )
 
 
@@ -374,9 +367,7 @@ def get_neighbors(
     # 헤더/쿼리 해소 namespace 형식 검증 (#142) — 요청 모델 밖 경로 초크포인트.
     namespace_id = ensure_namespace_id(namespace_id)
     if not graph.entity_exists(entity_id=entity_id, namespace_id=namespace_id):
-        raise EntityNotFoundError(
-            f"entity not found: {entity_id}", details={"id": entity_id}
-        )
+        raise EntityNotFoundError(f"entity not found: {entity_id}", details={"id": entity_id})
     result = graph.expand_neighbors(
         entry_id=entity_id,
         relation_types=body.relation_types,
@@ -415,13 +406,9 @@ def find_path(
             details={"from_id": body.from_id, "to_id": body.to_id},
         )
     if not graph.entity_exists(entity_id=body.from_id, namespace_id=namespace_id):
-        raise EntityNotFoundError(
-            f"entity not found: {body.from_id}", details={"id": body.from_id}
-        )
+        raise EntityNotFoundError(f"entity not found: {body.from_id}", details={"id": body.from_id})
     if not graph.entity_exists(entity_id=body.to_id, namespace_id=namespace_id):
-        raise EntityNotFoundError(
-            f"entity not found: {body.to_id}", details={"id": body.to_id}
-        )
+        raise EntityNotFoundError(f"entity not found: {body.to_id}", details={"id": body.to_id})
     paths = graph.find_shortest_paths(
         from_id=body.from_id,
         to_id=body.to_id,
@@ -432,9 +419,7 @@ def find_path(
     )
     return FindPathResponse(
         paths=[
-            PathSegment(
-                nodes=p.nodes, edges=p.edges, length=p.length, hub_score=p.hub_score
-            )
+            PathSegment(nodes=p.nodes, edges=p.edges, length=p.length, hub_score=p.hub_score)
             for p in paths
         ]
     )
@@ -472,6 +457,128 @@ def get_subgraph(
     )
 
 
+# ---------- find_related (#140 — 단일 스텝 multi-hop, ADR-0006 amend) ----------
+
+
+def find_related(
+    body: FindRelatedRequest,
+    *,
+    graph: GraphRepository,
+    namespace_id: str = "default",
+) -> FindRelatedResponse:
+    """시드 집합에서 구조적으로 가까운 관련 노드 top-k.
+
+    구현은 새 저장소 기능을 요구하지 않는다 — 기존 get_subgraph 순회(다중 시드
+    BFS)로 반경 안의 서브그래프를 한 번 가져온 뒤, 그 위에서 시드로부터의 감쇠
+    확산 근접도를 계산한다. 그래서 백엔드(Neo4j / Kuzu)와 무관하게 같은 동작을
+    노출하며 GDS 같은 추가 인프라에 의존하지 않는다. 정확한 Personalized PageRank
+    수치가 아니라 "왕복을 한 번으로 접는" 근접 랭킹이 목표다 (파라미터 정밀도는
+    측정으로 확정 — #140/#83).
+
+    namespace 격리는 get_subgraph 확장이 이미 보장한다 (#98). 그래프에 없는 시드는
+    get_subgraph 와 같은 정책으로 조용히 무시한다.
+    """
+    namespace_id = ensure_namespace_id(namespace_id)
+    # 근접 랭킹이 의미를 가지려면 후보 풀이 top_k 보다 넉넉해야 한다. get_subgraph
+    # 는 시드에서 가까운 순으로 max_nodes 에서 자르므로, 풀을 top_k 의 배수로 잡아
+    # "top_k 를 채울 만큼 가까운 노드" 를 확보한다.
+    pool = min(2000, max(body.top_k * 10, 100))
+    result = graph.expand_subgraph(
+        entry_ids=body.seeds,
+        relation_types=body.relation_types,
+        hops=body.max_hops,
+        max_nodes=pool,
+        namespace_id=namespace_id,
+    )
+    related, truncated = _score_proximity(
+        seeds=body.seeds,
+        nodes=result.nodes,
+        edges=result.edges,
+        top_k=body.top_k,
+        damping=body.damping,
+    )
+    return FindRelatedResponse(
+        related=related,
+        seeds=body.seeds,
+        # 풀 자체가 잘렸거나(result.truncated) 후보가 top_k 를 넘어 잘렸으면 truncated.
+        truncated=truncated or result.truncated,
+    )
+
+
+def _score_proximity(
+    *,
+    seeds: list[str],
+    nodes: list[Node],
+    edges: list[Edge],
+    top_k: int,
+    damping: float,
+) -> tuple[list[RelatedNode], bool]:
+    """다중 시드 감쇠 확산 근접도 — 순수 함수 (테스트 용이).
+
+    각 시드에서 BFS 로 최단 홉 거리를 구하고, 노드마다 시드별 기여
+    `damping ** distance` 를 합산한다. 여러 시드에 가깝거나 가까운 홉일수록 점수가
+    높다. 시드 자신은 결과에서 제외한다. 점수는 이 응답 안에서 max-normalize 해
+    0..1 로 돌려준다 (find_entities 의 정규화와 같은 규약).
+
+    반환 (related, truncated) — truncated 는 후보 수가 top_k 를 넘어 잘렸는지.
+    """
+    node_by_id = {n.id: n for n in nodes}
+    # 무방향 인접 — 근접도는 방향을 구분하지 않는다. 양 끝점이 모두 서브그래프
+    # 안에 있는 엣지만 사용한다.
+    adjacency: dict[str, set[str]] = {}
+    for e in edges:
+        if e.from_ in node_by_id and e.to in node_by_id:
+            adjacency.setdefault(e.from_, set()).add(e.to)
+            adjacency.setdefault(e.to, set()).add(e.from_)
+
+    seed_set = set(seeds)
+    seeds_present = [s for s in seeds if s in node_by_id]
+    if not seeds_present:
+        return [], False
+
+    score: dict[str, float] = {}
+    min_dist: dict[str, int] = {}
+    for seed in seeds_present:
+        for node_id, dist in _bfs_distances(seed, adjacency).items():
+            score[node_id] = score.get(node_id, 0.0) + damping**dist
+            if node_id not in min_dist or dist < min_dist[node_id]:
+                min_dist[node_id] = dist
+
+    # 시드는 결과에서 제외 — caller 가 이미 아는 진입점이다.
+    candidate_ids = [nid for nid in score if nid not in seed_set]
+    if not candidate_ids:
+        return [], False
+
+    # 점수 내림차순 → 같은 점수면 가까운 거리 우선 → id 사전순(결정성).
+    candidate_ids.sort(key=lambda nid: (-score[nid], min_dist[nid], nid))
+    truncated = len(candidate_ids) > top_k
+    kept = candidate_ids[:top_k]
+
+    max_score = max(score[nid] for nid in kept) or 1.0
+    related = [
+        RelatedNode(
+            node=node_by_id[nid],
+            score=max(0.0, min(1.0, score[nid] / max_score)),
+            distance=min_dist[nid],
+        )
+        for nid in kept
+    ]
+    return related, truncated
+
+
+def _bfs_distances(start: str, adjacency: dict[str, set[str]]) -> dict[str, int]:
+    """start 로부터 각 노드의 최단 홉 거리 (start 포함, 거리 0)."""
+    dist: dict[str, int] = {start: 0}
+    queue: deque[str] = deque([start])
+    while queue:
+        cur = queue.popleft()
+        for nb in adjacency.get(cur, ()):
+            if nb not in dist:
+                dist[nb] = dist[cur] + 1
+                queue.append(nb)
+    return dist
+
+
 # ---------- reviewable ingest: plan → preview → commit ----------
 #
 # WHY 세 함수가 한 묶음: 적재 전 변경을 사람이 검토하는 흐름이다. plan 이 변경
@@ -491,11 +598,7 @@ def _summarize_plan(plan: IngestPlan) -> PlanSummary:
     n_new = sum(1 for w in plan.writes if w.method == "create_entity")
     n_merge = sum(1 for w in plan.writes if w.method == "apply_merge_mutation")
     n_rel = sum(1 for w in plan.writes if w.method == "upsert_relation")
-    n_del = sum(
-        1
-        for w in plan.writes
-        if w.method in ("apply_entity_diff", "apply_relation_diff")
-    )
+    n_del = sum(1 for w in plan.writes if w.method in ("apply_entity_diff", "apply_relation_diff"))
     return PlanSummary(
         plan_id=plan.plan_id,
         source_path=plan.source_path,
@@ -514,9 +617,7 @@ def plan_ingest(
     registry: PlanRegistry,
 ) -> PlanSummary:
     """파일을 쓰지 않고 변경 묶음을 만들어 레지스트리에 보관 + 개수 요약 반환."""
-    plan = service.plan_file(
-        Path(body.path), namespace_id=body.namespace_id, hints=body.hints
-    )
+    plan = service.plan_file(Path(body.path), namespace_id=body.namespace_id, hints=body.hints)
     registry.create(plan)
     return _summarize_plan(plan)
 
@@ -563,11 +664,7 @@ def preview_plan(
         for w in plan.writes
         if w.method == "upsert_relation"
     ]
-    n_del = sum(
-        1
-        for w in plan.writes
-        if w.method in ("apply_entity_diff", "apply_relation_diff")
-    )
+    n_del = sum(1 for w in plan.writes if w.method in ("apply_entity_diff", "apply_relation_diff"))
     questions = [
         QuestionView(
             question_id=q.question_id,
@@ -619,9 +716,7 @@ def resolve_ingest(
             "unknown question_id",
             details={"plan_id": plan.plan_id, "question_ids": unknown},
         )
-    refined = service.resolve_plan(
-        plan, {r.question_id: r.decision for r in body.resolutions}
-    )
+    refined = service.resolve_plan(plan, {r.question_id: r.decision for r in body.resolutions})
     registry.create(refined)
     return _summarize_plan(refined)
 
