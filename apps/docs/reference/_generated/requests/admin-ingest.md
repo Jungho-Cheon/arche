@@ -7,4 +7,4 @@
 | --- | --- | --- | --- | --- |
 | `directory_path` | `string` | (필수) | 최소 1자 | 디렉토리 절대 경로 (재귀 크롤 대상) |
 | `dry_run` | `bool` | `false` | — | True 면 그래프에 쓰지 않고 추출만 수행. |
-| `namespace_id` | `string \| null` | `null` (없으면 키 제외) | — | ADR-0015 — entity 의 namespace. 미지정 시 'default' 또는 auth 헤더 추출 |
+| `namespace_id` | `string \| null` | `null` (없으면 키 제외) | — | entity 의 namespace. 미지정 시 'default' 또는 auth 헤더 추출 |

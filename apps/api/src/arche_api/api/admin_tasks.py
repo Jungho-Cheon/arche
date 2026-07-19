@@ -1,21 +1,10 @@
-"""Admin ingest 의 비동기 작업 registry — PRD 2 §1.2 + §1.3.
+"""Admin ingest 의 비동기 작업 registry.
 
-구조:
-  POST /admin/ingest → IngestTask 생성 + 별도 threading.Thread 로 background
-  실행 → 202 Accepted 즉시 응답 (task_id + status_url).
-  GET /admin/ingest/{task_id}/status → IngestTask 의 현재 state / progress /
-  metrics / error 를 반환.
-
-WHY in-process thread (별도 큐 X): PRD 2 §9.5 의 첫 시도 — MVP 단일 사용자 / 단일
-환경 (ADR-0002 D2) 가정에서 동시성 요구가 낮다. API 재시작 시 작업 상태가
-휘발되는 것은 의도된 트레이드오프 — 측정 회차 단위로 명령을 다시 호출하면 된다.
-
-WHY threading (asyncio.Task 가 아닌): IngestService.ingest_directory 는 동기
-함수 (Neo4j + LLM 둘 다 sync). asyncio.create_task 는 *현재 요청의 event loop*
-에 묶여 응답이 끝나면 동기 호출의 결과를 받을 보장이 없다 (특히 TestClient
-처럼 요청마다 loop 가 새로 만들어지는 경우). threading.Thread 는 loop 와 무관해
-요청 라이프타임을 넘어 안전하게 작업을 종결할 수 있다.
-"""
+POST /admin/ingest 가 IngestTask 를 만들어 별도 thread 로 background 실행하고 202 를
+즉시 응답하며, GET status 로 state/progress/metrics 를 조회한다. 별도 큐가 아닌
+in-process thread 를 쓰는 건 동시성 요구가 낮기 때문이고, 재시작 시 작업 상태 휘발은
+의도된 트레이드오프다. ingest_directory 가 동기 함수라 event loop 와 무관한
+threading.Thread 를 써 요청 라이프타임을 넘어 안전하게 종결한다."""
 
 from __future__ import annotations
 
@@ -40,12 +29,8 @@ TaskState = Literal["running", "succeeded", "failed"]
 
 @dataclass
 class IngestTaskState:
-    """단일 ingest 작업의 가변 상태.
-
-    WHY dataclass + 가변: 한 라이프타임 (작업 생성 → 진행 → 종료) 안에서 동일
-    객체를 가리키며 status / progress / metrics 가 갱신된다. status 엔드포인트는
-    이 객체를 dict 로 직렬화해 반환.
-    """
+    """단일 ingest 작업의 가변 상태. 작업 수명 동안 같은 객체가 갱신되고, status
+    엔드포인트가 이걸 dict 로 직렬화해 반환한다."""
 
     task_id: str
     directory_path: str
@@ -67,11 +52,8 @@ class IngestTaskState:
 
 @dataclass
 class IngestTaskRegistry:
-    """In-process registry — task_id → IngestTaskState.
-
-    WHY 단일 dict + thread 참조 별도: state 객체와 실행 중인 thread 를 분리하면
-    thread 가 종료된 뒤에도 status 응답을 만들 수 있다 (가비지 수거되지 않음).
-    """
+    """In-process registry — task_id → IngestTaskState. state 와 thread 를 분리해
+    thread 종료 뒤에도 status 응답을 만들 수 있다."""
 
     states: dict[str, IngestTaskState] = field(default_factory=dict)
     threads: dict[str, threading.Thread] = field(default_factory=dict)
@@ -89,11 +71,8 @@ class IngestTaskRegistry:
 
 
 def _on_progress(state: IngestTaskState, event: FileProgressEvent) -> None:
-    """파일 처리 한 건이 끝날 때 state 카운터를 누적.
-
-    WHY 단일 thread: 한 작업의 progress 콜백은 동일 worker thread 에서 직렬
-    호출되므로 lock 없이도 카운터 갱신이 안전.
-    """
+    """파일 처리 한 건이 끝날 때 state 카운터를 누적한다. progress 콜백은 같은 worker
+    thread 에서 직렬 호출되므로 lock 없이 안전하다."""
     r = event.result
     if r.short_circuited:
         state.files_skipped += 1
@@ -129,10 +108,8 @@ def run_ingest_task(
         state.files_total = result.files_total
         state.files_pending_skipped = result.files_pending_skipped
         state.files_unsupported_skipped = result.files_unsupported_skipped
-        # issue #78 — 디렉토리 2-pass 관계 보정 반영. `_on_progress` 는 파일별
-        # 진행 이벤트(2-pass *이전* 카운터)를 누적하므로, 2-pass 가 정방향 cross-file
-        # 관계를 회수하면 streamed dangling 이 과대·created 가 과소가 된다. 최종
-        # 집계 property(per_file 제자리 보정 반영)로 두 카운터를 덮어 정직하게 보고.
+        # progress 콜백은 2-pass 이전 카운터를 누적하므로, 2-pass 회수분을 반영한
+        # 최종 집계로 두 관계 카운터를 덮어 정직하게 보고한다.
         state.relations_created = result.relations_created
         state.relations_skipped_dangling = result.relations_skipped_dangling
         state.state = "succeeded"
@@ -151,11 +128,8 @@ def spawn_ingest_task(
     dry_run: bool,
     namespace_id: str = "default",
 ) -> IngestTaskState:
-    """state 생성 + worker thread 시작 + registry 에 thread 핸들 보관.
-
-    WHY daemon=True: API 프로세스가 종료될 때 미완료 ingest 가 join 을 막지 않게
-    한다 — MVP 의 단일 환경 가정에서 작업 상태는 휘발 가능.
-    """
+    """state 생성 + worker thread 시작 + registry 에 thread 핸들 보관. daemon=True 라
+    API 종료 시 미완료 ingest 가 join 을 막지 않는다."""
     state = registry.create(directory_path=str(directory_path), dry_run=dry_run)
     thread = threading.Thread(
         target=run_ingest_task,
@@ -175,7 +149,7 @@ def spawn_ingest_task(
 
 
 def state_to_status_dict(state: IngestTaskState) -> dict:
-    """GET /admin/ingest/{task_id}/status 의 응답 본문 (PRD 2 §1.3 형태)."""
+    """GET /admin/ingest/{task_id}/status 의 응답 본문."""
     error: dict | None = None
     if state.state == "failed":
         error = {

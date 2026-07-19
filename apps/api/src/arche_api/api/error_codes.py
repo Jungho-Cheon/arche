@@ -1,8 +1,4 @@
-"""표준 에러 코드 enum — ADR-0013 D2.
-
-agent 가 *enum 기반 분기* 가능하도록 closed set. 추가 코드 도입 시 ADR amend.
-각 코드의 `details` 필드 schema 는 정의에 인라인 명시.
-"""
+"""표준 에러 코드 enum — agent 가 enum 기반으로 분기할 수 있는 closed set."""
 
 from __future__ import annotations
 
@@ -24,13 +20,13 @@ class ErrorCode(str, Enum):
     NOT_A_DIRECTORY = "not_a_directory"       # 422 — 파일을 디렉토리로 사용
 
     # 서버 에러 (5xx)
-    DEPENDENCY_UNAVAILABLE = "dependency_unavailable"  # 503 — Neo4j / LLM provider 다운
+    DEPENDENCY_UNAVAILABLE = "dependency_unavailable"  # 503 — 그래프 백엔드 / LLM provider 다운
     EXTRACTION_FAILED = "extraction_failed"  # 500 — LLM 응답 파싱 실패 등
     INTERNAL_ERROR = "internal_error"        # 500 — 알려지지 않은 예외
     TIMEOUT = "timeout"                      # 504 — 백엔드 timeout
 
 
-# HTTP 상태 코드 매핑 — ADR-0013 D2 의 closed enum 과 1:1.
+# HTTP 상태 코드 매핑 — enum 과 1:1.
 ERROR_HTTP_STATUS: dict[ErrorCode, int] = {
     ErrorCode.INVALID_INPUT: 422,
     ErrorCode.ENTITY_NOT_FOUND: 404,
@@ -52,18 +48,14 @@ def flatten_validation_errors(errors: Iterable[dict[str, Any]]) -> list[dict[str
     """pydantic `ValidationError.errors()` 를 agent 가 파싱 가능한 평탄 형태로 변환.
 
     각 항목은 정확히 세 키만 노출한다.
-    - `loc`  — 위반 필드를 점 표기 한 문자열 (예: `body.keywords`, `body.from_id`).
-               raw `loc` 는 `('body', 'keywords')` 튜플이라 그대로 직렬화하면 모양이
-               불안정하다. 점 표기는 *agent 가 어떤 필드를 고쳐야 하는지* 한 문자열로
-               식별 가능하게 한다 (ADR-0013 D2 수용 기준).
+    - `loc`  — 위반 필드를 점 표기 한 문자열 (예: `body.keywords`). raw loc 튜플은
+               직렬화 모양이 불안정해, agent 가 고칠 필드를 한 문자열로 식별하게 한다.
     - `type` — pydantic 위반 종류 (예: `too_short`, `less_than_equal`,
                `string_pattern_mismatch`). agent 의 enum 기반 분기 신호.
     - `msg`  — 사람이 읽는 설명.
 
-    WHY `input` / `ctx` 제외: pydantic 의 raw error dict 는 위반 입력값 원본 (`input`)
-    과 컨텍스트 (`ctx`, 내부에 예외 객체가 들어갈 수 있음) 를 포함한다. 둘 다 JSON
-    직렬화가 불안정하거나 (`ctx` 의 예외 객체) 위반 식별에 불필요해 평탄화 시 떨군다.
-    REST 핸들러와 MCP 어댑터가 *같은 헬퍼* 를 써서 두 노출 표면의 형태를 한 곳에서 보장.
+    input / ctx 는 뺀다 — 원본 입력값과 컨텍스트(예외 객체 포함)는 JSON 직렬화가
+    불안정하고 위반 식별에 불필요하다. REST 와 MCP 가 같은 헬퍼를 써 형태를 맞춘다.
     """
     flattened: list[dict[str, str]] = []
     for e in errors:

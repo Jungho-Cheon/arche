@@ -1,8 +1,7 @@
 """FastAPI 의존성 — singleton service / repository 구성.
 
-WHY 모듈 전역 + lazy: 부팅 시 호출되는 startup 핸들러에서 초기화하면 import
-순환을 피할 수 있고, 테스트는 app.dependency_overrides 로 갈아끼우면 된다.
-"""
+startup 핸들러에서 초기화해 import 순환을 피하고, 테스트는 app.dependency_overrides
+로 갈아끼운다."""
 
 from __future__ import annotations
 
@@ -43,23 +42,16 @@ def build_ingest_service(
     embedder: EmbeddingProvider,
     graph: GraphRepository,
 ) -> IngestService:
-    """추출 파이프라인(IngestService) 을 한 곳에서 조립.
-
-    WHY 단일 출처: 같은 IngestService 구성이 REST 의존성(ingest_service_dep),
-    stdio MCP serve(cli.py), HTTP MCP mount(main.py lifespan) 세 진입점에서
-    필요하다. 세 곳이 서로 다른 파라미터로 조립하면 REST 와 MCP 가 *같은 적재
-    동작* 을 노출한다는 계약(ARCHITECTURE.md §1)이 깨진다. 조립을 이 함수 하나로
-    모아 어느 진입점이든 같은 파이프라인을 쓰게 한다.
-    """
+    """추출 파이프라인(IngestService) 을 한 곳에서 조립한다. REST/stdio MCP/HTTP MCP
+    세 진입점이 같은 구성을 써야 같은 적재 동작을 노출하므로 조립을 이 함수로 모은다."""
     return IngestService(
         llm=llm,
         embedder=embedder,
         graph=graph,
         model_context_tokens=settings.llm_model_context_tokens,
-        # ADR-0009 D3 — main_entity 2nd pass. 같은 LLM provider 의 generic
-        # complete 경로 재사용.
+        # main_entity 2nd pass — 같은 LLM provider 의 generic complete 재사용.
         main_entity_extractor=MainEntityExtractor(llm=llm),
-        # ADR-0010 D2 — 청크 추출 캐시 + ADR-0010 D1 — batch parallel default 8.
+        # 청크 추출 캐시 + batch parallel(기본 8).
         extraction_cache=ExtractionCache(root=DEFAULT_CACHE_DIR),
         extract_batch_size=8,
         llm_model_id=settings.llm_model_id,
@@ -78,22 +70,14 @@ def ingest_service_dep(
 
 
 def task_registry_dep(request: Request) -> IngestTaskRegistry:
-    """Admin ingest 의 in-process 작업 registry.
-
-    WHY app.state 에서 가져옴: lifespan 에서 한 번 만들어 두면 모든 요청이 같은
-    registry 인스턴스를 공유 — task_id 가 어떤 요청에서 만들어졌든 다른 요청
-    (status polling) 이 조회 가능.
-    """
+    """Admin ingest 의 in-process 작업 registry. lifespan 에서 한 번 만들어 모든
+    요청이 같은 인스턴스를 공유하므로, 다른 요청의 status polling 이 조회 가능하다."""
     return request.app.state.ingest_task_registry
 
 
 def build_default_components(settings: Settings) -> dict:
-    """프로덕션 부팅 경로에서 사용. 테스트는 별도 구성.
-
-    LLM/임베딩 provider 는 모델 식별자의 접두사로 팩토리가 고른다 (ADR-0019) —
-    `ARCHE_API_LLM_MODEL=anthropic/...`, `ARCHE_API_EMBEDDING_MODEL=voyage/...` 처럼
-    환경 변수만 바꾸면 코드 변경 없이 교체된다.
-    """
+    """프로덕션 부팅 경로에서 사용한다(테스트는 별도 구성). LLM/임베딩 provider 는
+    모델 식별자 접두사로 팩토리가 고르므로 환경 변수만 바꾸면 코드 변경 없이 교체된다."""
     graph = build_graph_repository(settings)
     llm = build_llm_provider(settings)
     embedder = build_embedding_provider(settings)
@@ -101,12 +85,9 @@ def build_default_components(settings: Settings) -> dict:
 
 
 def build_graph_repository(settings: Settings) -> GraphRepository:
-    """ADR-0020 투 트랙 — 설정 플래그로 그래프 백엔드를 고른다.
-
-    기본값 `embedded` 는 Kuzu(서버 없이 pip install). `neo4j` 는 프로덕션
-    (동시성/namespace 공유/규모). 두 어댑터 모두 같은 GraphRepository 계약을 만족해
-    도메인/서비스 코드는 어느 쪽인지 모른다(ADR-0018 능력별 포트).
-    """
+    """설정 플래그로 그래프 백엔드를 고른다. 기본값 embedded 는 Kuzu(서버 없이 설치),
+    neo4j 는 프로덕션(동시성/공유/규모)용이다. 두 어댑터가 같은 GraphRepository 계약을
+    만족해 도메인/서비스는 어느 쪽인지 모른다."""
     backend = (settings.graph_backend or "embedded").lower()
     if backend in ("neo4j", "server"):
         return Neo4jGraphRepository(settings)

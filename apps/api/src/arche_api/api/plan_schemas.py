@@ -1,10 +1,7 @@
 """reviewable ingest 의 요청/응답 스키마 — plan → preview → commit.
 
-WHY 별도 모듈 (schemas.py 와 분리): plan/preview/commit 은 graph primitive
-(find_entities 등) 와 *다른 사용 흐름* 이다 — 적재 전 변경 묶음을 사람이 검토하는
-관리자(admin) 통로. 입력/출력 계약을 한 모듈에 모아 reviewable ingest 의 표면을
-한눈에 보이게 한다. 모든 모델은 schemas.py 의 관례대로 `extra="forbid"` 로
-*예상치 못한 키를 거부* 한다 (계약 어긋남을 silent pass 시키지 않음).
+적재 전 변경 묶음을 사람이 검토하는 admin 통로라, graph primitive 와 사용 흐름이
+달라 별도 모듈로 둔다. 모든 모델은 extra="forbid" 로 예상치 못한 키를 거부한다.
 
 세 단계의 의미:
   - plan  : 파일을 *쓰지 않고* 추출만 돌려 변경 묶음(IngestPlan)을 만든다.
@@ -31,14 +28,12 @@ class PlanIngestRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     path: str = Field(min_length=1, description="적재 계획을 세울 파일의 절대 경로")
-    # ADR-0015 — 이 계획이 속한 namespace. 미지정 시 "default". 진입점이 이 값을
-    # 도메인 plan_file 로 흘려 비-default namespace 계획이 resolve/commit 까지 그
-    # namespace 안에 머물게 한다 (issue #92 — default 하드코딩 제거). resolve 는
-    # 보관된 plan.namespace_id 를 재사용하므로 별도 입력이 필요 없다.
+    # 이 계획이 속한 namespace. 진입점이 이 값을 plan_file 로 흘려 resolve/commit 까지
+    # 같은 namespace 에 머물게 한다(issue #92). resolve 는 보관된 값을 재사용한다.
     namespace_id: str = Field(
         default="default",
         min_length=1,
-        description="ADR-0015 — 계획이 속한 namespace. 미지정 시 'default'",
+        description="계획이 속한 namespace. 미지정 시 'default'",
     )
     hints: str | None = Field(
         default=None,
@@ -51,12 +46,8 @@ class PlanIngestRequest(BaseModel):
 
 
 class PlanContentRequest(BaseModel):
-    """plan 입력 (콘텐츠판, #155) — 파일 경로 대신 에이전트가 넘긴 텍스트.
-
-    에이전트가 외부 소스(Jira/Confluence 등)를 자기 MCP 로 읽어와 그 내용을 파일로
-    떨구지 않고 곧장 적재 계획을 세울 때 쓴다. 이후 preview/resolve/commit 은 파일
-    경로판과 완전히 같은 plan_id 흐름을 탄다.
-    """
+    """plan 입력(콘텐츠판) — 파일 경로 대신 에이전트가 넘긴 텍스트로 계획을 세운다.
+    외부 소스를 파일로 안 떨구고 곧장 적재할 때 쓰고, 이후 흐름은 파일 경로판과 같다."""
 
     model_config = ConfigDict(extra="forbid")
 
@@ -71,7 +62,7 @@ class PlanContentRequest(BaseModel):
     namespace_id: str = Field(
         default="default",
         min_length=1,
-        description="ADR-0015 — 계획이 속한 namespace. 미지정 시 'default'",
+        description="계획이 속한 namespace. 미지정 시 'default'",
     )
     hints: str | None = Field(
         default=None,
@@ -158,8 +149,7 @@ class QuestionView(BaseModel):
     candidate_id: str
     candidate_name: str
     similarity: float
-    # #105 — 닫힌 목록. 응답 스키마에 enum 으로 노출돼 소비자가 값 집합을 계약으로
-    # 삼는다. 도메인의 PlanQuestionKind 를 단일 출처로 재사용.
+    # 닫힌 목록 — 응답 스키마에 enum 으로 노출된다. 도메인의 PlanQuestionKind 를 재사용.
     kind: PlanQuestionKind
 
 

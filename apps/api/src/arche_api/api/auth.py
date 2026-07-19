@@ -1,11 +1,8 @@
-"""Auth + namespace 미들웨어 — ADR-0014 D3 + ADR-0015 D1/D2.
+"""Auth + namespace 미들웨어 — Bearer 토큰에서 namespace_id 를 뽑는다.
 
-Bearer 토큰 → namespace_id 추출. 토큰 검증은 *외부* (사내 SSO gateway / API key
-store) 에 위임 — 본 모듈은 *주입 포인트* 만 정의.
-
-시제품 단계 default — 토큰 자체가 namespace_id (예: `Bearer ns:work-a`). 사내
-인프라 도입 시 (Phase 3 ADR-0015 Open Question 11-13) JWT decoder 등 교체.
-"""
+토큰 검증은 외부(사내 SSO gateway / API key store)에 위임하고 이 모듈은 주입 포인트만
+정의한다. 시제품 기본값은 토큰 자체가 namespace_id 다(예: `Bearer ns:work-a`). 사내
+인프라를 도입하면 JWT decoder 등으로 교체한다."""
 
 from __future__ import annotations
 

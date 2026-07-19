@@ -1,4 +1,4 @@
-"""REST 요청/응답 envelope — PRD 3 §0.3."""
+"""REST 요청/응답 envelope."""
 
 from __future__ import annotations
 
@@ -32,23 +32,18 @@ class ErrorEnvelope(BaseModel):
 
 
 class DataEnvelope(BaseModel, Generic[T]):
-    """{ "data": <payload> } — PRD 3 §0.3."""
+    """{ "data": <payload> } 형태의 성공 응답 envelope."""
 
     model_config = ConfigDict(extra="forbid")
 
     data: T
 
 
-# ---------- find_entities (PRD 3 §3.3 / §3.4) ----------
+# ---------- find_entities ----------
 
 
 class FindEntitiesRequest(BaseModel):
-    """입력 — PRD 3 §3.3.
-
-    WHY `types` / `include_scores` 도 본 슬라이스에서 구현: 둘 다 *입력 계약*
-    이므로 (PRD 3 §3.3 이 source of truth) caller 가 호환을 가정한다. 하이브리드
-    구현 (#6) 전까지도 lexical-only 컨텍스트에서 의미 있게 동작 가능.
-    """
+    """find_entities 입력."""
 
     model_config = ConfigDict(extra="forbid")
 
@@ -62,24 +57,19 @@ class FindEntitiesRequest(BaseModel):
         default=False,
         description="True 이면 매치별 raw lexical/dense 점수 동봉 (디버깅 / 커스텀 re-rank).",
     )
-    # ADR-0015 — 질의할 namespace. REST 는 미지정 시 auth 헤더 > "default". MCP 는
-    # 미지정 시 "default". 검색을 이 namespace 안으로 가둔다 (issue #98 읽기 격리).
+    # 질의할 namespace. REST 는 미지정 시 auth 헤더 > "default", MCP 는 "default".
     namespace_id: str | None = Field(
         default=None,
         min_length=1,
-        description="ADR-0015 — 질의할 namespace. 미지정 시 auth 헤더 또는 'default'",
+        description="질의할 namespace. 미지정 시 auth 헤더 또는 'default'",
     )
 
     _ns_check = field_validator("namespace_id")(_validate_optional_namespace)
 
 
 class MatchScores(BaseModel):
-    """include_scores=true 일 때 노출되는 raw 점수 (PRD 3 §3.4).
-
-    WHY dense 는 0.0 으로 채워서라도 키를 노출: 하이브리드 도입 (#6) 이후에도
-    응답 형태가 *키 등장 여부* 로 갈리지 않게. lexical 만 동작 중이라는 사실은
-    별도 컨텍스트 (README 의 walking skeleton 한계 표) 로 안내.
-    """
+    """include_scores=true 일 때 노출되는 raw 점수. dense 는 값이 없어도 키를 노출해
+    응답 형태가 키 등장 여부로 갈리지 않게 한다."""
 
     model_config = ConfigDict(extra="forbid")
 
@@ -88,7 +78,7 @@ class MatchScores(BaseModel):
 
 
 class EntityMatch(BaseModel):
-    """PRD 3 §3.4 의 matches[] 한 항목."""
+    """matches[] 한 항목."""
 
     model_config = ConfigDict(extra="forbid")
 
@@ -96,10 +86,10 @@ class EntityMatch(BaseModel):
     score: float = Field(
         ge=0.0,
         le=1.0,
-        description="Fused score — walking skeleton 은 lexical-only 라 max-normalize 된 fulltext 점수.",
+        description="Fused score (0..1).",
     )
     matched_keyword: str = Field(
-        description="이 노드를 surface 시킨 input keyword (PRD 3 §3.5: 가장 높은 점수의 keyword).",
+        description="이 노드를 surface 시킨 input keyword.",
     )
     scores: MatchScores | None = Field(
         default=None,
@@ -108,7 +98,7 @@ class EntityMatch(BaseModel):
 
 
 class FindEntitiesResponse(BaseModel):
-    """PRD 3 §3.4 출력. envelope 으로 감싼 형태가 최종 REST 응답."""
+    """find_entities 출력. envelope 으로 감싼 형태가 최종 REST 응답이다."""
 
     model_config = ConfigDict(extra="forbid")
 
@@ -119,12 +109,7 @@ class FindEntitiesResponse(BaseModel):
 
 
 class AdminIngestRequest(BaseModel):
-    """PRD 2 §1.2 — 디렉토리 경로 + dry_run 옵션.
-
-    WHY directory_path: PRD 2 §1.2 가 명시. 단일 파일 ingest 는 CLI 의 `ingest`
-    명령으로 처리 (CLI 는 디렉토리/파일 양쪽 받지만 admin REST 는 디렉토리만
-    노출 — *멀티 파일 흐름의 진입점* 으로 의미를 좁힌다).
-    """
+    """디렉토리 경로 + dry_run 옵션. admin REST 는 디렉토리만 받는다(단일 파일은 CLI ingest)."""
 
     model_config = ConfigDict(extra="forbid")
 
@@ -134,17 +119,16 @@ class AdminIngestRequest(BaseModel):
     dry_run: bool = Field(
         default=False, description="True 면 그래프에 쓰지 않고 추출만 수행."
     )
-    # ADR-0015 D2 — namespace 명시 override. 부재 시 auth 헤더의 namespace 또는
-    # "default" 사용.
+    # namespace override. 미지정 시 auth 헤더의 namespace 또는 "default".
     namespace_id: str | None = Field(
         default=None,
-        description="ADR-0015 — entity 의 namespace. 미지정 시 'default' 또는 auth 헤더 추출",
+        description="entity 의 namespace. 미지정 시 'default' 또는 auth 헤더 추출",
     )
 
     _ns_check = field_validator("namespace_id")(_validate_optional_namespace)
 
 
-# ---------- admin/namespaces (ADR-0015 D6) ----------
+# ---------- admin/namespaces ----------
 
 
 class NamespaceSummary(BaseModel):
@@ -161,7 +145,7 @@ class AdminNamespacesResponse(BaseModel):
 
 
 class AdminIngestResponse(BaseModel):
-    """PRD 2 §1.2 — 202 Accepted 응답 본문 (작업 ID + 상태 polling URL)."""
+    """202 Accepted 응답 본문 — 작업 ID + 상태 polling URL."""
 
     model_config = ConfigDict(extra="forbid")
 
@@ -170,20 +154,9 @@ class AdminIngestResponse(BaseModel):
 
 
 class AdminIngestProgress(BaseModel):
-    """ingest 작업 진행 상태 — GET /admin/ingest/{task_id}/status 의 progress 필드.
-
-    세 카운터는 발생 단계와 조건이 다르다.
-
-    files_skipped             : ingest 단계에서 short-circuit 된 파일 수. 확장자는
-                                지원하지만 (path, SHA-256, 추출기 버전) 이 일치하는
-                                성공 회차가 이미 그래프에 있어 LLM 호출을 생략.
-    files_pending_skipped     : crawl 단계에서 PENDING_EXTS 로 분류된 파일 수.
-                                PENDING_EXTS 가 현재 비어 있어 항상 0. 계약 필드로
-                                유지하며 오디오/동영상 등 지원 예정 형식을 위해 예약.
-    files_unsupported_skipped : crawl 단계에서 SUPPORTED_EXTS 와 PENDING_EXTS 어느
-                                쪽에도 속하지 않는 확장자로 분류된 파일 수.
-                                예: .json, .py, .csv.
-    """
+    """ingest 작업 진행 상태. files_skipped 는 내용이 안 바뀌어 short-circuit 된 파일,
+    files_pending_skipped 와 files_unsupported_skipped 는 crawl 단계에서 확장자로
+    걸러진 파일(각각 지원 예정, 미지원)이다."""
 
     model_config = ConfigDict(extra="forbid")
 
@@ -227,7 +200,7 @@ class AdminIngestError(BaseModel):
 
 
 class AdminIngestStatusResponse(BaseModel):
-    """PRD 2 §1.3 의 status 응답 본문."""
+    """ingest status 응답 본문."""
 
     model_config = ConfigDict(extra="forbid")
 

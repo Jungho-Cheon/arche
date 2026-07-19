@@ -1,20 +1,9 @@
-"""Graph primitive 비즈니스 로직 — REST 라우터와 MCP 어댑터의 *공통 진입점* .
+"""Graph primitive 비즈니스 로직 — REST 라우터와 MCP 어댑터의 공통 진입점.
 
-WHY 모듈 분리: PRD 3 §0.1 의 1:1 매핑 — REST 와 MCP 는 *같은 입출력 스키마* 와
-*같은 동작* 을 노출한다. 두 통로가 각자 비즈니스 로직 (RRF fusion / BFS 절단 /
-find_path 매핑) 을 복사하면, 한쪽 수정이 다른 쪽에 누락되어 PRD 3 §0.1 의 정합
-계약이 깨진다. 따라서 비즈니스 로직은 *한 곳* (본 모듈) 에 모으고, 라우터는
-FastAPI 어댑터 (HTTPException + envelope), MCP 어댑터는 MCP 프로토콜 어댑터로
-얇게 동작한다.
-
-본 모듈은 **순수 서비스 함수** 만 담는다 — Pydantic 입력 모델을 받고, Pydantic
-응답 모델을 돌려준다. FastAPI 의 `Depends` / `HTTPException` / `Request` 같은
-HTTP 의존성은 없다. 에러는 도메인 예외 (`ArcheError` 계열) 로만 raise —
-REST 는 글로벌 핸들러로, MCP 는 `_to_mcp_error` 로 변환한다.
-
-WHY envelope (`DataEnvelope`) 미사용: PRD 3 §0.4 — MCP 의 응답은 *primitive
-payload 만* (envelope 없음). REST 라우터가 envelope 으로 감싸는 책임을 진다.
-"""
+REST 와 MCP 가 같은 스키마와 같은 동작을 노출하므로, fusion/순회/매핑 같은 로직을
+여기 한 곳에 모으고 두 통로는 얇은 어댑터로만 둔다. 순수 서비스 함수(Pydantic 입력→
+응답)라 HTTP 의존성이 없고, 에러는 도메인 예외로만 raise 한다. envelope 은 REST
+라우터가 감싼다(MCP 응답은 payload 만)."""
 
 from __future__ import annotations
 
@@ -83,13 +72,11 @@ from .schemas import (
 logger = logging.getLogger(__name__)
 
 
-# WHY RRF k 상수 (60): PRD 3 §3.5 권장값. 측정 통제 변수 (ADR-0001) — 변경 시
-# ADR-0003 amend + 새 측정 회차 필요. 모듈 상수로 기록해 라우터/어댑터/테스트가
-# 같은 값을 참조하도록 한다.
+# RRF k — 측정 통제 변수. 라우터/어댑터/테스트가 같은 값을 참조한다.
 RRF_K = 60
 
 
-# ---------- get_schema (PRD 3 §2) ----------
+# ---------- get_schema ----------
 
 
 def get_schema(
@@ -100,10 +87,9 @@ def get_schema(
 ) -> GetSchemaResponse:
     """그래프 모양 조회 — entity_types / relation_types / embedding_info.
 
-    namespace_id — 통계를 이 namespace 안으로 가둔다 (issue #98 읽기 격리).
+    namespace_id 로 통계를 이 namespace 안으로 가둔다.
     """
-    # 헤더/쿼리에서 해소된 namespace 는 요청 모델을 거치지 않으므로 여기서 형식
-    # 검증 (#142). 위반은 InvalidInputError(400).
+    # 요청 모델을 거치지 않는 namespace 는 여기서 형식 검증한다 (#142).
     namespace_id = ensure_namespace_id(namespace_id)
     entity_stats, relation_stats = graph.get_schema_summary(
         examples_per_type=5, namespace_id=namespace_id
@@ -135,7 +121,7 @@ def get_schema(
     )
 
 
-# ---------- find_entities (PRD 3 §3) ----------
+# ---------- find_entities ----------
 
 
 def find_entities(
@@ -145,42 +131,31 @@ def find_entities(
     embedder: EmbeddingProvider,
     namespace_id: str = "default",
 ) -> FindEntitiesResponse:
-    """어휘 + dense 하이브리드 + RRF (k=60).
+    """어휘 + dense 하이브리드 + RRF.
 
-    동작 (PRD 3 §3.5):
-    1. 각 input keyword 에 대해 fulltext top-k (lexical) + ANN top-k (dense).
-    2. 노드 ID 단위 union — RRF 결합.
-    3. types 필터 → 점수 내림차순 → limit slice → include_scores 옵션 적용.
-
-    *graceful fallback 없음* — 임베딩 의존성이 죽으면 503 dependency_unavailable
-    을 그대로 raise. lexical-only silent fallback 은 측정 무결성을 해친다.
-    """
-    # 헤더/쿼리 해소 namespace 형식 검증 (#142) — 요청 모델 밖 경로 초크포인트.
+    keyword 별 fulltext top-k(lexical) + ANN top-k(dense)를 노드 ID 단위로 union 해
+    RRF 로 결합하고, types 필터 → 점수 내림차순 → limit slice. 임베딩이 죽으면 503 을
+    그대로 raise 한다(lexical-only silent fallback 은 측정 무결성을 해친다)."""
+    # 요청 모델 밖 namespace 형식 검증 (#142).
     namespace_id = ensure_namespace_id(namespace_id)
-    # WHY limit_per_keyword 가 입력 limit 보다 크게: 여러 keyword 가 같은 노드를
-    # surface 시키는 경우를 흡수하려면 keyword 별 풀이 입력 limit 보다 넉넉해야.
+    # keyword 별 풀을 입력 limit 보다 넉넉히 — 여러 keyword 가 같은 노드를 낼 수 있다.
     per_kw = min(50, max(body.limit * 2, 10))
 
     lexical_hits = graph.find_by_keywords_scored(
         keywords=body.keywords, limit_per_keyword=per_kw, namespace_id=namespace_id
     )
 
-    # dense path — 각 keyword 별 임베딩 1 회 → ANN.
-    # WHY 배치 임베딩: keyword 가 32 개까지 가능하므로 한 번에 list 로 보내 호출
-    # 횟수를 1 회로 단축. OpenAI embeddings API 는 입력 list 의 순서를 보존한다.
+    # keyword 를 한 번에 배치 임베딩한다(호출 1회, 입력 순서 보존).
     try:
         keyword_vectors = embedder.embed(body.keywords)
     except DependencyUnavailableError:
         raise
     except Exception as e:  # noqa: BLE001
-        # 임베딩 호출 자체가 죽으면 503 으로 명시 변환. WHY: OpenAI SDK 의 일부
-        # 예외는 DependencyUnavailableError 로 wrap 되지만, 우리 어댑터 외부의
-        # 모듈 (network, dns) 에서 발생하는 예외도 같은 의미를 가지므로 503 으로.
+        # 어댑터 밖(network/dns)에서 난 예외도 같은 의미라 503 으로 명시 변환한다.
         raise DependencyUnavailableError(f"embedding call failed: {e}") from e
 
     if len(keyword_vectors) != len(body.keywords):
-        # WHY 방어: embed 가 입력 길이와 다른 출력을 돌리면 후속 zip 이 silently
-        # 잘림. 명시적 에러로 끌어올린다.
+        # embed 출력 길이가 다르면 zip 이 조용히 잘려, 명시적 에러로 올린다.
         raise DependencyUnavailableError(
             f"embedding length mismatch: got {len(keyword_vectors)} expected {len(body.keywords)}"
         )
@@ -216,7 +191,7 @@ def _fuse_with_rrf(
     limit: int,
     include_scores: bool,
 ) -> list[EntityMatch]:
-    """RRF (Reciprocal Rank Fusion, k=60) — PRD 3 §3.5.
+    """RRF (Reciprocal Rank Fusion).
 
     각 keyword 별로 별도 rank list 가 들어온다. fusion 단계:
 
@@ -327,7 +302,7 @@ def _fuse_with_rrf(
     return matches
 
 
-# ---------- get_entity (PRD 3 §4) ----------
+# ---------- get_entity ----------
 
 
 def get_entity(
@@ -336,13 +311,9 @@ def get_entity(
     graph: GraphRepository,
     namespace_id: str = "default",
 ) -> GetEntityResponse:
-    """ID 로 단일 노드 + 인접 엣지 카운트 조회.
-
-    엔티티 없으면 EntityNotFoundError (REST 404 / MCP entity_not_found). 다른
-    namespace 의 노드도 *없는 것* 으로 본다 (issue #98 — id 우회 차단).
-    """
-    # 헤더/쿼리 해소 namespace + REST path / MCP 인자 id 형식 검증 (#142) —
-    # 요청 모델을 거치지 않는 경로의 초크포인트.
+    """ID 로 단일 노드 + 인접 엣지 카운트 조회. 없거나 namespace 밖이면
+    EntityNotFoundError."""
+    # 요청 모델 밖 namespace 와 id 형식 검증 (#142).
     namespace_id = ensure_namespace_id(namespace_id)
     entity_id = ensure_entity_id(entity_id)
     result = graph.get_entity_with_counts(entity_id=entity_id, namespace_id=namespace_id)
@@ -354,7 +325,7 @@ def get_entity(
     )
 
 
-# ---------- get_neighbors (PRD 3 §5) ----------
+# ---------- get_neighbors ----------
 
 
 def get_neighbors(
@@ -365,7 +336,7 @@ def get_neighbors(
     namespace_id: str = "default",
 ) -> GetNeighborsResponse:
     """진입점의 N-hop 이웃. 진입점 노드 포함. 순회는 이 namespace 안에서만 (#98)."""
-    # 헤더/쿼리 해소 namespace 형식 검증 (#142) — 요청 모델 밖 경로 초크포인트.
+    # 요청 모델 밖 namespace 형식 검증 (#142).
     namespace_id = ensure_namespace_id(namespace_id)
     if not graph.entity_exists(entity_id=entity_id, namespace_id=namespace_id):
         raise EntityNotFoundError(f"entity not found: {entity_id}", details={"id": entity_id})
@@ -384,7 +355,7 @@ def get_neighbors(
     )
 
 
-# ---------- find_path (PRD 3 §6) ----------
+# ---------- find_path ----------
 
 
 def find_path(
@@ -393,13 +364,10 @@ def find_path(
     graph: GraphRepository,
     namespace_id: str = "default",
 ) -> FindPathResponse:
-    """두 노드 사이 k-shortest path. 양 끝점·경로 모두 이 namespace 안에서만 (#98).
+    """두 노드 사이 k-shortest path(양 끝점과 경로 모두 이 namespace 안).
 
-    422 unprocessable: from_id == to_id.
-    404 entity_not_found: from 또는 to 가 (이 namespace 의) 그래프에 없음.
-    200 + paths=[]: 노드는 있지만 max_hops / relation_types 제약 안에서 경로 없음.
-    """
-    # 헤더/쿼리 해소 namespace 형식 검증 (#142) — 요청 모델 밖 경로 초크포인트.
+    from_id == to_id 면 422, 끝점이 없으면 404, 노드는 있지만 경로가 없으면 200+paths=[]."""
+    # 요청 모델 밖 namespace 형식 검증 (#142).
     namespace_id = ensure_namespace_id(namespace_id)
     if body.from_id == body.to_id:
         raise UnprocessableError(
@@ -426,7 +394,7 @@ def find_path(
     )
 
 
-# ---------- get_subgraph (PRD 3 §7) ----------
+# ---------- get_subgraph ----------
 
 
 def get_subgraph(
@@ -435,13 +403,10 @@ def get_subgraph(
     graph: GraphRepository,
     namespace_id: str = "default",
 ) -> GetSubgraphResponse:
-    """여러 진입점 union N-hop. 진입점 echo 포함. 이 namespace 안에서만 확장 (#98).
-
-    진입점 중 일부가 그래프에 없으면 — 별도 entity_not_found 를 raise 하지 않고
-    *존재하는 것만* 확장한다 (PRD 3 §11 미정 결정 — 본 PR 의 합리적 결정).
-    namespace 밖 진입점도 같은 정책으로 *조용히 무시* 한다 (issue #98).
-    """
-    # 헤더/쿼리 해소 namespace 형식 검증 (#142) — 요청 모델 밖 경로 초크포인트.
+    """여러 진입점 union N-hop(진입점 echo 포함, 이 namespace 안에서만 확장).
+    없거나 namespace 밖인 진입점은 entity_not_found 대신 조용히 무시하고 나머지만
+    확장한다."""
+    # 요청 모델 밖 namespace 형식 검증 (#142).
     namespace_id = ensure_namespace_id(namespace_id)
     result = graph.expand_subgraph(
         entry_ids=body.entry_ids,
@@ -458,7 +423,7 @@ def get_subgraph(
     )
 
 
-# ---------- find_related (#140 — 단일 스텝 multi-hop, ADR-0006 amend) ----------
+# ---------- find_related ----------
 
 
 def find_related(
@@ -469,16 +434,10 @@ def find_related(
 ) -> FindRelatedResponse:
     """시드 집합에서 구조적으로 가까운 관련 노드 top-k.
 
-    구현은 새 저장소 기능을 요구하지 않는다 — 기존 get_subgraph 순회(다중 시드
-    BFS)로 반경 안의 서브그래프를 한 번 가져온 뒤, 그 위에서 시드로부터의 감쇠
-    확산 근접도를 계산한다. 그래서 백엔드(Neo4j / Kuzu)와 무관하게 같은 동작을
-    노출하며 GDS 같은 추가 인프라에 의존하지 않는다. 정확한 Personalized PageRank
-    수치가 아니라 "왕복을 한 번으로 접는" 근접 랭킹이 목표다 (파라미터 정밀도는
-    측정으로 확정 — #140/#83).
-
-    namespace 격리는 get_subgraph 확장이 이미 보장한다 (#98). 그래프에 없는 시드는
-    get_subgraph 와 같은 정책으로 조용히 무시한다.
-    """
+    get_subgraph 순회(다중 시드 BFS)로 반경 안의 서브그래프를 한 번 가져온 뒤 시드
+    로부터의 감쇠 확산 근접도를 계산한다. 그래서 백엔드와 무관하고 GDS 같은 추가
+    인프라가 필요 없다. 정확한 PageRank 수치가 아니라 왕복을 한 번으로 접는 근접
+    랭킹이 목표다. 없는 시드는 조용히 무시한다."""
     namespace_id = ensure_namespace_id(namespace_id)
     # 근접 랭킹이 의미를 가지려면 후보 풀이 top_k 보다 넉넉해야 한다. get_subgraph
     # 는 시드에서 가까운 순으로 max_nodes 에서 자르므로, 풀을 top_k 의 배수로 잡아
@@ -581,21 +540,13 @@ def _bfs_distances(start: str, adjacency: dict[str, set[str]]) -> dict[str, int]
 
 
 # ---------- reviewable ingest: plan → preview → commit ----------
-#
-# WHY 세 함수가 한 묶음: 적재 전 변경을 사람이 검토하는 흐름이다. plan 이 변경
-# 묶음(IngestPlan)을 만들어 레지스트리에 보관하고, preview 가 그 묶음을 항목 단위로
-# 펼치며 "미리보기 완료" 로 표시하고, commit 이 *미리보기를 거친 경우에만* 그래프에
-# 적용한다. 안전 latch(미리보기 전제 + stale 검출)는 도메인 메서드가 아니라 본
-# 서비스 함수에 둔다 — IngestService.commit_plan 은 *재생만* 담당하고, "지금 적용해도
-# 안전한가" 라는 정책 판단은 통로(서비스)의 책임이기 때문이다.
+# 적재 전 변경을 사람이 검토하는 흐름. plan 이 변경 묶음을 만들어 레지스트리에 보관,
+# preview 가 펼치며 "미리보기 완료" 로 표시, commit 은 미리보기를 거친 경우에만 적용한다.
+# "지금 적용해도 안전한가" 판단(미리보기 전제 + stale 검출)은 도메인이 아니라 이 서비스에 둔다.
 
 
 def _summarize_plan(plan: IngestPlan) -> PlanSummary:
-    """IngestPlan 의 writes 종류별 개수 + 미해소 질문 수를 PlanSummary 로 집계.
-
-    WHY 공용 헬퍼: plan_ingest 와 resolve_ingest 가 *같은 규칙* 으로 요약해야
-    한다. 한쪽만 고치면 두 통로의 카운트가 어긋난다 — 집계 규칙을 한 곳에 모은다.
-    """
+    """IngestPlan 의 writes 종류별 개수 + 미해소 질문 수를 PlanSummary 로 집계한다."""
     n_new = sum(1 for w in plan.writes if w.method == "create_entity")
     n_merge = sum(1 for w in plan.writes if w.method == "apply_merge_mutation")
     n_rel = sum(1 for w in plan.writes if w.method == "upsert_relation")
@@ -629,11 +580,8 @@ def plan_ingest_content(
     service: IngestService,
     registry: PlanRegistry,
 ) -> PlanSummary:
-    """콘텐츠판 plan (#155) — 파일 없이 텍스트로 변경 묶음을 만들어 보관 + 요약.
-
-    plan_ingest 와 같은 계약(PlanSummary)을 돌려주므로, 이후 preview/resolve/commit
-    은 파일 경로판과 완전히 같은 plan_id 흐름을 탄다.
-    """
+    """콘텐츠판 plan — 파일 없이 텍스트로 변경 묶음을 만들어 보관하고 요약한다.
+    이후 preview/resolve/commit 은 파일 경로판과 같은 plan_id 흐름을 탄다."""
     plan = service.plan_content(
         content=body.content,
         source_id=body.source_id,
@@ -649,12 +597,8 @@ def preview_plan(
     *,
     registry: PlanRegistry,
 ) -> PlanPreview:
-    """변경 묶음을 항목 단위로 펼치고, 계획을 "미리보기 완료" 로 표시한다.
-
-    WHY mark_previewed 가 여기서: commit 의 안전 latch 가 `previewed` 플래그를
-    전제한다. 미리보기를 *실제로 받아 본* 호출만 그 플래그를 세워야 latch 가
-    의미를 가진다 — 그래서 응답을 만드는 본 함수가 표시 책임을 진다.
-    """
+    """변경 묶음을 항목 단위로 펼치고 계획을 "미리보기 완료" 로 표시한다. 미리보기를
+    실제로 받아 본 호출만 플래그를 세워야 commit latch 가 의미를 가지므로 여기서 표시한다."""
     plan = registry.get(body.plan_id)
     if plan is None:
         raise InvalidInputError("unknown plan_id", details={"plan_id": body.plan_id})
@@ -718,11 +662,9 @@ def resolve_ingest(
 
     흐름:
       1. plan_id 로 계획을 찾는다 (없으면 InvalidInputError).
-      2. resolutions 의 모든 question_id 가 그 계획의 open_questions 에 존재하는지
-         검증한다 — 하나라도 없으면 InvalidInputError. WHY 도메인 위임 전에 검증:
-         IngestService.resolve_plan 은 알 수 없는 question_id 를 *조용히 무시* 한다
-         (멱등 재전송 흡수용). 통로(서비스)는 사용자가 *틀린 질문 id* 를 보냈음을
-         명시적으로 알려야 하므로, 위임 전에 거부한다.
+      2. resolutions 의 question_id 가 모두 계획의 open_questions 에 있는지 검증한다.
+         도메인 resolve_plan 은 알 수 없는 id 를 조용히 무시하지만(멱등), 통로는 틀린
+         id 를 사용자에게 알려야 하므로 위임 전에 거부한다.
       3. {question_id: decision} 맵으로 도메인 resolve_plan 에 위임한다.
       4. 정제된 계획을 *같은 plan_id* 로 레지스트리에 다시 보관한다 (previewed 는
          resolve_plan 이 False 로 초기화 — 다시 미리보기를 거쳐야 commit 가능).
