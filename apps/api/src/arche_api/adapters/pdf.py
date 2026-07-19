@@ -1,22 +1,12 @@
 """PDF 텍스트 + 이미지 추출 — pypdf 사용. 페이지 단위로 분리.
 
-WHY pypdf:
-- 순수 Python, 라이센스 BSD-3 호환. 운영/배포 시 라이센스 부담이 없다.
-- `pdfplumber` 는 `pdfminer.six` 의존이라 무거움. `pymupdf` 는 AGPL 이라 OSS+SaaS
-  배포 시 강한 제약. MVP 의 PDF 는 *대부분 텍스트 + 일부 이미지 페이지* 가정 —
-  pypdf 의 텍스트 추출 품질이면 충분.
-- OCR (이미지 페이지의 글자 인식) 은 본 PR 범위 밖이지만, 텍스트가 비어 있고
-  이미지가 있는 페이지는 *그 페이지 자체를 이미지로 멀티모달 호출* 하는 폴백을
-  `IngestService` 가 채운다 (PRD 2 §2.1 + §3.4).
+pypdf 는 순수 Python + BSD-3 호환이라 배포 부담이 없다(pymupdf 는 AGPL). 텍스트가
+비고 이미지만 있는 페이지는 그 페이지를 이미지로 멀티모달 호출하는 폴백을
+IngestService 가 채운다.
 
-흐름:
-  `extract_pdf(path)` → 페이지마다 `PdfPage(page_index, total_pages, text, images)`
-  반환. 텍스트는 `page.extract_text()`, 이미지는 `page.images` 의 `.data` 바이트
-  를 모은다. pypdf 가 throw 한 예외는 `DependencyUnavailableError` 가 아니라
-  도메인 에러 `InvalidInputError` 로 변환 — 호출자가 *그 파일만 skip + 다른
-  파일 계속* 의 PRD 2 §8 시나리오를 따르도록 (`UnsupportedFileTypeError` 도 아닌
-  이유: 확장자는 지원하지만 *내용이 깨진* 케이스).
-"""
+흐름 — extract_pdf(path) 가 페이지마다 PdfPage(page_index, total_pages, text, images)
+를 반환한다. pypdf 예외는 InvalidInputError 로 변환해, 호출자가 그 파일만 skip 하고
+계속하게 한다(확장자는 지원하지만 내용이 깨진 케이스)."""
 
 from __future__ import annotations
 
@@ -50,13 +40,9 @@ class PdfPage:
 def extract_pdf(path: Path) -> list[PdfPage]:
     """PDF 를 페이지 단위로 분해.
 
-    WHY pypdf.PdfReader 직접: 스트리밍이 아니라 메모리 적재 후 페이지 인덱스
-    접근. MVP 의 PDF 크기는 보통 수 MB 이하 — 스트리밍 이득이 작고 코드가
-    단순해진다.
-
     raises:
         InvalidInputError — 파일이 PDF 가 아니거나 깨졌을 때. 호출자는 이
-            예외를 잡아 *해당 파일만 skip + warning 로그* (PRD 2 §8).
+            예외를 잡아 해당 파일만 skip 하고 계속한다.
     """
     try:
         from pypdf import PdfReader
@@ -94,9 +80,8 @@ def extract_pdf(path: Path) -> list[PdfPage]:
 
         images: list[bytes] = []
         mime_types: list[str] = []
-        # WHY try/except: pypdf 의 이미지 추출은 PDF 의 인라인 이미지 스트림
-        # 인코딩에 따라 깨질 수 있다 (JBIG2 / JPEG2000 등). 실패해도 텍스트는
-        # 살리도록 분리해 잡는다.
+        # pypdf 이미지 추출은 인코딩(JBIG2/JPEG2000 등)에 따라 깨질 수 있어, 실패해도
+        # 텍스트는 살리도록 따로 잡는다.
         try:
             for img in page.images:
                 # `img.data` 는 디코드된 원본 바이트 (pypdf 가 stream filter
@@ -139,8 +124,8 @@ def extract_pdf(path: Path) -> list[PdfPage]:
     return pages
 
 
-# WHY magic-number 감지: pypdf 의 `img.name` 은 PDF 내부 리소스 이름이라 확장자가
-# 없을 수 있다. 첫 바이트로 포맷을 식별해 멀티모달 호출의 MIME 헤더를 정확히 둔다.
+# pypdf 의 img.name 은 PDF 내부 리소스 이름이라 확장자가 없을 수 있어, 첫 바이트로
+# 포맷을 식별해 MIME 헤더를 정한다.
 _PNG_SIG = b"\x89PNG\r\n\x1a\n"
 _JPEG_SIG = b"\xff\xd8\xff"
 _WEBP_SIG_HEAD = b"RIFF"

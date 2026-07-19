@@ -1,11 +1,6 @@
-"""Extraction 결과 캐시 — ADR-0010 D2.
-
-sha256 키 기반 디스크 캐시. 같은 (청크 본문 + 호출 컨텍스트 + system prompt +
-모델 + version) → 같은 ExtractedGraph 결과.
-
-WHY 디스크 단일: 시제품 단계의 단순성. Phase 3 의 사내 인프라 결정 시 Redis /
-S3 로 교체 가능 (캐시 인터페이스만 보존).
-"""
+"""Extraction 결과 디스크 캐시. 같은 (청크 본문 + 컨텍스트 + system prompt + 모델 +
+version) 은 같은 ExtractedGraph 를 돌려준다. 인터페이스만 보존하면 Redis/S3 로 교체
+가능하다."""
 
 from __future__ import annotations
 
@@ -20,8 +15,7 @@ from ..domain.models import ExtractedEntity, ExtractedGraph, ExtractedRelation
 logger = logging.getLogger(__name__)
 
 
-# ADR-0010 D2 version 필드. ADR-0009 의 SYSTEM_PROMPT / 컨텍스트 schema 변경 시
-# bump → 전체 캐시 invalidate.
+# SYSTEM_PROMPT 나 컨텍스트 schema 가 바뀌면 이 값을 올려 전체 캐시를 무효화한다.
 CACHE_VERSION: str = "v1-2026-06-21"
 
 

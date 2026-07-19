@@ -1,4 +1,4 @@
-"""Provider 팩토리 — config 의 provider 접두사로 LLM/임베딩 어댑터를 고른다 (ADR-0019).
+"""Provider 팩토리 — config 의 provider 접두사로 LLM/임베딩 어댑터를 고른다.
 
 `ARCHE_API_LLM_MODEL` / `ARCHE_API_EMBEDDING_MODEL` 의 `provider/model` 접두사
 (예: `anthropic/claude-...`, `voyage/voyage-3`) 로 어느 어댑터를 만들지 결정한다.

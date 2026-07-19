@@ -60,12 +60,9 @@ _FTS_INDEX = "entity_search_idx"
 
 
 class KuzuGraphRepository(GraphRepository):
-    """Kuzu 임베디드 어댑터. GraphRepository 계약을 Neo4j 어댑터와 동일하게 만족.
-
-    WHY 단일 커넥션 보존: Kuzu 는 in-process 라 커넥션이 곧 DB 핸들이다. 프로세스
-    수명 동안 하나를 재사용한다(임베디드는 단일 라이터 — ADR-0020 D1 의 동시성
-    경계와 정합).
-    """
+    """Kuzu 임베디드 어댑터 — GraphRepository 계약을 Neo4j 어댑터와 동일하게 만족한다.
+    Kuzu 는 in-process 라 커넥션이 곧 DB 핸들이라 프로세스 수명 동안 하나를 재사용한다
+    (임베디드는 단일 라이터)."""
 
     def __init__(self, settings: Settings) -> None:
         self._settings = settings
@@ -156,11 +153,8 @@ class KuzuGraphRepository(GraphRepository):
         return int(rows[0]["c"]) if rows else 0
 
     def _refresh_indexes(self) -> None:
-        """더티면 벡터/풀텍스트 인덱스를 drop 후 재생성. 데이터 없으면 건너뛴다.
-
-        WHY 재빌드: Kuzu 의 HNSW/FTS 인덱스는 병합(alias 변경)이나 삭제(차분) 뒤
-        조용히 어긋날 수 있다. 읽기 직전에 재빌드해 결과 정확성을 보장한다.
-        """
+        """더티면 벡터/풀텍스트 인덱스를 drop 후 재생성한다(데이터 없으면 건너뜀).
+        Kuzu 의 HNSW/FTS 인덱스는 병합/삭제 뒤 조용히 어긋날 수 있어 읽기 직전에 재빌드한다."""
         if not self._indexes_dirty:
             return
         if self._entity_count() == 0:
