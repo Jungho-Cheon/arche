@@ -106,9 +106,6 @@ def test_reindex_cli_invokes_adapter(monkeypatch) -> None:  # noqa: ANN001
     calls: list[str] = []
 
     class _FakeRepo:
-        def __init__(self, settings: object) -> None:
-            calls.append("init")
-
         def reindex_vector(self) -> dict[str, object]:
             calls.append("reindex")
             return {"index": VECTOR_INDEX, "dimension": 1536}
@@ -116,7 +113,8 @@ def test_reindex_cli_invokes_adapter(monkeypatch) -> None:  # noqa: ANN001
         def close(self) -> None:
             calls.append("close")
 
-    monkeypatch.setattr(cli, "Neo4jGraphRepository", _FakeRepo)
+    # CLI 는 이제 백엔드 팩토리로 저장소를 만든다 (embedded/neo4j 를 설정이 선택).
+    monkeypatch.setattr(cli, "build_graph_repository", lambda settings: _FakeRepo())
 
     result = CliRunner().invoke(cli.app, ["reindex"])
 
