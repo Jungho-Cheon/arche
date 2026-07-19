@@ -1,0 +1,16 @@
+{
+  "name": "arche",
+  "owner": {
+    "name": "Arche"
+  },
+  "metadata": {
+    "description": "Arche 그래프 지식베이스를 에이전트가 쓰게 하는 플러그인 배포처"
+  },
+  "plugins": [
+    {
+      "name": "arche",
+      "source": "./plugins/arche",
+      "description": "AI 에이전트가 Arche 그래프 지식베이스를 의도대로 쓰게 하는 하네스 — MCP 서버 등록 + 적재/질의 스킬"
+    }
+  ]
+}
