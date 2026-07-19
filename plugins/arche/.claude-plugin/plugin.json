@@ -1,0 +1,10 @@
+{
+  "name": "arche",
+  "displayName": "Arche",
+  "version": "0.1.0",
+  "description": "AI 에이전트가 Arche 그래프 지식베이스를 의도대로 쓰게 하는 하네스. Arche MCP 서버를 등록하고, 외부 소스 적재(ingest_content)와 그래프 질의(find_entities/find_related 등)의 사용 패턴을 스킬로 규정한다.",
+  "author": {
+    "name": "Arche"
+  },
+  "keywords": ["knowledge-graph", "mcp", "rag", "ingest", "arche"]
+}

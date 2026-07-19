@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "arche": {
+      "command": "arche",
+      "args": ["mcp", "serve", "--stdio"],
+      "env": {
+        "ARCHE_API_GRAPH_BACKEND": "embedded",
+        "ARCHE_API_LLM_MODEL": "claude-code/sonnet",
+        "ARCHE_API_EMBEDDING_MODEL": "openai/text-embedding-3-small"
+      }
+    }
+  }
+}
