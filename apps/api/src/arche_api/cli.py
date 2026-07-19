@@ -17,8 +17,8 @@ from typing import Annotated
 import typer
 from dotenv import load_dotenv
 
-from .adapters.graph import Neo4jGraphRepository
 from .adapters.providers import build_embedding_provider, build_llm_provider
+from .api.deps import build_graph_repository
 from .config import get_settings
 from .domain.errors import ArcheError
 from .domain.ingest import FileProgressEvent, IngestService
@@ -62,12 +62,12 @@ def mcp_serve(
         ),
     ] = True,
 ) -> None:
-    """graph 조회 6개 + 검토형 적재 4개를 MCP 표준 tool 로 노출 (PRD 3 §8, ADR-0006).
+    """graph 조회 7개 + 검토형 적재 4개를 MCP 표준 tool 로 노출 (PRD 3 §8, ADR-0006).
 
     동작:
-    1. `.env` 로드 + Settings / Neo4jGraphRepository / 임베딩 provider
-       (팩토리가 모델 접두사로 선택, ADR-0019) 구성.
-    2. `build_mcp_server` 로 조회 6 tool + (LLM/IngestService 구성 시) 검토형 적재
+    1. `.env` 로드 + Settings / 그래프 저장소(설정이 embedded Kuzu / neo4j 선택,
+       ADR-0020) / 임베딩 provider (팩토리가 모델 접두사로 선택, ADR-0019) 구성.
+    2. `build_mcp_server` 로 조회 7 tool + (LLM/IngestService 구성 시) 검토형 적재
        4 tool 등록.
     3. stdio transport 에서 JSON-RPC 핸드셰이크 (initialize / list_tools /
        call_tool) 를 처리.
@@ -114,7 +114,9 @@ def mcp_serve(
     load_dotenv()
     settings = get_settings()
 
-    graph = Neo4jGraphRepository(settings)
+    # 저장소 백엔드는 설정(ARCHE_API_GRAPH_BACKEND)이 고른다 — REST 의 deps 와 같은
+    # 팩토리. 기본값 embedded(Kuzu)면 Neo4j 서버 없이 stdio serve 가 뜬다 (ADR-0020).
+    graph = build_graph_repository(settings)
     embedder = build_embedding_provider(settings)
     try:
         # 인덱스 idempotent 보장 — REST 의 lifespan 과 같은 책임.
@@ -176,7 +178,8 @@ def reindex() -> None:
     load_dotenv()
     settings = get_settings()
 
-    graph = Neo4jGraphRepository(settings)
+    # 설정이 고른 백엔드에서 색인을 다시 만든다 (embedded Kuzu / neo4j 모두 지원).
+    graph = build_graph_repository(settings)
     try:
         result = graph.reindex_vector()
         typer.echo(
@@ -238,7 +241,9 @@ def ingest(
         ),
     ] = False,
 ) -> None:
-    """디렉토리 (또는 단일 파일) → 엔티티/관계 추출 → Neo4j 적재.
+    """디렉토리 (또는 단일 파일) → 엔티티/관계 추출 → 그래프 저장소 적재.
+
+    저장소는 설정으로 고른다 — 기본 embedded(Kuzu, 서버 불필요) / neo4j(프로덕션).
 
     출력 형식 (PRD 2 §7.3):
       [i/n] path ......... Xe Yr in Zs   ← 파일별 한 줄
@@ -247,7 +252,9 @@ def ingest(
     load_dotenv()
     settings = get_settings()
 
-    graph = Neo4jGraphRepository(settings)
+    # 저장소 백엔드는 설정(ARCHE_API_GRAPH_BACKEND)이 고른다 — 기본 embedded(Kuzu)면
+    # Neo4j 서버 없이 로컬 디렉토리로 적재된다 (ADR-0020, REST deps 와 같은 팩토리).
+    graph = build_graph_repository(settings)
     try:
         graph.ensure_indexes()
         # LLM/임베딩 provider 는 모델 식별자 접두사로 팩토리가 고른다 (ADR-0019).
