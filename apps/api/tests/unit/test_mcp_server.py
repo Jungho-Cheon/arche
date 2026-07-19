@@ -73,8 +73,8 @@ class _StubSettings:
 # ---------- tool registration ----------
 
 
-def test_build_tools_registers_exactly_six():
-    """PRD 3 §0.1 의 6 primitive."""
+def test_build_tools_registers_read_primitives():
+    """PRD 3 §0.1 의 6 primitive + find_related(#140, ADR-0006 amend)."""
     tools = _build_tools()
     names = [t.name for t in tools]
     assert names == [
@@ -84,6 +84,7 @@ def test_build_tools_registers_exactly_six():
         "get_neighbors",
         "find_path",
         "get_subgraph",
+        "find_related",
     ]
 
 
@@ -103,6 +104,7 @@ def test_descriptions_match_prd():
     assert "Get neighbors of a node" in tools["get_neighbors"].description
     assert "Find paths between two nodes" in tools["find_path"].description
     assert "Extract a subgraph" in tools["get_subgraph"].description
+    assert "structurally" in tools["find_related"].description
 
 
 # ---------- input_schema 평탄화 ----------
@@ -165,12 +167,8 @@ def test_get_neighbors_input_schema_includes_id_field():
 
 def test_dispatch_get_schema_returns_payload():
     graph = PrimitiveStubGraph(
-        entity_type_stats=[
-            EntityTypeStat(type="coupon", count=3, examples=[(_ENT_A, "쿠폰")])
-        ],
-        relation_type_stats=[
-            RelationTypeStat(type="applies_to", count=2, common_pairs=[])
-        ],
+        entity_type_stats=[EntityTypeStat(type="coupon", count=3, examples=[(_ENT_A, "쿠폰")])],
+        relation_type_stats=[RelationTypeStat(type="applies_to", count=2, common_pairs=[])],
     )
     out = _dispatch_tool(
         "get_schema",
@@ -243,9 +241,7 @@ def test_dispatch_get_neighbors_splits_id_from_body():
     )
     graph = PrimitiveStubGraph(
         nodes=[node, neighbor],
-        neighbors_result=NeighborhoodResult(
-            nodes=[node, neighbor], edges=[edge], truncated=False
-        ),
+        neighbors_result=NeighborhoodResult(nodes=[node, neighbor], edges=[edge], truncated=False),
     )
     out = _dispatch_tool(
         "get_neighbors",
@@ -289,6 +285,38 @@ def test_dispatch_get_subgraph_echos_entry_ids():
     assert payload["nodes"][0]["id"] == _ENT_A
 
 
+def test_dispatch_find_related_ranks_neighbor():
+    """find_related MCP 디스패치 — 시드의 이웃을 근접 랭킹으로 반환, 시드 제외."""
+    seed = _make_node()
+    neighbor = _make_node(node_id=_ENT_B, name="여름")
+    edge = Edge.model_validate(
+        {
+            "id": "01HZX0G7M8N0RT0V0EXAMPLE04",
+            "from": _ENT_A,
+            "to": _ENT_B,
+            "type": "applies_to",
+            "properties": {},
+            "source_refs": [],
+            "created_at": now_rfc3339(),
+            "updated_at": now_rfc3339(),
+        }
+    )
+    graph = PrimitiveStubGraph(
+        subgraph_result=NeighborhoodResult(nodes=[seed, neighbor], edges=[edge], truncated=False)
+    )
+    out = _dispatch_tool(
+        "find_related",
+        {"seeds": [_ENT_A], "top_k": 5},
+        graph=graph,
+        embedder=_StubEmbedder(),
+        settings=_StubSettings(),
+    )
+    payload = out.model_dump(by_alias=True)
+    assert payload["seeds"] == [_ENT_A]
+    assert [r["node"]["id"] for r in payload["related"]] == [_ENT_B]
+    assert payload["related"][0]["distance"] == 1
+
+
 def test_dispatch_unknown_tool_raises_value_error():
     graph = PrimitiveStubGraph()
     with pytest.raises(ValueError, match="unknown tool"):
@@ -329,9 +357,7 @@ def test_to_mcp_error_validation_error_maps_to_invalid_input():
         assert err.data["code"] == "invalid_input"
         errors = err.data["details"]["errors"]
         # REST 와 동일한 평탄화 (issue #26) — loc 점 표기 + type + msg 3 키만.
-        assert any(
-            e["loc"] == "keywords" and e["type"] == "too_short" for e in errors
-        )
+        assert any(e["loc"] == "keywords" and e["type"] == "too_short" for e in errors)
         assert all(set(e.keys()) == {"loc", "type", "msg"} for e in errors)
     else:
         raise AssertionError("expected ValidationError")
@@ -393,7 +419,7 @@ def test_build_mcp_server_call_tool_returns_isError_with_domain_code():
     assert body["error"]["details"]["id"] == _ENT_A
 
 
-def test_build_mcp_server_list_tools_returns_six():
+def test_build_mcp_server_list_tools_returns_read_primitives():
     graph = PrimitiveStubGraph()
     server = build_mcp_server(graph, _StubEmbedder(), _StubSettings())
     handler = server.request_handlers[mcp_types.ListToolsRequest]
@@ -401,4 +427,5 @@ def test_build_mcp_server_list_tools_returns_six():
     result = asyncio.run(handler(req))
     inner = result.root
     assert isinstance(inner, mcp_types.ListToolsResult)
-    assert len(inner.tools) == 6
+    # 6 primitive + find_related (#140).
+    assert len(inner.tools) == 7

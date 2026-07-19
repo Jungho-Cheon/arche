@@ -53,7 +53,7 @@ def test_read_only_server_has_no_write_tools():
     names = _tool_names(server)
     assert "ingest_plan" not in names  # service 없으면 등록 안 됨
     assert "ingest_resolve" not in names  # resolve 도 service 없으면 등록 안 됨
-    assert len(names) == 6
+    assert len(names) == 7  # 6 primitive + find_related (#140)
 
 
 def test_server_with_service_exposes_ingest_write_tools(fake_ingest_service):

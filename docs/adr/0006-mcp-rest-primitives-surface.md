@@ -3,6 +3,8 @@
 Status: accepted
 Date: 2026-06-15
 
+> **Amendment (#140, 2026-07-19)**: 조회 표면에 7번째 read primitive `find_related` 를 더한다. 시드 노드 집합에서 구조적으로 가까운 관련 노드를 근접 순위로 한 번에 회수하는 원자적 순회다 (HippoRAG 의 Personalized PageRank 착상). 답변 생성이 아니라 구조 순회이므로 본 ADR 의 "원자적 graph primitive 만 노출, 자연어 미수용" 원칙에 부합한다. 구현은 기존 get_subgraph 순회 위에 근접 점수를 얹어 저장소 백엔드(Neo4j/Kuzu)와 무관하게 동작하며 새 저장소 기능을 요구하지 않는다. 요약/답변은 여전히 caller(외부 LLM)의 몫이다.
+
 ## TL;DR
 
 Arche 는 MCP 와 REST API 모두에서 **graph primitives** — `find_entities`, `get_entity`, `get_neighbors`, `find_path`, `get_subgraph`, `get_schema` — 만 노출한다. *자연어 질문 엔드포인트는 두지 않는다.* caller (에이전트 또는 벤치마크 하니스) 가 자체 LLM 사이클로 질문에서 anchor 키워드를 추출한 뒤 primitives 를 호출한다. 이 분리는 (1) MCP 의 통상 패턴과 정렬, (2) Arche 코어에서 쿼리 시점 LLM 의존성 제거, (3) Pareto 우월 가설 (ADR-0001) 의 토큰 회계를 caller 쪽으로 정직하게 이전 — 세 효과가 있다.
