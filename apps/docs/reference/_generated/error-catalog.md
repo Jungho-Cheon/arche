@@ -15,7 +15,7 @@
 | `conflict` | 409 | 동시 적재 등 충돌 |
 | `directory_not_found` | 422 | 적재 디렉토리가 없음 |
 | `not_a_directory` | 422 | 파일을 디렉토리로 줌 |
-| `dependency_unavailable` | 503 | Neo4j 나 LLM provider 가 내려감 |
+| `dependency_unavailable` | 503 | 그래프 백엔드나 LLM provider 가 내려감 |
 | `extraction_failed` | 500 | LLM 응답 파싱 실패 등 |
 | `internal_error` | 500 | 알려지지 않은 예외 |
 | `timeout` | 504 | 백엔드 timeout |

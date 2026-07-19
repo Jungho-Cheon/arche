@@ -35,33 +35,27 @@ logger = logging.getLogger("arche_api")
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # WHY load_dotenv at lifespan start: docker compose 도 .env 를 직접 주입하지만,
-    # 로컬에서 uv run uvicorn 으로 띄울 때는 명시 로드가 필요.
+    # 로컬에서 uvicorn 으로 띄울 때는 .env 를 명시 로드해야 한다.
     load_dotenv()
     settings = get_settings()
     components = build_default_components(settings)
     app.state.graph_repo = components["graph_repo"]
     app.state.llm_provider = components["llm_provider"]
     app.state.embedding_provider = components["embedding_provider"]
-    # WHY 단일 registry 인스턴스: POST /admin/ingest 가 생성한 task_id 를 GET
-    # /status 가 같은 dict 에서 조회해야 한다. lifespan 에서 한 번 만들어 둠.
+    # POST /admin/ingest 가 만든 task_id 를 GET /status 가 같은 dict 에서 조회하도록
+    # lifespan 에서 registry 를 한 번만 만든다.
     app.state.ingest_task_registry = IngestTaskRegistry()
 
-    # 인덱스 마이그레이션 — idempotent. ADR-0004 D1 의 *DB 내장 인덱스* 보장.
+    # 인덱스 마이그레이션 — idempotent.
     try:
         components["graph_repo"].ensure_indexes()
-        logger.info("neo4j indexes ensured")
+        logger.info("graph indexes ensured")
     except Exception as e:  # noqa: BLE001
         logger.warning("ensure_indexes failed (will retry on first request): %s", e)
 
-    # ADR-0014 D1/D2 — MCP HTTP transports 마운트 (lifespan 안에서 lazy import
-    # 로 stdio-only 환경에서 SDK 호환성 부담 없도록).
-    #
-    # #107 — 검토형 적재 도구까지 HTTP 로 노출하려면 IngestService + PlanRegistry
-    # 가 필요하다. REST 의존성(deps.build_ingest_service)과 *같은* 조립을 써서
-    # HTTP MCP 가 stdio serve 와 같은 10개 도구를 노출하게 한다. plan_registry 는
-    # 앱 수명 동안 하나만 두어, plan 을 만든 뒤 같은 세션에서 resolve/commit 로
-    # 이어갈 수 있게 한다.
+    # MCP HTTP transports 를 lazy import 로 마운트한다(stdio-only 환경의 SDK 부담 회피).
+    # 검토형 적재 도구까지 HTTP 로 노출하려고 REST 와 같은 조립(build_ingest_service)을
+    # 쓰고, plan_registry 는 앱 수명 동안 하나만 두어 plan→resolve→commit 을 잇는다.
     try:
         from .api.deps import build_ingest_service
         from .api.plan_registry import PlanRegistry
@@ -82,7 +76,7 @@ async def lifespan(app: FastAPI):
             ingest_service=ingest_service,
             plan_registry=app.state.mcp_plan_registry,
         )
-        logger.info("MCP HTTP routes mounted at /mcp/v1 (6 read + 4 ingest tools)")
+        logger.info("MCP HTTP routes mounted at /mcp/v1")
     except Exception as e:  # noqa: BLE001
         logger.warning("MCP HTTP mount failed (stdio still available): %s", e)
 
@@ -110,8 +104,7 @@ def create_app() -> FastAPI:
     app.include_router(subgraph_router)
     app.include_router(related_router)
     app.include_router(admin_router)
-    # ADR-0013 D8 — /v1/ versioning alias. 기존 path 유지 + /v1/ prefix 동시 노출.
-    # deprecation 시점에 기존 path 에 Deprecation 헤더 추가 예정.
+    # /v1/ versioning alias — 기존 path 유지 + /v1/ prefix 동시 노출.
     app.include_router(health_router, prefix="/v1")
     app.include_router(schema_router, prefix="/v1")
     app.include_router(entities_router, prefix="/v1")
@@ -135,13 +128,9 @@ def create_app() -> FastAPI:
     async def _validation_exc_handler(  # type: ignore[unused-ignore]
         request: Request, exc: RequestValidationError
     ) -> JSONResponse:
-        """ADR-0013 D1 — 422 validation 도 ErrorEnvelope 으로 wrap. agent 가
-        같은 envelope 형태로 파싱 가능.
-
-        `details.errors[]` 는 `flatten_validation_errors` 로 평탄화 (loc 점 표기 +
-        type + msg) — agent 가 어떤 필드를 고쳐야 하는지 응답만으로 식별 (issue #26,
-        ADR-0013 D2 수용 기준). HTTP 코드는 422 (ERROR_HTTP_STATUS[INVALID_INPUT]).
-        """
+        """422 validation 도 ErrorEnvelope 으로 wrap 해 agent 가 같은 형태로 파싱하게
+        한다. details.errors[] 는 flatten_validation_errors 로 평탄화(loc/type/msg)해
+        agent 가 고칠 필드를 응답만으로 식별하게 한다."""
         return JSONResponse(
             status_code=ERROR_HTTP_STATUS[ErrorCode.INVALID_INPUT],
             content=ErrorEnvelope(

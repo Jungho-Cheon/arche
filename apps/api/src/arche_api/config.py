@@ -1,37 +1,25 @@
 """런타임 설정 — 환경 변수로 오버라이드, 기본값은 코드에 고정.
 
-WHY 환경 변수 prefix `ARCHE_API_*`: `ARCHE_EVAL_*` (eval 하니스) 와
-이름을 의도적으로 분리한다. 두 컴포넌트가 같은 .env 를 공유하더라도 *모델 식별자*
-같은 통제 변수는 *값* 만 공유하고 *이름* 은 분리해야 한 쪽 변경이 다른 쪽을
-자동으로 깨뜨리지 않는다.
-
-WHY 임베딩 모델 기본값이 eval/ 와 동일: PRD 2 §5.6 (노드 임베딩) + ADR-0003 D2 +
-ADR-0001 통제 변수 — 청크 벡터 RAG (eval/) 의 청크 임베딩과 Arche 노드
-임베딩은 *같은 모델 식별자* 를 써야 측정이 성립한다. 기본값을 양쪽에 박아 두면
-환경 변수 누락 시에도 통제가 깨지지 않는다.
-"""
+환경 변수 prefix 를 ARCHE_API_* 로 두어 eval 의 ARCHE_EVAL_* 와 이름을 분리한다(값은
+공유하되 한쪽 변경이 다른 쪽을 안 깨게). 임베딩 모델 기본값은 eval 과 같게 맞춘다 —
+같은 모델을 써야 측정이 성립하고, 기본값을 박아 두면 env 누락 시에도 통제가 유지된다."""
 
 from __future__ import annotations
 
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-# WHY gpt-4.1: PRD 2 §4 의 extraction LLM. eval/ 의 DEFAULT_LLM_MODEL 과 동일.
-# 같은 모델을 ingest extraction + (post-MVP) answer generation 양쪽에 쓰면
-# 도메인 어휘 인식의 일관성이 유지된다.
+# 추출 LLM 기본값. eval 의 기본 모델과 같게 맞춘다.
 DEFAULT_LLM_MODEL = "openai/gpt-4.1"
 
-# WHY text-embedding-3-small: eval/ DEFAULT_EMBEDDING_MODEL 과 *반드시 동일* .
-# 1536-dim, cosine. Neo4j 벡터 인덱스의 차원 (1536) 도 이 모델에 맞춰 고정.
+# 임베딩 기본값. eval 의 기본 모델과 반드시 같아야 한다(1536-dim, cosine).
 DEFAULT_EMBEDDING_MODEL = "openai/text-embedding-3-small"
 
-# WHY 1536: text-embedding-3-small 의 출력 차원. 모델 교체 시 인덱스 재생성 필요.
+# text-embedding-3-small 의 출력 차원. 모델 교체 시 인덱스 재생성 필요.
 EMBEDDING_DIMENSION = 1536
 
-# WHY 청크 분할 트리거의 *모델 컨텍스트 한도* — PRD 2 §3.1. gpt-4.1 은 1M 컨텍스트
-# 지만 보수적으로 잡아 작은 값을 기본으로 둔다 (대용량 문서를 단일 호출로 처리
-# 하려 할 때 응답 timeout / cost 가 폭발하는 케이스를 가드). 모델 교체 시 본
-# 값을 같이 조정 — Settings 의 환경 변수로 오버라이드 가능.
+# 청크 분할 트리거의 모델 컨텍스트 한도. 대용량 문서를 단일 호출로 처리할 때 timeout/
+# cost 가 폭발하지 않도록 보수적으로 작게 둔다(env 로 오버라이드 가능).
 DEFAULT_LLM_MODEL_CONTEXT_TOKENS = 128_000
 
 
@@ -44,8 +32,8 @@ class Settings(BaseSettings):
         extra="ignore",
     )
 
-    # Provider API 키 — 모델 식별자의 provider 접두사로 어느 키를 쓸지 결정한다
-    # (ADR-0019 multi-provider). 미사용 provider 의 키는 비어 있어도 된다.
+    # Provider API 키 — 모델 식별자의 provider 접두사로 어느 키를 쓸지 결정한다.
+    # 미사용 provider 의 키는 비어 있어도 된다.
     openai_api_key: str | None = Field(default=None, alias="OPENAI_API_KEY")
     anthropic_api_key: str | None = Field(default=None, alias="ANTHROPIC_API_KEY")
     voyage_api_key: str | None = Field(default=None, alias="VOYAGE_API_KEY")
@@ -58,9 +46,8 @@ class Settings(BaseSettings):
         default=DEFAULT_EMBEDDING_MODEL, alias="ARCHE_API_EMBEDDING_MODEL"
     )
 
-    # 그래프 저장소 백엔드 선택 (ADR-0020 투 트랙). 기본값은 임베디드(Kuzu) —
-    # 서버 없이 pip install 만으로 돈다. 동시성/namespace 공유/규모가 필요하면
-    # `neo4j` 로 바꾼다. 값에 따라 build_default_components 가 어댑터를 고른다.
+    # 그래프 저장소 백엔드. 기본값 임베디드(Kuzu)는 서버 없이 설치만으로 돌고,
+    # 동시성/공유/규모가 필요하면 neo4j 로 바꾼다. 팩토리가 이 값으로 어댑터를 고른다.
     graph_backend: str = Field(default="embedded", alias="ARCHE_API_GRAPH_BACKEND")
     # 임베디드(Kuzu) DB 파일 경로. `:memory:` 면 프로세스 수명 동안만 유지.
     kuzu_db_path: str = Field(default="./arche_kuzu_db", alias="ARCHE_API_KUZU_DB_PATH")
@@ -75,7 +62,7 @@ class Settings(BaseSettings):
         default=EMBEDDING_DIMENSION, alias="ARCHE_API_EMBEDDING_DIMENSION"
     )
 
-    # 청크 분할 트리거의 모델 컨텍스트 한도 (PRD 2 §3.1).
+    # 청크 분할 트리거의 모델 컨텍스트 한도.
     llm_model_context_tokens: int = Field(
         default=DEFAULT_LLM_MODEL_CONTEXT_TOKENS,
         alias="ARCHE_API_LLM_MODEL_CONTEXT_TOKENS",
@@ -98,8 +85,8 @@ class Settings(BaseSettings):
     def llm_provider(self) -> str:
         """모델 식별자의 provider 접두사 (예: openai/gpt-4.1 → "openai").
 
-        접두사가 없으면 "openai" 로 본다 (하위 호환). 팩토리가 이 값으로 어느
-        LLMProvider 어댑터를 만들지 고른다 (ADR-0019).
+        접두사가 없으면 "openai" 로 본다(하위 호환). 팩토리가 이 값으로 어느 LLMProvider
+        어댑터를 만들지 고른다.
         """
         return self.llm_model.split("/", 1)[0] if "/" in self.llm_model else "openai"
 

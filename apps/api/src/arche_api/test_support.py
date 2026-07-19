@@ -1,11 +1,8 @@
-"""테스트 전용 FakeGraph 어댑터 — MCP stdio e2e 테스트가 외부 Neo4j 없이 동작.
+"""테스트 전용 FakeGraph 어댑터 — MCP stdio e2e 테스트가 외부 의존 없이 동작한다.
 
-WHY 별도 모듈 + production 패키지에 포함: integration 테스트가 *본 서버를
-subprocess 로 spawn* 한다 (실제 stdio 핸드셰이크 검증). subprocess 안에서 import
-가능하려면 production 패키지 안에 위치해야 한다. 단 *production 코드가 본
-모듈을 import 하지 않는다* — CLI 가 환경변수 `ARCHE_TEST_FAKE_GRAPH=1` 일
-때만 lazy import.
-"""
+integration 테스트가 서버를 subprocess 로 spawn 하므로, subprocess 안에서 import
+가능하도록 production 패키지 안에 둔다. production 코드는 이 모듈을 import 하지 않고
+CLI 가 ARCHE_TEST_FAKE_GRAPH=1 일 때만 lazy import 한다."""
 
 from __future__ import annotations
 
@@ -65,11 +62,8 @@ def _make_edge(from_id: str, to_id: str, rel_type: str) -> Edge:
 
 
 class FakeGraph(GraphRepository):
-    """결정적 in-memory 그래프 — 2 노드 + 1 엣지.
-
-    WHY 최소 fixture: e2e 테스트는 *프로토콜 핸드셰이크* 와 *6 primitive 응답
-    경로* 만 확인한다. 실제 BFS / 하이브리드 매칭 동작은 unit + live 에서.
-    """
+    """결정적 in-memory 그래프 — 2 노드 + 1 엣지. e2e 테스트는 프로토콜 핸드셰이크와
+    응답 경로만 확인하고, 실제 순회/매칭 동작은 unit + live 에서 검증한다."""
 
     def __init__(self) -> None:
         self._data = _FakeData()

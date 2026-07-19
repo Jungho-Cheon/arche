@@ -1,30 +1,13 @@
-"""MCP stdio 어댑터 — 7 graph primitive 를 표준 MCP tool 로 노출 (PRD 3 §8).
+"""MCP stdio 어댑터 — graph primitive 를 표준 MCP tool 로 노출한다.
 
-find_related 는 PRD 3 §2-7 의 6 primitive 에 이은 파생 read primitive (#140,
-ADR-0006 amend) — 기존 get_subgraph 순회 위에 근접 랭킹을 얹은 형태다.
+REST 와 MCP 가 같은 스키마를 노출하도록 api/services.py 의 순수 함수를 직접 호출해
+인코딩만 다르게 돌려준다. tool 의 input_schema 는 Pydantic 모델의 model_json_schema()
+에서 끌어와 REST OpenAPI 와 같은 출처를 공유하고, _inline_defs 가 $defs 참조를 inline
+해 flat JSON Schema 로 만든다(일부 MCP 클라이언트가 $defs 를 못 푼다).
 
-WHY 본 모듈의 존재: PRD 3 §0.1 — REST 와 MCP 는 *같은 입출력 스키마* . 본 어댑터
-는 `api/services.py` 의 순수 함수를 직접 호출해 REST 라우터와 동일한 결과를
-*인코딩만 다르게* 돌려준다 (JSON-RPC over stdio vs JSON over HTTP).
-
-WHY input_schema source 단일화: PRD 3 §8.3 — 각 tool 의 input_schema 는 PRD 3
-§2-7 의 JSON Schema 와 *완전 동일* . Pydantic 모델의 `model_json_schema()` 출력
-을 그대로 입력 스키마로 쓰면 REST 의 OpenAPI 와 *같은 출처* 를 공유 — 한 곳을
-바꾸면 두 통로 모두에 반영된다.
-
-WHY `$defs` 평탄화: MCP 클라이언트 (Claude Desktop 포함) 는 *flat JSON Schema*
-를 기대한다. Pydantic 의 `model_json_schema()` 가 generic / 중첩 모델에 대해
-`$defs` 참조를 만들면 일부 클라이언트가 못 푼다. 본 모듈의 `_inline_defs` 가
-참조를 모두 inline 해 자기완결 스키마로 변환.
-
-WHY write tool 노출 제한: ADR-0006 D3 — `create_entity` / `delete_relation`
-같은 *직접 그래프 변형* write 는 MCP 에 노출하지 않는다 (CLI 와 admin REST
-전용). 단 reviewable ingest 의 5 tool (ingest_plan / ingest_content /
-ingest_preview / ingest_resolve / ingest_commit) 은 예외다: 사람의 미리보기 +
-확인 latch 를 강제하므로, LLM 이 검토 없이 그래프를 바꾸지 못한다. 이 다섯 tool 은 `ingest_service` 와
-`plan_registry` 가 *함께 주입된* 서버에서만 등록된다 (production serve 경로).
-LLM 이 없는 read-only fake-boot 경로는 7 read tool 만 노출한다.
-"""
+직접 그래프 변형 write 는 MCP 에 노출하지 않는다. reviewable ingest 의 다섯 tool 만
+예외로, 사람 미리보기+확인 latch 를 강제하며 ingest_service 와 plan_registry 가 함께
+주입된 서버에서만 등록된다. read-only 부팅 경로는 read tool 만 노출한다."""
 
 from __future__ import annotations
 
@@ -65,9 +48,7 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-# WHY 6 tool 의 description 을 한 곳에 모음: PRD 3 §2.2 / §3.2 / §4.2 / §5.2 /
-# §6.2 / §7.2 의 영어 원문 그대로. 측정 결과의 reproducibility 영향 — 변경하려면
-# PRD 3 amend 필요.
+# tool description 을 한 곳에 모은다. 측정 재현성에 영향을 주므로 신중히 바꾼다.
 _TOOL_DESCRIPTIONS: dict[str, str] = {
     "get_schema": (
         "Inspect the shape of the knowledge graph — entity types, relation "
@@ -118,9 +99,7 @@ _TOOL_DESCRIPTIONS: dict[str, str] = {
         "immediate neighbors, and pass `relation_types` to restrict the spread "
         "to specific edges."
     ),
-    # reviewable ingest (plan -> preview -> commit). 이 세 tool 은 LLM 이 사람의
-    # 검토를 *건너뛰고* 그래프를 바꾸지 못하도록 다음 행동 지침을 description 에
-    # 명시한다. ingest_service + plan_registry 가 주입된 서버에서만 등록된다.
+    # reviewable ingest — description 에 사람 검토를 건너뛰지 말라는 행동 지침을 싣는다.
     "ingest_plan": (
         "Plan ingestion of a single file: run extraction WITHOUT writing to "
         "the graph, stash the change set under a returned `plan_id`, and return "
@@ -177,9 +156,8 @@ _TOOL_DESCRIPTIONS: dict[str, str] = {
 }
 
 
-# reviewable ingest tool 이름 — service 주입 시에만 등록되는 plan/content/preview/resolve/commit.
-# WRITE_TOOL_NAMES_EXCLUDED (등록 금지 목록) 와는 *별개* 다: 이 다섯 tool 은 사람
-# 검토 latch 를 통과한 변경만 반영하므로 허용된다.
+# reviewable ingest tool — service 주입 시에만 등록된다. 사람 검토 latch 를 통과한
+# 변경만 반영하므로 write 금지 목록과 별개로 허용된다.
 INGEST_TOOL_NAMES: tuple[str, ...] = (
     "ingest_plan",
     "ingest_content",
@@ -189,8 +167,7 @@ INGEST_TOOL_NAMES: tuple[str, ...] = (
 )
 
 
-# 노출 금지 (ADR-0006 D3) — 등록조차 하지 않는 write tool 이름. 단위 테스트가
-# *이 이름 중 어느 것도 list_tools 에 등장하지 않음* 을 검증한다.
+# 노출 금지 — 등록조차 하지 않는 write tool 이름(단위 테스트가 부재를 검증한다).
 WRITE_TOOL_NAMES_EXCLUDED: frozenset[str] = frozenset(
     {"create_entity", "create_relation", "delete_entity", "delete_relation", "admin_ingest"}
 )
@@ -220,15 +197,8 @@ def _build_input_schema(model_cls: type[BaseModel] | None) -> dict[str, Any]:
 def _inline_defs(schema: dict[str, Any]) -> dict[str, Any]:
     """`$defs` 와 `$ref` 를 재귀적으로 inline 해 자기완결 스키마로 변환.
 
-    WHY 자체 구현: jsonschema 라이브러리의 RefResolver 도 가능하지만, 본 모듈은
-    `pydantic.model_json_schema()` 출력 *형태만* 다루면 충분. 추가 의존성을
-    피해 가벼운 walker 로 처리.
-
-    동작 가정 — Pydantic v2 가 만드는 ref 는 항상 `#/$defs/<key>` 형식. 다른
-    URI 는 처리하지 않는다 (사용처 없음).
-
-    cycle 방지 — 자기 참조가 있는 모델은 본 코드에서 다루지 않는다 (현재 모델
-    들은 모두 비순환). 만약 추후 순환 모델이 들어오면 별도 처리 필요.
+    Pydantic v2 의 ref 는 항상 #/$defs/<key> 형식이라 가벼운 walker 로 처리한다(추가
+    의존성 회피). 현재 모델은 모두 비순환이라 cycle 처리는 없다.
     """
     schema = copy.deepcopy(schema)
     defs: dict[str, Any] = schema.pop("$defs", {}) or {}
@@ -261,7 +231,7 @@ def _inline_defs(schema: dict[str, Any]) -> dict[str, Any]:
 
 
 def _build_tools() -> list[mcp_types.Tool]:
-    """7 read tool 의 등록 manifest — PRD 3 §0.1 의 6 primitive + find_related(#140)."""
+    """read tool 의 등록 manifest."""
     return [
         mcp_types.Tool(
             name="get_schema",
@@ -276,7 +246,7 @@ def _build_tools() -> list[mcp_types.Tool]:
         mcp_types.Tool(
             name="get_entity",
             description=_TOOL_DESCRIPTIONS["get_entity"],
-            # PRD 3 §4.3 — MCP 입력은 `{ id }` (REST 는 URL path)
+            # MCP 입력은 { id } (REST 는 URL path).
             inputSchema={
                 "type": "object",
                 "additionalProperties": False,
@@ -289,9 +259,7 @@ def _build_tools() -> list[mcp_types.Tool]:
         mcp_types.Tool(
             name="get_neighbors",
             description=_TOOL_DESCRIPTIONS["get_neighbors"],
-            # PRD 3 §5.3 — MCP 입력은 body 필드 + id 를 *한 객체* 로 합친 형태.
-            # REST 는 URL path 가 id 를 받지만 MCP 는 단일 입력 객체이므로 id 를
-            # 풀어서 포함.
+            # MCP 입력은 body 필드 + id 를 한 객체로 합친다(REST 는 URL path 로 id 를 받는다).
             inputSchema=_merge_id_into_schema(_build_input_schema(GetNeighborsRequest)),
         ),
         mcp_types.Tool(
@@ -350,13 +318,8 @@ def _build_ingest_tools() -> list[mcp_types.Tool]:
 
 
 def _merge_id_into_schema(schema: dict[str, Any]) -> dict[str, Any]:
-    """`get_neighbors` 의 입력 — REST 의 URL path id 를 MCP body 안에 합친다.
-
-    PRD 3 §5.3 의 JSON Schema 는 `id` + `relation_types` + `direction` + `hops`
-    + `max_nodes` 를 *한 객체* 로 묶는다. REST 는 URL path 가 id 를 운반하지만
-    MCP 는 단일 입력 객체이므로 id 를 properties 에 끼워 넣어야 PRD 와 정확
-    일치한다.
-    """
+    """get_neighbors 입력 — REST 의 URL path id 를 MCP body 의 properties 에 끼워 넣어
+    한 객체로 만든다."""
     out = copy.deepcopy(schema)
     props = out.setdefault("properties", {})
     props["id"] = {"type": "string", "pattern": "^[0-9A-Z]{26}$"}
@@ -382,9 +345,9 @@ def _dispatch_tool(
 ) -> BaseModel:
     """단일 tool 호출을 services 로 위임. 입력 검증 실패는 ValidationError 로 전파.
 
-    WHY namespace: MCP(stdio)는 HTTP auth 가 없으므로 질의 namespace 를 도구 인자의
-    `namespace_id`(미지정 시 "default")로 받는다 (issue #98 읽기 격리). REST 는 auth
-    header 로 결정 — 두 표면이 같은 services 함수에 namespace 를 흘려보낸다.
+    MCP 는 HTTP auth 가 없어 질의 namespace 를 도구 인자 namespace_id(미지정 시
+    "default")로 받는다. REST 는 auth header 로 결정하고, 두 표면이 같은 services 로
+    namespace 를 흘려보낸다.
     """
     # 인자에 실린 namespace (없으면 "default"). 4 body 도구는 검증된 body 에서,
     # get_schema/get_entity 는 인자 dict 에서 직접 꺼낸다.
@@ -405,8 +368,7 @@ def _dispatch_tool(
             raise ValueError("`id` is required and must be a string")
         return services.get_entity(entity_id=entity_id, graph=graph, namespace_id=arg_ns)
     if name == "get_neighbors":
-        # WHY id 분리: services.get_neighbors 는 entity_id 와 body 를 분리해 받는
-        # 다. MCP 입력은 한 객체이므로 id 만 떼어 body 모델에 검증을 맡긴다.
+        # services.get_neighbors 는 entity_id 와 body 를 나눠 받아, id 만 떼어낸다.
         args = dict(arguments)
         entity_id = args.pop("id", None)
         if not isinstance(entity_id, str):
@@ -458,10 +420,8 @@ def _dispatch_tool(
 # ---------- 에러 변환 ----------
 
 
-# WHY 에러 매핑 표를 명시: PRD 3 §9 의 code 카탈로그를 MCP 표준 에러 형식의
-# data.code 에 그대로 노출. MCP 의 JSON-RPC code 는 -32602 (invalid params) /
-# -32603 (internal) 같은 표준값을 쓰되, *Arche 의 code* 는 data.code 에
-# 함께 실어 caller 가 분류 가능하게 한다.
+# 도메인 code 를 MCP 표준 에러의 data.code 에 실어 caller 가 분류하게 한다.
+# JSON-RPC code 는 표준값(-32602/-32603)을 쓴다.
 _ARCHE_TO_RPC_CODE: dict[str, int] = {
     "invalid_input": -32602,
     "unsupported_file_type": -32602,
@@ -476,10 +436,8 @@ _ARCHE_TO_RPC_CODE: dict[str, int] = {
 def _to_mcp_error(exc: BaseException) -> mcp_types.ErrorData:
     """도메인 / 검증 예외 → MCP 표준 에러 (data.code 에 Arche code).
 
-    분기:
-    - ArcheError → 도메인 code (§9 카탈로그) 그대로 data.code.
-    - pydantic ValidationError → invalid_input.
-    - 그 외 → internal_error.
+    ArcheError 는 도메인 code 를 그대로, ValidationError 는 invalid_input, 그 외는
+    internal_error 로 매핑한다.
     """
     if isinstance(exc, ArcheError):
         return mcp_types.ErrorData(
@@ -488,8 +446,7 @@ def _to_mcp_error(exc: BaseException) -> mcp_types.ErrorData:
             data={"code": exc.code, "details": exc.details},
         )
     if isinstance(exc, ValidationError):
-        # REST 핸들러와 동일한 평탄화 — raw exc.errors() 의 input/ctx (직렬화 불가
-        # 가능) 를 떨구고 loc 점 표기 + type + msg 만 노출 (issue #26).
+        # REST 와 동일 평탄화 — 직렬화 불가능한 input/ctx 를 떨구고 loc/type/msg 만 노출.
         return mcp_types.ErrorData(
             code=-32602,
             message="invalid input",
@@ -582,17 +539,10 @@ def build_mcp_server(
     async def _call_tool(name: str, arguments: dict[str, Any]) -> mcp_types.CallToolResult:
         """MCP tool 호출 — payload (PRD 3 §0.4: envelope 없음) 를 JSON text 로 반환.
 
-        WHY CallToolResult 직접 반환: MCP SDK 의 call_tool 데코레이터는 핸들러가
-            raise 한 일반 Exception 을 잡아 *짧은 문자열 에러 메시지* 로만 변환
-            한다 (data.code 같은 구조 정보 손실). 본 어댑터는 PRD 3 §9 의 도메인
-            code 를 보존해야 하므로 핸들러가 *직접* `CallToolResult(isError=True,
-            content=[<JSON error body>])` 를 반환한다. caller (Claude Desktop /
-            테스트) 는 isError 플래그로 분기 후 text content 를 JSON 파싱해
-            `{ "error": { code, message, details } }` 로 도메인 정보를 얻는다.
-
-        WHY text content type: MCP 의 ContentBlock 중 `TextContent` 는 모든
-            클라이언트가 보장. 추후 structured content 로 바꿀 수 있지만 MVP 는
-            text 가 가장 호환성 높다.
+        SDK 데코레이터는 raise 한 Exception 을 짧은 문자열로만 변환해 data.code 가
+        사라진다. 도메인 code 를 보존하려고 핸들러가 직접 CallToolResult(isError=True)
+        를 반환하고, caller 는 isError 로 분기해 text content 를 JSON 파싱한다. content
+        는 모든 클라이언트가 보장하는 TextContent 를 쓴다.
         """
         try:
             result = _dispatch_tool(
@@ -633,11 +583,11 @@ def build_mcp_server(
 
 
 def _assert_no_write_tools(tools: list[mcp_types.Tool]) -> None:
-    """등록 직전 안전 가드 — ADR-0006 D3 의 read-only 계약을 코드 레벨에서 보호."""
+    """등록 직전 안전 가드 — read-only 계약을 코드 레벨에서 보호한다."""
     names = {t.name for t in tools}
     leaked = names & WRITE_TOOL_NAMES_EXCLUDED
     if leaked:
-        raise RuntimeError(f"refusing to register write tools (ADR-0006 D3): {sorted(leaked)}")
+        raise RuntimeError(f"refusing to register write tools: {sorted(leaked)}")
 
 
 # ---------- stdio 실행 진입점 (CLI 에서 호출) ----------
@@ -651,14 +601,8 @@ async def run_stdio_server(
     ingest_service: IngestService | None = None,
     plan_registry: PlanRegistry | None = None,
 ) -> None:
-    """stdio transport 로 서버를 띄운다.
-
-    WHY async: MCP SDK 의 server.run 은 async. CLI 진입점에서 `asyncio.run` 으로
-    호출한다.
-
-    `ingest_service` + `plan_registry` 를 함께 넘기면 reviewable ingest tool 까지
-    노출한다 (production serve 경로). fake-boot 는 둘 다 생략해 read-only.
-    """
+    """stdio transport 로 서버를 띄운다(server.run 이 async 라 asyncio.run 으로 호출).
+    ingest_service + plan_registry 를 함께 넘기면 reviewable ingest tool 까지 노출한다."""
     from mcp.server.stdio import stdio_server  # local import — 부팅 시 SDK 로딩 비용 한 번만.
 
     server = build_mcp_server(

@@ -1,14 +1,9 @@
-"""레퍼런스 문서의 *기계적 표* 를 코드 스키마에서 생성 (#111).
+"""레퍼런스 문서의 기계적 표를 코드 스키마에서 생성한다.
 
-WHY 이 모듈: 레퍼런스의 필드, 타입, 기본값, 범위는 이미 코드(pydantic 모델)에
-정의돼 있다. 이걸 손으로 문서에 옮겨 적으면 코드가 바뀔 때 문서만 옛 값으로
-남아 어긋난다. 이 모듈은 pydantic 모델의 JSON Schema(FastAPI 가 OpenAPI 를 만들
-때 쓰는 바로 그 스키마)에서 표를 만들어, 코드가 진실의 원천이 되게 한다.
-
-경계: *기계적 부분만* 생성한다. "ULID 26자리가 무슨 뜻인지", "임베딩이 왜
-빠지는지" 같은 사람이 읽는 설명 문장은 문서(primitives.md)에 그대로 남긴다.
-생성된 표는 VitePress 의 `<!-- @include: -->` 로 문서에 끼워 넣고, 설명 문단과
-자동 생성 표를 나란히 두되 출처는 서로 다르다(#111 완료 조건 3).
+필드/타입/기본값/범위는 pydantic 모델에 이미 있으므로, 손으로 옮겨 적어 어긋나지
+않도록 모델의 JSON Schema 에서 표를 만들어 코드를 진실의 원천으로 삼는다. 기계적
+부분만 생성하고, 사람이 읽는 설명 문장은 문서(primitives.md)에 그대로 둔다. 생성된
+표는 VitePress @include 로 끼워 넣는다.
 
 흐름:
 - `generate_markdown()` — 아래 GENERATED_MODELS 각각을 표로 렌더해 하나의 마크다운
@@ -372,7 +367,7 @@ _ERROR_GLOSS_KO: dict[str, str] = {
     "conflict": "동시 적재 등 충돌",
     "directory_not_found": "적재 디렉토리가 없음",
     "not_a_directory": "파일을 디렉토리로 줌",
-    "dependency_unavailable": "Neo4j 나 LLM provider 가 내려감",
+    "dependency_unavailable": "그래프 백엔드나 LLM provider 가 내려감",
     "extraction_failed": "LLM 응답 파싱 실패 등",
     "internal_error": "알려지지 않은 예외",
     "timeout": "백엔드 timeout",
