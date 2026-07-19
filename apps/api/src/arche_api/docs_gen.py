@@ -233,6 +233,7 @@ _INCLUDE_MARK = (
 def _request_specs() -> list[tuple[str, str, type[BaseModel]]]:
     from .api.plan_schemas import (
         CommitRequest,
+        PlanContentRequest,
         PlanIngestRequest,
         PreviewRequest,
         ResolveRequest,
@@ -252,6 +253,7 @@ def _request_specs() -> list[tuple[str, str, type[BaseModel]]]:
         ("get_subgraph", "get_subgraph", GetSubgraphRequest),
         ("find_related", "find_related", FindRelatedRequest),
         ("ingest_plan", "ingest_plan", PlanIngestRequest),
+        ("ingest_content", "ingest_content", PlanContentRequest),
         ("ingest_preview", "ingest_preview", PreviewRequest),
         ("ingest_resolve", "ingest_resolve", ResolveRequest),
         ("ingest_commit", "ingest_commit", CommitRequest),
@@ -282,6 +284,7 @@ _TOOL_GLOSS_KO: dict[str, str] = {
     "get_subgraph": "여러 출발점 주변을 한꺼번에 펼쳐 하나로 합친다.",
     "find_related": "시드 노드들과 구조적으로 가까운 관련 노드를 한 번에 근접 순위로 회수한다.",
     "ingest_plan": "파일 하나의 변화를 계획만 하고 그래프에는 쓰지 않는다. 계획 번호를 돌려준다.",
+    "ingest_content": "파일 대신 에이전트가 넘긴 텍스트로 계획을 세운다. 외부 소스를 읽어와 파일 없이 적재할 때.",
     "ingest_preview": "계획 번호로 바뀔 내용을 항목별로 펼쳐 사람이 검토하게 한다.",
     "ingest_resolve": "미리 보기가 물은 질문(닮은 점을 합칠지 따로 둘지)에 사람의 결정을 반영한다.",
     "ingest_commit": "사람이 확인한 계획을 그제야 그래프에 반영한다.",

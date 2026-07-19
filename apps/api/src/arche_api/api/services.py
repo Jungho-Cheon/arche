@@ -38,6 +38,7 @@ from .plan_schemas import (
     IngestCommitResponse,
     MergeView,
     NewEntityView,
+    PlanContentRequest,
     PlanIngestRequest,
     PlanPreview,
     PlanSummary,
@@ -618,6 +619,27 @@ def plan_ingest(
 ) -> PlanSummary:
     """파일을 쓰지 않고 변경 묶음을 만들어 레지스트리에 보관 + 개수 요약 반환."""
     plan = service.plan_file(Path(body.path), namespace_id=body.namespace_id, hints=body.hints)
+    registry.create(plan)
+    return _summarize_plan(plan)
+
+
+def plan_ingest_content(
+    body: PlanContentRequest,
+    *,
+    service: IngestService,
+    registry: PlanRegistry,
+) -> PlanSummary:
+    """콘텐츠판 plan (#155) — 파일 없이 텍스트로 변경 묶음을 만들어 보관 + 요약.
+
+    plan_ingest 와 같은 계약(PlanSummary)을 돌려주므로, 이후 preview/resolve/commit
+    은 파일 경로판과 완전히 같은 plan_id 흐름을 탄다.
+    """
+    plan = service.plan_content(
+        content=body.content,
+        source_id=body.source_id,
+        namespace_id=body.namespace_id,
+        hints=body.hints,
+    )
     registry.create(plan)
     return _summarize_plan(plan)
 

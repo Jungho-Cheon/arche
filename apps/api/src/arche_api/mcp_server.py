@@ -19,9 +19,9 @@ WHY `$defs` 평탄화: MCP 클라이언트 (Claude Desktop 포함) 는 *flat JSO
 
 WHY write tool 노출 제한: ADR-0006 D3 — `create_entity` / `delete_relation`
 같은 *직접 그래프 변형* write 는 MCP 에 노출하지 않는다 (CLI 와 admin REST
-전용). 단 reviewable ingest 의 4 tool (ingest_plan / ingest_preview /
-ingest_resolve / ingest_commit) 은 예외다: 사람의 미리보기 + 확인 latch 를
-강제하므로, LLM 이 검토 없이 그래프를 바꾸지 못한다. 이 네 tool 은 `ingest_service` 와
+전용). 단 reviewable ingest 의 5 tool (ingest_plan / ingest_content /
+ingest_preview / ingest_resolve / ingest_commit) 은 예외다: 사람의 미리보기 +
+확인 latch 를 강제하므로, LLM 이 검토 없이 그래프를 바꾸지 못한다. 이 다섯 tool 은 `ingest_service` 와
 `plan_registry` 가 *함께 주입된* 서버에서만 등록된다 (production serve 경로).
 LLM 이 없는 read-only fake-boot 경로는 7 read tool 만 노출한다.
 """
@@ -43,6 +43,7 @@ from .api import services
 from .api.error_codes import flatten_validation_errors
 from .api.plan_schemas import (
     CommitRequest,
+    PlanContentRequest,
     PlanIngestRequest,
     PreviewRequest,
     ResolveRequest,
@@ -133,6 +134,21 @@ _TOOL_DESCRIPTIONS: dict[str, str] = {
         'namespace (default "default"); the plan keeps that namespace through '
         "preview/resolve/commit, so identity matching and writes stay inside it."
     ),
+    "ingest_content": (
+        "Plan ingestion of raw text you already have in hand — content you read "
+        "from an external source (a Confluence/Jira page, a URL, another tool's "
+        "MCP) — WITHOUT writing it to a file first. Same review flow as "
+        "ingest_plan: extraction runs without touching the graph, the change set "
+        "is stashed under a returned `plan_id`, and you MUST call ingest_preview "
+        "then ingest_commit (only after the human confirms). Pass `content` (the "
+        "text) and `source_id`, a stable label that stands in for a file path "
+        '(e.g. "confluence:PAGE-123" or the document URL): idempotent '
+        "re-ingestion and diffing key off it, so re-ingesting the same source "
+        "with an updated body must reuse the same source_id. Optionally pass "
+        "`hints` and `namespace_id` exactly like ingest_plan. Use this instead of "
+        "ingest_plan whenever the agent fetched the content itself rather than "
+        "being handed a file on disk."
+    ),
     "ingest_preview": (
         "Expand a planned change set (by `plan_id`) item by item — the new "
         "entities, merges into existing entities, new relations, and deletion "
@@ -161,11 +177,12 @@ _TOOL_DESCRIPTIONS: dict[str, str] = {
 }
 
 
-# reviewable ingest tool 이름 — service 주입 시에만 등록되는 plan/preview/resolve/commit.
-# WRITE_TOOL_NAMES_EXCLUDED (등록 금지 목록) 와는 *별개* 다: 이 네 tool 은 사람
+# reviewable ingest tool 이름 — service 주입 시에만 등록되는 plan/content/preview/resolve/commit.
+# WRITE_TOOL_NAMES_EXCLUDED (등록 금지 목록) 와는 *별개* 다: 이 다섯 tool 은 사람
 # 검토 latch 를 통과한 변경만 반영하므로 허용된다.
 INGEST_TOOL_NAMES: tuple[str, ...] = (
     "ingest_plan",
+    "ingest_content",
     "ingest_preview",
     "ingest_resolve",
     "ingest_commit",
@@ -296,17 +313,23 @@ def _build_tools() -> list[mcp_types.Tool]:
 
 
 def _build_ingest_tools() -> list[mcp_types.Tool]:
-    """reviewable ingest 의 4 tool — service 가 주입된 서버에서만 등록.
+    """reviewable ingest 의 5 tool — service 가 주입된 서버에서만 등록.
 
     입력 스키마는 plan_schemas 의 Pydantic 모델에서 그대로 끌어와 REST 통로와
     같은 출처를 공유한다 (read tool 과 동일 원칙). ingest_plan 은 `{path}`,
-    preview/commit 은 `{plan_id}`, resolve 는 `{plan_id, resolutions}`.
+    ingest_content 는 `{content, source_id}`, preview/commit 은 `{plan_id}`,
+    resolve 는 `{plan_id, resolutions}`.
     """
     return [
         mcp_types.Tool(
             name="ingest_plan",
             description=_TOOL_DESCRIPTIONS["ingest_plan"],
             inputSchema=_build_input_schema(PlanIngestRequest),
+        ),
+        mcp_types.Tool(
+            name="ingest_content",
+            description=_TOOL_DESCRIPTIONS["ingest_content"],
+            inputSchema=_build_input_schema(PlanContentRequest),
         ),
         mcp_types.Tool(
             name="ingest_preview",
@@ -412,6 +435,11 @@ def _dispatch_tool(
         if name == "ingest_plan":
             plan_body = PlanIngestRequest.model_validate(arguments)
             return services.plan_ingest(plan_body, service=ingest_service, registry=plan_registry)
+        if name == "ingest_content":
+            content_body = PlanContentRequest.model_validate(arguments)
+            return services.plan_ingest_content(
+                content_body, service=ingest_service, registry=plan_registry
+            )
         if name == "ingest_preview":
             preview_body = PreviewRequest.model_validate(arguments)
             return services.preview_plan(preview_body, registry=plan_registry)
@@ -498,8 +526,8 @@ def build_mcp_server(
 ) -> Server:
     """MCP Server 객체 생성 + tool 등록.
 
-    기본은 6 read tool 만 등록한다. `ingest_service` 와 `plan_registry` 가 *둘 다*
-    주입되면 reviewable ingest 의 4 tool (plan/preview/resolve/commit) 을 추가로 등록한다.
+    기본은 7 read tool 만 등록한다. `ingest_service` 와 `plan_registry` 가 *둘 다*
+    주입되면 reviewable ingest 의 5 tool (plan/content/preview/resolve/commit) 을 추가로 등록한다.
     어느 한쪽이 None 이면 추가하지 않는다 — LLM 이 없는 read-only fake-boot 경로
     (CLI 의 ARCHE_TEST_FAKE_GRAPH) 를 보호하기 위함이다.
 

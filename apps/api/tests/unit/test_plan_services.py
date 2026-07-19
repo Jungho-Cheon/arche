@@ -23,9 +23,7 @@ from arche_api.domain.ingest_plan import AmbiguousMatch, IngestPlan, RecordedWri
 from arche_api.domain.models import MergeMutation, StoredEntity
 
 
-def _stored_entity(
-    *, eid: str, name: str, etype: str, aliases: list[str]
-) -> StoredEntity:
+def _stored_entity(*, eid: str, name: str, etype: str, aliases: list[str]) -> StoredEntity:
     """테스트용 StoredEntity — 미리보기 직렬화에 쓰이는 필드만 의미값, 나머지는 빈값."""
     return StoredEntity(
         id=eid,
@@ -45,9 +43,7 @@ def test_commit_refuses_without_preview(make_plan, fake_service):
     reg = PlanRegistry()
     reg.create(make_plan(previewed=False))
     with pytest.raises(UnprocessableError):
-        services.commit_plan(
-            CommitRequest(plan_id="pln_1"), service=fake_service, registry=reg
-        )
+        services.commit_plan(CommitRequest(plan_id="pln_1"), service=fake_service, registry=reg)
 
 
 def test_preview_sets_flag_then_commit_ok(make_plan, fake_service):
@@ -55,9 +51,7 @@ def test_preview_sets_flag_then_commit_ok(make_plan, fake_service):
     reg.create(make_plan(previewed=False))
     services.preview_plan(PreviewRequest(plan_id="pln_1"), registry=reg)
     assert reg.get("pln_1").previewed is True
-    services.commit_plan(
-        CommitRequest(plan_id="pln_1"), service=fake_service, registry=reg
-    )
+    services.commit_plan(CommitRequest(plan_id="pln_1"), service=fake_service, registry=reg)
 
 
 # ---------- Task 3: hints 입력 전달 ----------
@@ -83,6 +77,24 @@ def test_plan_ingest_without_hints_passes_none(fake_service):
         registry=reg,
     )
     assert fake_service.last_plan_file_hints is None
+
+
+def test_plan_ingest_content_forwards_args_to_service(fake_service):
+    """plan_ingest_content (#155) 가 content/source_id/hints 를 domain plan_content 로 전달."""
+    from arche_api.api.plan_schemas import PlanContentRequest
+
+    reg = PlanRegistry()
+    summary = services.plan_ingest_content(
+        PlanContentRequest(content="여름 쿠폰 본문", source_id="confluence:PAGE-1", hints="용어집"),
+        service=fake_service,
+        registry=reg,
+    )
+    assert fake_service.last_plan_content_body == "여름 쿠폰 본문"
+    assert fake_service.last_plan_content_source_id == "confluence:PAGE-1"
+    assert fake_service.last_plan_content_hints == "용어집"
+    # 계획이 레지스트리에 보관되어 이후 preview/commit 로 이어진다.
+    assert reg.get(summary.plan_id) is not None
+    assert summary.source_path == "confluence:PAGE-1"
 
 
 # ---------- Issue #92: 진입점이 요청의 namespace 를 전달 (default 하드코딩 제거) ----------
@@ -281,13 +293,9 @@ def test_commit_refuses_when_dependency_is_stale(make_plan):
 
     service = _FakeService(_FakeGraph(exists=False))
     reg = PlanRegistry()
-    reg.create(
-        make_plan(previewed=True, depends_on_entity_ids=["01HMISSING"])
-    )
+    reg.create(make_plan(previewed=True, depends_on_entity_ids=["01HMISSING"]))
     with pytest.raises(UnprocessableError, match="stale"):
-        services.commit_plan(
-            CommitRequest(plan_id="pln_1"), service=service, registry=reg
-        )
+        services.commit_plan(CommitRequest(plan_id="pln_1"), service=service, registry=reg)
 
 
 # ---------- Minor: 알 수 없는 plan_id ----------
@@ -339,9 +347,7 @@ class _StubPlanService:
 
 def test_plan_ingest_tallies_write_counts():
     """plan_ingest 의 PlanSummary 카운터가 writes 종류별 개수와 일치하는지."""
-    entity = _stored_entity(
-        eid="01HE", name="n", etype="t", aliases=[]
-    )
+    entity = _stored_entity(eid="01HE", name="n", etype="t", aliases=[])
     mutation = MergeMutation(
         id="01HM",
         aliases=[],

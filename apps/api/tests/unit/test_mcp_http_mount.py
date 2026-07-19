@@ -88,7 +88,7 @@ def test_http_mount_without_ingest_exposes_only_read_tools():
 
 def test_http_mount_with_ingest_exposes_all_tools_like_stdio():
     """ingest_service + plan_registry 를 주입하면 HTTP 전송도 검토형 적재 도구
-    4개를 더해 stdio serve 와 같은 도구 집합(7 read + 4 ingest)을 노출한다 (#107)."""
+    5개를 더해 stdio serve 와 같은 도구 집합(7 read + 5 ingest)을 노출한다 (#107, #155)."""
     from arche_api.api.plan_registry import PlanRegistry
 
     app = FastAPI()
@@ -103,8 +103,9 @@ def test_http_mount_with_ingest_exposes_all_tools_like_stdio():
     names = set(_mounted_tool_names(app))
     assert {
         "ingest_plan",
+        "ingest_content",
         "ingest_preview",
         "ingest_resolve",
         "ingest_commit",
     } <= names
-    assert len(names) == 11  # 7 read (6 primitive + find_related) + 4 ingest
+    assert len(names) == 12  # 7 read (6 primitive + find_related) + 5 ingest
