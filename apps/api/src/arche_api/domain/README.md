@@ -73,9 +73,23 @@
 
 에이전트 보강 메모(`hints`)는 추출 청크 컨텍스트의 `[ENRICHMENT]` prefix로만 들어가고 *원문은 그대로 보존*된다. `plan_file`/`resolve_plan`이 켰을 때만 non-None이고, 정상 적재는 None이라 렌더에서 통째로 생략된다.
 
+## 동일성과 병합 (identity.py)
+
+같은 대상을 한 노드로 모으는 규칙이 모여 있다. `normalize`, 매칭 임계값, stoplist는 **측정 통제 변수**다. 바꾸면 모든 측정 회차의 그래프가 달라지므로 ADR 개정과 새 측정 회차가 필요하고, 호출부에서 임시로 우회하면 측정이 무효가 된다.
+
+**4단계 매칭 (`EntityMatcher`).** step 1은 정규화한 이름의 정확 일치, step 2는 각 alias를 정규화해 같은 lookup, step 3은 이름을 임베딩해 벡터 ANN 후보 중 cosine이 임계값(0.92) 이상인 최초 후보, step 4는 모두 실패해 새 노드. 임베딩 호출은 step 1과 2가 다 miss일 때만 한다(비용). 벡터 인덱스가 동봉하는 score는 버전마다 매핑이 조금씩 달라, 임계값의 의미를 한 자리에 고정하려고 cosine을 코드에서 다시 계산한다.
+
+**normalize가 하는 것과 안 하는 것.** strip → NFC → lowercase → 내부 공백 축소 → 양 끝 흔한 구두점만 trim. 한국어 조사/접미사는 일부러 제거하지 않는다. "쿠폰을"과 "쿠폰"을 같게 만들면 "쿠폰사"가 "쿠폰"으로 잘려 다른 엔티티끼리 병합되는 false positive가 많아진다. normalize의 책임은 표기 흔들림 흡수까지고, 그 이상은 alias와 임베딩 신호가 맡는다.
+
+**stoplist — over-merge 방지 (`NON_IDENTIFYING_ALIAS_STOPLIST`).** 10-K나 사업보고서는 회사가 자기를 "the Company", "당사"로 부르고, 논문은 "this study", "our findings"로 자기를 가리킨다. 이 표현은 문서마다 똑같이 쓰여 globally 식별할 이름이 아니다. stoplist가 없으면 먼저 적재된 회사의 "the Company" alias에 다음 문서의 "the Company"가 매칭돼 서로 다른 회사가 한 노드로 흡수된다(FinanceBench에서 6개 회사가 한 노드로 뭉치는 catastrophic over-merge 관측). 그래서 이 alias들은 검색용 `normalized_aliases` 인덱스에서 빼고 매칭 lookup도 건너뛰되, 표시용 `aliases`에는 그대로 둔다. 나열로 다 못 담는 자기지칭은 "한정사/소유격 + 담론 명사" 구조를 `_GENERIC_DEIXIS_RE` 패턴으로 결정적으로 잡는다. 과포함의 비용은 under-merge(안 뭉침)뿐이라 over-merge보다 안전한 쪽이다.
+
+**식별자 alias (`extract_identifier_aliases`).** "thymidylate synthase (P04818)"의 괄호 안 ID나 "serotonin P34969"의 bare ID를 별도 노드로 남기면 사슬이 끊긴다. 이름에서 구조적 식별자를 뽑아 alias로 더하면 그 ID로 검색해도 같은 노드에 닿는다. 고정밀 게이트로 글자 1개 이상과 숫자 3개 이상을 동시에 가진 토큰만 식별자로 본다. 숫자 3개 요구가 "10-K"/"S-1" 같은 generic 코드를 걸러 over-merge를 막는다.
+
+**over-merge 탐지 (`detect_overmerged_entities`).** 예방(stoplist)은 앞으로의 적재만 막고 옛 그래프엔 불량 노드가 남는다. alias 수 이상치, 서로 다른 식별자 다수 보유, 매칭 색인에 샌 자기지칭 alias 같은 정적 신호로 플래그한다. 판단이 아니라 세기라 LLM이 필요 없다. 배경은 ADR-0008, ADR-0017.
+
 ## 그 밖의 모듈
 
-- `identity.py` — 4단계 엔티티 동일성 매칭(`EntityMatcher`)과 병합(`EntityMerger`), 정규화/식별자 alias 추출. step 1-3 매칭의 본체.
+- `identity.py` — 위 "동일성과 병합" 참조.
 - `chunking.py` — 텍스트를 추출 예산 토큰으로 분할. 작은 청크가 표/수치 추출에 유리한 이유가 여기 담긴다.
 - `extract_context.py` — 추출 LLM에 동봉하는 청크 컨텍스트 빌드(ADR-0009). 주변 그래프 이웃 + main_entity + enrichment.
 - `main_entity.py` — 문서당 1회 도는 2nd pass(ADR-0009 D3). 문서의 중심 엔티티를 잡아 모든 청크에 전달.
@@ -84,7 +98,7 @@
 - `models.py` — 도메인 자료형(`ExtractedGraph`, `StoredEntity`, `SourceRef` 등).
 - `ingest_plan.py` — `IngestPlan` / `AmbiguousMatch` 자료형.
 - `extraction_contract.py` — 추출 시스템 프롬프트와 스키마 계약.
-- `ports.py` — 저장소/LLM/임베딩 인터페이스(능력별 포트, ADR-0018).
+- `ports.py` — 저장소/LLM/임베딩 인터페이스. 그래프 능력을 GraphStore/VectorIndex/LexicalIndex 로 나눈 이유는 모든 백엔드가 벡터/어휘 인덱스를 native 로 갖지는 않기 때문이다. 좁은 능력 포트에 의존해 두면 나중에 벡터/어휘를 별도 store 로 빼도 도메인 코드가 안 바뀐다. 지금은 한 store(Neo4j/Kuzu)가 셋을 다 구현하고 합성 포트 GraphRepository 로 묶는다. 배경은 ADR-0018.
 - `errors.py` — 도메인 예외.
 
 ## 관련 결정
