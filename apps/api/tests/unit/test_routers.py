@@ -239,18 +239,18 @@ def _client_with(graph: StubGraph) -> TestClient:
     return TestClient(app)
 
 
-def test_healthz_returns_neo4j_state_ok():
+def test_healthz_returns_graph_state_ok():
     client = _client_with(StubGraph(healthy=True))
     r = client.get("/healthz")
     assert r.status_code == 200
     body = r.json()
-    assert body == {"status": "ok", "neo4j": "ok"}
+    assert body == {"status": "ok", "graph": "ok"}
 
 
-def test_healthz_returns_neo4j_state_down():
+def test_healthz_returns_graph_state_down():
     client = _client_with(StubGraph(healthy=False))
     r = client.get("/healthz")
-    assert r.json()["neo4j"] == "down"
+    assert r.json()["graph"] == "down"
 
 
 def test_find_entities_envelope_and_match_shape():

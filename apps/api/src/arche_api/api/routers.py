@@ -81,9 +81,9 @@ related_router = APIRouter(prefix="/related", tags=["related"])
 
 @health_router.get("/healthz", response_model=HealthzResponse)
 def healthz(graph: GraphRepository = Depends(graph_repo_dep)) -> HealthzResponse:
-    """liveness + neo4j 의존성 확인."""
-    neo4j_state = "ok" if graph.healthcheck() else "down"
-    return HealthzResponse(status="ok", neo4j=neo4j_state)
+    """liveness + 그래프 백엔드 의존성 확인."""
+    graph_state = "ok" if graph.healthcheck() else "down"
+    return HealthzResponse(status="ok", graph=graph_state)
 
 
 # ---------- find_entities (PRD 3 §3) ----------

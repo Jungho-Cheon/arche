@@ -245,4 +245,4 @@ class HealthzResponse(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     status: str
-    neo4j: str
+    graph: str

@@ -64,13 +64,13 @@ API 가 떴고 그래프 DB 와도 연결됐는지 확인합니다.
 
 ```bash
 curl http://localhost:8000/healthz
-# {"status":"ok","neo4j":"ok"}
+# {"status":"ok","graph":"ok"}
 ```
 
-`status` 는 API 자신이 응답하는지, `neo4j` 는 그래프 DB 와 통하는지를 나타냅니다. 둘 다 `ok` 면 준비가 끝난 겁니다.
+`status` 는 API 자신이 응답하는지, `graph` 는 그래프 DB 와 통하는지를 나타냅니다. 둘 다 `ok` 면 준비가 끝난 겁니다.
 
-::: tip neo4j 가 "down" 으로 보일 때
-방금 `docker compose up -d` 를 했다면 그래프 DB 가 아직 부팅 중이라 `neo4j` 값이 잠깐 `"down"` 으로 나올 수 있습니다. 몇 초 뒤 다시 호출하면 `"ok"` 로 바뀝니다.
+::: tip graph 가 "down" 으로 보일 때
+방금 `docker compose up -d` 를 했다면 그래프 DB 가 아직 부팅 중이라 `graph` 값이 잠깐 `"down"` 으로 나올 수 있습니다. 몇 초 뒤 다시 호출하면 `"ok"` 로 바뀝니다.
 :::
 
 ## 4단계 — 첫 적재
