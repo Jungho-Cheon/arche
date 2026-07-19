@@ -1,8 +1,6 @@
-"""계획용 자료구조 — 쓰기 의도를 기록한 묶음 (record/replay).
+"""계획용 자료구조 — 쓰기 의도를 기록한 묶음(record/replay).
 
-WHY domain 에 둠: PlanningGraphRepository 와 IngestService.plan_file 둘 다
-참조하고, 외부 기술(Neo4j/OpenAI)에 의존하지 않는 순수 도메인 표현이다.
-"""
+외부 기술에 의존하지 않는 순수 도메인 표현이라 domain 에 둔다."""
 
 from __future__ import annotations
 
@@ -16,16 +14,11 @@ if TYPE_CHECKING:
 
 
 class PlanQuestionKind(str, Enum):
-    """검토형 적재 질문의 종류 — 닫힌 목록 (#105).
+    """검토형 적재 질문의 종류 — 닫힌 목록. 응답 스키마에 enum 으로 노출돼 소비자가
+    값 집합을 계약으로 삼는다.
 
-    WHY enum: `kind` 를 열린 str 로 두면 문서와 클라이언트가 "올 수 있는 값"
-    전체를 신뢰하지 못한다. 닫힌 목록으로 고정하면 응답 스키마(plan_schemas)에
-    `enum` 으로 노출돼 소비자가 값 집합을 계약으로 삼고 분기할 수 있다. str 상속
-    이라 JSON 직렬화는 값 문자열 그대로. 새 종류 추가 = 여기 한 줄 + 소비자 갱신.
-
-    - POSSIBLE_MISSED_MERGE: 추출된 새 항목이 기존 노드와 임계 바로 아래
-      유사도라 자동 병합되지 않고 새 점으로 떨어졌다 — 같은 대상인지 사람에게
-      묻는다. 현재 유일한 종류.
+    - POSSIBLE_MISSED_MERGE: 새 항목이 기존 노드와 임계 바로 아래 유사도라 자동
+      병합되지 않고 새 점으로 떨어졌다 — 같은 대상인지 사람에게 묻는다.
     """
 
     POSSIBLE_MISSED_MERGE = "possible_missed_merge"
@@ -76,26 +69,12 @@ class IngestPlan:
     writes: list[RecordedWrite]
     result: IngestResult
     depends_on_entity_ids: list[str] = field(default_factory=list)
-    # 놓친 병합 후보(near-miss) 질문 — plan_file 이 result.ambiguities 를 유사도
-    # 내림차순 정렬 + 상한 cap + question_id 부여 후 채운다. 미리보기 UI 가 사람에게
-    # "이 둘이 같은 대상인가?" 를 묻는 입력. NORMAL ingest 는 이 필드를 만들지 않는다.
+    # 놓친 병합 후보 질문. plan_file 이 정렬·cap·번호 부여 후 채운다.
     open_questions: list[AmbiguousMatch] = field(default_factory=list)
-    # ask-human-on-ambiguity (해소 엔진) — 사람이 답한 질문을 *추출 엔티티 서명*
-    # ("<정규명>\x00<type>") 단위로 누적한 강제 매칭 힌트 맵. 값은
-    # "merge:<candidate_id>"(해당 candidate 로 강제 병합) 또는 "keep"(강제 새 노드 +
-    # 재질문 억제). resolve_plan 이 plan.open_questions 로 번역해 채우고, 다음
-    # resolve_plan 호출이 여기에 *덧붙여* 누적한다. NORMAL ingest/plan 은 비어 있다.
+    # 사람이 답한 강제 매칭 힌트 맵. 값은 "merge:<id>" 또는 "keep". resolve 가 누적한다.
     resolved: dict[str, str] = field(default_factory=dict)
-    # enrichment hints — 에이전트가 이 계획에 실은 보강 메모 (용어 풀이/약어/도메인
-    # 힌트). 추출 단계 LLM 프롬프트의 [ENRICHMENT] prefix 로만 들어가고 원문/노드의
-    # source_refs 는 건드리지 않는다 (provenance 보존). resolve_plan 이 재계획 시
-    # 이 값을 그대로 다시 흘려보내 다듬어진 계획도 같은 보강을 유지한다. NORMAL
-    # ingest/plan 은 None.
+    # 에이전트 보강 메모. 프롬프트 [ENRICHMENT] prefix 로만 들어가고 provenance 엔 영향 없다.
     hints: str | None = None
-    # namespace_id — 이 계획이 속한 namespace (ADR-0015). plan_file 이 자신이 받은
-    # namespace 를 여기에 기록하고, resolve_plan 이 재계획 시 이 값을 그대로 다시
-    # 흘려보낸다. WHY 보존: 계획이 namespace 를 잃으면 resolve 재계획이 "default" 로
-    # 되돌아가, 비-default namespace 로 만든 계획이 엉뚱한 namespace 에서 동일성
-    # 후보를 찾거나 그쪽으로 쓰여 격리가 깨진다 (issue #92). NORMAL ingest 는 이
-    # 자료구조를 만들지 않으므로 기본값 "default" 는 옛 default-only 동작과 같다.
+    # 이 계획이 속한 namespace. resolve 재계획이 같은 namespace 를 유지하도록 보존한다
+    # (안 그러면 default 로 되돌아가 격리가 깨진다, issue #92).
     namespace_id: str = "default"

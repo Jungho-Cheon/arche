@@ -1,17 +1,6 @@
-"""Main-entity 2nd pass — ADR-0009 D3.
-
-문서 1 회 별도 LLM 호출로 *주 entity* (name / type / aliases) 를 식별. 그 결과를
-청크 추출 호출의 [DOC_CONTEXT].main_entity 에 동봉 → "the Company", "we",
-"당사" 같은 1 인칭 자기지칭이 처음부터 주 entity 로 resolve.
-
-흐름:
-  1. 파일 첫 N 줄 (default 60) + LLM 호출
-  2. response_format = json_schema (strict)
-  3. 결과를 DocContext 로 변환
-
-비용 — 문서당 +1 LLM 호출 (input 약 500-1000 토큰, output 50 토큰). 1M corpus
-의 6 파일이면 +6 호출 = $0.01-0.05.
-"""
+"""Main-entity 2nd pass — 문서당 1 회 LLM 호출로 주 entity(name/type/aliases)를
+식별해 청크 추출의 [DOC_CONTEXT] 에 동봉한다. "the Company"/"당사" 같은 자기지칭이
+처음부터 주 entity 로 resolve 되게 한다. 배경은 ADR-0009."""
 
 from __future__ import annotations
 
@@ -26,13 +15,10 @@ from ..domain.errors import DependencyUnavailableError
 logger = logging.getLogger(__name__)
 
 
-# WHY 첫 60 줄: 10-K, 학술 논문, 일기 모두 *첫 페이지* 에 주 entity 가 명시되는
-# 패턴. 60 줄이면 보통 1-2 페이지 — 회사명/제목/저자 식별에 충분.
+# 첫 몇 줄에 주 entity 가 나오는 패턴(회사명/제목/저자). 60 줄이면 보통 1-2 페이지.
 DEFAULT_HEAD_LINES: int = 60
 
 
-# WHY 한국어 + 영어 혼합: ingest corpus 의 언어가 다양 — 시스템 메시지가 *판정
-# 정책* 을 한국어로 명시, 본문은 원문 그대로 전달.
 MAIN_ENTITY_SYSTEM = """\
 당신은 문서의 *주 entity* 를 식별하는 도구입니다.
 
@@ -109,8 +95,7 @@ class MainEntityExtractor:
                 response_format=MAIN_ENTITY_RESPONSE_FORMAT,
             )
         except (DependencyUnavailableError, NotImplementedError):
-            # NotImplementedError — LLM stub 이 complete 구현 안 했을 때
-            # (legacy LLM provider 호환). 본 단계가 *옵션* 이라 안전하게 None.
+            # complete 미구현(stub)이거나 의존성 다운 — 이 단계는 옵션이라 None 으로 폴백.
             logger.debug(
                 "main_entity LLM call unavailable source=%s — falling back",
                 source_path,

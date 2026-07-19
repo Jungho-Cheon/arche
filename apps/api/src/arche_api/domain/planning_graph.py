@@ -1,10 +1,7 @@
-"""계획용 GraphRepository 데코레이터 — 쓰기를 기록만 하고 실행하지 않는다.
+"""계획용 GraphRepository 데코레이터 — 쓰기를 실행하지 않고 기록만 한다.
 
-WHY: 검증된 적재 루프(_upsert_entities 등)를 한 줄도 고치지 않고 "쓰지 않는
-계획"을 얻기 위해, 포트 경계에서 쓰기를 가로챈다. 멀티청크 문서의 정합성은
-정규명 읽기 오버레이로 보존한다(같은 정규명 반복 등장 시 계획 안에서도 한
-점으로 병합).
-"""
+포트 경계에서 쓰기를 가로채 적재 루프를 안 고치고 "쓰지 않는 계획"을 얻는다.
+멀티청크 정합성은 정규명 읽기 오버레이로 보존한다. domain/README.md 참조."""
 
 from __future__ import annotations
 
@@ -100,8 +97,7 @@ class PlanningGraphRepository(GraphRepository):
     def find_by_normalized_name(
         self, *, normalized: str, type_: str, namespace_id: str = "default"
     ) -> StoredEntity | None:
-        # 오버레이도 namespace 로 거른다 (issue #94) — 계획은 단일 namespace 라
-        # 보통 일치하지만, cross-namespace 후보를 다리로 쓰지 않도록 명시.
+        # 오버레이도 namespace 로 거른다(cross-namespace 후보를 다리로 안 쓰게, issue #94).
         pend = self._pending_by_norm.get(normalized)
         if (
             pend is not None

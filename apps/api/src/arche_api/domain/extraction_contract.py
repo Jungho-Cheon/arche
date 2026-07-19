@@ -1,32 +1,16 @@
-"""추출 계약 — provider 중립 (ADR-0018 LLM-agnostic 경계).
+"""추출 계약 — provider 중립.
 
-WHY 도메인에 둠: "무엇을 어떻게 추출할 것인가" (지시문 + 엔티티/관계 스키마) 는
-*어느 LLM provider 를 쓰든 동일한 계약* 이다. 이 계약을 OpenAI 어댑터 안에 두면
-provider 를 바꿀 때 계약까지 따라 옮겨야 한다. 도메인으로 끌어올려, 각 어댑터
-(OpenAI `response_format`, Anthropic tool-use, Gemini responseSchema) 가 *이 중립
-계약을 자기 네이티브 구조화 출력 형식으로 번역* 하게 한다.
-
-경계:
-- 본 모듈 (도메인) — WHAT: 지시문 + 엔티티/관계 JSON Schema (중립).
-- 어댑터 (`adapters/llm.py`) — HOW: 중립 스키마를 provider 봉투로 감싸는 인코딩
-  (예: OpenAI 의 `{"type": "json_schema", "json_schema": {...}}`).
-
-검증으로 확정된 사항이 이 계약에 박혀 있다 (모델 교체가 아니라 *추출 완전성* 이
-정확도의 레버라는 측정 결과): 원칙 4(a) 식별자-동일성, 원칙 5 정량 보존, 원칙 6
-표 완전 추출. 이들은 도메인 무관 규칙이라 특정 벤치마크 과적합을 피한다.
-"""
+"무엇을 어떻게 추출하는가"(지시문 + 엔티티/관계 스키마)는 어느 LLM provider 를 쓰든
+같은 계약이라 도메인에 둔다. 각 어댑터(OpenAI response_format, Anthropic tool-use 등)가
+이 중립 계약을 자기 구조화 출력 형식으로 번역한다. 계약에 박힌 원칙(식별자 동일성,
+정량 보존, 표 완전 추출)은 도메인 무관 규칙이라 벤치마크 과적합을 피한다."""
 
 from __future__ import annotations
 
 from typing import Any
 
-# WHY 시스템 프롬프트 한국어: PRD 2 §4.2 의 패턴. 검증 도메인 (상거래) 이 한국어
-# 비즈니스 규칙이라 모델이 어휘를 그대로 유지하기 쉽도록.
-#
-# ADR-0009 (Context-aware extraction) 적용 — system prompt 가 호출에 동봉된
-# [DOC_CONTEXT] / [KNOWN_ENTITIES] / [SCHEMA] 블록을 *반드시 참조* 하도록 지시.
-# 이 변경으로 *추출 단계에서* generic 자기지칭 ("the Company", "당사") 이 문서
-# 주 entity 로 resolve 되고, 기존 graph entity 와의 매칭이 LLM 결정으로 이동.
+# 검증 도메인이 한국어 비즈니스 규칙이라 프롬프트도 한국어로 둔다. 프롬프트가 동봉된
+# 컨텍스트 블록을 참조해 자기지칭 resolve 와 기존 entity 매칭을 추출 단계에서 하게 한다.
 EXTRACTION_SYSTEM_PROMPT = """당신은 도메인 문서에서 엔티티와 관계를 추출하는 도구입니다.
 
 주어진 텍스트에서 다음을 식별하세요.
@@ -92,9 +76,7 @@ EXTRACTION_SYSTEM_PROMPT = """당신은 도메인 문서에서 엔티티와 관�
 결과는 반드시 지정된 JSON 스키마로 응답하세요.
 """
 
-# 엔티티/관계 추출 결과의 JSON Schema (PRD 2 §4.3). provider 봉투를 *벗긴* 순수
-# 스키마 — additionalProperties=false + required 강제. 각 어댑터가 자기 형식으로
-# 감싼다 (OpenAI 는 strict json_schema 봉투, 다른 provider 는 각자 방식).
+# 추출 결과 JSON Schema — provider 봉투를 벗긴 순수 스키마. 각 어댑터가 자기 형식으로 감싼다.
 EXTRACTION_ENTITY_RELATION_SCHEMA: dict[str, Any] = {
     "type": "object",
     "additionalProperties": False,
@@ -120,9 +102,8 @@ EXTRACTION_ENTITY_RELATION_SCHEMA: dict[str, Any] = {
                         "items": {"type": "string"},
                     },
                     "description": {"type": ["string", "null"]},
-                    # ADR-0009 D2 — LLM 이 KNOWN_ENTITIES 후보 중 하나
-                    # 와 *같은 대상* 이라고 확신할 때만 그 id 명시.
-                    # 비어있으면 후처리 매처가 Step 1-3 로 결정.
+                    # LLM 이 KNOWN_ENTITIES 후보와 같은 대상이라 확신할 때만 그 id.
+                    # 비어 있으면 후처리 매처가 결정한다.
                     "matched_existing_id": {"type": ["string", "null"]},
                 },
             },

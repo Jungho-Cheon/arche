@@ -90,7 +90,7 @@
 ## 그 밖의 모듈
 
 - `identity.py` — 위 "동일성과 병합" 참조.
-- `chunking.py` — 텍스트를 추출 예산 토큰으로 분할. 작은 청크가 표/수치 추출에 유리한 이유가 여기 담긴다.
+- `chunking.py` — 텍스트를 청크로 분할. 70% 컷과 overlap 비율은 측정 통제 변수다. 추출 청크 예산을 모델 컨텍스트(거대)와 분리해 작게 잡는데, 거대 청크에선 LLM 이 표의 모든 행과 기간별 수치를 빠짐없이 못 뽑아 정량 사실이 누락되기 때문이다. retrieval 용 `chunk_for_retrieval` 은 더 작은 청크와 문장 단위 overlap 을 쓴다.
 - `extract_context.py` — 추출 LLM에 동봉하는 청크 컨텍스트 빌드(ADR-0009). 주변 그래프 이웃 + main_entity + enrichment.
 - `main_entity.py` — 문서당 1회 도는 2nd pass(ADR-0009 D3). 문서의 중심 엔티티를 잡아 모든 청크에 전달.
 - `planning_graph.py` — 쓰기를 가로채 기록만 하는 `GraphRepository` 데코레이터. 검토 가능한 적재의 오버레이.

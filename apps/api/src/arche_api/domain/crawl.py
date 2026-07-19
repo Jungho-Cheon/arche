@@ -1,18 +1,8 @@
-"""디렉토리 재귀 수집 — PRD 2 §2.
+"""디렉토리 재귀 수집.
 
-흐름:
-  crawl(root) → root 아래 .txt / .md 파일을 정렬된 순서로 yield.
-  자동 제외 패턴 (`.git/`, `node_modules/`, dot 디렉토리 등) + 사용자 정의
-  `.archeignore` (pathspec 라이브러리, gitignore 문법) 를 함께 적용.
-
-WHY 정렬: 같은 디렉토리를 두 번 호출했을 때 *처리 순서가 동일* 해야 측정 회차
-사이 비교 가능성이 유지된다. OS 의 readdir 순서는 파일 시스템마다 다르므로
-명시적으로 정렬한다.
-
-WHY 직렬 처리 가정: PRD 2 §6 가 MVP 의 병렬 처리를 명시 금지. crawl 은 generator
-로 한 파일씩 yield 해서 호출자 (IngestService.ingest_directory) 가 직렬 루프로
-받는다.
-"""
+root 아래 지원 확장자 파일을 정렬된 순서로 모은다. 자동 제외(.git/ node_modules/
+dot 디렉토리)와 사용자 .archeignore(gitignore 문법)를 함께 적용한다. 정렬하는 건
+OS readdir 순서가 파일 시스템마다 달라, 측정 회차 사이 처리 순서를 같게 두기 위함."""
 
 from __future__ import annotations
 
@@ -25,21 +15,14 @@ import pathspec
 logger = logging.getLogger(__name__)
 
 
-# WHY 단일 그룹: #5 (PDF + 멀티모달 이미지) 가 들어오면서 텍스트/PDF/이미지가 같은
-# 흐름에 들어왔다. 이전 슬라이스에서는 PDF/이미지가 PENDING 으로 분리되어 있었지만
-# 이제 IngestService 가 확장자별로 분기 처리한다 (PRD 2 §2.1).
 SUPPORTED_EXTS: frozenset[str] = frozenset(
     {".txt", ".md", ".pdf", ".jpg", ".jpeg", ".png", ".webp"}
 )
-# WHY 빈 PENDING 보존: 외부 코드/STATUS 가 import 하는 심볼 — 빈 집합으로 두고
-# 후속 follow-up (예: 오디오/동영상) 이 들어오면 다시 채운다. 제거하면 호출자에
-# AttributeError 가 새어 나간다.
+# 항상 비어 있음 — 지원 예정 확장자(오디오/동영상 등) 자리. import 심볼이라 유지한다.
 PENDING_EXTS: frozenset[str] = frozenset()
 
 
-# WHY 패턴 고정: 도트 디렉토리 + node_modules / venv / __pycache__ 는 사용자가
-# 명시적으로 ingest 대상에 넣을 일이 거의 없는 *환경/캐시 디렉토리* 다. 자동
-# 제외해 사용자의 `.archeignore` 부담을 줄인다.
+# 환경/캐시 디렉토리는 자동 제외해 .archeignore 부담을 줄인다.
 DEFAULT_EXCLUDE_DIR_NAMES: frozenset[str] = frozenset(
     {
         "node_modules",
@@ -57,25 +40,12 @@ IGNORE_FILE_NAME = ".archeignore"
 
 @dataclass(frozen=True)
 class CrawlSummary:
-    """크롤 결과 요약 — 호출자가 stdout 진행률에 쓰는 신호.
-
-    세 카운터는 *확장자 기준* 의 crawl 단계 분류다. ingest 단계의 short-circuit
-    (= files_skipped) 와 무관하며, 아래 조건은 상호 배타적이다.
-
-      files_collected       : SUPPORTED_EXTS 에 속하는 파일 — ingest 대상.
-      files_pending_skipped : PENDING_EXTS 에 속하는 파일 — 현재 PENDING_EXTS 가
-                              비어 있어 항상 0. 오디오/동영상 등 지원 예정 형식이
-                              추가될 때 채워질 자리.
-      files_unsupported_skipped : 위 두 집합 어디에도 속하지 않는 확장자 — 예:
-                              .json, .py, .csv. debug 로그만 남기고 무음 skip.
-    """
+    """크롤 결과 요약. 세 카운터는 확장자 기준 분류다(상호 배타). files_collected 는
+    지원 파일, files_pending_skipped 는 지원 예정 형식(현재 0), files_unsupported_skipped
+    는 미지원 확장자(.json/.py/.csv 등)."""
 
     files_collected: list[Path]
-    # PENDING_EXTS 는 현재 frozenset() — 이 카운터는 항상 0.
-    # 오디오/동영상 등 미래 형식이 PENDING_EXTS 에 들어오면 증가한다.
     files_pending_skipped: int
-    # SUPPORTED_EXTS 와 PENDING_EXTS 양쪽에 없는 확장자 파일 수.
-    # 예: .json, .py, .csv — debug 로그만 남기고 수집하지 않는다.
     files_unsupported_skipped: int
 
 
@@ -84,15 +54,10 @@ def crawl(
     *,
     extra_excludes: list[str] | None = None,
 ) -> CrawlSummary:
-    """`root` 아래의 지원 파일 (.txt / .md) 을 재귀적으로 수집.
+    """root 아래의 지원 파일을 재귀 수집한다.
 
-    제외 정책:
-      1. 자동 제외 — `DEFAULT_EXCLUDE_DIR_NAMES` + 모든 dot 디렉토리.
-      2. 사용자 정의 — root/`.archeignore` 가 있으면 gitignore 문법으로 적용.
-      3. PDF / 이미지 — `PENDING_EXTS` 마주치면 warning 로그 + skip
-         (#5 follow-up 의 안내 한 줄).
-      4. 그 외 미지원 확장자 — debug 로그 + skip (README 등은 .md 라 SUPPORTED).
-    """
+    제외 정책 — 자동 제외(DEFAULT_EXCLUDE_DIR_NAMES + dot 디렉토리), 사용자
+    .archeignore(gitignore 문법), 그 외 미지원 확장자는 debug 로그만 남기고 skip."""
     root = root.resolve()
     if not root.exists():
         raise FileNotFoundError(f"directory not found: {root}")
@@ -105,24 +70,19 @@ def crawl(
     pending_skipped = 0
     unsupported_skipped = 0
 
-    # WHY rglob('*') + 명시 정렬: Path.rglob 의 yield 순서는 OS 의존이다 (Linux
-    # ext4 와 macOS APFS 가 다를 수 있음). 정렬해 두면 처리 순서가 측정 회차
-    # 사이에 동일 — idempotent 디버깅 가능성 우선.
+    # OS 의존인 탐색 순서를 정렬해 측정 회차 사이 처리 순서를 같게 한다.
     candidates = sorted(_walk(root=root, spec=spec))
     for path in candidates:
         ext = path.suffix.lower()
         if ext in SUPPORTED_EXTS:
-            # SUPPORTED_EXTS: .txt .md .pdf .jpg .jpeg .png .webp
             collected.append(path)
         elif ext in PENDING_EXTS:
-            # PENDING_EXTS 는 현재 비어 있어 이 분기는 실행되지 않는다.
-            # 오디오/동영상 등 지원 예정 형식이 추가되면 여기서 증가한다.
+            # PENDING_EXTS 가 비어 현재 실행되지 않는 분기.
             pending_skipped += 1
             logger.warning(
                 "skip %s (지원 예정 형식, PENDING_EXTS 등록): %s", ext, path
             )
         else:
-            # SUPPORTED / PENDING 어느 쪽도 아닌 확장자 — 예: .json, .py, .csv
             unsupported_skipped += 1
             logger.debug("skip unsupported extension %s: %s", ext, path)
 
@@ -134,13 +94,8 @@ def crawl(
 
 
 def _walk(*, root: Path, spec: pathspec.PathSpec) -> list[Path]:
-    """디렉토리를 재귀 탐색하며 자동 제외 + spec 매칭을 즉시 적용.
-
-    WHY Path.rglob 가 아닌 수동 재귀: rglob 은 디렉토리 prune 이 어렵다 (제외
-    디렉토리를 만나도 그 안을 계속 들여다본다). 수동 재귀는 prune 으로 *제외
-    디렉토리 안을 아예 진입하지 않는다* — node_modules 처럼 수만 개 파일이
-    있는 디렉토리를 만나도 비용이 0 에 가까워진다.
-    """
+    """디렉토리를 수동 재귀 탐색하며 제외를 즉시 적용한다. rglob 과 달리 제외
+    디렉토리(node_modules 등) 안으로 아예 진입하지 않아 비용을 아낀다."""
     out: list[Path] = []
     stack: list[Path] = [root]
     while stack:
@@ -166,12 +121,8 @@ def _walk(*, root: Path, spec: pathspec.PathSpec) -> list[Path]:
 def _is_excluded_dir(
     *, entry: Path, root: Path, spec: pathspec.PathSpec
 ) -> bool:
-    """디렉토리 자동 제외 — dot 시작 / 알려진 캐시 디렉토리 / spec 매칭.
-
-    WHY dot 디렉토리 통째 제외: PRD 2 §2.2 — `.git/`, `.cache/` 등을 한 룰로
-    묶고 사용자가 의도적으로 dot 으로 시작하는 디렉토리는 별도 spec 으로 다시
-    포함해야 한다는 *명시적인 동작* 으로 둔다 (gitignore 와 동일 직관).
-    """
+    """디렉토리 자동 제외 — dot 시작 / 알려진 캐시 디렉토리 / spec 매칭. dot 디렉토리는
+    통째로 제외하되 필요하면 spec 으로 다시 포함할 수 있다(gitignore 직관)."""
     name = entry.name
     if name.startswith("."):
         return True
@@ -197,6 +148,5 @@ def _load_ignore_spec(
             logger.warning("cannot read %s: %s", ignore_path, e)
     if extra_excludes:
         patterns.extend(extra_excludes)
-    # WHY "gitignore" (gitwildmatch 가 아닌): pathspec 1.x 에서 gitwildmatch 는
-    # deprecated. gitignore 패턴은 동일 문법 (gitignore 1:1) 으로 평가된다.
+    # "gitignore" 문법 — pathspec 1.x 에서 gitwildmatch 는 deprecated.
     return pathspec.PathSpec.from_lines("gitignore", patterns)

@@ -1,33 +1,12 @@
-"""ExtractContext — ADR-0009 의 청크 추출 호출에 동봉되는 4 종 컨텍스트.
+"""ExtractContext — 청크 추출 호출에 동봉하는 컨텍스트.
 
-ADR-0009 의 root cause 해법. 추출 단계의 LLM 호출이 *청크 본문 외의 정보* 를
-받아 "the Company" 같은 generic reference 를 *문서 주 entity 로 resolve* 하고,
-이미 그래프에 있는 entity 와의 매칭을 *추출 단계에서* 결정 (matched_existing_id).
+추출 LLM 이 청크 본문 밖의 정보를 받아 "the Company" 같은 generic reference 를
+문서 주 entity 로 resolve 하고, 기존 그래프 entity 와의 매칭을 추출 단계에서
+결정하게 돕는다. 순수 도메인 로직이라 I/O 는 포트로 주입받는다.
 
-본 모듈은 *순수 도메인 로직* 이다. I/O 는 GraphRepository / EmbeddingProvider
-인터페이스로 주입받고, 입력 → 출력 변환만 책임진다.
-
-ADR-0009 의 4 종 컨텍스트:
-  1. [DOC_CONTEXT] file_path + 주 entity (2nd pass 결과, PR C 에서 채워짐) +
-     preceding_chunks_summary
-  2. [KNOWN_ENTITIES] 청크 본문에 등장 가능성이 있는 *기존 entity 후보 N 개* —
-     hybrid 검색 (find_by_keywords_scored + find_entities_dense, ADR-0003 의
-     기존 인프라 재사용)
-  3. [SCHEMA] 알려진 entity type 분포 + relation type 목록 — 일관성
-  4. [PRECEDING] 같은 source_path 의 같은 회차에서 *방금 추출된* entity 후보 (PR B
-     에서는 in-memory state 로 우선 처리; ADR-0010 의 청크 cache 와 결합 가능)
-
-본 PR (B) 의 범위:
-  - ExtractContext / KnownEntity dataclass
-  - ExtractContextBuilder — 청크 본문 → context (DOC_CONTEXT.main_entity 는
-    None 으로; PR C 에서 채워짐)
-  - LLM 어댑터의 system message 에 context block 을 prepend 하는 텍스트
-    렌더링 (`render_context_block`)
-
-향후 PR:
-  - PR C — main_entity (2nd pass) 자동 채움
-  - PR D — multi-agent parallel + cache key 에 context_sha 동봉
-"""
+4 종 컨텍스트 — [DOC_CONTEXT] 파일 경로 + 주 entity + 앞 청크 요약,
+[KNOWN_ENTITIES] 청크와 매칭될 만한 기존 entity 후보, [SCHEMA] type 분포, 그리고
+선택적 [ENRICHMENT] 에이전트 보강 메모. 배경은 ADR-0009."""
 
 from __future__ import annotations
 
@@ -40,13 +19,10 @@ from arche_api.domain.ports import EmbeddingProvider, GraphRepository
 logger = logging.getLogger(__name__)
 
 
-# WHY 후보 N=10 default: ADR-0009 D4 의 합의. 너무 적으면 매칭 누락, 너무 많으면
-# 토큰 폭발. 사용자 합의 후 ADR Open Question 1 에서 최종.
+# 후보 수 — 적으면 매칭 누락, 많으면 토큰 폭발.
 DEFAULT_KNOWN_ENTITIES_TOP_K: int = 10
 
-# WHY 청크당 keyword 추출 6 개: 청크 내 *명사구 후보* 의 적정 수. 너무 많으면
-# hybrid 검색 호출 폭증, 너무 적으면 KNOWN_ENTITIES 의 *recall* 손실. 6 은
-# 보통 청크 1 개에 등장하는 *고유 명사구* 의 평균 추정.
+# 청크당 명사구 후보 수 — recall 과 검색 호출 수의 균형.
 DEFAULT_KEYWORDS_PER_CHUNK: int = 6
 
 
@@ -56,11 +32,7 @@ SCHEMA_TOP_TYPES: int = 12
 
 @dataclass(frozen=True)
 class KnownEntity:
-    """LLM 에 보일 *기존 entity 후보 요약* — id + 식별 정보.
-
-    description 은 *1 줄* 로 truncate (토큰 통제). LLM 이 matched_existing_id
-    결정 시 본 요약만 보고 판단한다.
-    """
+    """LLM 에 보일 기존 entity 후보 요약. description 은 토큰 통제로 1 줄로 자른다."""
 
     id: str
     name: str
@@ -71,11 +43,8 @@ class KnownEntity:
 
 @dataclass(frozen=True)
 class DocContext:
-    """[DOC_CONTEXT] — 문서 메타 + 주 entity (있을 때) + 앞 청크 요약.
-
-    main_entity_*: PR B 시점에는 None. PR C 의 2nd pass 가 채움.
-    preceding_chunks_summary: PR B 의 in-memory 누적 (선택). 본 PR 에서는 None.
-    """
+    """[DOC_CONTEXT] — 문서 메타 + 주 entity + 앞 청크 요약. main_entity 는 2nd pass 가
+    채우고 없으면 None."""
 
     file_path: str
     main_entity_name: str | None = None
@@ -94,15 +63,13 @@ class SchemaSummary:
 
 @dataclass(frozen=True)
 class ExtractContext:
-    """ADR-0009 D1 의 4 종 컨텍스트 묶음 + (선택) 에이전트 보강 메모."""
+    """4 종 컨텍스트 묶음 + 선택적 에이전트 보강 메모."""
 
     doc: DocContext
     known_entities: list[KnownEntity]
     schema: SchemaSummary
-    # WHY enrichment: 원문을 고치지 않고 추출 recall 을 올리기 위한 *에이전트
-    # 제공 메모* (용어 풀이/약어/도메인 힌트). LLM 프롬프트 prefix 에만 들어가고
-    # 저장 노드의 source_refs 에는 영향이 없다 (provenance 보존). None/빈 문자열
-    # 이면 렌더에서 통째로 생략 — 비보강 적재의 캐시 키/동작 불변.
+    # 원문을 안 고치고 추출 recall 을 올리는 에이전트 메모(용어 풀이 등). 프롬프트
+    # prefix 에만 들어가고 provenance 엔 영향 없다. None 이면 렌더에서 생략된다.
     enrichment: str | None = None
 
     def is_empty_graph(self) -> bool:
@@ -114,10 +81,8 @@ class ExtractContext:
         )
 
 
-# WHY 영문 + 한국어 noun-ish 패턴: chunk 본문에서 *고유성이 있는 토큰* 만 후보.
-# 너무 일반적인 *불용어* (the / a / is / 그 / 이 / 등) 는 제외. 정밀한 NLP
-# 토크나이저는 over-engineering — regex 기반 단순 패턴이 *결정론적* 이고
-# 측정 통제 변수로 깔끔.
+# 청크에서 고유성 있는 토큰만 후보로 잡는 단순 regex(정밀 NLP 는 과한 엔지니어링).
+# 결정적이라 측정 통제 변수로 깔끔하다.
 _NOUNY_TOKEN = re.compile(
     r"\b("
     # 영문: 대문자 시작 + 2 자 이상 (고유 명사 추정)
@@ -169,10 +134,8 @@ def _one_line(text: str | None, *, max_len: int = 180) -> str:
 
 
 def render_context_block(ctx: ExtractContext) -> str:
-    """[DOC_CONTEXT] / [KNOWN_ENTITIES] / [SCHEMA] 를 LLM user message 의 *앞부분*
-    텍스트로 직렬화. 본 ADR 의 통제 변수 — 형식 변경 시 ADR-0009 amend + 캐시
-    invalidation (ADR-0010).
-    """
+    """컨텍스트 블록들을 LLM user message 앞부분 텍스트로 직렬화한다. 형식은 측정
+    통제 변수라 바꾸면 캐시를 무효화해야 한다."""
     lines: list[str] = []
 
     lines.append("[DOC_CONTEXT]")
@@ -191,8 +154,7 @@ def render_context_block(ctx: ExtractContext) -> str:
         )
     lines.append("")
 
-    # [ENRICHMENT] — 에이전트 제공 보강 메모. 비어 있으면 통째로 생략하여
-    # 비보강 적재의 렌더 출력 (= 캐시 키) 을 불변으로 유지한다.
+    # 비어 있으면 통째로 생략해 비보강 적재의 렌더 출력(=캐시 키)을 불변으로 둔다.
     if ctx.enrichment and ctx.enrichment.strip():
         lines.append("[ENRICHMENT]")
         lines.append(ctx.enrichment.strip())
@@ -230,15 +192,13 @@ def render_context_block(ctx: ExtractContext) -> str:
 class ExtractContextBuilder:
     """청크 본문 + graph state → ExtractContext.
 
-    KNOWN_ENTITIES 후보 선정 알고리즘 (ADR-0009 D4):
-      1. extract_keywords 로 청크 본문에서 *명사구 후보* 추출.
-      2. find_by_keywords_scored (fulltext) 로 후보 entity 회수.
-      3. (옵션) embedder 로 청크 본문 embedding → find_entities_dense.
-      4. RRF 융합 + top-N (default 10).
+    KNOWN_ENTITIES 후보 선정:
+      1. extract_keywords 로 청크에서 명사구 후보 추출.
+      2. find_by_keywords_scored(fulltext)로 후보 entity 회수.
+      3. (옵션) 청크 embedding → find_entities_dense.
+      4. RRF 융합 + top-N.
 
-    본 PR (B) 의 default 는 *fulltext only*. dense 결합은 PR D 의 multi-agent
-    parallel 흐름과 함께 측정 후 결정 — fulltext 만으로 *충분히 recall* 한다는
-    예측 + dense 호출의 latency overhead 를 통제하기 위함.
+    default 는 fulltext only 고 dense 결합은 옵션이다.
     """
 
     def __init__(
@@ -266,12 +226,8 @@ class ExtractContextBuilder:
         main_entity_aliases: list[str] | None = None,
         enrichment: str | None = None,
     ) -> ExtractContext:
-        """청크 1 개에 대한 ExtractContext.
-
-        PR C — main_entity 인자 추가. 호출자 (ingest 흐름) 가 2nd pass 결과를
-        문서 단위로 1 회 계산 후, 그 결과를 *같은 문서의 모든 청크 build* 에
-        반복 전달한다.
-        """
+        """청크 1 개에 대한 ExtractContext. main_entity 는 문서당 1 회 계산한 값을
+        모든 청크에 반복 전달받는다."""
         doc = DocContext(
             file_path=source_path,
             main_entity_name=main_entity_name,
@@ -325,7 +281,7 @@ class ExtractContextBuilder:
                 exc_info=True,
             )
             return SchemaSummary(entity_types=[], relation_types=[])
-        # ADR-0009 D1 의 schema block — type 분포 + relation type 목록.
+        # type 분포 + relation type 목록.
         entity_types_pairs = sorted(
             ((s.type, s.count) for s in entity_stats),
             key=lambda kv: (-kv[1], kv[0]),

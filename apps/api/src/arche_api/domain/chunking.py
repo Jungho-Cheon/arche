@@ -1,20 +1,8 @@
-"""LLM 컨텍스트 초과 시 텍스트를 청크로 분할 — PRD 2 §3.
+"""LLM 컨텍스트 초과 시 텍스트를 청크로 분할.
 
-흐름:
-  count_tokens(text) → 컨텍스트의 70% 이하면 [Chunk(0, 1, text)] 반환
-  → 초과면 heading → paragraph → sentence 순서로 폴백 (각 단계도 단일 단위가
-  70% 컷을 넘으면 다음 단계). 분할 후 인접 청크 사이에 20% overlap (직전 청크의
-  마지막 토큰 일부를 다음 청크 앞에 prepend).
-
-WHY 별도 모듈: PRD 2 §3 의 트리거 조건 (70% 컷) 과 overlap 비율 (20%) 은 *측정
-통제 변수* (ADR-0001). 변경 시 측정 회차가 무효화되므로, 분할 로직 자체를 한
-파일에 모아 두면 변경 비용과 영향 범위가 한 자리에서 보인다.
-
-WHY tiktoken: PRD 2 §3.1 은 토크나이저로 tiktoken 을 명시한다. gpt-4.1 는
-o200k_base 토크나이저 계열이지만 본 모듈은 *측정용 근사* 가 목적이라 가용성
-높은 `cl100k_base` 로 고정해도 컷 결정에 큰 차이가 없다 (둘 다 BPE 기반 -
-실제 토큰 수의 ±10% 정도 오차이고 70% 컷은 그 안에서 안전 여유가 있다).
-"""
+컨텍스트의 70% 이하면 통째로 한 청크, 초과면 heading → paragraph → sentence 순으로
+폴백하고 인접 청크에 overlap 을 준다. 70% 컷과 overlap 비율, 작은 청크의 이유는
+domain/README.md 참조. 토크나이저는 측정용 근사라 cl100k_base 로 고정한다."""
 
 from __future__ import annotations
 
@@ -28,28 +16,19 @@ import tiktoken
 logger = logging.getLogger(__name__)
 
 
-# WHY 통제 변수 상수: 두 값 모두 PRD 2 §3 의 측정 통제 변수. 변경 시 ADR amend
-# + 새 측정 회차 시작 필요. 외부에서 호출 시 monkeypatch 로 작은 값을 주입해
-# 테스트를 돌리지만, 운영 경로에서 우회 금지.
+# 측정 통제 변수 — 운영 경로에서 우회 금지(테스트는 monkeypatch 로 작은 값 주입).
 TOKEN_BUDGET_RATIO: float = 0.70
 OVERLAP_RATIO: float = 0.20
 
 
-# Retrieval 친화적 청크 크기 — ADR-0009 D5 의 측정 통제 변수.
-# *LLM 추출* 의 청크 (위 70% 컷) 와는 별도. embed 한도 (8192) 안에서 RAG 정확도
-# 가 좋은 *작은 청크* 가 목표. 1500 토큰 = ~6000 자 한국어 = 단락 3-5 개.
+# retrieval 용 작은 청크(LLM 추출 청크와 별도). 측정 통제 변수. 1500 토큰 ≈ 단락 3-5 개.
 RETRIEVAL_CHUNK_TOKENS: int = 1500
 RETRIEVAL_OVERLAP_SENTENCES: int = 2
 
 
 @dataclass(frozen=True)
 class Chunk:
-    """분할 결과 단위.
-
-    `chunk_index` 는 0-based. `total_chunks` 는 같은 source 의 분할 총 개수 —
-    `source_refs` 에 그대로 박혀 추출 결과가 어느 청크에서 나왔는지 추적된다
-    (PRD 2 §3.3).
-    """
+    """분할 결과 단위. chunk_index 는 0-based, total_chunks 는 같은 source 의 총 청크 수."""
 
     text: str
     chunk_index: int
@@ -68,11 +47,7 @@ def _encoder() -> tiktoken.Encoding:
 
 
 def count_tokens(text: str) -> int:
-    """tiktoken cl100k_base 로 토큰 수 측정.
-
-    WHY 빈 문자열 짧은 경로: 빈 파일은 토큰 0 이고 청크 분할 트리거도 안 탄다.
-    encoder 호출 자체를 건너뛰어 부팅 시 시점 비용을 한 자리에서 줄인다.
-    """
+    """tiktoken cl100k_base 로 토큰 수 측정. 빈 문자열은 encoder 호출 없이 0."""
     if not text:
         return 0
     return len(_encoder().encode(text))
@@ -86,23 +61,12 @@ def chunk_text(
     overlap_ratio: float = OVERLAP_RATIO,
     budget_tokens: int | None = None,
 ) -> list[Chunk]:
-    """본문을 청크 리스트로 분할.
+    """본문을 청크 리스트로 분할한다.
 
-    `model_context_tokens * budget_ratio` 이하의 단일 텍스트는 *분할 없이* 한
-    Chunk 로 반환 (PRD 2 §3.1 의 70% 컷). 초과 시 heading → paragraph → sentence
-    순서로 점차 작은 단위로 폴백.
-
-    overlap 은 *직전 청크의 마지막 N 토큰* 을 다음 청크의 앞에 prepend (PRD 2
-    §3.3). N = overlap_ratio * budget_tokens (= 청크 1 개 분량의 20%).
-
-    WHY budget_tokens override (2026-06-22 추출 완성도 개선): 청크 예산을 모델
-    컨텍스트 창(예: 128K)의 70% 로 잡으면 청크 하나가 ~90K 토큰까지 커진다. 그런
-    거대 청크에서는 LLM 이 표의 모든 행·기간별 수치를 빠짐없이 추출하지 못하고
-    핵심만 뽑아 정량 사실이 대거 누락된다 (Amcor 487KB → 2 청크 → quick ratio
-    계산용 라인 항목 미추출). 추출 충실도는 *작은 청크* 에서 훨씬 높으므로, ingest
-    추출 단계는 모델 컨텍스트와 무관한 작은 절대 예산을 직접 지정한다. 도메인 무관
-    개선 — 표가 밀집한 모든 코퍼스(재무·과학·코드)에서 동일하게 이득.
-    """
+    budget(= budget_tokens 또는 model_context_tokens * budget_ratio) 이하면 통째로 한
+    Chunk, 초과면 heading → paragraph → sentence 로 폴백하고 인접 청크에 overlap 을
+    준다. budget_tokens 를 명시하면 모델 컨텍스트와 무관한 작은 예산으로 추출 충실도를
+    높인다. 배경은 domain/README.md."""
     if budget_ratio <= 0 or budget_ratio > 1:
         raise ValueError(f"budget_ratio out of (0, 1]: {budget_ratio}")
     if overlap_ratio < 0 or overlap_ratio >= 1:
@@ -143,8 +107,7 @@ def chunk_text(
 
 # ---------- 분할 단위 (heading → paragraph → sentence) ----------
 
-# WHY 정규식: heading 은 markdown 의 `#`/`##` 만 첫 단계로 잡는다. PDF/HTML 은
-# 본 모듈 범위 밖 (#5 이후).
+# heading 은 markdown #/## 만 잡는다(PDF/HTML 은 범위 밖).
 _HEADING_RE = re.compile(r"^(?P<level>#{1,6})\s+", re.MULTILINE)
 # 빈 줄로 paragraph 분리.
 _PARAGRAPH_SPLIT_RE = re.compile(r"\n\s*\n+")
@@ -227,12 +190,7 @@ def _split_by_sentence(paragraph: str) -> list[str]:
 
 
 def _pack_into_budget(units: list[str], *, budget: int) -> Iterator[str]:
-    """인접한 작은 단위를 budget 안에서 가능한 한 크게 합친다.
-
-    WHY: heading 단위로 자른 결과를 다시 paragraph 로 분해하면 매우 작은 조각이
-    많이 생긴다. 70% 컷 안에서 가능한 한 묶어 청크 수를 줄여 LLM 호출 횟수를
-    절약 (=비용 통제).
-    """
+    """인접한 작은 단위를 budget 안에서 최대한 크게 합쳐 청크 수(=LLM 호출 수)를 줄인다."""
     buf: list[str] = []
     buf_tokens = 0
     for u in units:
@@ -254,12 +212,8 @@ def _pack_into_budget(units: list[str], *, budget: int) -> Iterator[str]:
 
 
 def _force_split_by_tokens(text: str, *, budget: int) -> list[str]:
-    """budget 보다 큰 단일 sentence — 토큰 단위로 강제 분할 (최후 폴백).
-
-    WHY 마지막 수단: 실제 도메인 문서에서 *한 문장이 budget 을 넘는 경우* 는
-    드물지만, 코드 블록이나 표 같은 비정형 본문에서 일어날 수 있다. 의미 보존은
-    포기하되 LLM 호출이 깨지지 않도록 budget 안으로 강제로 잘라낸다.
-    """
+    """budget 보다 큰 단일 sentence 를 토큰 단위로 강제 분할(최후 폴백). 의미 보존은
+    포기하되 호출이 깨지지 않게 한다."""
     enc = _encoder()
     tokens = enc.encode(text)
     out: list[str] = []
@@ -289,7 +243,7 @@ def chunk_for_retrieval(
       2. paragraph 한 개가 target 초과 → sentence 단위로 분할 후 pack.
       3. 인접 청크 사이에 *마지막 N 문장* 을 다음 청크의 앞에 prepend.
 
-    ADR-0009 D5 의 측정 통제 변수 — 변경 시 CACHE_VERSION bump.
+    측정 통제 변수라 변경 시 캐시 버전을 올린다.
     """
     total = count_tokens(text)
     if total <= target_tokens:
@@ -342,11 +296,8 @@ def _split_by_sentence_multilingual(paragraph: str) -> list[str]:
 def _apply_sentence_overlap(
     *, pieces: list[str], overlap_sentences: int
 ) -> list[str]:
-    """이전 청크의 *마지막 N 문장* 을 다음 청크의 앞에 prepend.
-
-    `_apply_overlap` 의 토큰 leading 과 달리 *문장 경계 보존* — semantic
-    chunking 의 모범 패턴 (LlamaIndex / LangChain 의 SemanticChunker 와 정합).
-    """
+    """이전 청크의 마지막 N 문장을 다음 청크 앞에 prepend 한다(토큰이 아니라 문장
+    경계를 보존)."""
     if overlap_sentences <= 0 or len(pieces) <= 1:
         return list(pieces)
     out: list[str] = [pieces[0]]
@@ -360,11 +311,8 @@ def _apply_sentence_overlap(
 
 
 def _apply_overlap(*, pieces: list[str], overlap_tokens: int) -> list[str]:
-    """직전 청크의 마지막 `overlap_tokens` 토큰을 다음 청크 앞에 prepend.
-
-    PRD 2 §3.3 의 cross-청크 참조 보호 ("위에서 언급한 X" 등). 첫 청크는 prepend
-    대상이 없어 그대로.
-    """
+    """직전 청크의 마지막 overlap_tokens 토큰을 다음 청크 앞에 prepend 한다.
+    cross-청크 참조("위에서 언급한 X")를 보호한다. 첫 청크는 그대로."""
     if overlap_tokens <= 0 or len(pieces) <= 1:
         return list(pieces)
     enc = _encoder()
