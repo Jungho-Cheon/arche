@@ -1,6 +1,6 @@
 # ADR-0021: bi-temporal 유효기간 데이터 모델 — 경계 확정과 단계적 도입
 
-Status: proposed
+Status: accepted
 Date: 2026-07-17
 
 ## TL;DR
