@@ -9,7 +9,9 @@ export default defineConfig({
   lastUpdated: true,
   // _generated 는 @include 로 끼워 넣는 조각이라 독립 페이지로 빌드하지 않는다.
   srcExclude: ["**/_generated/**"],
+  head: [["link", { rel: "icon", href: "/arche-favicon.svg" }]],
   themeConfig: {
+    logo: { light: "/arche-mark.svg", dark: "/arche-mark-dark.svg" },
     search: { provider: "local" },
     socialLinks: [
       { icon: "github", link: "https://github.com/Jungho-Cheon/arche" },

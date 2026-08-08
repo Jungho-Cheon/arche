@@ -4,6 +4,10 @@ hero:
   name: Arche
   text: 흩어진 문서를 관계 그래프로
   tagline: AI 에이전트가 MCP 로 접근해 적은 비용으로 정확한 답을 찾도록, 문서를 점과 선의 지도로 바꿔 둡니다.
+  image:
+    light: /arche-mark.svg
+    dark: /arche-mark-dark.svg
+    alt: Arche
   actions:
     - theme: brand
       text: 시작하기
