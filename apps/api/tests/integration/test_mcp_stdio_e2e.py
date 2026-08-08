@@ -49,8 +49,8 @@ def _server_params() -> StdioServerParameters:
     )
 
 
-async def test_initialize_and_list_tools_returns_six():
-    """initialize 핸드셰이크 + 6 tool list."""
+async def test_initialize_and_list_read_tools():
+    """initialize 핸드셰이크 + 조회 tool list."""
     async with stdio_client(_server_params()) as (read, write):
         async with ClientSession(read, write) as session:
             await session.initialize()
@@ -63,6 +63,7 @@ async def test_initialize_and_list_tools_returns_six():
                 "get_neighbors",
                 "find_path",
                 "get_subgraph",
+                "find_related",
             ]
 
 
