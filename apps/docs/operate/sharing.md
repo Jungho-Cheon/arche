@@ -87,7 +87,7 @@ arche ingest ./내문서폴더
 
 stdio 와 HTTP 는 **같은 도구 12개**를 같은 이름과 같은 스키마로 노출합니다. 에이전트 쪽에서 바뀌는 건 접속 설정뿐입니다. 전송 방식 선택은 [에이전트에 붙이기](/integrate/agent)에서 더 다룹니다.
 
-## 5. 팀별로 칸 나누기
+## 5. 팀별로 namespace 나누기
 
 한 Neo4j 안에서 팀이나 프로젝트별로 지식을 나눠 담으려면 `namespace_id` 를 씁니다. [namespace 로 나눠 담기](/operate/namespace)를 보세요.
 
@@ -97,7 +97,7 @@ stdio 와 HTTP 는 **같은 도구 12개**를 같은 이름과 같은 스키마�
 `docker compose` 기본값은 로컬 개발용입니다. 사내망이나 인터넷에 그대로 노출하면 같은 네트워크의 누구나 그래프를 읽고 쓸 수 있습니다.
 
 - `NEO4J_PASSWORD` 기본값 `arche` 를 강한 값으로 바꿉니다.
-- API 서버는 토큰을 검증하지 않습니다. `Authorization: Bearer ns:team-a` 는 어느 칸을 볼지 고르는 값이지 로그인이 아닙니다. 아무나 보내면 그 칸을 읽고 씁니다.
+- API 서버는 토큰을 검증하지 않습니다. `Authorization: Bearer ns:team-a` 는 어느 namespace 를 볼지 고르는 값이지 로그인이 아닙니다. 아무나 보내면 그 namespace 를 읽고 씁니다.
 - `/admin/*` 관리 엔드포인트도 열려 있습니다.
 - 세 포트를 그대로 노출하지 말고 프록시나 사내 인증 뒤에 두세요.
 :::
@@ -127,4 +127,4 @@ Neo4j 에 넣은 내용은 임베디드로 따라오지 않습니다. 예전 Kuz
 
 - 두 배치의 차이는 [저장소 배치](/operate/storage)
 - 접속 설정 값은 [환경 변수](/reference/configuration)
-- 칸 나누기는 [namespace 로 나눠 담기](/operate/namespace)
+- namespace 나누기는 [namespace 로 나눠 담기](/operate/namespace)

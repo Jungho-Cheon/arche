@@ -30,7 +30,7 @@
 
 - [저장소 배치](/operate/storage): 임베디드 Kuzu 와 Neo4j 공유 서버의 차이
 - [팀과 그래프 공유하기](/operate/sharing): 서버 배치로 옮기는 절차
-- [namespace 로 나눠 담기](/operate/namespace): 칸 나누기와 격리가 막지 못하는 것
+- [namespace 로 나눠 담기](/operate/namespace): namespace 나누기와 격리가 막지 못하는 것
 - [모델 갈아끼우기](/operate/models): 추출과 임베딩 모델 교체, 차원 변경 시 복구 절차
 
 ## 붙이기

@@ -109,7 +109,7 @@ curl -X POST http://localhost:8000/entities/find \
 헤더 없이 요청 본문의 `namespace_id` 로 넘겨도 됩니다. `GET` 요청은 쿼리 문자열로 받습니다.
 
 ::: warning 이 헤더는 로그인이 아닙니다
-서버는 토큰을 검증하지 않습니다. 아무나 원하는 칸 이름을 보내면 그 칸을 읽고 씁니다. 사용자별로 볼 수 있는 칸을 갈라야 한다면 Arche 앞단에서 처리해야 합니다. 자세한 방법은 [namespace 로 나눠 담기](/operate/namespace)에 있습니다.
+서버는 토큰을 검증하지 않습니다. 아무나 원하는 이름을 보내면 그 namespace 를 읽고 씁니다. 사용자별로 볼 수 있는 범위를 갈라야 한다면 Arche 앞단에서 처리해야 합니다. 자세한 방법은 [namespace 로 나눠 담기](/operate/namespace)에 있습니다.
 :::
 
 ## 자주 걸리는 자리
