@@ -4,7 +4,7 @@
       "command": "uvx",
       "args": [
         "--from",
-        "arche-api @ git+https://github.com/Jungho-Cheon/arche.git@v0.1.1#subdirectory=apps/api",
+        "arche-api @ git+https://github.com/Jungho-Cheon/arche.git@v0.1.2#subdirectory=apps/api",
         "arche",
         "mcp",
         "serve",

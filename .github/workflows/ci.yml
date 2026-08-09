@@ -1,0 +1,62 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    name: 린트와 테스트 (uv.lock 고정)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      # setup-uv 는 부동 major 태그(v9)를 내지 않는다. 전체 버전으로 고정한다.
+      - uses: astral-sh/setup-uv@v9.0.0
+        with:
+          enable-cache: true
+
+      - name: 린트
+        working-directory: apps/api
+        run: uv run --extra dev ruff check src/ tests/
+
+      - name: 단위 테스트
+        working-directory: apps/api
+        run: uv run --extra dev pytest tests/unit -q
+
+      - name: MCP stdio e2e
+        working-directory: apps/api
+        run: uv run --extra dev pytest tests/integration/test_mcp_stdio_e2e.py -q
+
+      - name: 생성된 레퍼런스 표가 코드와 일치하는지
+        run: uv run --project apps/api arche docs gen-reference --check
+
+  fresh-install:
+    name: 갓 설치한 환경에서 MCP 기동
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      # setup-uv 는 부동 major 태그(v9)를 내지 않는다. 전체 버전으로 고정한다.
+      - uses: astral-sh/setup-uv@v9.0.0
+
+      # uv.lock 을 쓰지 않는 경로다. 사용자가 uvx 로 받는 의존성 조합을 그대로 재현해,
+      # 상한 없는 의존성이 새 major 를 물어와 서버가 죽는 일을 막는다.
+      - name: 잠금 없이 설치해 서버를 띄워 본다
+        run: python3 scripts/smoke_mcp_boot.py uvx --from ./apps/api arche
+
+  docs:
+    name: 문서 빌드
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      # 루트에 package.json 이 없어 packageManager 를 못 읽는다. 버전을 직접 준다.
+      - uses: pnpm/action-setup@v6
+        with:
+          version: 11
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @arche/docs build
