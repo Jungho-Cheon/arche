@@ -76,7 +76,7 @@ cp .env.example .env
 접두사를 빼면 `openai` 로 봅니다. 모르는 접두사를 주면 그 모델을 처음 쓰는 호출에서 지원 목록과 함께 오류를 냅니다. 기동은 막지 않습니다.
 
 ```text
-알 수 없는 LLM provider 'gemini' (ARCHE_API_LLM_MODEL='gemini/pro'). 지원: ['anthropic', 'claude-code', 'openai']
+추출 provider 생성 실패: 알 수 없는 LLM provider 'gemini' (ARCHE_API_LLM_MODEL='gemini/pro'). 지원: ['anthropic', 'claude-code', 'openai']
 ```
 
 `claude-code` 는 기계에 설치된 Claude Code 의 구독 인증을 그대로 써서 별도 키가 필요 없습니다. 다만 텍스트만 다루므로 이미지와 PDF 의 이미지 페이지는 추출되지 않습니다. 임베딩은 따로라 `openai` 나 `voyage` 키가 여전히 필요합니다.
