@@ -21,7 +21,7 @@
 
 설치하면 `/arche-ingest` 와 `/arche-query` 두 명령이 생기고, 맥락에 맞으면 Claude 가 알아서도 부릅니다.
 
-전제조건은 uv 하나입니다. 실행 파일은 플러그인이 `uv tool run` 으로 직접 받으므로 미리 설치할 게 없습니다. 임베딩 키는 안 넣어도 도구가 올라오고, 넣는 방법은 [시작하기](/getting-started)의 2단계에 있습니다.
+전제조건은 uv 하나입니다. 실행 파일은 플러그인이 `uvx` 로 직접 받으므로 미리 설치할 게 없습니다. 임베딩 키는 안 넣어도 도구가 올라오고, 넣는 방법은 [시작하기](/getting-started)의 2단계에 있습니다.
 
 플러그인 기본 설정은 추출을 Claude Code 구독 인증으로 돌려서 추출용 API 키가 필요 없습니다. 대신 이미지와 PDF 이미지 페이지가 빠집니다. 바꾸려면 [모델 갈아끼우기](/operate/models)를 보세요.
 
@@ -138,24 +138,28 @@ uvicorn arche_api.main:app
 
 **클라이언트를 다시 켰는지** 확인하세요. 설정을 고쳐도 재시작 전에는 반영되지 않습니다.
 
-**uv 가 깔려 있는지** 확인하세요. 플러그인은 `uv` 로 서버를 띄우므로, 없으면 서버가 시작조차 못 합니다.
+**uv 가 깔려 있는지** 확인하세요. 플러그인은 `uvx` 로 서버를 띄우므로, 없으면 서버가 시작조차 못 합니다. `uvx` 는 uv 를 설치하면 함께 생깁니다.
 
 ```bash
-uv --version
+uvx --version
 ```
 
-없으면 [docs.astral.sh/uv](https://docs.astral.sh/uv/) 를 보고 설치한 뒤 클라이언트를 다시 켜세요.
+없으면 아래로 설치한 뒤 클라이언트를 다시 켜세요.
+
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
 
 **깔려 있는데도 안 붙으면 PATH 를 의심하세요.** uv 는 보통 `~/.local/bin` 에 설치되는데, 이 자리는 셸 프로필이 PATH 에 넣어 줍니다. 터미널에서 켠 클라이언트는 그 PATH 를 물려받지만 **아이콘으로 켠 앱은 못 받을 수 있습니다.** 터미널에서는 잡히는데 클라이언트에서만 안 붙는다면 이 경우입니다.
 
 ```bash
-which uv
+which uvx
 ```
 
 나온 경로를 설정의 `command` 에 그대로 적으면 우회됩니다.
 
 ```json
-{ "command": "/Users/me/.local/bin/uv", "args": ["tool", "run", "..."] }
+{ "command": "/Users/me/.local/bin/uvx", "args": ["--from", "..."] }
 ```
 
 직접 등록한 설정에서 `"command": "arche"` 를 쓴다면 같은 확인을 `arche` 로 하세요.

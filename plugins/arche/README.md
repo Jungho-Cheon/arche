@@ -4,7 +4,7 @@
 
 담긴 것:
 
-- **MCP 서버 등록** (`.mcp.json`) — `uv tool run` 으로 `arche` 를 받아 stdio MCP 서버로 띄운다. 저장소 백엔드는 임베디드 Kuzu(서버 불필요), 추출은 구독형 `claude-code`(API 키 불필요), 임베딩은 OpenAI 소액.
+- **MCP 서버 등록** (`.mcp.json`) — `uvx` 으로 `arche` 를 받아 stdio MCP 서버로 띄운다. 저장소 백엔드는 임베디드 Kuzu(서버 불필요), 추출은 구독형 `claude-code`(API 키 불필요), 임베딩은 OpenAI 소액.
 - **스킬 `arche-ingest`** — 외부 소스(Confluence/Jira/URL)나 로컬 파일을 사람 검토 게이트(plan/content → preview → resolve → commit)로 적재한다.
 - **스킬 `arche-query`** — 질문을 그래프 프리미티브로 접근해 그래프 근거로만 답한다.
 
@@ -12,9 +12,9 @@
 
 - [uv](https://docs.astral.sh/uv/) — MCP 서버가 uv 위에서 돈다. `curl -LsSf https://astral.sh/uv/install.sh | sh` 로 설치한다.
 
-이게 전부다. 서버 실행 파일은 플러그인이 `uv tool run` 으로 직접 받으므로 저장소를 클론하거나 `arche` 를 미리 설치할 필요가 없다.
+이게 전부다. 서버 실행 파일은 플러그인이 `uvx` 으로 직접 받으므로 저장소를 클론하거나 `arche` 를 미리 설치할 필요가 없다.
 
-단 uv 자체는 미리 있어야 한다. 없으면 플러그인을 깔아도 서버가 시작되지 않는다. `uv --version` 으로 확인한다. 깔려 있는데도 도구가 안 붙으면 PATH 문제일 수 있다 — GUI 로 켠 클라이언트는 셸 프로필의 PATH 를 못 받을 수 있어서, `which uv` 로 나온 절대 경로를 `command` 에 적으면 우회된다.
+단 uv 자체는 미리 있어야 한다. 없으면 플러그인을 깔아도 서버가 시작되지 않는다. `uvx --version` 으로 확인한다. 깔려 있는데도 도구가 안 붙으면 PATH 문제일 수 있다 — GUI 로 켠 클라이언트는 셸 프로필의 PATH 를 못 받을 수 있어서, `which uvx` 로 나온 절대 경로를 `command` 에 적으면 우회된다.
 
 참조는 태그로 고정해 둔다. 브랜치로 두면 서버를 띄울 때마다 git fetch 가 일어나 네트워크가 없으면 안 뜬다.
 

@@ -6,7 +6,7 @@ Claude Code 플러그인으로 진행합니다. 다른 방식은 이 문서를 �
 
 준비물은 둘입니다.
 
-- **uv** — 파이썬 도구를 받아 실행합니다. 설치는 [docs.astral.sh/uv](https://docs.astral.sh/uv/) 를 보세요. Arche 실행 파일은 플러그인이 uv 로 알아서 받으므로 따로 설치할 게 없습니다. **다만 uv 자체는 미리 있어야 합니다.** 없으면 플러그인을 설치해도 도구가 안 올라옵니다. `uv --version` 으로 확인하세요.
+- **uv** — 파이썬 도구를 받아 실행합니다. 설치는 [docs.astral.sh/uv](https://docs.astral.sh/uv/) 를 보세요. Arche 실행 파일은 플러그인이 uv 로 알아서 받으므로 따로 설치할 게 없습니다. **다만 uv 자체는 미리 있어야 합니다.** 없으면 플러그인을 설치해도 도구가 안 올라옵니다. `uvx --version` 으로 확인하세요.
 - **OpenAI API 키** — 글을 벡터로 바꾸는 데만 씁니다. 문서에서 노드와 관계를 뽑는 일은 이미 쓰고 있는 Claude Code 구독 인증이 맡아서 추가 비용이 거의 없습니다. 키는 [platform.openai.com](https://platform.openai.com/api-keys) 에서 만들고, 결제 수단을 등록해 크레딧이 있어야 실제로 응답합니다.
 
 처음에는 파일 서너 개짜리 작은 폴더로 시작하세요.

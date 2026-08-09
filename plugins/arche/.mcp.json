@@ -1,10 +1,8 @@
 {
   "mcpServers": {
     "arche": {
-      "command": "uv",
+      "command": "uvx",
       "args": [
-        "tool",
-        "run",
         "--from",
         "arche-api @ git+https://github.com/Jungho-Cheon/arche.git@v0.1.0#subdirectory=apps/api",
         "arche",
