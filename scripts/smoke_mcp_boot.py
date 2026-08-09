@@ -8,6 +8,10 @@ API 키 없이 돌린다 — 키가 없어도 부팅과 도구 목록까지는 �
 
     python scripts/smoke_mcp_boot.py <arche 실행 명령...>
     python scripts/smoke_mcp_boot.py uvx --from ./apps/api arche
+
+uvx 는 도구 환경을 캐시하므로 로컬 경로로 반복 실행할 때는 `uv cache prune` 이나
+`--no-cache` 로 옛 빌드를 걷어내야 코드 변경이 반영된다. CI 는 매번 새 러너라
+그대로 둔다.
 """
 
 from __future__ import annotations
@@ -16,6 +20,8 @@ import json
 import os
 import subprocess
 import sys
+import tempfile
+import time
 
 EXPECTED_TOOLS = {
     "get_schema",
@@ -35,6 +41,8 @@ EXPECTED_TOOLS = {
     "entity_split_commit",
 }
 
+TIMEOUT_SECONDS = 300.0
+
 HANDSHAKE = [
     {
         "jsonrpc": "2.0",
@@ -51,6 +59,30 @@ HANDSHAKE = [
 ]
 
 
+def _drain(proc, deadline: float) -> tuple[bool, set[str]]:
+    """id=2 응답이 올 때까지 stdout 을 한 줄씩 읽는다.
+
+    세 메시지를 한 번에 쓰고 stdin 을 닫으면 서버가 tools/list 를 처리하기 전에 EOF
+    를 먼저 보고 내려갈 수 있다. 그러면 기동은 멀쩡한데 도구가 0 개로 보인다. 응답을
+    받고 나서 내리는 쪽이 실제 클라이언트가 하는 일이기도 하다."""
+    initialized = False
+    tools: set[str] = set()
+    while time.monotonic() < deadline:
+        line = proc.stdout.readline()
+        if not line:
+            break
+        try:
+            msg = json.loads(line.strip())
+        except json.JSONDecodeError:
+            continue
+        if msg.get("id") == 1 and "result" in msg:
+            initialized = True
+        if msg.get("id") == 2 and "result" in msg:
+            tools = {t["name"] for t in msg["result"]["tools"]}
+            break
+    return initialized, tools
+
+
 def main(argv: list[str]) -> int:
     if not argv:
         print("사용법: python scripts/smoke_mcp_boot.py <arche 실행 명령...>", file=sys.stderr)
@@ -65,39 +97,40 @@ def main(argv: list[str]) -> int:
     }
     env.pop("ARCHE_TEST_FAKE_GRAPH", None)
 
-    proc = subprocess.run(
-        [*argv, "mcp", "serve", "--stdio"],
-        input="\n".join(json.dumps(m) for m in HANDSHAKE) + "\n",
-        capture_output=True,
-        text=True,
-        env=env,
-        timeout=300,
-    )
-
-    tools: set[str] = set()
-    initialized = False
-    for line in proc.stdout.splitlines():
-        line = line.strip()
-        if not line:
-            continue
+    # stderr 는 파일로 뺀다. 파이프로 두면 서버 로그가 버퍼를 채웠을 때 서로 막힌다.
+    with tempfile.TemporaryFile(mode="w+", encoding="utf-8") as errfile:
+        proc = subprocess.Popen(
+            [*argv, "mcp", "serve", "--stdio"],
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=errfile,
+            text=True,
+            env=env,
+            bufsize=1,
+        )
         try:
-            msg = json.loads(line)
-        except json.JSONDecodeError:
-            continue
-        if msg.get("id") == 1 and "result" in msg:
-            initialized = True
-        if msg.get("id") == 2 and "result" in msg:
-            tools = {t["name"] for t in msg["result"]["tools"]}
+            for message in HANDSHAKE:
+                proc.stdin.write(json.dumps(message) + "\n")
+            proc.stdin.flush()
+            initialized, tools = _drain(proc, time.monotonic() + TIMEOUT_SECONDS)
+        finally:
+            proc.terminate()
+            try:
+                proc.wait(timeout=10)
+            except subprocess.TimeoutExpired:
+                proc.kill()
+        errfile.seek(0)
+        stderr_tail = errfile.read()[-3000:]
 
     if not initialized:
         print("initialize 응답이 없습니다. 서버가 기동하지 못했습니다.", file=sys.stderr)
-        print(proc.stderr[-3000:], file=sys.stderr)
+        print(stderr_tail, file=sys.stderr)
         return 1
 
     missing = EXPECTED_TOOLS - tools
     if missing:
         print(f"도구가 빠졌습니다: {sorted(missing)}", file=sys.stderr)
-        print(proc.stderr[-3000:], file=sys.stderr)
+        print(stderr_tail, file=sys.stderr)
         return 1
 
     print(f"기동 OK, 도구 {len(tools)} 개 확인")
