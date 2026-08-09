@@ -34,7 +34,7 @@ def _service(graph: FakeGraph) -> IngestService:
 
 
 def test_same_entity_different_namespaces_stay_separate(tmp_path: Path):
-    """같은 정규명·type 을 서로 다른 namespace 에 적재하면 병합되지 않는다."""
+    """같은 정규명과 type 을 서로 다른 namespace 에 적재하면 병합되지 않는다."""
     graph = FakeGraph()
     service = _service(graph)
 
@@ -57,7 +57,7 @@ def test_same_entity_different_namespaces_stay_separate(tmp_path: Path):
 
 
 def test_same_entity_same_namespace_merges(tmp_path: Path):
-    """같은 정규명·type·namespace 면 종전대로 병합된다 (회귀 가드)."""
+    """같은 정규명, type, namespace 면 종전대로 병합된다 (회귀 가드)."""
     graph = FakeGraph()
     service = _service(graph)
 

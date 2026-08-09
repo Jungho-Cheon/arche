@@ -13,7 +13,7 @@ Arche 는 MCP 와 REST API 모두에서 **graph primitives** — `find_entities`
 
 > **MCP (Model Context Protocol)** — AI 에이전트가 외부 도구를 표준화된 방식으로 호출하는 프로토콜. 도구는 보통 *원자적 primitives* 로 구성되고, 에이전트가 LLM 사이클로 *어떤 primitive 를 어떤 인자로 부를지* 결정한다.
 >
-> **primitive** — 추가 분해되지 않는 원자적 작업. 자연어 처리·의도 해석·결과 합성을 포함하지 않는다.
+> **primitive** — 추가 분해되지 않는 원자적 작업. 자연어 처리, 의도 해석, 결과 합성을 포함하지 않는다.
 
 ## 이 ADR 을 읽는 이유
 
@@ -31,7 +31,7 @@ Arche 는 MCP 와 REST API 모두에서 **graph primitives** — `find_entities`
 
 ADR-0003 의 초기 안은 *"Arche 가 자연어 질문을 받아 내부에서 LLM 으로 anchor 를 추출"* 하는 모델이었다. 이는 두 가지 부담을 만든다.
 
-1. **쿼리 시점 LLM 컴포넌트** — Arche 코어가 쿼리마다 LLM API 를 호출. 추가 의존성·비용·지연.
+1. **쿼리 시점 LLM 컴포넌트** — Arche 코어가 쿼리마다 LLM API 를 호출. 추가 의존성, 비용, 지연.
 2. **에이전트와의 중복** — 에이전트는 어차피 자체 LLM 사이클로 *어떤 정보가 필요한지* 를 정한다. 그 결정을 자연어 문장으로 다시 묶어 Arche 에 넘기면, Arche 가 *같은 LLM 사이클을 한 번 더 돈다* . 이중 작업.
 
 또한 **2026 년의 MCP 생태계 통상 패턴은 *primitives 노출*** 이다. 성숙한 MCP 서버들 — GitHub MCP (`list_issues` / `get_issue` / `search_code`), Slack MCP (`list_channels` / `send_message`), Filesystem MCP (`read_file` / `grep`) — 은 모두 자연어가 아닌 *원자적 작업* 을 노출한다. 자연어 해석은 *MCP 의 책임이 아니라 에이전트의 책임* 이라는 분리가 정착되어 있다.
@@ -40,7 +40,7 @@ ADR-0003 의 초기 안은 *"Arche 가 자연어 질문을 받아 내부에서 L
 
 Neo4j 도 자체 MCP 서버를 제공한다 ([neo4j.com/docs/mcp](https://neo4j.com/docs/mcp/current/)). 노출되는 도구는 다음 네 가지.
 
-- `get-schema` — 라벨·관계 타입·속성 키 introspection
+- `get-schema` — 라벨, 관계 타입, 속성 키 introspection
 - `read-cypher` — read-only Cypher 실행
 - `write-cypher` — write/schema 변경 Cypher (admin 경고 동반)
 - `list-gds-procedures` — Graph Data Science 프로시저 목록
@@ -71,7 +71,7 @@ Arche 가 자체 MCP 를 가져야 하는 이유는 *Neo4j MCP 의 대체* 가 �
 | `find_path(from_id, to_id, max_hops?)` | 출발/도착 노드 id, 최대 hop | 경로 목록 (각 경로는 노드/엣지의 순서) | 두 엔티티 사이 관계 탐색 |
 | `get_subgraph(ids, hops?)` | 진입점 노드 id 들, 확장 hop 수 | 진입점들 주변 서브그래프 (노드/엣지 집합) | 진입점 다수에서 *한 번에* 서브그래프 추출 (성능) |
 
-**모든 read primitive 응답은 공통 메타데이터를 포함** — 노드/엣지의 *원본 소스* (파일 경로, 추출 위치), *추가일·수정일 timestamp* . 이는 traversal 결과를 caller 가 LLM 컨텍스트에 넘길 때 *출처 추적* 의 근거가 된다.
+**모든 read primitive 응답은 공통 메타데이터를 포함** — 노드/엣지의 *원본 소스* (파일 경로, 추출 위치), *추가일과 수정일 timestamp* . 이는 traversal 결과를 caller 가 LLM 컨텍스트에 넘길 때 *출처 추적* 의 근거가 된다.
 
 ### D3. Write 작업은 MCP 에 노출하지 않음
 
@@ -128,19 +128,19 @@ Arche MCP 와 Neo4j MCP 는 *같은 DB 인스턴스에 동시 attach 가능* . �
 
 ### 옵션 1 — 자연어 엔드포인트 (`/query`) 만 노출, primitives 숨김
 
-거부. **(a) 에이전트 워크플로와 어긋난다 + (b) 코어에 query-time LLM 의존성을 끌어들인다 + (c) 토큰 이중 계산이 발생한다** . 에이전트는 자체 LLM 으로 *반복적인 탐색 결정* (한 번 검색 → 결과 보고 다음 검색) 을 하는데, 자연어 입출력만 노출되면 그 *결정 사이클이 Arche 의 자연어 처리로 한 번 더 wrap 됨* . 토큰·지연이 누적.
+거부. **(a) 에이전트 워크플로와 어긋난다 + (b) 코어에 query-time LLM 의존성을 끌어들인다 + (c) 토큰 이중 계산이 발생한다** . 에이전트는 자체 LLM 으로 *반복적인 탐색 결정* (한 번 검색 → 결과 보고 다음 검색) 을 하는데, 자연어 입출력만 노출되면 그 *결정 사이클이 Arche 의 자연어 처리로 한 번 더 wrap 됨* . 토큰과 지연이 누적.
 
 만약 이걸 택했다면, Arche 의 컴포넌트 다이어그램에 *쿼리 시점 LLM* 박스가 영구히 들어왔을 것이고, post-MVP 의 chat 기능이 *이 LLM 박스를 재사용할지 새로 둘지* 가 또 고민거리가 됐을 것이다.
 
 ### 옵션 2 — 자연어와 primitives 둘 다 노출 (옵션 Q)
 
-거부. *MVP 단계에서 두 표면을 모두 유지하는 비용이 정당화되지 않는다* . MVP 사용자는 본인 + 벤치마크 하니스뿐이고, 둘 다 primitives 로 충분. 두 표면이 있으면 *문서·테스트·예제* 가 두 배가 되고 *어느 쪽을 쓰는 게 권장인지* 의 결정도 사용자에게 떠넘겨진다.
+거부. *MVP 단계에서 두 표면을 모두 유지하는 비용이 정당화되지 않는다* . MVP 사용자는 본인 + 벤치마크 하니스뿐이고, 둘 다 primitives 로 충분. 두 표면이 있으면 *문서, 테스트, 예제* 가 두 배가 되고 *어느 쪽을 쓰는 게 권장인지* 의 결정도 사용자에게 떠넘겨진다.
 
 만약 이걸 택했다면, MVP 종료까지 *자연어 엔드포인트의 품질도 챙겨야* 하는 부담이 추가됐을 것이다. post-MVP 에서 자연어가 필요해질 때 옵션 Q 형태의 wrapper 를 *그때 추가* 하는 게 더 깨끗.
 
 ### 옵션 3 — Neo4j MCP 를 그대로 쓰고 Arche MCP 안 만들기
 
-거부. *에이전트의 부담이 너무 크고, 안전성이 떨어진다.* Cypher 작성을 에이전트에게 떠넘기면 (a) *Arche 의 정확한 스키마* (엔티티 타입·관계 타입·속성 명) 를 매번 LLM 컨텍스트에 넣어야 하고, (b) 하이브리드 매칭 (어휘 + 벡터) 같은 *Arche 의 고유 의미론* 을 Cypher 로 표현하라고 시켜야 한다. 또한 write Cypher 노출은 *에이전트가 그래프를 부술 수 있는* 시나리오를 만든다.
+거부. *에이전트의 부담이 너무 크고, 안전성이 떨어진다.* Cypher 작성을 에이전트에게 떠넘기면 (a) *Arche 의 정확한 스키마* (엔티티 타입, 관계 타입, 속성 명) 를 매번 LLM 컨텍스트에 넣어야 하고, (b) 하이브리드 매칭 (어휘 + 벡터) 같은 *Arche 의 고유 의미론* 을 Cypher 로 표현하라고 시켜야 한다. 또한 write Cypher 노출은 *에이전트가 그래프를 부술 수 있는* 시나리오를 만든다.
 
 Neo4j MCP 는 *power user / 디버깅* 용도로 *공존* 시키는 게 정답이다 (D6).
 
@@ -165,7 +165,7 @@ Neo4j MCP 는 *power user / 디버깅* 용도로 *공존* 시키는 게 정답�
 - Primitives 의 응답 스키마는 *공개 계약* . OpenAPI / MCP tool schema 로 명세화하고 *호환 깨는 변경* 은 별도 ADR.
 - Write 작업이 MCP 에 *우발적으로* 노출되지 않게 코드 레벨에서 차단. write 가 필요한 admin 엔드포인트는 *MCP 가 아닌* CLI/REST 로만.
 - `get_schema()` 응답에 *embedding 차원, 임베딩 모델 식별자* 같은 메타도 포함하면 에이전트가 *호환되는 임베딩 사용* 을 결정하는 데 도움 (post-MVP 의 멀티 모델 시나리오 대비).
-- Neo4j MCP 가 같은 DB 에 attach 됐을 때 *상호 간섭* 없음을 보장 — Arche 가 사용하는 인덱스명·라벨에 충돌 없는 prefix 권장 (`opt_*` 등).
+- Neo4j MCP 가 같은 DB 에 attach 됐을 때 *상호 간섭* 없음을 보장 — Arche 가 사용하는 인덱스명과 라벨에 충돌 없는 prefix 권장 (`opt_*` 등).
 - 토큰 측정 (ADR-0005 D6) 에서 *Arche 컬럼* 의 토큰은 *caller 의 두 LLM 호출 + Arche primitives 호출 시 발생하는 embedding 호출* 의 합. 명세 명확히.
 
 ### Post-MVP 진화

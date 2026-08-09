@@ -1,4 +1,4 @@
-# ADR-0013: Agent 친화적 API contract — 응답 envelope · 에러 코드 · OpenAPI · idempotency · latency budget · next-action hints
+# ADR-0013: Agent 친화적 API contract — 응답 envelope, 에러 코드, OpenAPI, idempotency, latency budget, next-action hints
 
 Status: proposed (RFC)
 Date: 2026-06-21

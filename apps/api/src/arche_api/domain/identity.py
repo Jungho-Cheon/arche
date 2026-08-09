@@ -25,7 +25,7 @@ EMBEDDING_AMBIGUITY_BAND_LOW: float = 0.82
 
 
 # 흔한 구두점만 trim 한다(전수 제거 아님). 양쪽 인용/조판 부호 + ASCII 일부.
-_NORMALIZE_TRIM_CHARS = ".,-··'\"“”‘’`"
+_NORMALIZE_TRIM_CHARS = ".,-·'\"“”‘’`"
 _WS_RUNS = re.compile(r"\s+")
 
 

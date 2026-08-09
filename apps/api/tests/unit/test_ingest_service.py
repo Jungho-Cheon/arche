@@ -575,7 +575,7 @@ def test_no_short_circuit_when_extractor_version_changes(
     svc_v1.ingest_file(p)
     assert llm_v1.calls == 1
 
-    # 같은 파일·같은 그래프지만 추출기 지문이 "v2" — 재추출되어야 한다.
+    # 같은 파일과 같은 그래프지만 추출기 지문이 "v2" — 재추출되어야 한다.
     llm_v2 = FakeLLM(extracted, fingerprint="v2")
     svc_v2 = IngestService(llm=llm_v2, embedder=FakeEmbedder(), graph=fake_graph)
     result = svc_v2.ingest_file(p)

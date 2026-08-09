@@ -1,6 +1,6 @@
 """ArcheAgenticRunner (이슈 #83) 단위 — provider + client 모두 가짜.
 
-agentic 루프의 결정성(budget·반복 가드·강제 답변)과 프리미티브 디스패치/관찰
+agentic 루프의 결정성(budget, 반복 가드, 강제 답변)과 프리미티브 디스패치/관찰
 직렬화/토큰 합산을 *API 키 없이* 검증한다. LLM 은 scripted LLMResult 시퀀스,
 코어는 httpx.MockTransport 경유 ArcheClient (HTTP envelope 계약 유지).
 """

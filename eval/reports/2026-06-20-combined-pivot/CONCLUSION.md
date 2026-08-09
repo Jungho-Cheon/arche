@@ -60,7 +60,7 @@ Chunk 단독 (96.7%) 도 가성비는 좋다 ($0.97). 하지만:
 ### Graph RAG 만 선택하지 않는 이유
 
 - 본 회차에서 graph 단독 90% — 자동 EntityMatcher 의 alias 통합이 *충분하지 않다*. 이는 매번 ingest 마다 발생할 수 있는 *불안정한 그래프 품질* 의 신호.
-- Graph 의 품질 변동성을 chunk 가 완충하는 것이 안전. 단독 운영은 graph 품질 보장 추가 비용 (수동 머지·alias 사전 등) 을 요구함.
+- Graph 의 품질 변동성을 chunk 가 완충하는 것이 안전. 단독 운영은 graph 품질 보장 추가 비용 (수동 머지, alias 사전 등) 을 요구함.
 
 ### Pivot 후 Arche 의 정체성
 

@@ -8,7 +8,7 @@ Date: 2026-06-20
 > 으로 뒤집혔다. **에이전트 반복 graph-only 가 94-97% 로 Combined/graphify 를 압도**
 > 하면서, 답변 LLM 을 코어에 내재화하지 않고 외부(MCP/REST)에 두고 graph primitive 를
 > 반복 호출하는 방식이 제품 기본이 됐다. Arche 정체성은 *그래프 지식 베이스* 로
-> 회귀(Combined orchestrator 아님). 본 ADR 의 측정 사실(chunk·graph 오답 비중첩)은
+> 회귀(Combined orchestrator 아님). 본 ADR 의 측정 사실(chunk 와 graph 오답 비중첩)은
 > 역사적 기록으로 유효하나 *결정* 은 ADR-0016 이 대체한다.
 
 > **Amendment (ADR-0008, 2026-06-20)**: 본 ADR 의 D2 가 정의한 1M 시점 재검증 (M6.5) 결과 Combined ≈ chunk (+0pp). 그러나 진단 결과 graph 데이터가 catastrophic over-merge 로 부패해 측정 자체가 무효. ADR-0008 이 *EntityConsolidator 를 M7 gating 으로 격상* 하고 ADR-0007 D2 의 *결정 분기 시점을 지연* 한다. 정체성 (D1) 과 기술 결정 (D3-D6) 은 유지. 자세한 evidence 는 [`eval/reports/2026-06-20-financebench-1M/CONCLUSION.md`](../../eval/reports/2026-06-20-financebench-1M/CONCLUSION.md).
@@ -90,9 +90,9 @@ ADR-0001 의 가설이 미달했으므로, Arche 의 정체성을 다음 중 하
 
 ### D1. Arche 의 정체성 변경
 
-**기존**: "Arche = LLM·AI 에이전트가 도메인의 *관계 정보* 를 *최소한의 토큰과 시간으로* 활용하도록 돕는 *그래프 기반* 지식 베이스 도구" (ADR-0001 D1)
+**기존**: "Arche = LLM 과 AI 에이전트가 도메인의 *관계 정보* 를 *최소한의 토큰과 시간으로* 활용하도록 돕는 *그래프 기반* 지식 베이스 도구" (ADR-0001 D1)
 
-**변경**: "Arche = chunk RAG 와 graph RAG 의 신호를 *단일 LLM 호출의 컨텍스트* 로 결합해 LLM·에이전트에게 제공하는 ***retrieval orchestrator***"
+**변경**: "Arche = chunk RAG 와 graph RAG 의 신호를 *단일 LLM 호출의 컨텍스트* 로 결합해 LLM 과 에이전트에게 제공하는 ***retrieval orchestrator***"
 
 핵심 변화:
 - "그래프 기반" → "chunk + graph 결합 기반"

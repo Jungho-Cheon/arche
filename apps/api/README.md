@@ -79,7 +79,7 @@ curl -s -X POST http://localhost:8000/entities/find \
 
 ### Neo4j 5.15+ Community
 
-ADR-0004 D1 — 풀텍스트 인덱스 + 벡터 인덱스 + 그래프 traversal 세 가지를 *한 컴포넌트* 에서 모두 제공해야 한다는 제약을 만족하는 가장 성숙한 벤더. `db.index.fulltext.queryNodes` (이름·별칭 검색) 와 `db.index.vector.queryNodes` (1536-dim cosine) 가 같은 인스턴스에 공존한다. 별도 벡터 DB 서비스 (Pinecone / Qdrant 등) 는 ADR-0004 D1 에 따라 *MVP 에서 도입하지 않는다* .
+ADR-0004 D1 — 풀텍스트 인덱스 + 벡터 인덱스 + 그래프 traversal 세 가지를 *한 컴포넌트* 에서 모두 제공해야 한다는 제약을 만족하는 가장 성숙한 벤더. `db.index.fulltext.queryNodes` (이름과 별칭 검색) 와 `db.index.vector.queryNodes` (1536-dim cosine) 가 같은 인스턴스에 공존한다. 별도 벡터 DB 서비스 (Pinecone / Qdrant 등) 는 ADR-0004 D1 에 따라 *MVP 에서 도입하지 않는다* .
 
 5.15+ 핀: 5.15 부터 `CREATE VECTOR INDEX ... IF NOT EXISTS` 표준 Cypher 가 GA. 5.13 의 `db.index.vector.createNodeIndex` 프로시저 + `SHOW INDEXES` 가드 패턴이 사라지고, 세 인덱스 (fulltext / vector / btree) 모두 단일 `CREATE ... IF NOT EXISTS` 로 idempotent 보장된다. `docker-compose.yml` 의 이미지 태그도 같은 minor 에 고정 (`5.15-community`).
 
@@ -103,7 +103,7 @@ eval/ 와 같은 워크스페이스에 join. `uv sync` 한 번으로 두 패키�
 | `entity_name_idx` | FULLTEXT on `(:Entity)` over `[name, aliases]` | `find_entities` 의 lexical 매칭 |
 | `entity_embedding_idx` | VECTOR on `(:Entity).embedding`, 1536-dim, cosine | 동일성 4 단계 Step 3 + 하이브리드 dense 매칭 (#6 후속) |
 | `entity_name_btree` | BTREE on `(:Entity).name` | 디버그 / 직접 조회용 |
-| `entity_normalized_name_idx` | BTREE on `(:Entity).normalized_name` | 4 단계 동일성 Step 1·2 lookup |
+| `entity_normalized_name_idx` | BTREE on `(:Entity).normalized_name` | 4 단계 동일성 Step 1/2 lookup |
 | `ingestion_run_source_idx` | BTREE on `(:IngestionRun).source_path` | 차분 알고리즘의 "직전 성공 회차" 조회 |
 
 벡터 인덱스 차원 1536 은 `text-embedding-3-small` 의 출력 차원과 *반드시 일치* . 모델 교체 시 `ARCHE_API_EMBEDDING_DIMENSION` 환경 변수와 인덱스 재생성 둘 다 필요.
@@ -137,7 +137,7 @@ ingest 한 번이 곧 한 회차 노드. 노드 속성:
 - 이전 회차가 emit 했는데 이번 회차가 안 건드린 노드 / 관계 →
   - `source_paths` 가 *오직 이번 source_path 만* 포함 → 노드 / 관계 삭제 (노드는 인접 관계도 함께 `DETACH DELETE`).
   - 그 외 → `source_paths` (와 `source_chunk_indexes`) 에서 해당 항목만 trim, 노드 자체는 유지.
-- 양쪽에 있는 것 → 4 단계 매처가 step 1·2·3 으로 hit 시켜 병합 규칙 (PRD 2 §5.3) 적용.
+- 양쪽에 있는 것 → 4 단계 매처가 step 1/2/3 으로 hit 시켜 병합 규칙 (PRD 2 §5.3) 적용.
 
 처리 순서는 *관계 → 엔티티* . 엔티티 `DETACH DELETE` 가 cascade 로 관계를 지우면 관계 카운터가 누락되므로 관계를 먼저 처리한다.
 
@@ -152,7 +152,7 @@ ingest 한 번이 곧 한 회차 노드. 노드 속성:
 3. **Step 3** — 임베딩 cosine ≥ `EMBEDDING_MATCH_THRESHOLD` (= 0.92) 인 후보. `entity_embedding_idx` 의 ANN top-5 후 type 필터, 우리 코드에서 cosine 재계산.
 4. **Step 4** — 모두 miss → 새 노드 생성.
 
-응답의 `entities_matched_by_step` 가 step 1·2·3 의 분포를 노출 (디버그 + threshold tuning 신호).
+응답의 `entities_matched_by_step` 가 step 1/2/3 의 분포를 노출 (디버그 + threshold tuning 신호).
 
 ## 통제 변수 (Control variables)
 
@@ -172,7 +172,7 @@ ingest 한 번이 곧 한 회차 노드. 노드 속성:
 | `get_schema` / `get_entity` / `get_neighbors` / `find_path` / `get_subgraph` | #6 |
 | MCP HTTP+SSE 어댑터 | post-MVP (PRD 3 §8.1) |
 | `find_entities` 의 dense + RRF 하이브리드 | #6 |
-| 인증·테넌트 | ADR-0002 (post-MVP) |
+| 인증과 테넌트 | ADR-0002 (post-MVP) |
 
 본 슬라이스의 코드는 *위 후속 슬라이스의 토대* 다. 인덱스 / 어댑터 / 스키마는 follow-up 시 깨지지 않게 잡혀 있다.
 

@@ -18,7 +18,7 @@ Amends: [ADR-0004](./0004-vector-infra-graph-db-internal-index.md) 단일 store 
 - **agnostic (비종속)**: 특정 구현에 묶이지 않음. "DB-agnostic" = 어느 그래프
   데이터베이스를 쓰든 상위 코드가 안 바뀜. "Agent-agnostic" = 어느 AI 에이전트가
   소비하든 상관없음. "LLM-agnostic" = 어느 거대 언어 모델 (large language model,
-  문장을 생성·이해하는 AI) 을 쓰든 상관없음.
+  문장을 생성하고 이해하는 AI) 을 쓰든 상관없음.
 - **포트 / 어댑터 (port / adapter)**: 포트 = 코어가 외부에 요구하는 *추상
   인터페이스*. 어댑터 = 그 포트를 특정 기술로 *구현한 것* (예: Neo4j 어댑터).
   코어는 포트만 알고 어댑터는 모른다 → 어댑터 교체가 코어를 안 건드린다.
@@ -34,11 +34,11 @@ Amends: [ADR-0004](./0004-vector-infra-graph-db-internal-index.md) 단일 store 
 
 ## TL;DR
 
-검증으로 핵심 결정이 안정화됐고 (정확도의 레버는 모델·규모가 아니라 *추출
+검증으로 핵심 결정이 안정화됐고 (정확도의 레버는 모델과 규모가 아니라 *추출
 완전성* — ADR-0016/0017), 곧 문서 사이트 (`apps/docs`) 와 기업 웹 앱
 (`apps/web-ui`) 이 붙는다. 이 시점에 프로젝트 구조를 확정한다.
 
-1. **monorepo 로 간다.** 백엔드·문서·웹·공유 클라이언트를 한 저장소에. 공유
+1. **monorepo 로 간다.** 백엔드, 문서, 웹, 공유 클라이언트를 한 저장소에. 공유
    계약이 이 시스템의 척추라서, 계약 변경이 소비처까지 *한 번에* 검증되는 게
    multi-repo 의 버전 핀 지연보다 싸다. 기업 web-ui 의 OSS/상용 경계가
    *구체화되면* 그때만 사설 저장소로 분리한다 (monorepo → 분리는 싸고, 그 반대는
@@ -55,7 +55,7 @@ Amends: [ADR-0004](./0004-vector-infra-graph-db-internal-index.md) 단일 store 
 이전에는 추상화를 미뤘다 (가설이 흔들리는데 경계를 먼저 그으면 헛 경계가 된다).
 이제 검증이 *무엇을 경계로 잘라야 하는지* 를 알려준다.
 
-- 추출 완전성이 정확도의 레버다 (모델 교체·규모 확대는 효과 null — ADR-0016/0017
+- 추출 완전성이 정확도의 레버다 (모델 교체와 규모 확대는 효과 null — ADR-0016/0017
   측정). → 추출 계약과 결정적 후처리를 *모델과 독립된 1급 시민* 으로 만들어야
   한다.
 - 단일 store (그래프 + 벡터 + 어휘 검색을 한 DB 에) 는 의도된 MVP 단순화였다
@@ -81,7 +81,7 @@ arche/                    # 단일 저장소 (OSS 코어)
 ```
 
 근거:
-- **공유 계약 원자성** — `apps/api` 가 OpenAPI/MCP 를 내보내고 web-ui·문서가 이를
+- **공유 계약 원자성** — `apps/api` 가 OpenAPI/MCP 를 내보내고 web-ui 와 문서가 이를
   소비한다. monorepo 면 계약이 바뀔 때 생성 클라이언트와 소비처가 *한 PR, 한 CI
   게이트* 로 갱신돼 깨짐이 머지 전에 잡힌다. multi-repo 는 같은 변경을 여러
   저장소의 순서 있는 PR 로 쪼개고, 버전 핀 지연 동안 깨짐을 *런타임으로 미룬다*.
@@ -104,8 +104,8 @@ MVP 는 API-only (ADR-0002) 이고 빈 스캐폴드는 형식주의다. 구조�
 `GraphRepository` 한 포트가 그래프 순회 + 벡터 ANN (근사 최근접 탐색) + 어휘
 fulltext 검색 셋을 한 store 가 제공한다고 가정했다. 셋을 능력별 포트로 분리한다.
 
-- `GraphStore` — 노드/관계 생성·병합, N-hop 순회, k-최단경로, 스키마 통계, 적재
-  회차 기록·차분, 연결 수명주기.
+- `GraphStore` — 노드/관계 생성과 병합, N-hop 순회, k-최단경로, 스키마 통계, 적재
+  회차 기록과 차분, 연결 수명주기.
 - `VectorIndex` — 임베딩 ANN (`vector_search`, `find_entities_dense`).
 - `LexicalIndex` — 어휘 fulltext (`find_by_keywords_scored`).
 - `GraphRepository(GraphStore, VectorIndex, LexicalIndex)` — 셋을 합친 합성 포트.

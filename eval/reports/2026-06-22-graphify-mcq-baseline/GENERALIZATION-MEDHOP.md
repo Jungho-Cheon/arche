@@ -69,7 +69,7 @@ inhibits 90 ...) **거의 전부 단일 abstract 내부** — 문서 간 엔티�
 
 ## 일반화 판정 (정직)
 
-- **그래프의 *우위* 는 일반화한다** — graph > grep 가 finance·biomedical 양쪽에서 성립.
+- **그래프의 *우위* 는 일반화한다** — graph > grep 가 finance 와 biomedical 양쪽에서 성립.
 - **그래프의 *절대 정답률* 은 일반화하지 않는다** — 관계 도메인은 finance 에 없던
   entity-resolution 천장을 드러낸다. FinanceBench 정량 추출을 고쳤듯, 다음 레버는
   **문서 간 엔티티 동일성 해소** 임을 데이터가 가리킨다.

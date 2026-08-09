@@ -45,7 +45,7 @@ MCP tool 호출 결과는 *primitive payload 만* 반환 (MCP SDK 가 자체 env
 
 ### 0.5 ID 형식
 
-모든 노드·엣지 ID 는 **ULID** (26 자, base32, 시간 정렬 가능) 형태의 문자열. 예: `01HJZX...` . 외부에서 *opaque string* 으로 다룰 것 — 형식 가정 금지.
+모든 노드와 엣지 ID 는 **ULID** (26 자, base32, 시간 정렬 가능) 형태의 문자열. 예: `01HJZX...` . 외부에서 *opaque string* 으로 다룰 것 — 형식 가정 금지.
 
 ---
 

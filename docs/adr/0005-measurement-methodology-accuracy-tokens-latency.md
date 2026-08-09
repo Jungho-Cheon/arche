@@ -9,7 +9,7 @@ ADR-0001 의 Pareto 우월 가설은 **정확도 + 토큰 비용 + 응답 지연
 
 - **질문 형식** — 30 개 **MCQ + 이유 서술** . 각 질문은 4-5 지선다 (정답 1개 + "정보 부족" 옵션 포함) + 시스템이 *왜 그 선택지를 골랐는지* 이유 서술 강제.
 - **정확도 채점** — Correctness (0/1, MCQ 자동) + Reasoning quality (0-2, LLM judge + spot-check) + Faithfulness (0-1, LLM judge + spot-check). 문항당 0-4 점.
-- **토큰** — 컬럼별·질문별·LLM 호출별 입출력 토큰 합계. Arche 는 anchor 추출 + 답변 생성 두 호출 모두 계산. ingestion 토큰은 별도 계산.
+- **토큰** — 컬럼별, 질문별, LLM 호출별 입출력 토큰 합계. Arche 는 anchor 추출 + 답변 생성 두 호출 모두 계산. ingestion 토큰은 별도 계산.
 - **지연** — 질문당 wall-clock. 중간값 + p95.
 - **재현성** — N=3 회 측정, 중간값 보고, 전체 prompt/response/timing 로그 보존.
 - **보고서** — 한 장. *3 컬럼 × 3 메트릭 = 9 칸 표* + failure mode breakdown + 한 단락 해석.
@@ -124,7 +124,7 @@ LLM judge 의 결과 중 다음 케이스를 본인이 직접 재검토.
 
 ### D6. 토큰 측정
 
-각 컬럼·각 질문에서 *모든 LLM 호출* 의 입출력 토큰을 합산.
+각 컬럼과 각 질문에서 *모든 LLM 호출* 의 입출력 토큰을 합산.
 
 | 컬럼 | LLM 호출 수 (질문당) | 토큰 합계 = |
 |---|---|---|
@@ -140,7 +140,7 @@ LLM judge 의 결과 중 다음 케이스를 본인이 직접 재검토.
 
 ### D7. 지연 측정
 
-각 컬럼·각 질문에서 *질문 전송 → 최종 답변 수신* 까지의 wall-clock time 을 ms 단위로 기록.
+각 컬럼과 각 질문에서 *질문 전송 → 최종 답변 수신* 까지의 wall-clock time 을 ms 단위로 기록.
 
 - 컬럼별 30 개 측정값 → 중간값 + p95 보고.
 - 통제: *같은 시간대* (같은 날 연속 측정), *같은 네트워크 조건* (같은 머신/연결), *순차 실행* (병렬 실행 시 API rate limit / 서버 부하 변동이 결과를 흐림).
@@ -157,7 +157,7 @@ LLM 호출의 `temperature` 는 *0 또는 최저값* 으로 고정. seed 가 지
 측정 한 번에 다음을 *전체 보존* .
 
 - 30 개 질문의 정의 (YAML)
-- 각 컬럼·각 질문·각 회차의 raw input prompt, raw output response, latency
+- 각 컬럼, 각 질문, 각 회차의 raw input prompt, raw output response, latency
 - LLM judge 의 raw input/output
 - Spot-check 으로 덮어쓴 항목과 본인 판정 근거
 
@@ -236,7 +236,7 @@ Arche           |    X       |       X        |       X        |   X
 
 ### 즉시 영향
 
-- 30 개 MCQ 질문 설계가 *상거래 검증 데이터 준비* 의 일부가 된다. 각 질문에 정답·distractor·failure mode·reference reasoning 4 가지 메타데이터를 본인이 작성해야 한다 — 자유 서술 30 개보다 *작성 시간이 1.5-2 배* 들지만 채점 시간이 *수배 줄어든다* .
+- 30 개 MCQ 질문 설계가 *상거래 검증 데이터 준비* 의 일부가 된다. 각 질문에 정답, distractor, failure mode, reference reasoning 4 가지 메타데이터를 본인이 작성해야 한다 — 자유 서술 30 개보다 *작성 시간이 1.5-2 배* 들지만 채점 시간이 *수배 줄어든다* .
 - 측정 코드는 *비교 하니스* (`eval/` 디렉토리, 구현 단계 결정) 에 들어간다. Arche 본체에 포함되지 않는다.
 - LLM judge 비용이 측정 예산에 추가 (전형적으로 $5-20 수준).
 - 본인 spot-check 시간 30 분-1 시간이 *MVP 종료 작업의 일부* .

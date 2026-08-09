@@ -38,7 +38,7 @@ ADR-0007 (Combined RAG 채택) 의 D2 가 정의한 1M 시점 재검증 (M6.5) �
 ## 읽기 전 권장 배경
 
 - [ADR-0007 — Combined RAG 채택](./0007-combined-rag-pivot.md) — 본 ADR 이 amend 하는 ADR. D2 에 정의된 1M 시점 재검증 분기 표
-- [eval/reports/2026-06-20-financebench-1M/CONCLUSION.md](../../eval/reports/2026-06-20-financebench-1M/CONCLUSION.md) — 본 ADR 의 *측정 evidence*. 표·진단·로그가 여기 있다
+- [eval/reports/2026-06-20-financebench-1M/CONCLUSION.md](../../eval/reports/2026-06-20-financebench-1M/CONCLUSION.md) — 본 ADR 의 *측정 evidence*. 표, 진단, 로그가 여기 있다
 - [PRD 6 §3.A](../prd/6_post_mvp_combined.md) — EntityConsolidator 의 *원래 P0 설계*
 
 ## Context — 왜 이 결정이 필요했나

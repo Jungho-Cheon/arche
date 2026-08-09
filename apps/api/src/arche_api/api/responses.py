@@ -1,4 +1,4 @@
-"""읽기 primitive 의 요청·응답 Pydantic 모델.
+"""읽기 primitive 의 요청과 응답 Pydantic 모델.
 
 공통 메타데이터(Node/Edge/SourceRef)는 domain/models.py 에서 import 해 모든 응답이
 같은 모델을 쓰게 한다. FastAPI response_model 로 넘기면 OpenAPI 스키마가 자동으로

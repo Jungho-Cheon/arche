@@ -4,7 +4,7 @@
 
 ## 가설 (ADR-0001)
 
-LLM·AI 에이전트가 도메인 지식의 *관계* 를 활용할 때, 그래프 기반 도구 (Arche) 가 베이스라인 (full-context, chunk RAG) 대비 **정확도·토큰·지연** 세 축 중 어느 축에서도 후퇴 없이 한 축에서 우위 (Pareto 우월) 를 가진다.
+LLM 과 AI 에이전트가 도메인 지식의 *관계* 를 활용할 때, 그래프 기반 도구 (Arche) 가 베이스라인 (full-context, chunk RAG) 대비 **정확도, 토큰, 지연** 세 축 중 어느 축에서도 후퇴 없이 한 축에서 우위 (Pareto 우월) 를 가진다.
 
 ## 결과 한 줄
 
@@ -31,7 +31,7 @@ Pareto 판정 — 세 축 NG.
 
 1. **더 큰 corpus + 깊은 multi-hop 도메인** 으로 재측정 — gpt-4.1 long-context 가 한계를 보이는 영역에서 그래프 도구의 우위 확인.
 2. **anchor 추출 정확도** 개선 — 별칭 환원 + ULID 매칭 신호 강화.
-3. **Arche latency 단축** — primitive 호출 사전 캐싱·병렬화.
+3. **Arche latency 단축** — primitive 호출 사전 캐싱과 병렬화.
 4. **코드베이스 적재 ADR** (post-MVP 1순위) — AST + LLM 결합 그래프 추출. 본 측정의 자연어 corpus 와 별개 도메인 검증.
 
 ## 측정 데이터 소재
