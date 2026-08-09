@@ -8,16 +8,18 @@ Arche 는 그래프를 어디에 둘지 두 갈래로 나눕니다. 혼자 쓰�
 
 **임베디드 (기본값).** 그래프가 내 디스크의 폴더 하나에 들어갑니다. Kuzu 라는 임베디드 데이터베이스를 쓰고, 서버 프로세스도 Docker 도 띄우지 않습니다. 설치하고 바로 돕니다.
 
-```text
-Claude Code + 플러그인 ──띄움──▶ arche stdio MCP ──▶ Kuzu 폴더
+```mermaid
+flowchart LR
+  CC["Claude Code + 플러그인"] -->|세션마다 띄움| MCP["arche stdio MCP"] --> KZ["Kuzu 폴더"]
 ```
 
 여기서 말하는 "서버"는 클라우드에 상주하는 게 아니라 대화 세션마다 뜨는 로컬 프로세스입니다. 네트워크가 없고 저장소는 디스크의 폴더입니다.
 
 **공유 서버.** 여러 사람이 같은 그래프를 볼 때의 배치입니다. Neo4j 를 띄우고 Arche API 서버가 그 앞에 섭니다.
 
-```text
-Claude Code + 플러그인 ──HTTP MCP──▶ arche 서버 ──▶ Neo4j
+```mermaid
+flowchart LR
+  CC["Claude Code + 플러그인"] -->|HTTP MCP| SRV["arche 서버"] --> NEO["Neo4j"]
 ```
 
 ## 무엇이 같고 무엇이 다른가

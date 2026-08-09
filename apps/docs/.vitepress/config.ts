@@ -1,6 +1,7 @@
 import { defineConfig } from "vitepress";
+import { withMermaid } from "vitepress-plugin-mermaid";
 
-export default defineConfig({
+export default withMermaid(defineConfig({
   title: "Arche",
   description:
     "흩어진 문서를 관계 그래프로 바꿔, AI 에이전트가 적은 비용으로 정확히 답하게 하는 지식 베이스 도구",
@@ -10,6 +11,7 @@ export default defineConfig({
   // _generated 는 @include 로 끼워 넣는 조각이라 독립 페이지로 빌드하지 않는다.
   srcExclude: ["**/_generated/**"],
   head: [["link", { rel: "icon", href: "/arche-favicon.svg" }]],
+  mermaid: { themeVariables: { fontSize: "16px" } },
   themeConfig: {
     logo: { light: "/arche-mark.svg", dark: "/arche-mark-dark.svg" },
     search: { provider: "local" },
@@ -99,4 +101,4 @@ export default defineConfig({
     //   themeConfig: { nav: [], sidebar: {} },
     // },
   },
-});
+}));
