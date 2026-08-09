@@ -81,7 +81,7 @@ def test_http_mount_without_ingest_exposes_only_read_tools():
     """ingest_service/plan_registry 미주입 시 조회 도구만 (6 primitive + find_related)."""
     app = _app_with_mcp()
     names = _mounted_tool_names(app)
-    assert len(names) == 7  # 6 primitive + find_related (#140)
+    assert len(names) == 8  # 6 primitive + find_related (#140) + graph_health (#170/#171)
     assert "ingest_plan" not in names
     assert "ingest_commit" not in names
 
@@ -111,4 +111,4 @@ def test_http_mount_with_ingest_exposes_all_tools_like_stdio():
         "entity_split_preview",
         "entity_split_commit",
     } <= names
-    assert len(names) == 15  # 7 read (6 primitive + find_related) + 5 ingest + 3 split
+    assert len(names) == 16  # 8 read (6 primitive + find_related + graph_health) + 5 ingest + 3 split

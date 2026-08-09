@@ -105,6 +105,6 @@ def test_request_table_carries_defaults_ranges_and_descriptions():
 
     md = docs_gen.render_request_table("find_entities", FindEntitiesRequest)
     assert "| `limit` | `int` | `10` |" in md  # 기본값
-    assert "1 이상, 50 이하" in md  # 범위
+    assert "1 이상, 200 이하" in md  # 범위
     assert "`false`" in md  # bool 은 JSON 표기로
     assert "필터 — 결과 노드" in md  # Field description 이 설명 칸에

@@ -198,6 +198,36 @@ def test_schema_summary_counts_only_one_namespace(two_namespaces):
     assert {t.type: t.count for t in relation_types} == {"APPLIES_TO": 1}
 
 
+def test_entity_surfaces_describe_only_one_namespace(two_namespaces):
+    repo, _ = two_namespaces
+
+    surfaces = repo.iter_entity_surfaces(namespace_id=HERE)
+
+    # 양쪽에 같은 이름과 타입이 하나씩. 격리가 깨지면 4 가 된다.
+    assert len(surfaces) == 2
+    assert {s.type for s in surfaces} == {"Policy", "Product"}
+    # 관계도 이 namespace 안의 것만 센다. 저쪽 관계까지 세면 4 가 된다.
+    assert sum(s.relation_count for s in surfaces) == 2
+
+
+def test_listing_entities_stays_inside_the_namespace(two_namespaces):
+    repo, _ = two_namespaces
+
+    total, entities = repo.list_entities(namespace_id=HERE, limit=100)
+
+    assert total == 2
+    assert {e.namespace_id for e in entities} == {HERE}
+
+    typed_total, typed = repo.list_entities(namespace_id=HERE, types=["Policy"], limit=100)
+    assert typed_total == 1
+    assert [e.type for e in typed] == ["Policy"]
+
+    # total 은 쪽수와 무관하게 전체를 말해야 한다. 쪽수만 세면 페이지를 넘길 근거가 없다.
+    paged_total, paged = repo.list_entities(namespace_id=HERE, offset=1, limit=1)
+    assert paged_total == 2
+    assert len(paged) == 1
+
+
 def test_every_namespace_aware_method_is_covered_here():
     """namespace 를 받는 메서드가 늘면 이 파일도 늘어야 한다.
 
@@ -217,6 +247,8 @@ def test_every_namespace_aware_method_is_covered_here():
         "get_entity_relations",
         "get_entity_with_counts",
         "get_schema_summary",
+        "iter_entity_surfaces",
+        "list_entities",
         "vector_search",
     }
 

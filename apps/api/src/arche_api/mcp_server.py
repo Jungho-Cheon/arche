@@ -25,6 +25,7 @@ from arche_api.domain.ports import EmbeddingProvider, GraphRepository
 
 from .api import services
 from .api.error_codes import flatten_validation_errors
+from .api.health_schemas import GraphHealthRequest
 from .api.plan_schemas import (
     CommitRequest,
     PlanContentRequest,
@@ -63,7 +64,26 @@ _TOOL_DESCRIPTIONS: dict[str, str] = {
     "find_entities": (
         "Find graph nodes matching one or more anchor keywords using lexical "
         "+ dense vector hybrid retrieval. Caller is expected to have "
-        "extracted these keywords from a user question."
+        "extracted these keywords from a user question. OMIT `keywords` to "
+        "enumerate instead of search: you then get every node matching `types` "
+        "in id order, which is the only way to be sure you have seen all of "
+        "them. Either way the response carries `total`, so `matches` being "
+        "short never means 'that is all there is' — page with `offset`."
+    ),
+    "graph_health": (
+        "Check whether the stored graph is in good shape, in one call. Returns "
+        "the FULL per-type node counts (unlike `get_schema`, which truncates "
+        "its examples) plus three deterministic problem signals: "
+        "`duplicate_names` (nodes sharing a normalized name — the same thing "
+        "got scattered across several nodes, so questions about it find "
+        "nothing), `overmerged` (one node that looks like it swallowed two "
+        "different real-world things — every path through it is false, which "
+        "yields confident wrong answers), and `isolated` (nodes with no "
+        "relations at all — extraction found the thing but none of its links). "
+        "Each list is capped at `max_samples` while the `*_total` counts are "
+        "always exact; `truncated` says whether any list was cut. Fix an "
+        "`overmerged` node with the entity_split tools; fix `duplicate_names` "
+        "by re-ingesting the source and answering the merge questions."
     ),
     "get_entity": (
         "Fetch full details of a single node by its ID, including direct edge "
@@ -346,6 +366,11 @@ def _build_tools() -> list[mcp_types.Tool]:
             description=_TOOL_DESCRIPTIONS["find_related"],
             inputSchema=_build_input_schema(FindRelatedRequest),
         ),
+        mcp_types.Tool(
+            name="graph_health",
+            description=_TOOL_DESCRIPTIONS["graph_health"],
+            inputSchema=_build_input_schema(GraphHealthRequest),
+        ),
     ]
 
 
@@ -497,6 +522,11 @@ def _dispatch_tool(
     if name == "find_related":
         body = FindRelatedRequest.model_validate(arguments)
         return services.find_related(body, graph=graph, namespace_id=body.namespace_id or "default")
+    if name == "graph_health":
+        health_body = GraphHealthRequest.model_validate(arguments)
+        return services.graph_health(
+            health_body, graph=graph, namespace_id=health_body.namespace_id or "default"
+        )
     # reviewable ingest — service/registry 가 주입된 서버에서만 등록되므로, 여기
     # 도달했다면 둘 다 존재한다. 방어적으로 None 을 막는다.
     if name in INGEST_TOOL_NAMES:

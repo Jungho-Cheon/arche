@@ -35,6 +35,7 @@ from ..domain.models import (
 )
 from ..domain.ports import (
     DenseHit,
+    EntitySurface,
     EntityTypeStat,
     EntityWithCounts,
     GraphRepository,
@@ -852,6 +853,64 @@ class KuzuGraphRepository(GraphRepository):
                 RETURN e.namespace_id AS ns, count(*) AS c ORDER BY c DESC"""
         )
         return {r["ns"]: int(r["c"]) for r in rows}
+
+    def _relation_degrees(self, namespace_id: str) -> dict[str, int]:
+        rows = self._fetch(
+            f"""MATCH (a:{ENTITY_LABEL})-[:{RELATION_TYPE_LABEL_DEFAULT}]->(b:{ENTITY_LABEL})
+                WHERE a.namespace_id = $ns AND b.namespace_id = $ns
+                RETURN a.id AS from_id, b.id AS to_id""",
+            ns=namespace_id,
+        )
+        degree: dict[str, int] = {}
+        for row in rows:
+            degree[row["from_id"]] = degree.get(row["from_id"], 0) + 1
+            degree[row["to_id"]] = degree.get(row["to_id"], 0) + 1
+        return degree
+
+    def iter_entity_surfaces(self, *, namespace_id: str = "default") -> list[EntitySurface]:
+        rows = self._fetch(
+            f"""MATCH (e:{ENTITY_LABEL}) WHERE e.namespace_id = $ns
+                RETURN e.id AS id, e.name AS name, e.type AS type,
+                       e.normalized_name AS normalized_name, e.aliases AS aliases
+                ORDER BY e.id""",
+            ns=namespace_id,
+        )
+        degree = self._relation_degrees(namespace_id)
+        return [
+            EntitySurface(
+                id=r["id"],
+                name=r["name"] or "",
+                type=r["type"] or "",
+                normalized_name=r["normalized_name"] or "",
+                aliases=list(r["aliases"] or []),
+                relation_count=degree.get(r["id"], 0),
+            )
+            for r in rows
+        ]
+
+    def list_entities(
+        self,
+        *,
+        namespace_id: str = "default",
+        types: list[str] | None = None,
+        offset: int = 0,
+        limit: int = 100,
+    ) -> tuple[int, list[StoredEntity]]:
+        where = "e.namespace_id = $ns" + (" AND list_contains($types, e.type)" if types else "")
+        params: dict[str, Any] = {"ns": namespace_id}
+        if types:
+            params["types"] = list(types)
+        total_rows = self._fetch(
+            f"MATCH (e:{ENTITY_LABEL}) WHERE {where} RETURN count(*) AS c", **params
+        )
+        rows = self._fetch(
+            f"""MATCH (e:{ENTITY_LABEL}) WHERE {where}
+                RETURN e AS e ORDER BY e.id SKIP $skip LIMIT $take""",
+            skip=offset,
+            take=limit,
+            **params,
+        )
+        return int(total_rows[0]["c"]), [_node_to_stored(r["e"]) for r in rows]
 
     def get_stored_entity(self, *, entity_id: str) -> StoredEntity | None:
         rows = self._fetch(

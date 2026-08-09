@@ -24,6 +24,7 @@ from ..domain.models import (
 )
 from ..domain.ports import (
     DenseHit,
+    EntitySurface,
     EntityTypeStat,
     EntityWithCounts,
     GraphRepository,
@@ -926,24 +927,67 @@ class Neo4jGraphRepository(GraphRepository):
             ).data()
         return {r["ns"]: int(r["c"]) for r in rows}
 
-    def find_overmerged_entities(
-        self, *, max_aliases: int = 30, max_distinct_ids: int = 2
-    ) -> list:
-        """기존 그래프의 과잉 병합 의심 노드를 탐지한다. 모든 Entity 의 (id, name,
-        aliases)에 결정적 detector 를 적용한다. 운영자 검토용이라 포트가 아닌 구현체에만 둔다."""
-        from ..domain.identity import detect_overmerged_entities
+    def _relation_degrees(self, namespace_id: str) -> dict[str, int]:
+        with self._driver.session() as s:
+            rows = s.run(
+                f"MATCH (a:{ENTITY_LABEL})-[]->(b:{ENTITY_LABEL}) "
+                "WHERE coalesce(a.namespace_id, 'default') = $ns "
+                "AND coalesce(b.namespace_id, 'default') = $ns "
+                "RETURN a.id AS from_id, b.id AS to_id",
+                ns=namespace_id,
+            ).data()
+        degree: dict[str, int] = {}
+        for row in rows:
+            degree[row["from_id"]] = degree.get(row["from_id"], 0) + 1
+            degree[row["to_id"]] = degree.get(row["to_id"], 0) + 1
+        return degree
 
+    def iter_entity_surfaces(self, *, namespace_id: str = "default") -> list[EntitySurface]:
         with self._driver.session() as s:
             rows = s.run(
                 f"MATCH (e:{ENTITY_LABEL}) "
-                "RETURN e.id AS id, e.name AS name, "
-                "coalesce(e.aliases, []) AS aliases"
+                "WHERE coalesce(e.namespace_id, 'default') = $ns "
+                "RETURN e.id AS id, e.name AS name, e.type AS type, "
+                "e.normalized_name AS normalized_name, "
+                "coalesce(e.aliases, []) AS aliases "
+                "ORDER BY e.id",
+                ns=namespace_id,
             ).data()
-        return detect_overmerged_entities(
-            ((r["id"], r["name"] or "", list(r["aliases"] or [])) for r in rows),
-            max_aliases=max_aliases,
-            max_distinct_ids=max_distinct_ids,
+        degree = self._relation_degrees(namespace_id)
+        return [
+            EntitySurface(
+                id=r["id"],
+                name=r["name"] or "",
+                type=r["type"] or "",
+                normalized_name=r["normalized_name"] or "",
+                aliases=list(r["aliases"] or []),
+                relation_count=degree.get(r["id"], 0),
+            )
+            for r in rows
+        ]
+
+    def list_entities(
+        self,
+        *,
+        namespace_id: str = "default",
+        types: list[str] | None = None,
+        offset: int = 0,
+        limit: int = 100,
+    ) -> tuple[int, list[StoredEntity]]:
+        where = (
+            f"MATCH (e:{ENTITY_LABEL}) WHERE coalesce(e.namespace_id, 'default') = $ns"
+            + (" AND e.type IN $types" if types else "")
         )
+        params = {"ns": namespace_id, "types": list(types or [])}
+        with self._driver.session() as s:
+            total_rec = s.run(f"{where} RETURN count(e) AS c", **params).single()
+            rows = s.run(
+                f"{where} RETURN e ORDER BY e.id SKIP $skip LIMIT $take",
+                skip=offset,
+                take=limit,
+                **params,
+            ).data()
+        return int(total_rec["c"]) if total_rec else 0, [_node_to_stored(r["e"]) for r in rows]
 
     def get_stored_entity(self, *, entity_id: str) -> StoredEntity | None:
         with self._driver.session() as s:

@@ -262,7 +262,7 @@ def test_find_entities_envelope_and_match_shape():
     body = r.json()
     # PRD 3 §0.3 envelope
     assert set(body.keys()) == {"data"}
-    assert set(body["data"].keys()) == {"matches"}
+    assert set(body["data"].keys()) == {"matches", "total", "offset"}
     assert len(body["data"]["matches"]) == 1
     match = body["data"]["matches"][0]
     # PRD 3 §3.4 매치 필드 (include_scores 기본 false 라 scores 없음)

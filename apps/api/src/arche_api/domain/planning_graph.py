@@ -9,6 +9,7 @@ from .ingest_plan import RecordedWrite
 from .models import Edge, MergeMutation, SourceRef, StoredEntity
 from .ports import (
     DenseHit,
+    EntitySurface,
     EntityTypeStat,
     EntityWithCounts,
     GraphRepository,
@@ -208,6 +209,21 @@ class PlanningGraphRepository(GraphRepository):
 
     def count_entities_by_namespace(self) -> dict[str, int]:
         return self._real.count_entities_by_namespace()
+
+    def iter_entity_surfaces(self, *, namespace_id: str = "default") -> list[EntitySurface]:
+        return self._real.iter_entity_surfaces(namespace_id=namespace_id)
+
+    def list_entities(
+        self,
+        *,
+        namespace_id: str = "default",
+        types: list[str] | None = None,
+        offset: int = 0,
+        limit: int = 100,
+    ) -> tuple[int, list[StoredEntity]]:
+        return self._real.list_entities(
+            namespace_id=namespace_id, types=types, offset=offset, limit=limit
+        )
 
     def get_stored_entity(self, *, entity_id: str) -> StoredEntity | None:
         return self._real.get_stored_entity(entity_id=entity_id)

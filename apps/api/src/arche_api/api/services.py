@@ -22,7 +22,16 @@ from ..domain.errors import (
     InvalidInputError,
     UnprocessableError,
 )
+from ..domain.graph_health import assess_graph_health
 from ..domain.models import Edge, Node
+from .health_schemas import (
+    DuplicateNameView,
+    GraphHealthRequest,
+    GraphHealthResponse,
+    IsolatedView,
+    OverMergeView,
+    TypeCount,
+)
 from .plan_schemas import (
     CommitRequest,
     IngestCommitResponse,
@@ -133,6 +142,51 @@ def get_schema(
     )
 
 
+# ---------- 그래프 건강 ----------
+
+
+def graph_health(
+    body: GraphHealthRequest,
+    *,
+    graph: GraphRepository,
+    namespace_id: str = "default",
+) -> GraphHealthResponse:
+    """쌓인 그래프가 병들었는지 세어 본다.
+
+    판정은 domain/graph_health.py 가 하고 저장소는 노드 표면만 내준다. 그래서 Neo4j 든
+    임베디드든 같은 그래프에 같은 답이 나온다.
+    """
+    namespace_id = ensure_namespace_id(namespace_id)
+    report = assess_graph_health(
+        graph.iter_entity_surfaces(namespace_id=namespace_id),
+        namespace_id=namespace_id,
+        max_samples=body.max_samples,
+    )
+    return GraphHealthResponse(
+        namespace_id=report.namespace_id,
+        entity_count=report.entity_count,
+        type_counts=[TypeCount(type=t, count=c) for t, c in report.type_counts],
+        duplicate_names=[
+            DuplicateNameView(
+                normalized_name=g.normalized_name,
+                entity_ids=g.entity_ids,
+                names=g.names,
+                types=g.types,
+            )
+            for g in report.duplicate_names
+        ],
+        duplicate_name_total=report.duplicate_name_total,
+        overmerged=[
+            OverMergeView(entity_id=f.entity_id, name=f.name, reasons=f.reasons)
+            for f in report.overmerged
+        ],
+        overmerged_total=report.overmerged_total,
+        isolated=[IsolatedView(id=e.id, name=e.name, type=e.type) for e in report.isolated],
+        isolated_total=report.isolated_total,
+        truncated=report.truncated,
+    )
+
+
 # ---------- find_entities ----------
 
 
@@ -143,13 +197,23 @@ def find_entities(
     embedder: EmbeddingProvider,
     namespace_id: str = "default",
 ) -> FindEntitiesResponse:
-    """어휘 + dense 하이브리드 + RRF.
+    """노드를 고른다 — keywords 가 있으면 유사도 상위, 없으면 조건에 맞는 전량.
 
-    keyword 별 fulltext top-k(lexical) + ANN top-k(dense)를 노드 ID 단위로 union 해
-    RRF 로 결합하고, types 필터 → 점수 내림차순 → limit slice. 임베딩이 죽으면 503 을
-    그대로 raise 한다(lexical-only silent fallback 은 측정 무결성을 해친다)."""
+    두 방식이 한 도구인 이유. 검색이 노드를 보는 *유일한* 길이면 "이 타입에 무엇이
+    있는지 빠짐없이" 를 물을 수 없고, 실제로 16 개짜리 타입에서 14 개만 나왔다. 고르는
+    기준만 다를 뿐 하는 일은 같아서 도구를 따로 세울 이유가 없다.
+
+    keywords 가 있으면 keyword 별 fulltext top-k(lexical) + ANN top-k(dense)를 노드 ID
+    단위로 union 해 RRF 로 결합하고, types 필터 → 점수 내림차순 → limit slice. 임베딩이
+    죽으면 503 을 그대로 raise 한다(lexical-only silent fallback 은 측정 무결성을 해친다).
+
+    total 은 어느 쪽이든 채운다. 받은 개수만 보이면 "이게 전부" 로 읽히기 때문이다."""
     # 요청 모델 밖 namespace 형식 검증 (#142).
     namespace_id = ensure_namespace_id(namespace_id)
+
+    if not body.keywords:
+        return _list_entities(body, graph=graph, namespace_id=namespace_id)
+
     # keyword 별 풀을 입력 limit 보다 넉넉히 — 여러 keyword 가 같은 노드를 낼 수 있다.
     per_kw = min(50, max(body.limit * 2, 10))
 
@@ -183,15 +247,50 @@ def find_entities(
             )
         )
 
-    matches = _fuse_with_rrf(
+    fused = _fuse_with_rrf(
         lexical_hits=lexical_hits,
         dense_hits=dense_hits,
         keywords=body.keywords,
         types=body.types,
-        limit=body.limit,
         include_scores=body.include_scores,
     )
-    return FindEntitiesResponse(matches=matches)
+    return FindEntitiesResponse(
+        matches=fused[body.offset : body.offset + body.limit],
+        total=len(fused),
+        offset=body.offset,
+    )
+
+
+def _list_entities(
+    body: FindEntitiesRequest,
+    *,
+    graph: GraphRepository,
+    namespace_id: str,
+) -> FindEntitiesResponse:
+    """keywords 없이 부른 find_entities — 조건에 맞는 노드를 id 순으로 전량 훑는다."""
+    total, entities = graph.list_entities(
+        namespace_id=namespace_id,
+        types=body.types,
+        offset=body.offset,
+        limit=body.limit,
+    )
+    matches = [
+        EntityMatch(
+            node=Node(
+                id=e.id,
+                name=e.name,
+                type=e.type,
+                aliases=list(e.aliases),
+                description=e.description,
+                properties=e.properties,
+                source_refs=list(e.source_refs),
+                created_at=e.created_at,
+                updated_at=e.updated_at,
+            )
+        )
+        for e in entities
+    ]
+    return FindEntitiesResponse(matches=matches, total=total, offset=body.offset)
 
 
 def _fuse_with_rrf(
@@ -200,7 +299,6 @@ def _fuse_with_rrf(
     *,
     keywords: list[str],
     types: list[str] | None,
-    limit: int,
     include_scores: bool,
 ) -> list[EntityMatch]:
     """RRF (Reciprocal Rank Fusion).
@@ -213,7 +311,7 @@ def _fuse_with_rrf(
        = sum over keywords of (1/(k + lex_rank) + 1/(k + dense_rank)).
        각 항은 *해당 keyword 의 lexical/dense 에서 surface 됐을 때만* 더한다.
     4. matched_keyword: *가장 큰 단일 keyword 기여* 가 발생한 keyword 유지.
-    5. types 필터 → 점수 내림차순 → limit slice.
+    5. types 필터 → 점수 내림차순. 쪽 자르기는 호출부가 offset/limit 로 한다.
     """
     # 1) keyword 별 rank 부여 — lexical
     per_kw_lex_rank: dict[tuple[str, str], int] = {}  # (keyword, node_id) -> rank
@@ -291,9 +389,8 @@ def _fuse_with_rrf(
         if not fused_rows:
             return []
 
-    # 5) 점수 내림차순 + limit + max-normalize 로 0..1
+    # 5) 점수 내림차순 + max-normalize 로 0..1
     fused_rows.sort(key=lambda r: r[0], reverse=True)
-    fused_rows = fused_rows[:limit]
     max_score = max(r[0] for r in fused_rows) or 1.0
 
     matches: list[EntityMatch] = []

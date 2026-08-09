@@ -12,7 +12,7 @@ TYPE_CHECKING 아래 둔다(힌트가 문자열이라 런타임 평가가 없다
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any
 
 from .models import (
@@ -26,6 +26,21 @@ from .models import (
 
 if TYPE_CHECKING:
     from .extract_context import ExtractContext
+
+
+@dataclass(frozen=True)
+class EntitySurface:
+    """그래프 건강 점검이 노드 하나에서 필요로 하는 최소 정보.
+
+    판정은 domain/graph_health.py 가 한다. 저장소는 이 표면만 채워 주면 되고, 그래서
+    어느 저장소를 쓰든 같은 그래프에 같은 진단이 나온다."""
+
+    id: str
+    name: str
+    type: str
+    normalized_name: str
+    aliases: list[str] = field(default_factory=list)
+    relation_count: int = 0
 
 
 @dataclass(frozen=True)
@@ -442,6 +457,28 @@ class GraphStore(ABC):
     @abstractmethod
     def count_entities_by_namespace(self) -> dict[str, int]:
         """namespace 별 entity 수. /admin/namespaces 운영 가시성용."""
+
+    # ----- 그래프 건강 (선택적 확장점) -----
+    # 기본 구현이 NotImplementedError 를 던진다. 빈 결과를 돌려주면 병든 그래프가
+    # "깨끗함" 으로 보고돼, 점검 자체가 거짓 안심이 된다.
+
+    def iter_entity_surfaces(self, *, namespace_id: str = "default") -> list[EntitySurface]:
+        """이 namespace 노드 전부의 (id, 이름, 타입, 정규명, 별칭, 관계 수).
+
+        판정은 domain/graph_health.py 가 한다. 저장소는 세는 일만 맡아, 어느 저장소를
+        쓰든 같은 그래프에 같은 진단이 나온다."""
+        raise NotImplementedError("이 store 는 그래프 건강 점검을 지원하지 않습니다")
+
+    def list_entities(
+        self,
+        *,
+        namespace_id: str = "default",
+        types: list[str] | None = None,
+        offset: int = 0,
+        limit: int = 100,
+    ) -> tuple[int, list[StoredEntity]]:
+        """이 namespace 노드를 id 순으로 훑는다 — (조건에 맞는 전체 수, 이 쪽수)."""
+        raise NotImplementedError("이 store 는 노드 열거를 지원하지 않습니다")
 
     @abstractmethod
     def get_stored_entity(self, *, entity_id: str) -> StoredEntity | None:

@@ -42,12 +42,28 @@ class FindEntitiesRequest(BaseModel):
 
     model_config = ConfigDict(extra="forbid")
 
-    keywords: list[str] = Field(min_length=1, max_length=32)
+    # 빈 리스트는 계속 거부한다. 앵커 추출에 실패한 호출자가 [] 를 보내는 일이 있는데,
+    # 그걸 열거로 받으면 검색이 빗나간 자리에서 조용히 전량이 돌아간다. 열거는 필드를
+    # *생략* 했을 때만 — 뜻이 분명한 쪽만 연다.
+    keywords: list[str] | None = Field(
+        default=None,
+        min_length=1,
+        max_length=32,
+        description=(
+            "앵커 키워드. 주면 유사도 상위를 돌려준다. 필드를 생략하면 검색이 아니라 "
+            "*열거* 가 되어 types/namespace 조건에 맞는 노드를 id 순으로 전량 훑는다."
+        ),
+    )
     types: list[str] | None = Field(
         default=None,
         description="필터 — 결과 노드의 type 이 이 리스트에 포함된 것만 반환.",
     )
-    limit: int = Field(default=10, ge=1, le=50)
+    limit: int = Field(default=10, ge=1, le=200)
+    offset: int = Field(
+        default=0,
+        ge=0,
+        description="이 개수만큼 건너뛴 다음부터. total 과 함께 쪽수를 넘길 때 쓴다.",
+    )
     include_scores: bool = Field(
         default=False,
         description=(
@@ -81,13 +97,15 @@ class EntityMatch(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     node: Node
-    score: float = Field(
+    score: float | None = Field(
+        default=None,
         ge=0.0,
         le=1.0,
-        description="Fused score (0..1).",
+        description="Fused score (0..1). keywords 없이 열거한 결과면 null (고른 기준이 유사도가 아니다).",
     )
-    matched_keyword: str = Field(
-        description="이 노드를 surface 시킨 input keyword.",
+    matched_keyword: str | None = Field(
+        default=None,
+        description="이 노드를 surface 시킨 input keyword. 열거 결과면 null.",
     )
     scores: MatchScores | None = Field(
         default=None,
@@ -101,6 +119,15 @@ class FindEntitiesResponse(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     matches: list[EntityMatch]
+    total: int = Field(
+        default=0,
+        ge=0,
+        description=(
+            "이 조건에 해당하는 노드의 전체 수. matches 는 offset/limit 로 잘린 한 쪽이라, "
+            "받은 개수를 전부로 읽지 않게 하려고 늘 함께 싣는다."
+        ),
+    )
+    offset: int = Field(default=0, ge=0)
 
 
 # ---------- admin/ingest ----------

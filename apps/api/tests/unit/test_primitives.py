@@ -253,7 +253,6 @@ def test_rrf_single_keyword_lexical_only_normalized_score_one():
         dense_hits=[],
         keywords=["여름"],
         types=None,
-        limit=10,
         include_scores=False,
     )
     assert len(matches) == 1
@@ -271,7 +270,6 @@ def test_rrf_lexical_and_dense_both_contribute():
         dense_hits=dense,
         keywords=["x"],
         types=None,
-        limit=10,
         include_scores=True,
     )
     assert len(matches) == 1
@@ -310,7 +308,6 @@ def test_rrf_orders_by_rank_not_raw_score_magnitude():
         dense_hits=dense,
         keywords=["x"],
         types=None,
-        limit=10,
         include_scores=False,
     )
     by_id = {m.node.id: i for i, m in enumerate(matches)}
@@ -329,7 +326,6 @@ def test_rrf_types_filter():
         dense_hits=[],
         keywords=["x"],
         types=["product"],
-        limit=10,
         include_scores=False,
     )
     assert len(matches) == 1

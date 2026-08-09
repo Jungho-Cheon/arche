@@ -74,7 +74,7 @@ class _StubSettings:
 
 
 def test_build_tools_registers_read_primitives():
-    """PRD 3 §0.1 의 6 primitive + find_related(#140, ADR-0006 amend)."""
+    """PRD 3 §0.1 의 6 primitive + find_related(#140) + graph_health(#170/#171)."""
     tools = _build_tools()
     names = [t.name for t in tools]
     assert names == [
@@ -85,6 +85,7 @@ def test_build_tools_registers_read_primitives():
         "find_path",
         "get_subgraph",
         "find_related",
+        "graph_health",
     ]
 
 
@@ -444,4 +445,4 @@ def test_build_mcp_server_list_tools_returns_read_primitives():
     inner = result.root
     assert isinstance(inner, mcp_types.ListToolsResult)
     # 6 primitive + find_related (#140).
-    assert len(inner.tools) == 7
+    assert len(inner.tools) == 8
