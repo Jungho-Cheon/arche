@@ -41,6 +41,8 @@ from .plan_schemas import (
     PlanIngestRequest,
     PlanPreview,
     PlanSummary,
+    PlanWarning,
+    PlanWarningKind,
     PreviewRequest,
     QuestionView,
     RelationView,
@@ -658,6 +660,31 @@ def _require_plan(plan_id: str, registry: PlanRegistry) -> IngestPlan:
     return plan
 
 
+def _plan_warnings(plan: IngestPlan) -> list[PlanWarning]:
+    """미리 보기에 안 나오는 것만 경고로 만든다.
+
+    관계가 하나도 안 붙은 새 노드는 여기 없다. 호출부가 new_entities 의 id 와
+    new_relations 의 끝점을 빼면 스스로 알아낼 수 있어서다. 확정을 막지 않는 이유는
+    domain/README.md."""
+    warnings: list[PlanWarning] = []
+    dropped = plan.result.relations_skipped_dangling
+    if dropped:
+        pairs = ", ".join(
+            f"{r.from_name} -> {r.to_name}" for r, _ in plan.result.unresolved_relations[:5]
+        )
+        warnings.append(
+            PlanWarning(
+                kind=PlanWarningKind.RELATION_DROPPED,
+                message=(
+                    f"관계 {dropped} 개를 뽑았지만 끝점 노드를 못 찾아 버렸습니다 ({pairs}). "
+                    "끝점이 다른 문서에 있다면 그 문서를 먼저 넣으세요"
+                ),
+                count=dropped,
+            )
+        )
+    return warnings
+
+
 def _summarize_plan(plan: IngestPlan) -> PlanSummary:
     """IngestPlan 의 writes 종류별 개수 + 미해소 질문 수를 PlanSummary 로 집계한다."""
     n_new = sum(1 for w in plan.writes if w.method == "create_entity")
@@ -673,6 +700,7 @@ def _summarize_plan(plan: IngestPlan) -> PlanSummary:
         deletion_count=n_del,
         open_questions=len(plan.open_questions),
         previewed=plan.previewed,
+        warning_count=len(_plan_warnings(plan)),
     )
 
 
@@ -730,6 +758,7 @@ def preview_plan(
             target_id=w.kwargs["mutation"].id,
             before_name=(w.before.name if w.before else ""),
             after_aliases=list(w.kwargs["mutation"].aliases),
+            target_blocked_aliases=list(w.before.blocked_aliases if w.before else []),
         )
         for w in plan.writes
         if w.method == "apply_merge_mutation"
@@ -765,6 +794,7 @@ def preview_plan(
         for q in plan.open_questions
     ]
     return PlanPreview(
+        warnings=_plan_warnings(plan),
         new_entities=new_entities,
         merges=merges,
         new_relations=new_relations,

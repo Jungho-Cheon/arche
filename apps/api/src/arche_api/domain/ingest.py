@@ -82,6 +82,20 @@ class IngestResult:
     unresolved_relations: list[tuple[ExtractedRelation, SourceRef]] = field(default_factory=list)
     # 놓친 병합 후보. 관측 신호일 뿐 쓰기 동작은 바꾸지 않는다.
     ambiguities: list[AmbiguousMatch] = field(default_factory=list)
+    # 이 회차가 새로 만들었는데 관계가 하나도 안 붙은 노드. 병합된 노드는 이전 회차의
+    # 관계를 이미 가질 수 있어 세지 않는다.
+    entities_without_relations: list[str] = field(default_factory=list)
+
+
+@dataclass(frozen=True)
+class _RelationPass:
+    """지연 관계 해소 한 번의 결과."""
+
+    created: int
+    dangling: int
+    relation_ids: list[str]
+    linked_entity_ids: set[str]
+    unresolved: list[tuple[ExtractedRelation, SourceRef]]
 
 
 @dataclass
@@ -490,6 +504,7 @@ class IngestService:
             agg_created = 0
             agg_updated = 0
             agg_by_step: dict[int, int] = {0: 0, 1: 0, 2: 0, 3: 0}
+            agg_created_ids: list[str] = []
             # ask-human-on-ambiguity — 청크별 near-miss 를 문서 단위로 누적.
             agg_ambiguities: list[AmbiguousMatch] = []
             # 관계는 모았다가 모든 엔티티 적재 후 한 번에 해소한다. domain/README.md 참조.
@@ -529,6 +544,7 @@ class IngestService:
 
                 all_name_to_id.update(name_to_id)
                 agg_created += entity_metrics["created"]
+                agg_created_ids.extend(entity_metrics["created_ids"])
                 agg_updated += entity_metrics["updated"]
                 for step in (0, 1, 2, 3):
                     agg_by_step[step] += entity_metrics["by_step"].get(step, 0)
@@ -538,14 +554,13 @@ class IngestService:
                     pending_relations.append((r, source_ref))
 
             # 모든 엔티티가 적재된 뒤 관계를 해소한다.
-            agg_rel_created, agg_rel_dangling, all_rel_ids, unresolved_rels = (
-                self._upsert_relations_deferred(
-                    pending=pending_relations,
-                    name_to_id=all_name_to_id,
-                    run_id=run_id,
-                    namespace_id=namespace_id,
-                )
+            rel_pass = self._upsert_relations_deferred(
+                pending=pending_relations,
+                name_to_id=all_name_to_id,
+                run_id=run_id,
+                namespace_id=namespace_id,
             )
+            all_rel_ids = rel_pass.relation_ids
 
             # 차분 — 이전 회차가 emit 했는데 이번엔 안 한 것 처리.
             diff_metrics = self._apply_diff(
@@ -568,8 +583,11 @@ class IngestService:
                 source_path=source_path,
                 entities_created=agg_created,
                 entities_updated=agg_updated,
-                relations_created=agg_rel_created,
-                relations_skipped_dangling=agg_rel_dangling,
+                relations_created=rel_pass.created,
+                relations_skipped_dangling=rel_pass.dangling,
+                entities_without_relations=[
+                    eid for eid in agg_created_ids if eid not in rel_pass.linked_entity_ids
+                ],
                 entity_ids=list(all_name_to_id.values()),
                 entities_matched_by_step=agg_by_step,
                 short_circuited=False,
@@ -579,7 +597,7 @@ class IngestService:
                 relations_trimmed=diff_metrics["relations_trimmed"],
                 chunks_total=total_chunks,
                 run_id=run_id,
-                unresolved_relations=unresolved_rels,
+                unresolved_relations=rel_pass.unresolved,
                 source_hash=source_hash,
                 ambiguities=agg_ambiguities,
             )
@@ -1003,6 +1021,7 @@ class IngestService:
         updated = 0
         # step 0 = LLM 이 추출 중 매칭 결정, 1-3 = 매처, 4 = 신규. 자세한 건 README.
         by_step: dict[int, int] = {0: 0, 1: 0, 2: 0, 3: 0}
+        created_ids: list[str] = []
         # 새 노드로 떨어졌지만 매처가 밴드 내 후보를 본 near-miss 만 모은다.
         ambiguities: list[AmbiguousMatch] = []
         now = now_rfc3339()
@@ -1113,6 +1132,7 @@ class IngestService:
             self._graph.create_entity(entity=stored)
             self._graph.mark_entity_emitted(entity_id=new_id, run_id=run_id)
             name_to_id[e_new.name] = new_id
+            created_ids.append(new_id)
             created += 1
 
             # 새 노드지만 매처가 임계 바로 아래 후보를 봤다면 놓친 병합 후보로 기록한다.
@@ -1138,6 +1158,7 @@ class IngestService:
 
         return name_to_id, {
             "created": created,
+            "created_ids": created_ids,
             "updated": updated,
             "by_step": by_step,
             "ambiguities": ambiguities,
@@ -1150,12 +1171,13 @@ class IngestService:
         name_to_id: dict[str, str],
         run_id: str,
         namespace_id: str = "default",
-    ) -> tuple[int, int, list[str], list[tuple[ExtractedRelation, SourceRef]]]:
+    ) -> _RelationPass:
         """모아 둔 관계를 파일 전체 엔티티와 그래프 기준으로 한 번에 해소한다.
         엔드포인트 해소 순서와 unresolved(2-pass 회수 대상)의 의미는 domain/README.md 참조."""
         created = 0
         dangling = 0
         rel_ids: list[str] = []
+        linked_ids: set[str] = set()
         unresolved: list[tuple[ExtractedRelation, SourceRef]] = []
         # 이번 파일 엔티티의 정규화 인덱스 — 정확 일치 miss 시 표기 흔들림 흡수.
         norm_index: dict[str, str] = {}
@@ -1191,10 +1213,18 @@ class IngestService:
                 unresolved.append((r, source_ref))
                 continue
             rel_ids.append(rid)
+            linked_ids.add(from_id)
+            linked_ids.add(to_id)
             self._graph.mark_relation_emitted(relation_id=rid, run_id=run_id)
             if was_created:
                 created += 1
-        return created, dangling, rel_ids, unresolved
+        return _RelationPass(
+            created=created,
+            dangling=dangling,
+            relation_ids=rel_ids,
+            linked_entity_ids=linked_ids,
+            unresolved=unresolved,
+        )
 
     def _resolve_endpoint(
         self,

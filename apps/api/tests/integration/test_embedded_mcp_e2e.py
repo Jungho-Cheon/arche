@@ -384,6 +384,104 @@ async def test_split_works_outside_the_default_namespace(tmp_path):
             assert "여름 정산" in _names(schema)
 
 
+async def test_a_merge_onto_a_split_node_says_the_name_is_contested(tmp_path):
+    """가른 뒤 옛 이름으로 다시 넣으면, 그 사실이 미리 보기에 보여야 한다 (#172).
+
+    가르기는 사람이 "이 둘은 다른 대상" 이라고 내린 결정이다. 그런데 다음 문서가 남은
+    쪽 이름으로 떼어낸 쪽 내용을 부르면 매칭 Step 1 이 이름만 보고 도로 합친다. 노드가
+    자기 이름을 스스로 막을 수는 없다 — 막으면 원본 문서 재적재가 안 된다.
+
+    그래서 막는 대신 보이게 한다. 갈린 흔적(blocked_aliases)은 저장돼 있지만 어떤 읽기
+    응답에도 안 실려서, 호출부는 이 이름이 다투는 이름이라는 걸 알 방법이 없었다.
+    """
+    db_path = tmp_path / "kuzu_db"
+
+    async with stdio_client(_params(db_path)) as (read, write):
+        async with ClientSession(read, write) as session:
+            await session.initialize()
+            await _ingest(
+                session,
+                content="노드: 여름 기획 | 정책\n노드: 스니커즈 | 상품\n관계: 여름 기획 | 적용된다 | 스니커즈\n",
+                source_id="e2e:c-a",
+            )
+            await _ingest(
+                session,
+                content="노드: 여름 기획 | 정책\n노드: 환불 규정 | 정책\n관계: 여름 기획 | 따른다 | 환불 규정\n",
+                source_id="e2e:c-b",
+            )
+            found = _payload(
+                await session.call_tool(
+                    "find_entities",
+                    arguments={"keywords": ["여름 기획"], "namespace_id": NAMESPACE},
+                )
+            )
+            origin_id = next(
+                m["node"]["id"] for m in found["matches"] if m["node"]["name"] == "여름 기획"
+            )
+            split = _payload(
+                await session.call_tool(
+                    "entity_split_plan",
+                    arguments={
+                        "entity_id": origin_id,
+                        "new_name": "여름 정산",
+                        "move_source_paths": ["e2e:c-b"],
+                        "namespace_id": NAMESPACE,
+                    },
+                )
+            )
+            _payload(
+                await session.call_tool(
+                    "entity_split_preview", arguments={"plan_id": split["plan_id"]}
+                )
+            )
+            _payload(
+                await session.call_tool(
+                    "entity_split_commit", arguments={"plan_id": split["plan_id"]}
+                )
+            )
+
+            # 새 문서가 옛 이름을 다시 쓴다. 계획은 남은 노드로 병합할 것이다.
+            plan = _payload(
+                await session.call_tool(
+                    "ingest_content",
+                    arguments={
+                        "content": "노드: 여름 기획 | 정책\n노드: 정산 담당자 | 사람\n"
+                        "관계: 여름 기획 | 담당한다 | 정산 담당자\n",
+                        "source_id": "e2e:c-c",
+                        "namespace_id": NAMESPACE,
+                    },
+                )
+            )
+            preview = _payload(
+                await session.call_tool("ingest_preview", arguments={"plan_id": plan["plan_id"]})
+            )
+
+            contested = [m for m in preview["merges"] if m["target_blocked_aliases"]]
+            assert contested, (
+                "가른 적 있는 노드로 병합하는데 미리 보기가 그 사실을 안 알렸다. "
+                f"merges={preview['merges']}"
+            )
+            # 떼어낸 쪽 이름이 무엇인지까지 알려 줘야 무엇과 다투는지 판단할 수 있다.
+            assert "여름 정산" in contested[0]["target_blocked_aliases"]
+
+            # 다투지 않는 병합에는 빈 목록이라, 늘 붙는 잡음이 아니다.
+            plain = _payload(
+                await session.call_tool(
+                    "ingest_content",
+                    arguments={
+                        "content": "노드: 스니커즈 | 상품\n노드: 재고 | 개념\n"
+                        "관계: 스니커즈 | 가진다 | 재고\n",
+                        "source_id": "e2e:c-d",
+                        "namespace_id": NAMESPACE,
+                    },
+                )
+            )
+            plain_preview = _payload(
+                await session.call_tool("ingest_preview", arguments={"plan_id": plain["plan_id"]})
+            )
+            assert all(not m["target_blocked_aliases"] for m in plain_preview["merges"])
+
+
 async def test_split_refuses_a_node_from_another_namespace(tmp_path):
     """남의 namespace 노드를 default 라고 우겨도 계획이 서면 안 된다."""
     db_path = tmp_path / "kuzu_db"

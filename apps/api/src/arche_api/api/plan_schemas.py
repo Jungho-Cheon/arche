@@ -13,6 +13,7 @@
 
 from __future__ import annotations
 
+from enum import Enum
 from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field
@@ -105,6 +106,11 @@ class PlanSummary(BaseModel):
             "계획과 질문 해소는 이 값을 False 로 되돌리므로 그다음엔 다시 미리 봐야 한다"
         ),
     )
+    warning_count: int = Field(
+        default=0,
+        ge=0,
+        description="추출 품질 경고 수. 확정을 막지 않는다. 내용은 preview 의 warnings 에 있다",
+    )
 
 
 # ---------- preview ----------
@@ -137,6 +143,14 @@ class MergeView(BaseModel):
     target_id: str = Field(description="병합 대상 (살아남는) 엔티티 id")
     before_name: str = Field(description="병합 전 대상 엔티티 이름 (없으면 빈 문자열)")
     after_aliases: list[str] = Field(default_factory=list)
+    target_blocked_aliases: list[str] = Field(
+        default_factory=list,
+        description=(
+            "비어 있지 않으면 이 대상은 전에 둘로 갈린 적이 있고, 여기 적힌 이름들은 "
+            "그때 떼어낸 쪽으로 간 것이다. 지금 병합하려는 내용이 그쪽 이야기라면 "
+            "합치면 안 된다 — 확인하고 정할 것"
+        ),
+    )
 
 
 class RelationView(BaseModel):
@@ -174,6 +188,27 @@ class QuestionView(BaseModel):
     kind: PlanQuestionKind
 
 
+class PlanWarningKind(str, Enum):
+    """경고의 종류 — 닫힌 목록.
+
+    - RELATION_DROPPED: 관계를 뽑았는데 끝점 노드를 못 찾아 버렸다. 버린 관계는
+      미리 보기 어디에도 안 나와서, 이걸 안 알리면 호출부가 알 방법이 없다.
+    """
+
+    RELATION_DROPPED = "relation_dropped"
+
+
+class PlanWarning(BaseModel):
+    """확정을 막지는 않지만 사람이 보고 판단할 품질 신호."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    kind: PlanWarningKind
+    message: str
+    entity_ids: list[str] = Field(default_factory=list)
+    count: int = Field(ge=0)
+
+
 class PlanPreview(BaseModel):
     """preview 응답 — 변경 묶음을 항목 단위로 펼친 형태."""
 
@@ -186,6 +221,13 @@ class PlanPreview(BaseModel):
     questions: list[QuestionView] = Field(
         default_factory=list,
         description="사람 판단을 기다리는 near-miss 병합 후보 질문 목록",
+    )
+    warnings: list[PlanWarning] = Field(
+        default_factory=list,
+        description=(
+            "추출 품질 신호. 질문과 달리 확정을 막지 않는다 — 사람이 보고 그대로 "
+            "넣을지 hints 로 다시 뽑을지 정한다"
+        ),
     )
 
 
