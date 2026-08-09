@@ -4,4 +4,4 @@
 *1% 슬라이스* 만 구현한다. 자세한 범위 / out-of-scope 는 apps/api/README.md.
 """
 
-__version__ = "0.1.0"
+__version__ = "0.1.2"

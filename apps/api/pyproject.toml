@@ -1,6 +1,6 @@
 [project]
 name = "arche-api"
-version = "0.1.0"
+version = "0.1.2"
 description = "Arche MVP API — graph primitives + ingest 파이프라인"
 readme = "README.md"
 requires-python = ">=3.12"

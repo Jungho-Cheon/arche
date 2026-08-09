@@ -40,7 +40,7 @@ arche config set-key    # ~/.config/arche/config.env 에 권한 600 으로 저�
 `arche` 를 터미널에서도 쓰려면 그때 따로 설치한다. 플러그인만 쓸 거라면 필요 없다.
 
 ```bash
-uv tool install "arche-api @ git+https://github.com/Jungho-Cheon/arche.git@v0.1.1#subdirectory=apps/api"
+uv tool install "arche-api @ git+https://github.com/Jungho-Cheon/arche.git@v0.1.2#subdirectory=apps/api"
 ```
 
 ## 쓰는 법
