@@ -73,7 +73,7 @@ cp .env.example .env
 | 추출 | `openai`, `anthropic`, `claude-code` |
 | 임베딩 | `openai`, `voyage` |
 
-접두사를 빼면 `openai` 로 봅니다. 모르는 접두사를 주면 기동할 때 지원 목록과 함께 오류를 냅니다.
+접두사를 빼면 `openai` 로 봅니다. 모르는 접두사를 주면 그 모델을 처음 쓰는 호출에서 지원 목록과 함께 오류를 냅니다. 기동은 막지 않습니다.
 
 ```text
 알 수 없는 LLM provider 'gemini' (ARCHE_API_LLM_MODEL='gemini/pro'). 지원: ['anthropic', 'claude-code', 'openai']

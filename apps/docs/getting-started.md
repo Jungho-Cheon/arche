@@ -13,7 +13,7 @@ Claude Code 플러그인으로 진행합니다. 다른 방식은 이 문서를 �
 
 ## 1단계 — arche 명령 설치
 
-플러그인은 Arche 서버를 연결만 하고, 실행 파일은 따로 깝니다.
+플러그인은 Arche 서버를 연결만 하고, 실행 파일은 따로 설치합니다.
 
 ```bash
 git clone https://github.com/Jungho-Cheon/arche.git

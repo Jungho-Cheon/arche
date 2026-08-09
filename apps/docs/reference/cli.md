@@ -133,7 +133,7 @@ OPENAI_API_KEY 를 /Users/me/.config/arche/config.env 에 저장했습니다.
 arche config set-key --provider voyage
 ```
 
-**더 센 자리에 같은 값이 있으면** 저장은 되지만 그 값이 쓰이지 않습니다. 이때는 경고가 함께 나옵니다.
+**우선순위가 높은 자리에 같은 값이 있으면** 저장은 되지만 그 값이 쓰이지 않습니다. 이때는 경고가 함께 나옵니다.
 
 ```text
 [warn] 지금은 환경 변수 쪽 값이 우선합니다. 방금 저장한 값은 그쪽을 지워야 쓰입니다.

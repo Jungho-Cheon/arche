@@ -30,7 +30,7 @@ namespace_id may contain only letters, digits, and . _ : -
 { "keywords": ["환불"], "namespace_id": "team-a" }
 ```
 
-MCP 클라이언트 설정에 헤더로 못 박아 두는 방법도 있습니다. HTTP 전송을 쓸 때만 됩니다.
+MCP 클라이언트 설정에 헤더로 고정해 두는 방법도 있습니다. HTTP 전송을 쓸 때만 됩니다.
 
 ```json
 {
