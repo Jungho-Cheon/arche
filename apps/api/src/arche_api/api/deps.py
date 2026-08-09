@@ -57,6 +57,9 @@ def build_ingest_service(
         extraction_cache=ExtractionCache(root=DEFAULT_CACHE_DIR),
         extract_batch_size=8,
         llm_model_id=settings.llm_model_id,
+        extract_context_use_dense=settings.extract_context_use_dense,
+        extract_context_top_k=settings.extract_context_top_k,
+        extract_context_keywords_per_chunk=settings.extract_context_keywords_per_chunk,
     )
 
 
