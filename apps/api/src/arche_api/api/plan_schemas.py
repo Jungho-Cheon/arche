@@ -113,6 +113,7 @@ class NewEntityView(BaseModel):
 
     model_config = ConfigDict(extra="forbid")
 
+    id: str = Field(description="확정하면 이 id 로 만들어진다. new_relations 의 끝점과 맞춘다")
     name: str
     type: str
     aliases: list[str] = Field(default_factory=list)
@@ -136,6 +137,11 @@ class RelationView(BaseModel):
     from_id: str
     to_id: str
     type: str
+    # 이 계획 안에서 알아낼 수 있는 끝점 이름. id 만으로는 사람에게 무엇과 무엇을 잇는지
+    # 보여 줄 수 없어 함께 싣는다. 이 계획이 만들지도 병합하지도 않는 기존 노드가
+    # 끝점이면 빈 문자열이다.
+    from_name: str = ""
+    to_name: str = ""
 
 
 class QuestionView(BaseModel):

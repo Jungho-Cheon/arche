@@ -627,6 +627,7 @@ def preview_plan(
     registry.mark_previewed(plan.plan_id)
     new_entities = [
         NewEntityView(
+            id=w.kwargs["entity"].id,
             name=w.kwargs["entity"].name,
             type=w.kwargs["entity"].type,
             aliases=list(w.kwargs["entity"].aliases),
@@ -643,11 +644,19 @@ def preview_plan(
         for w in plan.writes
         if w.method == "apply_merge_mutation"
     ]
+    # 이 계획이 건드리는 노드의 id → 이름. 관계를 사람에게 보여 줄 때 끝점을 이름으로
+    # 부르기 위한 것이다. id 만 실으면 미리 보기를 읽고 판단할 수가 없다.
+    name_by_id = {e.id: e.name for e in new_entities}
+    for merge in merges:
+        if merge.before_name:
+            name_by_id.setdefault(merge.target_id, merge.before_name)
     new_relations = [
         RelationView(
             from_id=w.kwargs["from_id"],
             to_id=w.kwargs["to_id"],
             type=w.kwargs["rel_type"],
+            from_name=name_by_id.get(w.kwargs["from_id"], ""),
+            to_name=name_by_id.get(w.kwargs["to_id"], ""),
         )
         for w in plan.writes
         if w.method == "upsert_relation"
@@ -839,6 +848,7 @@ def preview_entity_split(
             type=plan.new_entity.type,
             aliases=list(plan.new_entity.aliases),
             description=plan.new_entity.description,
+            description_inherited=plan.description_inherited,
             source_paths=split_source_ref_paths(plan.new_entity.source_refs),
         ),
         relations=relations,

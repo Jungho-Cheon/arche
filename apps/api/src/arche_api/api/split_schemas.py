@@ -90,6 +90,12 @@ class SplitEntityView(BaseModel):
     type: str
     aliases: list[str] = Field(default_factory=list)
     description: str | None = None
+    # 설명을 기계적으로 가를 방법이 없어 떼어낸 노드는 원래 설명을 물려받는다. 그러면
+    # 그 설명은 새 노드에 대해 틀린 말일 수 있다. 확정 전에 눈으로 볼 것을 알린다.
+    description_inherited: bool = Field(
+        default=False,
+        description="원래 노드의 설명을 그대로 물려받았는지. True 면 새 노드와 안 맞을 수 있다",
+    )
     source_paths: list[str] = Field(default_factory=list)
 
 
