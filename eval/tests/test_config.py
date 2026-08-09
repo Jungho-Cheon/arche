@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import os
 
 from arche_eval.config import (
     DEFAULT_EMBEDDING_MODEL,

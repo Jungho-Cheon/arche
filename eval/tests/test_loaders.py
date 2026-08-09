@@ -5,7 +5,6 @@ from pathlib import Path
 import pytest
 
 from arche_eval.loaders import (
-    CorpusFile,
     FileLoader,
     SerializedCorpus,
     UnsupportedFileType,

@@ -6,9 +6,10 @@
 from __future__ import annotations
 
 from .ingest_plan import RecordedWrite
-from .models import MergeMutation, SourceRef, StoredEntity
+from .models import Edge, MergeMutation, SourceRef, StoredEntity
 from .ports import (
     DenseHit,
+    EntitySurface,
     EntityTypeStat,
     EntityWithCounts,
     GraphRepository,
@@ -119,6 +120,40 @@ class PlanningGraphRepository(GraphRepository):
             normalized=normalized, namespace_id=namespace_id
         )
 
+    def find_entities_by_name(
+        self, *, normalized_name: str, namespace_id: str = "default"
+    ) -> list[StoredEntity]:
+        real = self._real.find_entities_by_name(
+            normalized_name=normalized_name, namespace_id=namespace_id
+        )
+        pend = self._pending_by_norm.get(normalized_name)
+        if pend is None or (pend.namespace_id or "default") != namespace_id:
+            return real
+        if any(e.id == pend.id for e in real):
+            return real
+        return [*real, pend]
+
+    def get_entity_relations(
+        self, *, entity_id: str, namespace_id: str = "default"
+    ) -> list[Edge]:
+        return self._real.get_entity_relations(entity_id=entity_id, namespace_id=namespace_id)
+
+    def move_relation_endpoint(
+        self, *, relation_id: str, old_entity_id: str, new_entity_id: str
+    ) -> None:
+        """떼어내기의 쓰기. 지금 이 래퍼를 타고 오지는 않지만, 쓰기가 계획 단계에서
+        진짜 그래프로 새는 일이 없도록 다른 쓰기와 같이 기록만 한다."""
+        self.writes.append(
+            RecordedWrite(
+                "move_relation_endpoint",
+                {
+                    "relation_id": relation_id,
+                    "old_entity_id": old_entity_id,
+                    "new_entity_id": new_entity_id,
+                },
+            )
+        )
+
     # ---------- 읽기: 순수 위임 (시그니처는 ports.py 와 동일하게 키워드 전용) ----------
 
     def ensure_indexes(self) -> None:
@@ -174,6 +209,21 @@ class PlanningGraphRepository(GraphRepository):
 
     def count_entities_by_namespace(self) -> dict[str, int]:
         return self._real.count_entities_by_namespace()
+
+    def iter_entity_surfaces(self, *, namespace_id: str = "default") -> list[EntitySurface]:
+        return self._real.iter_entity_surfaces(namespace_id=namespace_id)
+
+    def list_entities(
+        self,
+        *,
+        namespace_id: str = "default",
+        types: list[str] | None = None,
+        offset: int = 0,
+        limit: int = 100,
+    ) -> tuple[int, list[StoredEntity]]:
+        return self._real.list_entities(
+            namespace_id=namespace_id, types=types, offset=offset, limit=limit
+        )
 
     def get_stored_entity(self, *, entity_id: str) -> StoredEntity | None:
         return self._real.get_stored_entity(entity_id=entity_id)

@@ -6,7 +6,6 @@ import io
 import json
 from pathlib import Path
 
-import pytest
 
 from arche_eval.scoring.spotcheck import (
     apply_overrides_file,

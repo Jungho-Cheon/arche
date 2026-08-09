@@ -298,6 +298,25 @@ def test_commit_refuses_when_dependency_is_stale(make_plan):
         services.commit_plan(CommitRequest(plan_id="pln_1"), service=service, registry=reg)
 
 
+def test_commit_checks_dependency_in_the_plan_namespace(make_plan):
+    """의존 노드 확인은 계획의 namespace 로 물어야 한다.
+
+    default 로 물으면 다른 namespace 의 병합 대상이 늘 사라진 것으로 잡혀, 두 번째
+    문서부터 전부 stale 로 거부된다 (issue #92 와 같은 결).
+    """
+    from .conftest import _FakeGraph, _FakeService
+
+    graph = _FakeGraph(exists=True, exists_in="mbti")
+    service = _FakeService(graph)
+    reg = PlanRegistry()
+    reg.create(
+        make_plan(previewed=True, depends_on_entity_ids=["01HALIVE"], namespace_id="mbti")
+    )
+
+    services.commit_plan(CommitRequest(plan_id="pln_1"), service=service, registry=reg)
+    assert graph.asked_namespaces == ["mbti"]
+
+
 # ---------- Minor: 알 수 없는 plan_id ----------
 
 

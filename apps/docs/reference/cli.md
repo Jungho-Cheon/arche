@@ -81,7 +81,7 @@ arche ingest <경로> [--dry-run]
 arche mcp serve --stdio
 ```
 
-조회 도구 7개와 검토형 적재 도구 5개를 MCP 표준 도구로 노출합니다. 에이전트와 Arche 가 같은 기계에 있을 때 쓰는 전송 방식입니다.
+조회 도구 7개, 검토형 적재 도구 5개, 떼어내기 도구 3개를 MCP 표준 도구로 노출합니다. 에이전트와 Arche 가 같은 기계에 있을 때 쓰는 전송 방식입니다.
 
 MCP 클라이언트에 이렇게 등록합니다.
 
@@ -155,6 +155,8 @@ arche reindex
 reindex: rebuilt vector index 'entity_embedding_idx' at dimension 1024
   note: stored node embeddings are NOT recomputed; reingest documents to refill vectors at the new dimension.
 ```
+
+임베디드 저장소에서는 색인 이름이 실행할 때마다 달라집니다. Kuzu 가 지운 벡터 색인 이름을 되쓰지 못해, 두 번째 실행부터는 `entity_embedding_idx_2`, `entity_embedding_idx_3` 처럼 번호가 올라갑니다. 한 프로세스에서는 한 번만 다시 만들 수 있고, 두 번째 요청은 재시작하라는 안내와 함께 거부합니다.
 
 **색인 구조만 다시 만들고 이미 저장된 노드의 벡터 값은 다시 계산하지 않습니다.** 모델을 바꿨다면 문서를 다시 적재해야 새 차원의 벡터가 채워집니다. 전체 절차는 [모델 갈아끼우기](/operate/models)에 있습니다.
 

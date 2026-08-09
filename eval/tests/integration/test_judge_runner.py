@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import Any
 from unittest.mock import MagicMock
 
 import yaml
@@ -127,8 +126,10 @@ def test_run_judge_emits_one_row_per_column(tmp_path: Path) -> None:
 
     # mapping.json 이 있고 익명화 라벨이 셋.
     mapping = json.loads((run_dir / "judge" / "mapping.json").read_text())
-    assert set(mapping["Q01"].keys()) == {"A", "B", "C"}
-    assert set(mapping["Q01"].values()) == {"full_context", "chunk_rag", "arche"}
+    # 컬럼이 넷이면 라벨도 넷이어야 한다. 셋으로 굳어 있으면 매 질문마다 한 컬럼이
+    # 무작위로 익명 라벨을 못 받고, 그 컬럼의 점수가 "?" 로 기록된다.
+    assert set(mapping["Q01"].keys()) == {"A", "B", "C", "D"}
+    assert set(mapping["Q01"].values()) == {"full_context", "chunk_rag", "arche", "combined"}
 
     # scores.jsonl 한 줄 = 한 응답.
     lines = (run_dir / "judge" / "scores.jsonl").read_text().strip().split("\n")
@@ -140,7 +141,9 @@ def test_run_judge_emits_one_row_per_column(tmp_path: Path) -> None:
         # 점수가 정수로 기록됨.
         assert isinstance(r["reasoning_quality"], int)
         assert isinstance(r["faithfulness"], int)
-        assert r["anonymized_label"] in {"A", "B", "C"}
+        # 자료가 있는 컬럼은 반드시 익명 라벨을 받는다. "?" 가 나오면 매핑이 그 컬럼을
+        # 빠뜨린 것이고, 그 점수는 어느 컬럼 것인지 알 수 없게 된다.
+        assert r["anonymized_label"] in {"A", "B", "C", "D"}
 
 
 def test_judge_skips_when_student_reasoning_empty(tmp_path: Path) -> None:

@@ -2,7 +2,7 @@
 
 Cypher 를 구성하는 모든 경로는 파라미터 바인딩(`$param`)만 쓰므로 사용자 입력을
 질의 문자열에 이어 붙이는 인젝션은 구조적으로 불가능하다(`adapters/graph.py`
-감사 결과). 라벨·인덱스명처럼 파라미터화가 불가능한 조각은 전부 모듈 상수이고,
+감사 결과). 라벨과 인덱스명처럼 파라미터화가 불가능한 조각은 전부 모듈 상수이고,
 정수는 `int()` 로 캐스팅해 삽입한다.
 
 본 모듈은 그 위에 *심층 방어* 를 얹는다. 신뢰할 수 없는 입력(`namespace_id` /
@@ -26,7 +26,7 @@ from ..domain.errors import InvalidInputError
 # namespace 는 운영자/인증 계층이 발급하는 식별자다(ADR-0015). 시제품 토큰
 # `ns:work-a` 와 기본값 `default` 를 포함하는 최소 문자군으로 좁힌다 — 영숫자와
 # 소수의 구분자만. 이 값은 `$ns` 로 바인딩되므로 인젝션은 이미 막혀 있고, 여기서는
-# 제어 문자·공백·따옴표 같은 이질적 입력을 형식 단계에서 거른다.
+# 제어 문자, 공백, 따옴표 같은 이질적 입력을 형식 단계에서 거른다.
 NAMESPACE_ID_MAX_LEN = 128
 _NAMESPACE_ID_RE = re.compile(r"^[A-Za-z0-9._:\-]+$")
 
@@ -94,8 +94,8 @@ def validate_relation_types(values: list[str] | None) -> list[str] | None:
     """relation_types 필터 형식 검증. 위반 시 ValueError.
 
     관계 타입은 LLM 추출 산출물이라 고정 enum 화이트리스트를 둘 수 없다(추출마다
-    새 타입이 생긴다). 대신 개수·길이·제어 문자로 보수적으로 좁힌다 — 정상 질의는
-    통과하고, 비정상(초장문·대량·제어 문자) 입력만 거른다. 값은 `$rel_types` 로
+    새 타입이 생긴다). 대신 개수, 길이, 제어 문자로 보수적으로 좁힌다 — 정상 질의는
+    통과하고, 비정상(초장문, 대량, 제어 문자) 입력만 거른다. 값은 `$rel_types` 로
     바인딩되므로 인젝션은 이미 막혀 있다.
     """
     if values is None:
@@ -111,7 +111,7 @@ def validate_relation_types(values: list[str] | None) -> list[str] | None:
             raise ValueError(
                 f"relation_types items must be at most {RELATION_TYPE_MAX_LEN} characters"
             )
-        # C0 제어 문자(개행·탭·NUL 포함)와 DEL 은 관계 타입 필터에 정상적으로
+        # C0 제어 문자(개행, 탭, NUL 포함)와 DEL 은 관계 타입 필터에 정상적으로
         # 등장하지 않는다 — 위생 차원에서 거른다.
         if any(ord(ch) < 0x20 or ord(ch) == 0x7F for ch in v):
             raise ValueError("relation_types items must not contain control characters")

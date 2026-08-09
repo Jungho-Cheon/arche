@@ -284,8 +284,8 @@ Vectara / Pinecone Assistant 대비 — *self-hostable* 라이선스. 데이터�
 |---|---|---|---|---|
 | **M6.5** | **1M corpus 3-way 검증 (gating)** | Phase 0 (gating) | 1 주 + 측정 | **본 PRD 의 M7-M9 전 작업이 본 회차에 gated** |
 | M7 | Combined RAG productization | Phase 1 | 4 주 | M6.5 결과 분기에 따라 형태 결정 |
-| M8 | Combined 품질·비용 최적화 | Phase 2 | 6 주 | M7 머지 후 |
-| M9 | Scale·다도메인·외부 비교 | Phase 3 | 8 주 | 한국어 일반화 / 자체 corpus 확장 / 외부 도구 비교 |
+| M8 | Combined 품질과 비용 최적화 | Phase 2 | 6 주 | M7 머지 후 |
+| M9 | Scale, 다도메인, 외부 비교 | Phase 3 | 8 주 | 한국어 일반화 / 자체 corpus 확장 / 외부 도구 비교 |
 
 #### M6.5 gating — 1M 에서 본 PRD 의 가설을 재검증
 

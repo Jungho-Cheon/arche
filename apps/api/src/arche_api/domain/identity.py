@@ -25,7 +25,7 @@ EMBEDDING_AMBIGUITY_BAND_LOW: float = 0.82
 
 
 # 흔한 구두점만 trim 한다(전수 제거 아님). 양쪽 인용/조판 부호 + ASCII 일부.
-_NORMALIZE_TRIM_CHARS = ".,-··'\"“”‘’`"
+_NORMALIZE_TRIM_CHARS = ".,-·'\"“”‘’`"
 _WS_RUNS = re.compile(r"\s+")
 
 
@@ -307,7 +307,7 @@ class EntityMatcher:
             if hit is not None:
                 return MatchResult(existing=hit, step=2)
 
-        # Step 3 — 임베딩 유사도. Step 1·2 가 모두 miss 일 때만 embedder 를 부른다(비용).
+        # Step 3 — 임베딩 유사도. Step 1 과 2 가 모두 miss 일 때만 embedder 를 부른다(비용).
         embedding = self._embedder.embed([e_new.name])
         if not embedding or not embedding[0]:
             return MatchResult(existing=None, step=4)
@@ -336,7 +336,36 @@ class EntityMatcher:
                 best_near = (cand, sim)
 
         # Step 4 — miss. 밴드 내 근접 후보가 있으면 near_miss 로 surface.
+        if best_near is None and normalized_name:
+            same_name = self._same_name_under_another_type(normalized_name)
+            if same_name is not None:
+                best_near = (same_name, 1.0)
         return MatchResult(existing=None, step=4, near_miss=best_near)
+
+    def _same_name_under_another_type(self, normalized_name: str) -> StoredEntity | None:
+        """이름은 같은데 타입만 다른 기존 노드.
+
+        앞의 세 단계는 모두 타입까지 같아야 맞춘다. 그런데 타입 라벨은 추출 모델이
+        문서마다 새로 짓는 값이라, 이름이 글자 하나 안 틀리고 같아도 타입이 달라 갈라진다.
+        갈라지는 것 자체보다 나쁜 건 질문조차 안 올라온다는 점이다 — 사람이 알아챌
+        기회가 없다.
+
+        그래서 여기서 합치지는 않는다. 이름이 같아도 다른 대상일 수 있어서다. 사람이
+        판단하도록 질문으로 올린다.
+
+        후보가 여럿이면 가장 먼저 만들어진 것을 묻는다. 여럿이라고 넘겨 버리면 흔한
+        약어처럼 여러 곳에 걸리는 이름이 오히려 조용히 빠지는데, 그런 이름일수록 갈라짐이
+        잘 생긴다.
+        """
+        candidates = self._repo.find_entities_by_name(
+            normalized_name=normalized_name, namespace_id=self._namespace_id
+        )
+        # id 는 시간순이라 정렬하면 먼저 만들어진 쪽이 앞에 온다.
+        for candidate in sorted(candidates, key=lambda c: c.id):
+            if normalized_name in set(candidate.blocked_aliases or []):
+                continue
+            return candidate
+        return None
 
 
 # ---------- 병합 규칙 ----------

@@ -195,7 +195,7 @@ def test_step1_normalize_hits_existing(repo, tmp_path: Path):
 
 
 def test_identity_matching_is_scoped_by_namespace(repo, tmp_path: Path):
-    """같은 정규명·type 이라도 namespace 가 다르면 병합되지 않는다 (issue #94).
+    """같은 정규명과 type 이라도 namespace 가 다르면 병합되지 않는다 (issue #94).
 
     실 Neo4j Cypher 의 namespace 필터(coalesce(e.namespace_id,'default')=$ns)가
     동작함을 잠근다 — FakeGraph 가 실제 쿼리와 갈라지지 않게.

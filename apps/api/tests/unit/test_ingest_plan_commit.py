@@ -76,7 +76,7 @@ def test_plan_does_not_write_then_commit_matches_direct_ingest(tmp_path: Path):
     # commit 이 진짜 그래프에 노드 2 + 관계 1 을 실제로 만들었는지.
     assert len(g2._entities) == len(g3._entities) == 2
     assert len(g2._relations) == len(g3._relations) == 1
-    # 신선 파일 경로는 어떤 삭제·trim 도 만들지 않는다 (회귀 가드 — issue #88).
+    # 신선 파일 경로는 어떤 삭제와 trim 도 만들지 않는다 (회귀 가드 — issue #88).
     assert committed.entities_deleted == direct.entities_deleted == 0
     assert committed.entities_trimmed == direct.entities_trimmed == 0
     assert committed.relations_deleted == direct.relations_deleted == 0
@@ -91,7 +91,7 @@ class _RecordingGraph:
     append_emitted_relations 가 실제로 받은 인자를 그대로 포착해야 한다. 기존
     FakeGraph 의 apply_*_diff 는 엔티티 상태로 결과를 결정해 통제가 어렵고,
     emit 기록은 set 으로 합쳐 호출 인자 원형을 잃는다 — 그래서 호출 인자를
-    있는 그대로 기록·재생하는 최소 더블을 둔다.
+    있는 그대로 기록하고 재생하는 최소 더블을 둔다.
     """
 
     def __init__(
@@ -204,7 +204,7 @@ def test_commit_plan_splits_deletion_and_trim_counts():
 
 
 def test_commit_plan_leaves_missing_diff_uncounted():
-    """apply_*_diff 가 "missing" 을 돌려주면 삭제·trim 어느 카운터도 올리지 않는다.
+    """apply_*_diff 가 "missing" 을 돌려주면 삭제와 trim 어느 카운터도 올리지 않는다.
 
     WHY (issue #88): 직접 적재 경로 _apply_diff 는 "deleted"/"trimmed" 만 집계하고
     "missing"(대상이 이미 없음) 은 무집계로 둔다. commit_plan 재생도 동일해야 하므로

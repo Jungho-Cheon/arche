@@ -9,8 +9,9 @@ Kuzu 특성 반영:
   임베딩은 고정 차원 배열 컬럼 `FLOAT[dim]` 로 둔다(차원은 Settings).
 - 풀텍스트는 문자열 컬럼에만 걸 수 있어, name + aliases 를 `search_text` 로
   비정규화해 그 컬럼에 인덱스한다(Neo4j 는 [name, aliases] 배열에 직접 인덱스).
-- 벡터/풀텍스트 인덱스는 쓰기 후 최신성을 보장하려고 *더티 플래그 + 읽기 시 재빌드*
-  로 관리한다. 임베디드는 체험/단일 사용자/작은 코퍼스 가정이라 재빌드 비용 무시 가능.
+- 풀텍스트 인덱스는 쓰기 후 최신성을 보장하려고 *더티 플래그 + 읽기 시 재빌드* 로
+  관리한다. 임베디드는 체험/단일 사용자/작은 코퍼스 가정이라 재빌드 비용 무시 가능.
+  벡터 인덱스는 재빌드하지 않는다 — 이유는 `_refresh_indexes` 주석에.
 - BFS/절단/hub_score/RRF 는 도메인/이 어댑터의 Python 로직으로 처리(Neo4j 와 동일
   방식). Cypher 가 지는 건 인덱스 조회, 단일 홉 확장, k-최단 경로, upsert 뿐.
 """
@@ -23,7 +24,7 @@ import os
 from typing import Any
 
 from ..config import Settings
-from ..domain.errors import DependencyUnavailableError
+from ..domain.errors import DependencyUnavailableError, UnprocessableError
 from ..domain.models import (
     Edge,
     MergeMutation,
@@ -34,6 +35,7 @@ from ..domain.models import (
 )
 from ..domain.ports import (
     DenseHit,
+    EntitySurface,
     EntityTypeStat,
     EntityWithCounts,
     GraphRepository,
@@ -73,6 +75,8 @@ class KuzuGraphRepository(GraphRepository):
         self._indexes_dirty = True
         self._vector_built = False
         self._fts_built = False
+        self._vector_index = _VECTOR_INDEX
+        self._vector_reindexed = False
         try:
             import kuzu
 
@@ -117,9 +121,8 @@ class KuzuGraphRepository(GraphRepository):
     # ---------- 스키마 / 인덱스 ----------
 
     def ensure_indexes(self) -> None:
-        """노드/관계 테이블을 idempotent 하게 만든다. 벡터/풀텍스트 인덱스는 데이터가
-        있어야 만들 수 있어, 쓰기 후 읽기 시점에 lazy 재빌드한다(_refresh_indexes).
-        """
+        """노드/관계 테이블을 idempotent 하게 만든다. 인덱스는 첫 읽기 시점에 만든다
+        (_refresh_indexes)."""
         dim = self._dim
         self._exec(
             f"""CREATE NODE TABLE IF NOT EXISTS {ENTITY_LABEL}(
@@ -155,54 +158,99 @@ class KuzuGraphRepository(GraphRepository):
             self._exec(f"ALTER TABLE {ENTITY_LABEL} ADD blocked_aliases STRING[]")
         except Exception:  # noqa: BLE001
             pass
+        self._vector_index = self._resolve_vector_index()
         self._indexes_dirty = True
 
-    def _entity_count(self) -> int:
-        rows = self._fetch(f"MATCH (n:{ENTITY_LABEL}) RETURN count(*) AS c")
-        return int(rows[0]["c"]) if rows else 0
+    def _existing_indexes(self) -> dict[str, str]:
+        """이 DB 에 살아 있는 인덱스 이름 → 종류. 앞선 프로세스가 만든 것도 보인다."""
+        try:
+            rows = self._fetch("CALL SHOW_INDEXES() RETURN *")
+        except Exception:  # noqa: BLE001
+            return {}
+        return {
+            str(r["index_name"]): str(r["index_type"])
+            for r in rows
+            if r.get("table_name") == ENTITY_LABEL
+        }
+
+    def _resolve_vector_index(self) -> str:
+        """지금 쓸 벡터 인덱스 이름. reindex 가 이름을 옮겨 두었을 수 있어 DB 에 묻는다."""
+        for name, kind in self._existing_indexes().items():
+            if kind == "HNSW":
+                return name
+        return _VECTOR_INDEX
 
     def _refresh_indexes(self) -> None:
-        """더티면 벡터/풀텍스트 인덱스를 drop 후 재생성한다(데이터 없으면 건너뜀).
-        Kuzu 의 HNSW/FTS 인덱스는 병합/삭제 뒤 조용히 어긋날 수 있어 읽기 직전에 재빌드한다."""
+        """더티면 인덱스를 지금 데이터에 맞춘다.
+
+        두 인덱스의 성질이 다르다. FTS 는 이름을 지웠다 다시 써도 되고, 다시 만들 이유도
+        있다 — 병합이 search_text 를 고쳐 써도 옛 단어가 계속 잡히기 때문이다. 벡터
+        (HNSW) 는 반대다. Kuzu 0.11.3 은 지운 벡터 인덱스 이름을 다시 쓰지 못하고
+        ("already exists" 또는 "not loaded yet"), 만든 뒤 들어오고 지워진 행은 알아서
+        반영한다. 그래서 벡터는 없을 때만 만든다.
+
+        두 인덱스 모두 빈 테이블에도 만들어지므로 노드 수는 보지 않는다.
+        """
         if not self._indexes_dirty:
             return
-        if self._entity_count() == 0:
-            # 인덱스 대상이 없으면 만들 수 없다. 읽기는 빈 결과를 낸다.
-            self._drop_indexes()
-            self._indexes_dirty = False
-            return
-        self._drop_indexes()
-        self._exec(
-            f"CALL CREATE_VECTOR_INDEX('{ENTITY_LABEL}', '{_VECTOR_INDEX}', 'embedding', metric := 'cosine')"
-        )
-        self._vector_built = True
-        self._exec(
-            f"CALL CREATE_FTS_INDEX('{ENTITY_LABEL}', '{_FTS_INDEX}', ['search_text'])"
-        )
-        self._fts_built = True
-        self._indexes_dirty = False
-
-    def _drop_indexes(self) -> None:
-        if self._vector_built:
-            try:
-                self._exec(f"CALL DROP_VECTOR_INDEX('{ENTITY_LABEL}', '{_VECTOR_INDEX}')")
-            except Exception:  # noqa: BLE001
-                pass
-            self._vector_built = False
-        if self._fts_built:
+        existing = self._existing_indexes()
+        if _FTS_INDEX in existing:
             try:
                 self._exec(f"CALL DROP_FTS_INDEX('{ENTITY_LABEL}', '{_FTS_INDEX}')")
             except Exception:  # noqa: BLE001
                 pass
-            self._fts_built = False
+        self._exec(f"CALL CREATE_FTS_INDEX('{ENTITY_LABEL}', '{_FTS_INDEX}', ['search_text'])")
+        self._fts_built = True
+
+        if self._vector_index not in existing:
+            self._exec(
+                f"CALL CREATE_VECTOR_INDEX('{ENTITY_LABEL}', '{self._vector_index}', "
+                "'embedding', metric := 'cosine')"
+            )
+        self._vector_built = True
+        self._indexes_dirty = False
 
     def _mark_dirty(self) -> None:
         self._indexes_dirty = True
 
+    @staticmethod
+    def _next_vector_index_name(current: str) -> str:
+        """다음 벡터 인덱스 이름. 지운 이름은 되살릴 수 없어 번호를 하나 올린다."""
+        base, _, tail = current.rpartition("_")
+        if base == _VECTOR_INDEX and tail.isdigit():
+            return f"{_VECTOR_INDEX}_{int(tail) + 1}"
+        return f"{_VECTOR_INDEX}_2"
+
     def reindex_vector(self) -> dict[str, Any]:
-        """임베딩 모델 교체 대응 — 다음 읽기에서 현재 차원으로 재빌드되도록 더티 표시."""
-        self._mark_dirty()
-        return {"index": _VECTOR_INDEX, "dimension": self._dim}
+        """임베딩 모델 교체 대응 — 벡터 인덱스를 지금 차원으로 다시 만든다.
+
+        지운 이름을 다시 쓸 수 없어 (Kuzu 0.11.3) 새 이름으로 만든다. 옛 이름은 이 DB
+        에서 영영 못 쓰게 되므로 reindex 를 반복하면 번호가 계속 올라간다.
+
+        만들고 나서 지운다. 순서를 뒤집으면 같은 커넥션에서 다음 생성이 카탈로그 오류로
+        깨진다. 한 번 지우고 나면 그 커넥션에서는 벡터 인덱스를 더 만들지 못해, 두 번째
+        요청은 재시작을 알리고 거부한다.
+        """
+        if self._vector_reindexed:
+            raise UnprocessableError(
+                "이 프로세스에서는 벡터 색인을 이미 다시 만들었습니다. "
+                "한 번 더 하려면 프로세스를 다시 띄우세요."
+            )
+        old = self._vector_index if self._vector_index in self._existing_indexes() else None
+        new = self._next_vector_index_name(self._vector_index) if old else self._vector_index
+        self._exec(
+            f"CALL CREATE_VECTOR_INDEX('{ENTITY_LABEL}', '{new}', "
+            "'embedding', metric := 'cosine')"
+        )
+        if old:
+            try:
+                self._exec(f"CALL DROP_VECTOR_INDEX('{ENTITY_LABEL}', '{old}')")
+            except Exception:  # noqa: BLE001
+                pass
+        self._vector_index = new
+        self._vector_built = True
+        self._vector_reindexed = True
+        return {"index": self._vector_index, "dimension": self._dim}
 
     # ---------- 쓰기 헬퍼 ----------
 
@@ -248,6 +296,20 @@ class KuzuGraphRepository(GraphRepository):
         )
         return rows[0]["id"] if len(rows) == 1 else None
 
+    def find_entities_by_name(
+        self, *, normalized_name: str, namespace_id: str = "default"
+    ) -> list[StoredEntity]:
+        if not normalized_name:
+            return []
+        rows = self._fetch(
+            f"""MATCH (e:{ENTITY_LABEL})
+                WHERE e.namespace_id = $ns AND e.normalized_name = $n
+                RETURN e AS e ORDER BY e.id LIMIT 5""",
+            n=normalized_name,
+            ns=namespace_id,
+        )
+        return [_node_to_stored(r["e"]) for r in rows]
+
     def vector_search(
         self,
         *,
@@ -263,7 +325,7 @@ class KuzuGraphRepository(GraphRepository):
             return []
         oversample = max(top_k * 4, top_k)
         rows = self._fetch(
-            f"""CALL QUERY_VECTOR_INDEX('{ENTITY_LABEL}', '{_VECTOR_INDEX}', $vec, $k)
+            f"""CALL QUERY_VECTOR_INDEX('{ENTITY_LABEL}', '{self._vector_index}', $vec, $k)
                 WITH node AS n, distance
                 WHERE n.type = $t AND n.namespace_id = $ns
                 RETURN n AS e ORDER BY distance ASC LIMIT $lim""",
@@ -289,7 +351,7 @@ class KuzuGraphRepository(GraphRepository):
         if not self._vector_built:
             return []
         rows = self._fetch(
-            f"""CALL QUERY_VECTOR_INDEX('{ENTITY_LABEL}', '{_VECTOR_INDEX}', $vec, $k)
+            f"""CALL QUERY_VECTOR_INDEX('{ENTITY_LABEL}', '{self._vector_index}', $vec, $k)
                 WITH node AS n, distance
                 WHERE n.namespace_id = $ns
                 RETURN n AS e, distance AS d ORDER BY distance ASC LIMIT $lim""",
@@ -791,6 +853,64 @@ class KuzuGraphRepository(GraphRepository):
                 RETURN e.namespace_id AS ns, count(*) AS c ORDER BY c DESC"""
         )
         return {r["ns"]: int(r["c"]) for r in rows}
+
+    def _relation_degrees(self, namespace_id: str) -> dict[str, int]:
+        rows = self._fetch(
+            f"""MATCH (a:{ENTITY_LABEL})-[:{RELATION_TYPE_LABEL_DEFAULT}]->(b:{ENTITY_LABEL})
+                WHERE a.namespace_id = $ns AND b.namespace_id = $ns
+                RETURN a.id AS from_id, b.id AS to_id""",
+            ns=namespace_id,
+        )
+        degree: dict[str, int] = {}
+        for row in rows:
+            degree[row["from_id"]] = degree.get(row["from_id"], 0) + 1
+            degree[row["to_id"]] = degree.get(row["to_id"], 0) + 1
+        return degree
+
+    def iter_entity_surfaces(self, *, namespace_id: str = "default") -> list[EntitySurface]:
+        rows = self._fetch(
+            f"""MATCH (e:{ENTITY_LABEL}) WHERE e.namespace_id = $ns
+                RETURN e.id AS id, e.name AS name, e.type AS type,
+                       e.normalized_name AS normalized_name, e.aliases AS aliases
+                ORDER BY e.id""",
+            ns=namespace_id,
+        )
+        degree = self._relation_degrees(namespace_id)
+        return [
+            EntitySurface(
+                id=r["id"],
+                name=r["name"] or "",
+                type=r["type"] or "",
+                normalized_name=r["normalized_name"] or "",
+                aliases=list(r["aliases"] or []),
+                relation_count=degree.get(r["id"], 0),
+            )
+            for r in rows
+        ]
+
+    def list_entities(
+        self,
+        *,
+        namespace_id: str = "default",
+        types: list[str] | None = None,
+        offset: int = 0,
+        limit: int = 100,
+    ) -> tuple[int, list[StoredEntity]]:
+        where = "e.namespace_id = $ns" + (" AND list_contains($types, e.type)" if types else "")
+        params: dict[str, Any] = {"ns": namespace_id}
+        if types:
+            params["types"] = list(types)
+        total_rows = self._fetch(
+            f"MATCH (e:{ENTITY_LABEL}) WHERE {where} RETURN count(*) AS c", **params
+        )
+        rows = self._fetch(
+            f"""MATCH (e:{ENTITY_LABEL}) WHERE {where}
+                RETURN e AS e ORDER BY e.id SKIP $skip LIMIT $take""",
+            skip=offset,
+            take=limit,
+            **params,
+        )
+        return int(total_rows[0]["c"]), [_node_to_stored(r["e"]) for r in rows]
 
     def get_stored_entity(self, *, entity_id: str) -> StoredEntity | None:
         rows = self._fetch(

@@ -12,7 +12,7 @@ TYPE_CHECKING 아래 둔다(힌트가 문자열이라 런타임 평가가 없다
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any
 
 from .models import (
@@ -26,6 +26,21 @@ from .models import (
 
 if TYPE_CHECKING:
     from .extract_context import ExtractContext
+
+
+@dataclass(frozen=True)
+class EntitySurface:
+    """그래프 건강 점검이 노드 하나에서 필요로 하는 최소 정보.
+
+    판정은 domain/graph_health.py 가 한다. 저장소는 이 표면만 채워 주면 되고, 그래서
+    어느 저장소를 쓰든 같은 그래프에 같은 진단이 나온다."""
+
+    id: str
+    name: str
+    type: str
+    normalized_name: str
+    aliases: list[str] = field(default_factory=list)
+    relation_count: int = 0
 
 
 @dataclass(frozen=True)
@@ -215,8 +230,8 @@ class LexicalIndex(ABC):
 
 
 class GraphStore(ABC):
-    """순수 그래프 능력 — 노드/관계 생성·병합, N-hop 순회, k-shortest path, 스키마
-    통계, 적재 회차 기록·차분. 연결 수명주기(ensure_indexes/healthcheck/close)도 이
+    """순수 그래프 능력 — 노드와 관계를 만들고 병합하기, N-hop 순회, k-shortest path,
+    스키마 통계, 적재 회차 기록과 차분. 연결 수명주기(ensure_indexes/healthcheck/close)도 이
     store 가 소유한다. 벡터 ANN 과 어휘 fulltext 는 별도 포트로 분리했다."""
 
     @abstractmethod
@@ -243,6 +258,20 @@ class GraphStore(ABC):
         기본 구현 None 은 선택적 확장점이라 단일 store 만 override 한다. namespace_id 로
         같은 namespace 안에서만 해소한다."""
         return None
+
+    def find_entities_by_name(
+        self, *, normalized_name: str, namespace_id: str = "default"
+    ) -> list[StoredEntity]:
+        """정규명이 *그 노드의 이름* 과 같은 노드들. 별칭 일치는 세지 않는다.
+
+        위의 find_entity_id_by_normalized_name 과 쓰임이 다르다. 그쪽은 관계 끝점을
+        이을 때 쓰므로 후보가 둘 이상이면 잇지 않는 게 맞다. 이쪽은 "이름이 같은데 타입만
+        다른 노드가 있나" 를 묻는 자리라, 후보가 여럿이어도 그 사실을 알아야 한다. 그
+        구분을 안 하면 흔한 약어처럼 여러 노드의 별칭으로도 등장하는 이름일수록 조용히
+        빠진다 — 하필 갈라짐이 가장 잘 생기는 이름들이다.
+
+        기본 구현 [] 는 선택적 확장점이라는 뜻이다."""
+        return []
 
     @abstractmethod
     def create_entity(self, *, entity: StoredEntity) -> None:
@@ -428,6 +457,28 @@ class GraphStore(ABC):
     @abstractmethod
     def count_entities_by_namespace(self) -> dict[str, int]:
         """namespace 별 entity 수. /admin/namespaces 운영 가시성용."""
+
+    # ----- 그래프 건강 (선택적 확장점) -----
+    # 기본 구현이 NotImplementedError 를 던진다. 빈 결과를 돌려주면 병든 그래프가
+    # "깨끗함" 으로 보고돼, 점검 자체가 거짓 안심이 된다.
+
+    def iter_entity_surfaces(self, *, namespace_id: str = "default") -> list[EntitySurface]:
+        """이 namespace 노드 전부의 (id, 이름, 타입, 정규명, 별칭, 관계 수).
+
+        판정은 domain/graph_health.py 가 한다. 저장소는 세는 일만 맡아, 어느 저장소를
+        쓰든 같은 그래프에 같은 진단이 나온다."""
+        raise NotImplementedError("이 store 는 그래프 건강 점검을 지원하지 않습니다")
+
+    def list_entities(
+        self,
+        *,
+        namespace_id: str = "default",
+        types: list[str] | None = None,
+        offset: int = 0,
+        limit: int = 100,
+    ) -> tuple[int, list[StoredEntity]]:
+        """이 namespace 노드를 id 순으로 훑는다 — (조건에 맞는 전체 수, 이 쪽수)."""
+        raise NotImplementedError("이 store 는 노드 열거를 지원하지 않습니다")
 
     @abstractmethod
     def get_stored_entity(self, *, entity_id: str) -> StoredEntity | None:

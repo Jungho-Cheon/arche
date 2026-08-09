@@ -5,8 +5,9 @@ API 가 안 떠 있어도 CLI 만으로 적재할 수 있어 셋업 비용을 �
 
 from __future__ import annotations
 
+import os
 from pathlib import Path
-from typing import Annotated
+from typing import Annotated, Any
 
 import typer
 from dotenv import load_dotenv
@@ -182,8 +183,6 @@ def mcp_serve(
         )
         raise typer.Exit(code=2)
 
-    import os
-
     # ARCHE_TEST_FAKE_GRAPH=1 이면 외부 의존 없이 fake 로 서버를 띄운다(핸드셰이크와
     # 응답 경로만 검증). 실제 부팅은 이 변수 없이 설정이 고른 백엔드/provider 를 쓴다.
     if os.environ.get("ARCHE_TEST_FAKE_GRAPH") == "1":
@@ -199,7 +198,15 @@ def mcp_serve(
     # 저장소 백엔드는 설정이 고른다(REST deps 와 같은 팩토리). 기본값 embedded(Kuzu)면
     # 서버 없이 stdio serve 가 뜬다.
     graph = build_graph_repository(settings)
-    embedder = LazyEmbeddingProvider()
+    embedder: Any = LazyEmbeddingProvider()
+    # ARCHE_TEST_FAKE_PROVIDERS=1 은 *네트워크만* 걷어낸다. 저장소와 IngestService,
+    # 동일성 해소는 그대로라 배포되는 경로를 키 없이 결정적으로 돌릴 수 있다.
+    # ARCHE_TEST_FAKE_GRAPH 와 다르다 — 그쪽은 저장소까지 흉내내 적재를 건너뛴다.
+    fake_providers = os.environ.get("ARCHE_TEST_FAKE_PROVIDERS") == "1"
+    if fake_providers:
+        from .test_support import HashEmbedder
+
+        embedder = HashEmbedder(dimension=settings.embedding_dimension)
     try:
         # 인덱스 idempotent 보장 — REST 의 lifespan 과 같은 책임.
         try:
@@ -218,7 +225,11 @@ def mcp_serve(
         from .domain.main_entity import MainEntityExtractor
         from .mcp_server import run_stdio_server
 
-        llm = LazyLLMProvider()
+        llm: Any = LazyLLMProvider()
+        if fake_providers:
+            from .test_support import ScriptedLLM
+
+            llm = ScriptedLLM()
         service = IngestService(
             llm=llm,
             embedder=embedder,

@@ -64,6 +64,7 @@ async def test_initialize_and_list_read_tools():
                 "find_path",
                 "get_subgraph",
                 "find_related",
+                "graph_health",
             ]
 
 

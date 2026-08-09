@@ -16,6 +16,7 @@ import json
 import logging
 from typing import TYPE_CHECKING, Any
 
+import jsonschema
 import mcp.types as mcp_types
 from mcp.server.lowlevel import Server
 from pydantic import BaseModel, ValidationError
@@ -24,9 +25,11 @@ from arche_api.domain.ports import EmbeddingProvider, GraphRepository
 
 from .api import services
 from .api.error_codes import flatten_validation_errors
+from .api.health_schemas import GraphHealthRequest
 from .api.plan_schemas import (
     CommitRequest,
     PlanContentRequest,
+    PlanDeleteRequest,
     PlanIngestRequest,
     PreviewRequest,
     ResolveRequest,
@@ -44,7 +47,7 @@ from .api.split_schemas import (
     SplitPreviewRequest,
 )
 from .config import Settings
-from .domain.errors import ArcheError
+from .domain.errors import ArcheError, InvalidInputError
 
 if TYPE_CHECKING:
     from .api.plan_registry import PlanRegistry
@@ -62,7 +65,25 @@ _TOOL_DESCRIPTIONS: dict[str, str] = {
     "find_entities": (
         "Find graph nodes matching one or more anchor keywords using lexical "
         "+ dense vector hybrid retrieval. Caller is expected to have "
-        "extracted these keywords from a user question."
+        "extracted these keywords from a user question. OMIT `keywords` to "
+        "enumerate instead of search: you then get every node matching `types` "
+        "in id order, which is how you confirm you have seen all of them. "
+        "Either way the response carries `total`, so a short `matches` list "
+        "does not mean that is all there is — page with `offset`."
+    ),
+    "graph_health": (
+        "Find nodes that were stored incorrectly, in one call. Returns the FULL "
+        "per-type node counts (unlike `get_schema`, which caps its examples) "
+        "plus three counted signals: `duplicate_names` (several nodes share one "
+        "normalized name, so one real thing is split across them and questions "
+        "about it match none), `overmerged` (one node carries the aliases and "
+        "identifiers of two different things, so every path through it states "
+        "something false), and `isolated` (nodes with no relations, meaning "
+        "extraction produced the entity but not its relations). Each list is "
+        "capped at `max_samples`; the `*_total` counts are always exact and "
+        "`truncated` says whether any list was cut. To repair: `overmerged` "
+        "goes to the entity_split tools, `duplicate_names` goes to re-ingesting "
+        "the source and answering the merge questions."
     ),
     "get_entity": (
         "Fetch full details of a single node by its ID, including direct edge "
@@ -133,6 +154,16 @@ _TOOL_DESCRIPTIONS: dict[str, str] = {
         "ingest_plan whenever the agent fetched the content itself rather than "
         "being handed a file on disk."
     ),
+    "ingest_delete": (
+        "Plan removing everything one source put into the graph, WITHOUT writing. "
+        "Pass the `source_path` you ingested with (the file path, or the "
+        "`source_id` you gave ingest_content). A node cited by other sources "
+        "survives and merely loses this one; a node only this source produced is "
+        "removed along with its relations. Same review flow as the other ingest "
+        "tools: this returns a `plan_id`, you MUST call ingest_preview to show "
+        "the human exactly what disappears, and only then ingest_commit. "
+        "Deletion cannot be undone, so never skip the preview."
+    ),
     "ingest_preview": (
         "Expand a planned change set (by `plan_id`) item by item — the new "
         "entities, merges into existing entities, new relations, and deletion "
@@ -150,13 +181,19 @@ _TOOL_DESCRIPTIONS: dict[str, str] = {
         '"keep" means it is genuinely new and distinct. This refines the same '
         "plan_id in place and clears the safety latch, so you MUST call "
         "ingest_preview again afterwards (and review any remaining questions) "
-        "before ingest_commit."
+        "before ingest_commit. Do not read `open_questions: 0` in this response "
+        "as \"ready to commit\" — check `previewed`, which this call resets to "
+        "false."
     ),
     "ingest_commit": (
         "Apply a previously previewed plan (by `plan_id`) to the graph. Do not "
         "call without a prior ingest_preview on this plan_id: commit is "
-        "rejected (unprocessable) unless the plan was previewed, and also "
-        "rejected if the graph drifted and the plan went stale (re-plan)."
+        "rejected (unprocessable) unless the plan was previewed. It is also "
+        "rejected while the plan still has unanswered `questions` — send the "
+        "human's decisions through ingest_resolve first (use \"keep\" for every "
+        "question if they are all genuinely distinct; skipping the questions is "
+        "not the same as answering them). Finally, it is rejected if the graph "
+        "drifted and the plan went stale (re-plan)."
     ),
     # 떼어내기 — 잘못 합친 노드를 되돌리는 유일한 길. 같은 검토 latch 를 쓴다.
     "entity_split_plan": (
@@ -194,6 +231,7 @@ _TOOL_DESCRIPTIONS: dict[str, str] = {
 INGEST_TOOL_NAMES: tuple[str, ...] = (
     "ingest_plan",
     "ingest_content",
+    "ingest_delete",
     "ingest_preview",
     "ingest_resolve",
     "ingest_commit",
@@ -270,13 +308,34 @@ def _inline_defs(schema: dict[str, Any]) -> dict[str, Any]:
     return walked
 
 
+_NAMESPACE_PROPERTY: dict[str, Any] = {
+    "type": "string",
+    "minLength": 1,
+    "description": "조회할 namespace. 미지정 시 'default'",
+}
+
+
+def _namespace_only_schema() -> dict[str, Any]:
+    """입력이 namespace 뿐인 도구의 스키마.
+
+    get_schema 는 본문이 없지만 namespace 는 받아야 한다. 이걸 빼면 dispatch 가 읽는
+    namespace_id 를 스키마가 거부해, MCP 로는 default 말고 다른 namespace 를 볼 길이
+    없어진다.
+    """
+    return {
+        "type": "object",
+        "additionalProperties": False,
+        "properties": {"namespace_id": _NAMESPACE_PROPERTY},
+    }
+
+
 def _build_tools() -> list[mcp_types.Tool]:
     """read tool 의 등록 manifest."""
     return [
         mcp_types.Tool(
             name="get_schema",
             description=_TOOL_DESCRIPTIONS["get_schema"],
-            inputSchema=_build_input_schema(None),
+            inputSchema=_namespace_only_schema(),
         ),
         mcp_types.Tool(
             name="find_entities",
@@ -293,6 +352,7 @@ def _build_tools() -> list[mcp_types.Tool]:
                 "required": ["id"],
                 "properties": {
                     "id": {"type": "string", "pattern": "^[0-9A-Z]{26}$"},
+                    "namespace_id": _NAMESPACE_PROPERTY,
                 },
             },
         ),
@@ -317,6 +377,11 @@ def _build_tools() -> list[mcp_types.Tool]:
             description=_TOOL_DESCRIPTIONS["find_related"],
             inputSchema=_build_input_schema(FindRelatedRequest),
         ),
+        mcp_types.Tool(
+            name="graph_health",
+            description=_TOOL_DESCRIPTIONS["graph_health"],
+            inputSchema=_build_input_schema(GraphHealthRequest),
+        ),
     ]
 
 
@@ -338,6 +403,11 @@ def _build_ingest_tools() -> list[mcp_types.Tool]:
             name="ingest_content",
             description=_TOOL_DESCRIPTIONS["ingest_content"],
             inputSchema=_build_input_schema(PlanContentRequest),
+        ),
+        mcp_types.Tool(
+            name="ingest_delete",
+            description=_TOOL_DESCRIPTIONS["ingest_delete"],
+            inputSchema=_build_input_schema(PlanDeleteRequest),
         ),
         mcp_types.Tool(
             name="ingest_preview",
@@ -394,6 +464,21 @@ def _merge_id_into_schema(schema: dict[str, Any]) -> dict[str, Any]:
 
 
 # ---------- tool 실행 디스패치 ----------
+
+
+def _validate_arguments(
+    name: str, arguments: dict[str, Any], schemas_by_name: dict[str, dict[str, Any]]
+) -> None:
+    """선언한 입력 스키마로 인자를 검사한다. 어긋나면 invalid_input 으로 올린다."""
+    schema = schemas_by_name.get(name)
+    if schema is None:
+        return
+    try:
+        jsonschema.validate(instance=arguments, schema=schema)
+    except jsonschema.ValidationError as e:
+        raise InvalidInputError(
+            e.message, details={"tool": name, "field": ".".join(str(p) for p in e.absolute_path)}
+        ) from None
 
 
 def _dispatch_tool(
@@ -453,6 +538,11 @@ def _dispatch_tool(
     if name == "find_related":
         body = FindRelatedRequest.model_validate(arguments)
         return services.find_related(body, graph=graph, namespace_id=body.namespace_id or "default")
+    if name == "graph_health":
+        health_body = GraphHealthRequest.model_validate(arguments)
+        return services.graph_health(
+            health_body, graph=graph, namespace_id=health_body.namespace_id or "default"
+        )
     # reviewable ingest — service/registry 가 주입된 서버에서만 등록되므로, 여기
     # 도달했다면 둘 다 존재한다. 방어적으로 None 을 막는다.
     if name in INGEST_TOOL_NAMES:
@@ -465,6 +555,11 @@ def _dispatch_tool(
             content_body = PlanContentRequest.model_validate(arguments)
             return services.plan_ingest_content(
                 content_body, service=ingest_service, registry=plan_registry
+            )
+        if name == "ingest_delete":
+            delete_body = PlanDeleteRequest.model_validate(arguments)
+            return services.plan_delete(
+                delete_body, service=ingest_service, registry=plan_registry
             )
         if name == "ingest_preview":
             preview_body = PreviewRequest.model_validate(arguments)
@@ -630,7 +725,13 @@ def build_mcp_server(
     async def _list_tools() -> list[mcp_types.Tool]:
         return tools
 
-    @server.call_tool()
+    schemas_by_name = {t.name: t.inputSchema for t in tools}
+
+    # validate_input=False 로 두고 스키마 검사를 직접 한다. SDK 에 맡기면 검사가 이
+    # 핸들러 *앞* 에서 끝나 맨 문자열("Input validation error: ...")을 돌려주는데,
+    # 그러면 같은 "입력이 틀렸다" 인데 응답 모양이 둘이 된다. error.code 로 분기하는
+    # 클라이언트가 한쪽에서 깨진다.
+    @server.call_tool(validate_input=False)
     async def _call_tool(name: str, arguments: dict[str, Any]) -> mcp_types.CallToolResult:
         """MCP tool 호출 — payload (PRD 3 §0.4: envelope 없음) 를 JSON text 로 반환.
 
@@ -640,6 +741,7 @@ def build_mcp_server(
         는 모든 클라이언트가 보장하는 TextContent 를 쓴다.
         """
         try:
+            _validate_arguments(name, arguments, schemas_by_name)
             result = _dispatch_tool(
                 name,
                 arguments,

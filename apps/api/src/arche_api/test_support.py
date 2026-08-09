@@ -7,6 +7,7 @@ CLI 가 ARCHE_TEST_FAKE_GRAPH=1 일 때만 lazy import 한다."""
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from typing import Any
 
 from arche_api.domain.ports import (
     DenseHit,
@@ -19,7 +20,18 @@ from arche_api.domain.ports import (
     RelationTypeStat,
 )
 
-from .domain.models import Edge, Node, SourceRef, StoredEntity, now_rfc3339
+from .domain.extract_context import ExtractContext
+from .domain.models import (
+    Edge,
+    ExtractedEntity,
+    ExtractedGraph,
+    ExtractedRelation,
+    Node,
+    SourceRef,
+    StoredEntity,
+    now_rfc3339,
+)
+from .domain.ports import GenericCompleteResult, ImageInput, LLMProvider
 
 
 @dataclass
@@ -268,3 +280,79 @@ class FakeSettings:
 
     embedding_model = "fake/embedding-model"
     embedding_dimension = 1536
+
+
+# ---------- 진짜 저장소로 e2e 를 돌리기 위한 provider 대역 ----------
+# FakeGraph 는 저장소까지 흉내내 실제 적재 경로를 건너뛴다. 아래 둘은 반대로 저장소를
+# 그대로 두고 *네트워크만* 걷어낸다 — 배포되는 경로(MCP 서버 + 임베디드 Kuzu + 진짜
+# IngestService + 진짜 동일성 해소)를 키 없이 결정적으로 돌리기 위해서다.
+
+
+class ScriptedLLM(LLMProvider):
+    """본문에 적힌 대로 뽑는 추출기.
+
+    본문의 각 줄을 아래 두 문법으로 읽는다. 그 외의 줄은 무시한다.
+
+        노드: <이름> | <타입>
+        관계: <출발 이름> | <관계 타입> | <도착 이름>
+
+    LLM 대신 쓰면 추출 결과가 입력으로 완전히 정해져, 테스트가 모델의 변덕이 아니라
+    적재와 동일성 해소를 본다.
+    """
+
+    def extract(
+        self,
+        *,
+        text: str | None = None,
+        images: list[ImageInput] | None = None,
+        source_path: str,
+        context: ExtractContext | None = None,
+    ) -> ExtractedGraph:
+        entities: list[ExtractedEntity] = []
+        relations: list[ExtractedRelation] = []
+        for line in (text or "").splitlines():
+            line = line.strip()
+            if line.startswith("노드:"):
+                parts = [p.strip() for p in line[len("노드:") :].split("|")]
+                if len(parts) == 2 and all(parts):
+                    entities.append(ExtractedEntity(name=parts[0], type=parts[1]))
+            elif line.startswith("관계:"):
+                parts = [p.strip() for p in line[len("관계:") :].split("|")]
+                if len(parts) == 3 and all(parts):
+                    relations.append(
+                        ExtractedRelation(from_name=parts[0], type=parts[1], to_name=parts[2])
+                    )
+        return ExtractedGraph(entities=entities, relations=relations)
+
+    def complete(self, *, system: str, user: str, response_format: dict[str, Any]):
+        return GenericCompleteResult(raw="{}", parsed={}, parse_error=None)
+
+    def extraction_fingerprint(self) -> str:
+        return "scripted-llm-v1"
+
+
+class HashEmbedder:
+    """글자에서 뽑아낸 결정적 임베딩.
+
+    0 벡터를 쓰면 모든 노드가 서로 완벽히 닮은 것으로 잡혀 유사도 경로가 검증되지
+    않는다. 이름이 비슷하면 벡터도 가깝도록 문자 3-gram 을 해싱해 채운다.
+    """
+
+    def __init__(self, dimension: int = 1536) -> None:
+        self._dim = dimension
+
+    def embed(self, texts: list[str]) -> list[list[float]]:
+        import hashlib
+        import math
+
+        out: list[list[float]] = []
+        for text in texts:
+            vec = [0.0] * self._dim
+            padded = f"  {(text or '').lower()}  "
+            for i in range(len(padded) - 2):
+                gram = padded[i : i + 3]
+                slot = int(hashlib.blake2b(gram.encode(), digest_size=4).hexdigest(), 16)
+                vec[slot % self._dim] += 1.0
+            norm = math.sqrt(sum(v * v for v in vec))
+            out.append([v / norm for v in vec] if norm else vec)
+        return out

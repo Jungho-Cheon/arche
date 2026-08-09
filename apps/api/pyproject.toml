@@ -22,6 +22,10 @@ dependencies = [
     "mcp>=1.0.0,<2",
     "pypdf>=4.0.0",
     "kuzu==0.11.3",
+    # MCP 도구 인자를 선언한 입력 스키마로 직접 검사한다 (SDK 검증을 끄고
+    # 오류 봉투를 우리 쪽에서 맞추기 위해). mcp 의 전이 의존이지만 직접 import 하므로
+    # 명시한다.
+    "jsonschema>=4.0.0",
 ]
 
 [project.optional-dependencies]

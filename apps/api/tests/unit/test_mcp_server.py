@@ -74,7 +74,7 @@ class _StubSettings:
 
 
 def test_build_tools_registers_read_primitives():
-    """PRD 3 §0.1 의 6 primitive + find_related(#140, ADR-0006 amend)."""
+    """PRD 3 §0.1 의 6 primitive + find_related(#140) + graph_health(#170/#171)."""
     tools = _build_tools()
     names = [t.name for t in tools]
     assert names == [
@@ -85,6 +85,7 @@ def test_build_tools_registers_read_primitives():
         "find_path",
         "get_subgraph",
         "find_related",
+        "graph_health",
     ]
 
 
@@ -151,6 +152,22 @@ def test_get_entity_input_schema_requires_id_with_ulid_pattern():
     assert schema["required"] == ["id"]
     assert schema["properties"]["id"]["pattern"] == "^[0-9A-Z]{26}$"
     assert schema["additionalProperties"] is False
+
+
+def test_namespace_scoped_read_tools_accept_namespace_id():
+    """dispatch 가 읽는 인자는 스키마도 받아야 한다.
+
+    get_schema 와 get_entity 는 REST 처럼 본문에 namespace 를 싣지 않고 인자 dict 에서
+    바로 꺼낸다. 스키마가 그 키를 막아 두면 MCP 로는 default 말고 다른 namespace 를
+    볼 길이 없다.
+    """
+    tools = {t.name: t for t in _build_tools()}
+    for name in ("get_schema", "get_entity"):
+        properties = tools[name].inputSchema["properties"]
+        assert "namespace_id" in properties, name
+        assert properties["namespace_id"]["type"] == "string", name
+    # namespace 는 선택 입력 — 안 주면 default.
+    assert "namespace_id" not in tools["get_entity"].inputSchema["required"]
 
 
 def test_get_neighbors_input_schema_includes_id_field():
@@ -428,4 +445,4 @@ def test_build_mcp_server_list_tools_returns_read_primitives():
     inner = result.root
     assert isinstance(inner, mcp_types.ListToolsResult)
     # 6 primitive + find_related (#140).
-    assert len(inner.tools) == 7
+    assert len(inner.tools) == 8

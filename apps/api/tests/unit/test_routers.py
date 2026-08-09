@@ -262,7 +262,7 @@ def test_find_entities_envelope_and_match_shape():
     body = r.json()
     # PRD 3 §0.3 envelope
     assert set(body.keys()) == {"data"}
-    assert set(body["data"].keys()) == {"matches"}
+    assert set(body["data"].keys()) == {"matches", "total", "offset"}
     assert len(body["data"]["matches"]) == 1
     match = body["data"]["matches"][0]
     # PRD 3 §3.4 매치 필드 (include_scores 기본 false 라 scores 없음)
@@ -529,7 +529,7 @@ def test_get_entity_query_overrides_header():
 
 # ---------- #109 — 빈 값(None) 처리 규칙 통일 ----------
 #
-# 규칙: 모든 조회·관리 응답에서 값이 None 인 필드는 *키 자체를 뺀다*. 예전에는
+# 규칙: 모든 조회와 관리 응답에서 값이 None 인 필드는 *키 자체를 뺀다*. 예전에는
 # find_entities / ingest status 만 뺐고 나머지는 `null` 을 실어 보냈다. 아래
 # 테스트가 이 규칙을 엔드포인트별로 고정한다. `_make_node` 가 description=None
 # 인 노드를 만드므로, 통일 후에는 어떤 조회 응답에도 `description: null` 이 없어야

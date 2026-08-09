@@ -22,16 +22,28 @@ from ..domain.errors import (
     InvalidInputError,
     UnprocessableError,
 )
+from ..domain.graph_health import assess_graph_health
 from ..domain.models import Edge, Node
+from .health_schemas import (
+    DuplicateNameView,
+    GraphHealthRequest,
+    GraphHealthResponse,
+    IsolatedView,
+    OverMergeView,
+    TypeCount,
+)
 from .plan_schemas import (
     CommitRequest,
     IngestCommitResponse,
     MergeView,
     NewEntityView,
     PlanContentRequest,
+    PlanDeleteRequest,
     PlanIngestRequest,
     PlanPreview,
     PlanSummary,
+    PlanWarning,
+    PlanWarningKind,
     PreviewRequest,
     QuestionView,
     RelationView,
@@ -133,6 +145,47 @@ def get_schema(
     )
 
 
+# ---------- 그래프 건강 ----------
+
+
+def graph_health(
+    body: GraphHealthRequest,
+    *,
+    graph: GraphRepository,
+    namespace_id: str = "default",
+) -> GraphHealthResponse:
+    """그래프에 잘못 들어간 노드가 있는지 센다. 배경은 domain/README.md."""
+    namespace_id = ensure_namespace_id(namespace_id)
+    report = assess_graph_health(
+        graph.iter_entity_surfaces(namespace_id=namespace_id),
+        namespace_id=namespace_id,
+        max_samples=body.max_samples,
+    )
+    return GraphHealthResponse(
+        namespace_id=report.namespace_id,
+        entity_count=report.entity_count,
+        type_counts=[TypeCount(type=t, count=c) for t, c in report.type_counts],
+        duplicate_names=[
+            DuplicateNameView(
+                normalized_name=g.normalized_name,
+                entity_ids=g.entity_ids,
+                names=g.names,
+                types=g.types,
+            )
+            for g in report.duplicate_names
+        ],
+        duplicate_name_total=report.duplicate_name_total,
+        overmerged=[
+            OverMergeView(entity_id=f.entity_id, name=f.name, reasons=f.reasons)
+            for f in report.overmerged
+        ],
+        overmerged_total=report.overmerged_total,
+        isolated=[IsolatedView(id=e.id, name=e.name, type=e.type) for e in report.isolated],
+        isolated_total=report.isolated_total,
+        truncated=report.truncated,
+    )
+
+
 # ---------- find_entities ----------
 
 
@@ -143,13 +196,19 @@ def find_entities(
     embedder: EmbeddingProvider,
     namespace_id: str = "default",
 ) -> FindEntitiesResponse:
-    """어휘 + dense 하이브리드 + RRF.
+    """노드를 고른다 — keywords 가 있으면 유사도 상위, 없으면 조건에 맞는 전량.
 
-    keyword 별 fulltext top-k(lexical) + ANN top-k(dense)를 노드 ID 단위로 union 해
-    RRF 로 결합하고, types 필터 → 점수 내림차순 → limit slice. 임베딩이 죽으면 503 을
-    그대로 raise 한다(lexical-only silent fallback 은 측정 무결성을 해친다)."""
+    keywords 가 있으면 keyword 별 fulltext top-k(lexical) + ANN top-k(dense)를 노드 ID
+    단위로 union 해 RRF 로 결합한다. 임베딩이 실패하면 503 을 그대로 raise 한다 —
+    lexical 만으로 조용히 되돌아가면 측정 결과를 믿을 수 없게 된다.
+
+    두 방식을 한 함수에 둔 이유는 domain/README.md 참조."""
     # 요청 모델 밖 namespace 형식 검증 (#142).
     namespace_id = ensure_namespace_id(namespace_id)
+
+    if not body.keywords:
+        return _list_entities(body, graph=graph, namespace_id=namespace_id)
+
     # keyword 별 풀을 입력 limit 보다 넉넉히 — 여러 keyword 가 같은 노드를 낼 수 있다.
     per_kw = min(50, max(body.limit * 2, 10))
 
@@ -183,15 +242,50 @@ def find_entities(
             )
         )
 
-    matches = _fuse_with_rrf(
+    fused = _fuse_with_rrf(
         lexical_hits=lexical_hits,
         dense_hits=dense_hits,
         keywords=body.keywords,
         types=body.types,
-        limit=body.limit,
         include_scores=body.include_scores,
     )
-    return FindEntitiesResponse(matches=matches)
+    return FindEntitiesResponse(
+        matches=fused[body.offset : body.offset + body.limit],
+        total=len(fused),
+        offset=body.offset,
+    )
+
+
+def _list_entities(
+    body: FindEntitiesRequest,
+    *,
+    graph: GraphRepository,
+    namespace_id: str,
+) -> FindEntitiesResponse:
+    """keywords 없이 부른 find_entities — 조건에 맞는 노드를 id 순으로 전량 돌려준다."""
+    total, entities = graph.list_entities(
+        namespace_id=namespace_id,
+        types=body.types,
+        offset=body.offset,
+        limit=body.limit,
+    )
+    matches = [
+        EntityMatch(
+            node=Node(
+                id=e.id,
+                name=e.name,
+                type=e.type,
+                aliases=list(e.aliases),
+                description=e.description,
+                properties=e.properties,
+                source_refs=list(e.source_refs),
+                created_at=e.created_at,
+                updated_at=e.updated_at,
+            )
+        )
+        for e in entities
+    ]
+    return FindEntitiesResponse(matches=matches, total=total, offset=body.offset)
 
 
 def _fuse_with_rrf(
@@ -200,7 +294,6 @@ def _fuse_with_rrf(
     *,
     keywords: list[str],
     types: list[str] | None,
-    limit: int,
     include_scores: bool,
 ) -> list[EntityMatch]:
     """RRF (Reciprocal Rank Fusion).
@@ -213,7 +306,7 @@ def _fuse_with_rrf(
        = sum over keywords of (1/(k + lex_rank) + 1/(k + dense_rank)).
        각 항은 *해당 keyword 의 lexical/dense 에서 surface 됐을 때만* 더한다.
     4. matched_keyword: *가장 큰 단일 keyword 기여* 가 발생한 keyword 유지.
-    5. types 필터 → 점수 내림차순 → limit slice.
+    5. types 필터 → 점수 내림차순. 쪽 자르기는 호출부가 offset/limit 로 한다.
     """
     # 1) keyword 별 rank 부여 — lexical
     per_kw_lex_rank: dict[tuple[str, str], int] = {}  # (keyword, node_id) -> rank
@@ -291,9 +384,8 @@ def _fuse_with_rrf(
         if not fused_rows:
             return []
 
-    # 5) 점수 내림차순 + limit + max-normalize 로 0..1
+    # 5) 점수 내림차순 + max-normalize 로 0..1
     fused_rows.sort(key=lambda r: r[0], reverse=True)
-    fused_rows = fused_rows[:limit]
     max_score = max(r[0] for r in fused_rows) or 1.0
 
     matches: list[EntityMatch] = []
@@ -569,6 +661,31 @@ def _require_plan(plan_id: str, registry: PlanRegistry) -> IngestPlan:
     return plan
 
 
+def _plan_warnings(plan: IngestPlan) -> list[PlanWarning]:
+    """미리 보기에 안 나오는 것만 경고로 만든다.
+
+    관계가 하나도 안 붙은 새 노드는 여기 없다. 호출부가 new_entities 의 id 와
+    new_relations 의 끝점을 빼면 스스로 알아낼 수 있어서다. 확정을 막지 않는 이유는
+    domain/README.md."""
+    warnings: list[PlanWarning] = []
+    dropped = plan.result.relations_skipped_dangling
+    if dropped:
+        pairs = ", ".join(
+            f"{r.from_name} -> {r.to_name}" for r, _ in plan.result.unresolved_relations[:5]
+        )
+        warnings.append(
+            PlanWarning(
+                kind=PlanWarningKind.RELATION_DROPPED,
+                message=(
+                    f"관계 {dropped} 개를 뽑았지만 끝점 노드를 못 찾아 버렸습니다 ({pairs}). "
+                    "끝점이 다른 문서에 있다면 그 문서를 먼저 넣으세요"
+                ),
+                count=dropped,
+            )
+        )
+    return warnings
+
+
 def _summarize_plan(plan: IngestPlan) -> PlanSummary:
     """IngestPlan 의 writes 종류별 개수 + 미해소 질문 수를 PlanSummary 로 집계한다."""
     n_new = sum(1 for w in plan.writes if w.method == "create_entity")
@@ -583,6 +700,8 @@ def _summarize_plan(plan: IngestPlan) -> PlanSummary:
         relations_created=n_rel,
         deletion_count=n_del,
         open_questions=len(plan.open_questions),
+        previewed=plan.previewed,
+        warning_count=len(_plan_warnings(plan)),
     )
 
 
@@ -616,6 +735,20 @@ def plan_ingest_content(
     return _summarize_plan(plan)
 
 
+def plan_delete(
+    body: PlanDeleteRequest,
+    *,
+    service: IngestService,
+    registry: PlanRegistry,
+) -> PlanSummary:
+    """한 출처가 넣은 것을 걷어내는 계획. 이후 preview/commit 은 적재와 같은 흐름이다."""
+    plan = service.plan_delete(
+        source_path=body.source_path, namespace_id=body.namespace_id
+    )
+    registry.create(plan)
+    return _summarize_plan(plan)
+
+
 def preview_plan(
     body: PreviewRequest,
     *,
@@ -627,6 +760,7 @@ def preview_plan(
     registry.mark_previewed(plan.plan_id)
     new_entities = [
         NewEntityView(
+            id=w.kwargs["entity"].id,
             name=w.kwargs["entity"].name,
             type=w.kwargs["entity"].type,
             aliases=list(w.kwargs["entity"].aliases),
@@ -639,15 +773,24 @@ def preview_plan(
             target_id=w.kwargs["mutation"].id,
             before_name=(w.before.name if w.before else ""),
             after_aliases=list(w.kwargs["mutation"].aliases),
+            target_blocked_aliases=list(w.before.blocked_aliases if w.before else []),
         )
         for w in plan.writes
         if w.method == "apply_merge_mutation"
     ]
+    # 이 계획이 건드리는 노드의 id → 이름. 관계를 사람에게 보여 줄 때 끝점을 이름으로
+    # 부르기 위한 것이다. id 만 실으면 미리 보기를 읽고 판단할 수가 없다.
+    name_by_id = {e.id: e.name for e in new_entities}
+    for merge in merges:
+        if merge.before_name:
+            name_by_id.setdefault(merge.target_id, merge.before_name)
     new_relations = [
         RelationView(
             from_id=w.kwargs["from_id"],
             to_id=w.kwargs["to_id"],
             type=w.kwargs["rel_type"],
+            from_name=name_by_id.get(w.kwargs["from_id"], ""),
+            to_name=name_by_id.get(w.kwargs["to_id"], ""),
         )
         for w in plan.writes
         if w.method == "upsert_relation"
@@ -666,6 +809,7 @@ def preview_plan(
         for q in plan.open_questions
     ]
     return PlanPreview(
+        warnings=_plan_warnings(plan),
         new_entities=new_entities,
         merges=merges,
         new_relations=new_relations,
@@ -713,10 +857,15 @@ def commit_plan(
 ) -> IngestCommitResponse:
     """미리보기를 거친 계획만 그래프에 적용한다 (안전 latch).
 
-    latch 두 단계:
+    latch 세 단계:
       1. previewed=False → 422 unprocessable. 사용자가 변경을 눈으로 확인하기 전에
          그래프를 건드리는 사고를 막는다.
-      2. depends_on_entity_ids 중 *지금은 사라진* 노드가 있으면 → 422. 계획을 세운
+      2. 답하지 않은 질문이 남아 있으면 → 422. 도구 설명이 "질문에 답한 뒤 확정하라"
+         고 못박는데 서버가 안 막으면, 그 약속은 지키는 사람만 지키는 것이 된다.
+         실제로 질문을 지나친 확정이 갈라 놓은 노드를 조용히 다시 만들었다. 떼어내기가
+         같은 자리에서 거부하는 것과도 맞춘다. 전부 따로 두고 싶으면 resolve 에
+         keep 을 실어 한 번 부르면 된다 — 결정을 명시하게 하는 것이 요점이다.
+      3. depends_on_entity_ids 중 *지금은 사라진* 노드가 있으면 → 422. 계획을 세운
          시점과 적용 시점 사이에 그래프가 바뀌어 병합 대상이 없어진 경우, 재생이
          어긋난 결과를 만든다. "stale; re-plan" 으로 명시 거부해 다시 계획하도록.
     """
@@ -725,8 +874,22 @@ def commit_plan(
         raise UnprocessableError(
             "call ingest_preview before commit", details={"plan_id": plan.plan_id}
         )
+    if plan.open_questions:
+        raise UnprocessableError(
+            "answer the open questions with ingest_resolve before commit",
+            details={
+                "plan_id": plan.plan_id,
+                "open_questions": len(plan.open_questions),
+                "question_ids": [q.question_id for q in plan.open_questions],
+            },
+        )
     for eid in plan.depends_on_entity_ids:
-        if not service._graph.entity_exists(entity_id=eid):
+        # namespace 를 넘겨야 한다. entity_exists 는 namespace 밖 노드를 없는 것으로
+        # 보므로, 기본값 "default" 로 물으면 다른 namespace 의 병합 대상이 늘 사라진
+        # 것으로 잡혀 계획이 전부 stale 로 거부된다 (issue #92 와 같은 결).
+        if not service._graph.entity_exists(
+            entity_id=eid, namespace_id=plan.namespace_id
+        ):
             raise UnprocessableError(
                 "plan is stale; re-plan",
                 details={"plan_id": plan.plan_id, "missing_entity_id": eid},
@@ -834,6 +997,7 @@ def preview_entity_split(
             type=plan.new_entity.type,
             aliases=list(plan.new_entity.aliases),
             description=plan.new_entity.description,
+            description_inherited=plan.description_inherited,
             source_paths=split_source_ref_paths(plan.new_entity.source_refs),
         ),
         relations=relations,

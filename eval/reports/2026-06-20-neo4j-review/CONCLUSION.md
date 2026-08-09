@@ -18,7 +18,7 @@
 |---|---|---|
 | Vector index (cosine) | `vector_search`, `find_entities_dense` | 5.15 native API 그대로. dim/similarity OPTIONS 인라인 — Cypher parameter 제약 회피의 모범 |
 | Fulltext index (Lucene/BM25) | `find_by_keywords_scored` | 4 단계 동일성 Step 2 + RRF 의 lexical 신호 정확히 분리 |
-| Btree on `normalized_name` | `find_by_normalized_name` | Step 1·2 정확 일치 lookup 의 인덱스 적중 |
+| Btree on `normalized_name` | `find_by_normalized_name` | Step 1/2 정확 일치 lookup 의 인덱스 적중 |
 | Btree on `IngestionRun.source_path` | `find_latest_succeeded_run` | 차분 알고리즘의 핫패스 인덱스 적중 |
 | `MERGE` on (from_id, type, to_id) | `upsert_relation` | 3-튜플 유일성 (PRD §5.5) 의 DB-level 보장 |
 | `ON CREATE / ON MATCH SET` | `upsert_relation` | created vs updated 분기를 *단일 round-trip* 에 |

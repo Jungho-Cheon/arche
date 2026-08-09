@@ -109,7 +109,7 @@ def healthz(graph: GraphRepository = Depends(graph_repo_dep)) -> HealthzResponse
 @entities_router.post(
     "/find",
     response_model=DataEnvelope[FindEntitiesResponse],
-    # None 필드는 키를 뺀다 — 모든 조회·관리 응답에서 같은 규칙을 쓴다.
+    # None 필드는 키를 뺀다 — 모든 조회와 관리 응답에서 같은 규칙을 쓴다.
     response_model_exclude_none=True,
 )
 def find_entities(

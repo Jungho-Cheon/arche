@@ -8,7 +8,7 @@ LLM 컨텍스트에 들어갈 텍스트 형식을 결정적으로 생성한다. 
 1. **빈 description / 빈 properties / 빈 source_refs 처리** — PRD 가 모든 노드에 그
    세 줄을 다 요구하지 않는다. 빈 값은 *해당 줄 생략* . `source_refs` 가 비면
    `출처: (없음)` 표시 (출처 누락이 LLM 추론에 영향을 줄 수 있어 명시적으로).
-2. **chunk_index null 처리** — `<source_path>` 만 표시 (콜론·인덱스 생략).
+2. **chunk_index null 처리** — `<source_path>` 만 표시 (콜론과 인덱스 생략).
 3. **노드 식별** — name 기반 (LLM 가독성). 동일 name 의 노드가 둘 이상이면
    ` [id=<short>]` suffix 로 disambiguate. id 의 앞 6 자만 노출해 토큰 절약.
 4. **find_path 결과 직렬화** — 모든 path 의 노드/엣지를 union 해서 [엔티티] /

@@ -32,7 +32,7 @@ from .identity import (
     extract_identifier_aliases,
     normalize,
 )
-from .ingest_plan import AmbiguousMatch, IngestPlan
+from .ingest_plan import AmbiguousMatch, IngestPlan, PlanQuestionKind
 from .main_entity import MainEntity, MainEntityExtractor
 from .models import (
     ExtractedGraph,
@@ -82,6 +82,20 @@ class IngestResult:
     unresolved_relations: list[tuple[ExtractedRelation, SourceRef]] = field(default_factory=list)
     # 놓친 병합 후보. 관측 신호일 뿐 쓰기 동작은 바꾸지 않는다.
     ambiguities: list[AmbiguousMatch] = field(default_factory=list)
+    # 이 회차가 새로 만들었는데 관계가 하나도 안 붙은 노드. 병합된 노드는 이전 회차의
+    # 관계를 이미 가질 수 있어 세지 않는다.
+    entities_without_relations: list[str] = field(default_factory=list)
+
+
+@dataclass(frozen=True)
+class _RelationPass:
+    """지연 관계 해소 한 번의 결과."""
+
+    created: int
+    dangling: int
+    relation_ids: list[str]
+    linked_entity_ids: set[str]
+    unresolved: list[tuple[ExtractedRelation, SourceRef]]
 
 
 @dataclass
@@ -490,6 +504,7 @@ class IngestService:
             agg_created = 0
             agg_updated = 0
             agg_by_step: dict[int, int] = {0: 0, 1: 0, 2: 0, 3: 0}
+            agg_created_ids: list[str] = []
             # ask-human-on-ambiguity — 청크별 near-miss 를 문서 단위로 누적.
             agg_ambiguities: list[AmbiguousMatch] = []
             # 관계는 모았다가 모든 엔티티 적재 후 한 번에 해소한다. domain/README.md 참조.
@@ -529,6 +544,7 @@ class IngestService:
 
                 all_name_to_id.update(name_to_id)
                 agg_created += entity_metrics["created"]
+                agg_created_ids.extend(entity_metrics["created_ids"])
                 agg_updated += entity_metrics["updated"]
                 for step in (0, 1, 2, 3):
                     agg_by_step[step] += entity_metrics["by_step"].get(step, 0)
@@ -538,14 +554,13 @@ class IngestService:
                     pending_relations.append((r, source_ref))
 
             # 모든 엔티티가 적재된 뒤 관계를 해소한다.
-            agg_rel_created, agg_rel_dangling, all_rel_ids, unresolved_rels = (
-                self._upsert_relations_deferred(
-                    pending=pending_relations,
-                    name_to_id=all_name_to_id,
-                    run_id=run_id,
-                    namespace_id=namespace_id,
-                )
+            rel_pass = self._upsert_relations_deferred(
+                pending=pending_relations,
+                name_to_id=all_name_to_id,
+                run_id=run_id,
+                namespace_id=namespace_id,
             )
+            all_rel_ids = rel_pass.relation_ids
 
             # 차분 — 이전 회차가 emit 했는데 이번엔 안 한 것 처리.
             diff_metrics = self._apply_diff(
@@ -568,8 +583,11 @@ class IngestService:
                 source_path=source_path,
                 entities_created=agg_created,
                 entities_updated=agg_updated,
-                relations_created=agg_rel_created,
-                relations_skipped_dangling=agg_rel_dangling,
+                relations_created=rel_pass.created,
+                relations_skipped_dangling=rel_pass.dangling,
+                entities_without_relations=[
+                    eid for eid in agg_created_ids if eid not in rel_pass.linked_entity_ids
+                ],
                 entity_ids=list(all_name_to_id.values()),
                 entities_matched_by_step=agg_by_step,
                 short_circuited=False,
@@ -579,7 +597,7 @@ class IngestService:
                 relations_trimmed=diff_metrics["relations_trimmed"],
                 chunks_total=total_chunks,
                 run_id=run_id,
-                unresolved_relations=unresolved_rels,
+                unresolved_relations=rel_pass.unresolved,
                 source_hash=source_hash,
                 ambiguities=agg_ambiguities,
             )
@@ -682,6 +700,56 @@ class IngestService:
             open_questions=open_questions,
             hints=hints,
             namespace_id=namespace_id,
+            source_content=content,
+        )
+
+    def plan_delete(self, *, source_path: str, namespace_id: str = "default") -> IngestPlan:
+        """한 출처가 넣은 것을 걷어내는 계획. 추출도 LLM 호출도 없다.
+
+        지우기는 그 출처를 *빈 내용으로 다시 넣는 것* 과 같아, 이미 검증된 차분 경로에
+        빈 집합을 넘겨 만든다. 그래서 여러 문서가 함께 만든 노드는 그 출처만 떨어지고
+        살아남고, 그 출처만 가진 노드는 인접 관계와 함께 사라진다."""
+        prior = self._graph.find_latest_succeeded_run(source_path=source_path)
+        if prior is None:
+            raise InvalidInputError(f"No ingested source to delete: {source_path}")
+
+        planning = PlanningGraphRepository(self._graph)
+        real = self._graph
+        self._graph = planning
+        try:
+            metrics = self._apply_diff(
+                prior=prior,
+                new_entity_ids=set(),
+                new_relation_ids=set(),
+                source_path=source_path,
+                run_id=prior.id,
+            )
+        finally:
+            self._graph = real
+
+        result = IngestResult(
+            source_path=source_path,
+            entities_created=0,
+            entities_updated=0,
+            relations_created=0,
+            relations_skipped_dangling=0,
+            entity_ids=[],
+            run_id=prior.id,
+            entities_deleted=metrics["entities_deleted"],
+            entities_trimmed=metrics["entities_trimmed"],
+            relations_deleted=metrics["relations_deleted"],
+            relations_trimmed=metrics["relations_trimmed"],
+        )
+        return IngestPlan(
+            plan_id=f"pln_{ULID()}",
+            source_path=source_path,
+            source_hash="",
+            extractor_version=self._extractor_version,
+            created_at=now_rfc3339(),
+            previewed=False,
+            writes=planning.writes,
+            result=result,
+            namespace_id=namespace_id,
         )
 
     def resolve_plan(self, plan: IngestPlan, resolutions: dict[str, str]) -> IngestPlan:
@@ -715,11 +783,21 @@ class IngestService:
         try:
             # 원 계획의 hints 와 namespace 를 그대로 넘겨 재계획이 같은 컨텍스트와
             # namespace 에서 돌게 한다.
-            refined = self.plan_file(
-                Path(plan.source_path),
-                namespace_id=plan.namespace_id,
-                hints=plan.hints,
-            )
+            # 본문으로 세운 계획은 본문으로 다시 세운다. 파일로 세운 계획만 경로를
+            # 다시 읽는다 — source_path 가 본문 계획에서는 파일이 아니라 출처 라벨이다.
+            if plan.source_content is not None:
+                refined = self.plan_content(
+                    content=plan.source_content,
+                    source_id=plan.source_path,
+                    namespace_id=plan.namespace_id,
+                    hints=plan.hints,
+                )
+            else:
+                refined = self.plan_file(
+                    Path(plan.source_path),
+                    namespace_id=plan.namespace_id,
+                    hints=plan.hints,
+                )
         finally:
             self._active_resolutions = prior
 
@@ -992,12 +1070,13 @@ class IngestService:
         updated = 0
         # step 0 = LLM 이 추출 중 매칭 결정, 1-3 = 매처, 4 = 신규. 자세한 건 README.
         by_step: dict[int, int] = {0: 0, 1: 0, 2: 0, 3: 0}
+        created_ids: list[str] = []
         # 새 노드로 떨어졌지만 매처가 밴드 내 후보를 본 near-miss 만 모은다.
         ambiguities: list[AmbiguousMatch] = []
         now = now_rfc3339()
 
         for e_new in extracted.entities:
-            # 이름에서 구조적 식별자를 뽑아 alias 로 보강한다. 식별자로도 검색·병합.
+            # 이름에서 구조적 식별자를 뽑아 alias 로 보강한다. 식별자로도 검색과 병합이 된다.
             id_aliases = extract_identifier_aliases(e_new.name)
             if id_aliases:
                 merged_aliases = list(e_new.aliases or [])
@@ -1102,12 +1181,14 @@ class IngestService:
             self._graph.create_entity(entity=stored)
             self._graph.mark_entity_emitted(entity_id=new_id, run_id=run_id)
             name_to_id[e_new.name] = new_id
+            created_ids.append(new_id)
             created += 1
 
             # 새 노드지만 매처가 임계 바로 아래 후보를 봤다면 놓친 병합 후보로 기록한다.
             # 생성 이후라 쓰기엔 영향 없다. 사람 확인용 신호.
             if not force_keep and result.near_miss is not None:
                 cand, sim = result.near_miss
+                same_name = normalize(cand.name) == normalize(e_new.name)
                 ambiguities.append(
                     AmbiguousMatch(
                         question_id="",
@@ -1116,11 +1197,17 @@ class IngestService:
                         candidate_id=cand.id,
                         candidate_name=cand.name,
                         similarity=sim,
+                        kind=(
+                            PlanQuestionKind.SAME_NAME_DIFFERENT_TYPE
+                            if same_name and cand.type != e_new.type
+                            else PlanQuestionKind.POSSIBLE_MISSED_MERGE
+                        ),
                     )
                 )
 
         return name_to_id, {
             "created": created,
+            "created_ids": created_ids,
             "updated": updated,
             "by_step": by_step,
             "ambiguities": ambiguities,
@@ -1133,12 +1220,13 @@ class IngestService:
         name_to_id: dict[str, str],
         run_id: str,
         namespace_id: str = "default",
-    ) -> tuple[int, int, list[str], list[tuple[ExtractedRelation, SourceRef]]]:
+    ) -> _RelationPass:
         """모아 둔 관계를 파일 전체 엔티티와 그래프 기준으로 한 번에 해소한다.
         엔드포인트 해소 순서와 unresolved(2-pass 회수 대상)의 의미는 domain/README.md 참조."""
         created = 0
         dangling = 0
         rel_ids: list[str] = []
+        linked_ids: set[str] = set()
         unresolved: list[tuple[ExtractedRelation, SourceRef]] = []
         # 이번 파일 엔티티의 정규화 인덱스 — 정확 일치 miss 시 표기 흔들림 흡수.
         norm_index: dict[str, str] = {}
@@ -1174,10 +1262,18 @@ class IngestService:
                 unresolved.append((r, source_ref))
                 continue
             rel_ids.append(rid)
+            linked_ids.add(from_id)
+            linked_ids.add(to_id)
             self._graph.mark_relation_emitted(relation_id=rid, run_id=run_id)
             if was_created:
                 created += 1
-        return created, dangling, rel_ids, unresolved
+        return _RelationPass(
+            created=created,
+            dangling=dangling,
+            relation_ids=rel_ids,
+            linked_entity_ids=linked_ids,
+            unresolved=unresolved,
+        )
 
     def _resolve_endpoint(
         self,

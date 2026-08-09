@@ -16,7 +16,6 @@ from .judge import (
     build_mapping,
     extract_provided_context,
     extract_student_reasoning,
-    read_mapping,
     score_faithfulness,
     score_reasoning_quality,
     write_mapping,

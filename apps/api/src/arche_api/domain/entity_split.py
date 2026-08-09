@@ -54,6 +54,8 @@ class SplitPlan:
     new_entity: StoredEntity
     origin_mutation: MergeMutation
     assignments: list[RelationAssignment] = field(default_factory=list)
+    # 떼어낸 노드의 설명이 원래 노드에서 물려받은 것인지. 미리 보기가 사람에게 알린다.
+    description_inherited: bool = False
 
     @property
     def open_questions(self) -> list[RelationAssignment]:
@@ -234,6 +236,7 @@ class SplitService:
             new_entity=new_entity,
             origin_mutation=origin_mutation,
             assignments=assignments,
+            description_inherited=new_description is None,
         )
 
     def _assign_relations(
