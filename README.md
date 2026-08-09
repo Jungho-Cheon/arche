@@ -7,137 +7,107 @@
 
 <h1>Arche</h1>
 
-<p><strong>흩어진 문서를 관계 지도(그래프)로 바꿔, AI 에이전트가 적은 비용으로 정확한 답을 찾게 한다.</strong></p>
+<p><strong>흩어진 문서를 관계 그래프로 바꿔, AI 에이전트가 적은 비용으로 정확한 답을 찾게 하는 지식 베이스 도구</strong></p>
 
 <p>
 <img alt="status" src="https://img.shields.io/badge/status-MVP-E8A33D?style=flat-square&labelColor=1a1008">
 <img alt="python" src="https://img.shields.io/badge/python-3.12+-8a7a66?style=flat-square&labelColor=1a1008">
-<img alt="storage" src="https://img.shields.io/badge/storage-embedded%20Kuzu%20%7C%20Neo4j-8a7a66?style=flat-square&labelColor=1a1008">
 <img alt="interface" src="https://img.shields.io/badge/interface-MCP%20%2B%20REST-8a7a66?style=flat-square&labelColor=1a1008">
-</p>
-
-<p>
-  <a href="./docs/overview.md"><b>소개</b></a> &nbsp;•&nbsp;
-  <a href="#-직접-해보기"><b>직접 해보기</b></a> &nbsp;•&nbsp;
-  <a href="./apps/api/ARCHITECTURE.md"><b>아키텍처</b></a> &nbsp;•&nbsp;
-  <a href="./docs/adr/"><b>결정 기록</b></a> &nbsp;•&nbsp;
-  <a href="./apps/docs/"><b>사용 가이드</b></a>
 </p>
 
 </div>
 
 ---
 
-문서에서 엔티티(점)와 관계(선)를 추출해 그래프로 저장하고, **그래프 프리미티브** (REST + MCP 양쪽 노출) 로 외부 에이전트가 필요한 만큼만 조합해 쓰게 한다. 자연어로 답을 만드는 일은 부르는 쪽(에이전트)의 몫이고, Arche 는 *원자적 그래프 조회* 만 제공한다 — 그래서 어떤 AI 모델이든 갈아 끼울 수 있다.
+회사의 정책과 계약서, 매뉴얼은 수백 개로 흩어져 있고, 어려운 질문일수록 답은 한 문서 안에 없어요. Arche 는 문서를 미리 점과 선의 관계 지도로 바꿔 두고, AI 에이전트가 그 위에서 작고 값싼 조회만으로 필요한 연결을 따라가게 해요.
 
-> 코드를 몰라도 "무엇을 / 왜 / 어떤 가치 / 무엇으로 이루어졌나" 를 따라갈 수 있는 소개부터 보세요 → **[`docs/overview.md`](./docs/overview.md)**
+답을 쓰는 건 Arche 가 아니에요. 그래프에서 사실 조각만 돌려주고 문장으로 엮는 일은 에이전트가 해요. 그래서 어떤 AI 모델을 쓰든 상관없어요.
 
-## 왜 Arche 인가
+## 설치
 
-회사의 정책, 보고서, 매뉴얼, 계약서는 수백 개로 흩어져 있고, 어려운 질문의 정답은 *여러 문서에 걸친 관계* 에 산다. 지금 흔한 두 방식은 각각 약점이 있다.
+Claude Code 에서 두 줄이면 끝나요. 저장소를 받을 필요가 없어요.
 
-| 방식 | 약점 |
-|---|---|
-| **문서 전체를 AI 에 통째로 넣기** (full-context) | 토큰 비용 폭증, 느림. 문서가 많으면 다 들어가지 못함. |
-| **청크 벡터 검색** (chunk RAG) | 비슷한 토막은 잘 찾지만 *관계* 를 잇지 못함 — multi-hop 질문, 표 속 숫자 비교에 약함. |
-
-Arche 는 문서를 미리 **관계 지도(그래프)** 로 바꿔 두고, 에이전트가 그 위에서 작고 값싼 조회만으로 답에 필요한 연결을 따라가게 한다.
-
-## 검증된 가치
-
-같은 AI 모델로 공정 비교했을 때, 에이전트가 **그래프만으로** 답하는 방식이 청크 검색을 크게 앞섰다.
-
-> **FinanceBench** (여러 회사 재무 보고서를 가로지르는 질문): Arche 그래프 단독 **94-97%** vs 대표적 청크 검색 도구 **57.6%** &nbsp;—&nbsp; 근거 [ADR-0016](./docs/adr/0016-agentic-graphonly-and-quantitative-extraction.md)
->
-> 정답의 레버는 "모델 크기" 가 아니라 **추출 완전성** — 문서의 관계와 숫자를 빠짐없이 그래프에 담는 것.
-
-*솔직한 한계:* 정답률의 **절대값** 은 도메인마다 다르다 (재무 90%대, 생물의학 30%대). 변하지 않는 것은 *순위* — 같은 조건에서 청크 검색보다 앞선다는 점이고, 절대값은 그래프에 얼마나 빠짐없이 담았는지에 달렸다.
-
-## 핵심 구성요소
-
-```
-   문서 더미                  Arche                          AI 에이전트
- (md/pdf/이미지)                                            (질문하는 쪽)
-      │              ┌──────────────────────────┐
-      │   ① 적재      │  ② 그래프 저장            │   ④ 두 통로로 질의
-      └─────────────▶│   점(엔티티)+선(관계)     │◀──── MCP (AI 도구 표준)
-                     │   + 진입점 검색 인덱스     │◀──── REST API (HTTP)
-                     └────────────┬─────────────┘
-                                  │ ③ 추출 완전성/동일성 품질
-                                  ▼
-                     정확하고 끊김 없는 관계 지도
+```text
+/plugin marketplace add Jungho-Cheon/arche
+/plugin install arche@arche
 ```
 
-| | 구성요소 | 하는 일 |
-|---|---|---|
-| ① | **적재 (ingest)** | 폴더의 문서(글/PDF/이미지)를 읽어 점과 선을 뽑아 그래프에 넣는다. 다시 넣으면 바뀐 부분만 갱신(델타). |
-| ② | **그래프 저장 + 진입점 검색** | 그래프 DB 에 저장 (기본은 서버 없는 임베디드 Kuzu, 팀 공유가 필요하면 Neo4j). 키워드로 출발점을 빠르게 찾도록 어휘 + 의미(벡터) 검색을 함께. |
-| ③ | **추출/동일성 품질** | 같은 대상을 한 점으로 모으고, 숫자와 표를 빠짐없이 보존하며, 잘못 뭉친 점을 걸러낸다 — 정확도의 핵심 레버. |
-| ④ | **프리미티브 표면 (REST + MCP)** | 6가지 조회 동작을 두 표준 통로로 노출. 에이전트는 이것만 조합해 답을 찾는다. |
-| ⑤ | **평가 하베스 (eval)** | 위 가치를 *증명* 하는 측정 장치. 같은 질문을 여러 방식으로 풀어 정확도와 비용을 비교. |
+[uv](https://docs.astral.sh/uv/) 가 미리 깔려 있어야 해요. 플러그인이 `uvx` 로 Arche 를 직접 받아 실행하거든요.
 
-## 직접 해보기
-
-> 준비물: **Python 3.12** 와 **AI 모델 API 키** (임베딩용 OpenAI 키). 기본은 서버 없이 도는 임베디드 그래프라 Docker 가 필요 없다. 추출은 OpenAI 대신 설치된 Claude Code 의 구독 인증(별도 키 없이)이나 Anthropic 으로도 돌릴 수 있다 (모델 접두사만 변경, [ADR-0019](./docs/adr/0019-multi-provider-factory.md)). 처음엔 파일 몇 개짜리 작은 폴더로 시작하길 권한다.
+임베딩에 쓸 키를 한 번 넣어요. 문서에서 점과 선을 뽑는 일은 이미 쓰고 있는 Claude Code 구독 인증이 맡아서 추출용 키는 필요 없어요.
 
 ```bash
-# 1) 내려받고 키 채우기 (Docker 불필요 — 기본은 서버 없는 임베디드 그래프)
-git clone https://github.com/Jungho-Cheon/arche.git
-cd arche
-cp .env.example .env          # .env 에 OPENAI_API_KEY 를 채운다 (임베딩에 필요)
-
-# 2) 내 문서 폴더를 그래프로 적재 — 임베디드 Kuzu 파일에 바로 저장, 서버 없음
-uv run --project apps/api arche ingest ./내문서폴더
-
-# 3) 질의 — 에이전트(Claude Desktop / Cursor 등)에 MCP 도구로 연결한다
-uv run --project apps/api arche mcp serve --stdio
-#    에이전트로 적재할 때는 reviewable ingest 흐름이 plan, preview, (모호하면 질문 해소) 확정, commit 순서를 안내한다.
-#    추출이 빈약하면 ingest_plan 에 hints(용어 풀이/도메인 메모)를 실어 추출만 보강할 수 있다 — 원문은 그대로 보존된다.
+uvx --from "arche-api @ git+https://github.com/Jungho-Cheon/arche.git@v0.1.2#subdirectory=apps/api" \
+  arche config set-key
 ```
 
-MCP 클라이언트(예: Claude Desktop) 설정:
+## 해보기
 
-```json
-{ "mcpServers": { "arche": { "command": "arche", "args": ["mcp", "serve", "--stdio"] } } }
+같은 대화창에서 말로 시켜요.
+
+```text
+./docs 폴더를 Arche 에 넣어줘
+환불 규정이 어떤 조건에서 적용돼?
 ```
 
-**팀에서 공유하려면 (선택):** 여러 사람이 같은 그래프를 함께 보려면 `docker compose` 로 Neo4j + API 서버를 띄우고 `ARCHE_API_GRAPH_BACKEND=neo4j` 로 바꾼다. 임베디드는 단일 사용자용이고, 공유는 이 서버 형태로 연다 ([ADR-0023](./docs/adr/0023-embedded-default-shared-destination.md)).
+적재는 무엇이 새로 생기고 무엇이 합쳐지는지 보여 준 뒤 확인을 받고서야 그래프에 써요. 그래프는 실행한 폴더 아래 `arche_kuzu_db` 에 쌓이고, 서버도 Docker 도 띄우지 않아요.
 
-자세한 흐름과 용어 풀이는 [`docs/overview.md`](./docs/overview.md), 개발자용 구조는 [`apps/api/ARCHITECTURE.md`](./apps/api/ARCHITECTURE.md) 참조.
+## 얼마나 정확한가
 
-처음부터 끝까지 따라가는 단계별 안내는 [`apps/docs/`](./apps/docs/) 사용 가이드에 있다 — 로컬에서 `pnpm --dir apps/docs dev` 로 띄운다.
+같은 모델과 같은 조건에서 잰 결과예요. 비교 대상 graphify 는 다른 그래프 기반 도구예요.
 
-## 그래프 프리미티브
+| 방식 | FinanceBench 33문항 |
+| --- | --- |
+| Arche 그래프 단독, 에이전트 반복 | **94-97%** |
+| graphify 그래프 단독, 에이전트 반복 | 57.6% |
+| Arche 그래프 단독, 단발 호출 | 45.5% |
 
-| 프리미티브 | 하는 일 |
+정확도를 가른 건 모델 크기가 아니라 **추출 완전성**이었어요. 문서의 관계와 숫자를 얼마나 빠짐없이 그래프에 담았는지가 결정했어요. 근거는 [ADR-0016](./docs/adr/0016-agentic-graphonly-and-quantitative-extraction.md) 에 있어요.
+
+절대 정답률은 도메인마다 달라요. 재무에서 97%, 생물의학에서 30% 였고, 일관되게 유지되는 건 순위예요. 무엇을 검증했고 무엇은 아직 안 쟀는지는 [왜 그래프인가](./apps/docs/about/why-graph.md) 의 "정직한 한계"에 적어 뒀어요.
+
+## 무엇을 노출하나
+
+에이전트가 부를 수 있는 도구는 12개예요. 그래프를 읽는 조회 7개와, 사람 확인을 거쳐 문서를 넣는 검토형 적재 5개.
+
+| 조회 | 하는 일 |
 |---|---|
-| `get_schema` | 그래프에 어떤 종류의 점과 선이 있는지 개요를 본다. |
-| `find_entities` | 키워드로 출발점(점)을 찾는다 (어휘 + 벡터 하이브리드, RRF). |
-| `get_entity` | 점 하나의 상세 + 인접 엣지 카운트를 본다. |
-| `get_neighbors` | 한 점의 N-hop 이웃을 펼친다. |
-| `find_path` | 두 점 사이를 잇는 k-최단 경로를 찾는다 (허브 인지 점수 — ADR-0017). |
-| `get_subgraph` | 여러 출발점 주변을 한꺼번에 펼친다. |
+| `get_schema` | 그래프에 어떤 종류의 점과 선이 있는지 |
+| `find_entities` | 키워드로 출발점 찾기 (어휘 + 벡터 하이브리드) |
+| `get_entity` | 점 하나의 상세와 인접 관계 수 |
+| `get_neighbors` | 한 점의 N홉 이웃 펼치기 |
+| `find_path` | 두 점을 잇는 경로 찾기 |
+| `get_subgraph` | 여러 출발점 주변을 한꺼번에 펼치기 |
+| `find_related` | 시드와 구조적으로 가까운 점 회수 |
 
-REST 와 MCP 는 *같은* 6가지 동작을 노출한다 (Pydantic 단일 스키마). OpenAPI 는 `/openapi.json` 으로 자동 노출.
+노드를 만들거나 지우는 쓰기 도구는 노출하지 않아요. 그래프를 바꾸는 길은 검토형 적재뿐이에요.
 
-## 진입점 (문서)
+같은 조회 7개가 REST 로도 열려 있어요. 두 통로가 코드의 한 스키마에서 나와서 서로 어긋나지 않아요.
+
+## 다음에 볼 곳
 
 | 보고 싶은 것 | 문서 |
 |---|---|
-| 처음 오셨나요 — 무엇을/왜/가치/구성 | [`docs/overview.md`](./docs/overview.md) |
-| 무엇을 만들고 무엇을 검증하나 (사양) | [`docs/prd/1_mvp.md`](./docs/prd/1_mvp.md) |
-| 왜 이렇게 결정했나 (의사결정 기록) | [`docs/adr/`](./docs/adr/) — 핵심 가치 ADR-0001/0016, 구조 ADR-0018 |
-| 코드는 어떻게 생겼나 (개발자용) | [`apps/api/ARCHITECTURE.md`](./apps/api/ARCHITECTURE.md) |
-| 현재 진행 상태 | [`STATUS.md`](./STATUS.md) |
+| 설치부터 첫 질의까지 | [시작하기](./apps/docs/getting-started.md) |
+| 무엇을 왜 만드는가 | [Arche 소개](./apps/docs/about/intro.md) |
+| 도구별 요청/응답 필드 | [조회 도구 참조표](./apps/docs/query/tools.md) |
+| 팀과 그래프 공유 | [팀과 그래프 공유하기](./apps/docs/operate/sharing.md) |
+| 왜 이렇게 결정했나 | [ADR 인덱스](./docs/adr/README.md) |
+| 코드 구조 (개발자용) | [ARCHITECTURE.md](./apps/api/ARCHITECTURE.md) |
+| 지금 진행 상태 | [STATUS.md](./STATUS.md) |
 
-## 교체 가능하게 설계됨 (agnostic)
+문서 사이트는 `pnpm --dir apps/docs dev` 로 띄워요.
 
-특정 기술에 묶이지 않게 세 축을 열어 뒀다 ([ADR-0018](./docs/adr/0018-monorepo-and-agnostic-boundaries.md)).
+## 갈아끼울 수 있는 곳
 
-- **어떤 소비 에이전트든** — REST + MCP 두 표준 통로로 노출 (Claude, GPT, 자체 에이전트).
-- **어떤 그래프 DB 든** — 저장소를 능력별 인터페이스 뒤에 두어 교체 가능.
-- **어떤 추출 LLM/임베딩이든** — 추출은 OpenAI/Anthropic/Claude Code, 임베딩은 OpenAI/Voyage 가 들어 있고, 모델 이름 접두사(`openai/`, `anthropic/`, `claude-code/`, `voyage/`)만 바꾸면 코드 수정 없이 교체된다. OpenAI 없이 Claude + Voyage 로, 또는 `claude-code/`(설치된 Claude Code 구독 인증)로 **별도 API 키 없이** 추출까지 돌릴 수 있다 ([ADR-0019](./docs/adr/0019-multi-provider-factory.md)).
+특정 기술에 묶이지 않도록 세 군데를 열어 뒀어요 ([ADR-0018](./docs/adr/0018-monorepo-and-agnostic-boundaries.md)).
+
+**부르는 쪽** — MCP 와 REST 두 표준 통로라 Claude 든 다른 모델이든 자체 에이전트든 붙어요.
+
+**저장소** — 임베디드 Kuzu 와 Neo4j 를 설정 한 줄로 바꿔요. 혼자 쓸 때는 서버 없이 파일로, 팀이 공유할 때는 Neo4j 로 ([ADR-0023](./docs/adr/0023-embedded-default-shared-destination.md)).
+
+**추출과 임베딩 모델** — 모델 이름의 접두사만 바꾸면 갈아끼워요. OpenAI 없이 Claude 와 Voyage 로도, Claude Code 구독 인증으로 추출용 키 없이도 돌아가요 ([ADR-0019](./docs/adr/0019-multi-provider-factory.md)).
 
 ## 관련 저장소
 
-- **`legacy-arche`** (별도 저장소) — 2026-06-15 PRD 재정립 이전의 작업이 보존되어 있다. 본 저장소의 의사결정과 무관하다.
+**`legacy-arche`** (별도 저장소) — 2026-06-15 PRD 재정립 이전의 작업이 보존돼 있어요. 이 저장소의 의사결정과는 무관해요.

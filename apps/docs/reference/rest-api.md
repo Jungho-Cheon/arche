@@ -102,7 +102,7 @@ curl http://localhost:8000/healthz
 
 요청 필드와 응답 필드는 [조회 도구 참조표](/query/tools)에 있습니다. MCP 도구와 스키마가 같고, REST 만의 차이는 셋입니다.
 
-- 성공 응답이 `{ "data": ... }` 로 한 겹 감싸입니다.
+- 성공 응답을 `{ "data": ... }` 로 한 번 더 감쌉니다.
 - `GET /schema` 와 `GET /entities/{entity_id}` 는 `namespace_id` 를 쿼리 문자열로 받습니다.
 - `POST /entities/{entity_id}/neighbors` 는 경로의 `entity_id` 를 진입점으로 씁니다. 본문에도 `id` 를 넣으면 값이 같은지 검사합니다.
 
