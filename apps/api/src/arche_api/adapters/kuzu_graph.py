@@ -295,6 +295,20 @@ class KuzuGraphRepository(GraphRepository):
         )
         return rows[0]["id"] if len(rows) == 1 else None
 
+    def find_entities_by_name(
+        self, *, normalized_name: str, namespace_id: str = "default"
+    ) -> list[StoredEntity]:
+        if not normalized_name:
+            return []
+        rows = self._fetch(
+            f"""MATCH (e:{ENTITY_LABEL})
+                WHERE e.namespace_id = $ns AND e.normalized_name = $n
+                RETURN e AS e ORDER BY e.id LIMIT 5""",
+            n=normalized_name,
+            ns=namespace_id,
+        )
+        return [_node_to_stored(r["e"]) for r in rows]
+
     def vector_search(
         self,
         *,

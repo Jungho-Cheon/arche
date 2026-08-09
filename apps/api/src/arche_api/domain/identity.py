@@ -352,13 +352,20 @@ class EntityMatcher:
 
         그래서 여기서 합치지는 않는다. 이름이 같아도 다른 대상일 수 있어서다. 사람이
         판단하도록 질문으로 올린다.
+
+        후보가 여럿이면 가장 먼저 만들어진 것을 묻는다. 여럿이라고 넘겨 버리면 흔한
+        약어처럼 여러 곳에 걸리는 이름이 오히려 조용히 빠지는데, 그런 이름일수록 갈라짐이
+        잘 생긴다.
         """
-        entity_id = self._repo.find_entity_id_by_normalized_name(
-            normalized=normalized_name, namespace_id=self._namespace_id
+        candidates = self._repo.find_entities_by_name(
+            normalized_name=normalized_name, namespace_id=self._namespace_id
         )
-        if entity_id is None:
-            return None
-        return self._repo.get_stored_entity(entity_id=entity_id)
+        # id 는 시간순이라 정렬하면 먼저 만들어진 쪽이 앞에 온다.
+        for candidate in sorted(candidates, key=lambda c: c.id):
+            if normalized_name in set(candidate.blocked_aliases or []):
+                continue
+            return candidate
+        return None
 
 
 # ---------- 병합 규칙 ----------

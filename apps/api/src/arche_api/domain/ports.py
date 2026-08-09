@@ -215,8 +215,8 @@ class LexicalIndex(ABC):
 
 
 class GraphStore(ABC):
-    """순수 그래프 능력 — 노드/관계 생성·병합, N-hop 순회, k-shortest path, 스키마
-    통계, 적재 회차 기록·차분. 연결 수명주기(ensure_indexes/healthcheck/close)도 이
+    """순수 그래프 능력 — 노드와 관계를 만들고 병합하기, N-hop 순회, k-shortest path,
+    스키마 통계, 적재 회차 기록과 차분. 연결 수명주기(ensure_indexes/healthcheck/close)도 이
     store 가 소유한다. 벡터 ANN 과 어휘 fulltext 는 별도 포트로 분리했다."""
 
     @abstractmethod
@@ -243,6 +243,20 @@ class GraphStore(ABC):
         기본 구현 None 은 선택적 확장점이라 단일 store 만 override 한다. namespace_id 로
         같은 namespace 안에서만 해소한다."""
         return None
+
+    def find_entities_by_name(
+        self, *, normalized_name: str, namespace_id: str = "default"
+    ) -> list[StoredEntity]:
+        """정규명이 *그 노드의 이름* 과 같은 노드들. 별칭 일치는 세지 않는다.
+
+        위의 find_entity_id_by_normalized_name 과 쓰임이 다르다. 그쪽은 관계 끝점을
+        이을 때 쓰므로 후보가 둘 이상이면 잇지 않는 게 맞다. 이쪽은 "이름이 같은데 타입만
+        다른 노드가 있나" 를 묻는 자리라, 후보가 여럿이어도 그 사실을 알아야 한다. 그
+        구분을 안 하면 흔한 약어처럼 여러 노드의 별칭으로도 등장하는 이름일수록 조용히
+        빠진다 — 하필 갈라짐이 가장 잘 생기는 이름들이다.
+
+        기본 구현 [] 는 선택적 확장점이라는 뜻이다."""
+        return []
 
     @abstractmethod
     def create_entity(self, *, entity: StoredEntity) -> None:

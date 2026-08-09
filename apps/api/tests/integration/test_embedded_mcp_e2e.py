@@ -413,3 +413,110 @@ async def test_split_refuses_a_node_from_another_namespace(tmp_path):
             assert result.isError is True
             body = json.loads(result.content[0].text)
             assert body["error"]["code"] == "entity_not_found"
+
+
+async def test_commit_is_refused_while_questions_are_unanswered(tmp_path):
+    """답하지 않은 질문이 남으면 확정을 거부한다.
+
+    도구 설명은 질문에 답한 뒤 확정하라고 못박는데 서버가 안 막으면 그 약속은 지키는
+    사람만 지키는 것이 된다. 실제로 질문을 지나친 확정이 갈라 놓은 노드를 조용히 다시
+    만들었다. 떼어내기가 같은 자리에서 거부하는 것과도 맞춘다.
+    """
+    db_path = tmp_path / "kuzu_db"
+
+    async with stdio_client(_params(db_path)) as (read, write):
+        async with ClientSession(read, write) as session:
+            await session.initialize()
+            await _ingest(session, content="노드: INFJ | 성격유형\n", source_id="e2e:type-a")
+
+            plan = _payload(
+                await session.call_tool(
+                    "ingest_content",
+                    arguments={
+                        "content": "노드: INFJ | MBTI유형\n",
+                        "source_id": "e2e:type-b",
+                        "namespace_id": NAMESPACE,
+                    },
+                )
+            )
+            _payload(
+                await session.call_tool("ingest_preview", arguments={"plan_id": plan["plan_id"]})
+            )
+
+            result = await session.call_tool(
+                "ingest_commit", arguments={"plan_id": plan["plan_id"]}
+            )
+            assert result.isError is True
+            body = json.loads(result.content[0].text)
+            assert body["error"]["code"] == "unprocessable"
+            assert body["error"]["details"]["open_questions"] == 1
+
+            # 거부됐으면 그래프는 그대로여야 한다 — 갈라진 노드가 생기지 않는다.
+            schema = _payload(
+                await session.call_tool("get_schema", arguments={"namespace_id": NAMESPACE})
+            )
+            assert sum(t["count"] for t in schema["entity_types"]) == 1
+
+            # 전부 따로 두고 싶으면 keep 을 실어 한 번 부르면 된다 — 결정을 명시하게 한다.
+            preview = _payload(
+                await session.call_tool("ingest_preview", arguments={"plan_id": plan["plan_id"]})
+            )
+            _payload(
+                await session.call_tool(
+                    "ingest_resolve",
+                    arguments={
+                        "plan_id": plan["plan_id"],
+                        "resolutions": [
+                            {"question_id": preview["questions"][0]["question_id"],
+                             "decision": "keep"}
+                        ],
+                    },
+                )
+            )
+            _payload(
+                await session.call_tool("ingest_preview", arguments={"plan_id": plan["plan_id"]})
+            )
+            _payload(
+                await session.call_tool("ingest_commit", arguments={"plan_id": plan["plan_id"]})
+            )
+            after = _payload(
+                await session.call_tool("get_schema", arguments={"namespace_id": NAMESPACE})
+            )
+            assert sum(t["count"] for t in after["entity_types"]) == 2
+
+
+async def test_a_name_that_is_also_someone_elses_alias_still_asks(tmp_path):
+    """이름이 다른 노드의 별칭으로도 걸릴 때 질문이 조용히 사라지면 안 된다.
+
+    후보를 유일할 때만 받으면 흔한 약어처럼 여러 곳에 걸리는 이름이 빠진다. 하필 그런
+    이름일수록 문서마다 다른 타입으로 뽑혀 갈라진다.
+    """
+    db_path = tmp_path / "kuzu_db"
+
+    async with stdio_client(_params(db_path)) as (read, write):
+        async with ClientSession(read, write) as session:
+            await session.initialize()
+            # "여름" 이라는 이름을 가진 노드와, 그 말을 별칭으로 품은 다른 노드를 만든다.
+            await _ingest(session, content="노드: 여름 | 계절\n", source_id="e2e:season")
+            await _ingest(
+                session,
+                content="노드: 여름 프로모션 | 정책\n관계: 여름 프로모션 | 적용된다 | 여름\n",
+                source_id="e2e:promo",
+            )
+
+            plan = _payload(
+                await session.call_tool(
+                    "ingest_content",
+                    arguments={
+                        "content": "노드: 여름 | 기간\n",
+                        "source_id": "e2e:period",
+                        "namespace_id": NAMESPACE,
+                    },
+                )
+            )
+
+            assert plan["open_questions"] == 1
+            preview = _payload(
+                await session.call_tool("ingest_preview", arguments={"plan_id": plan["plan_id"]})
+            )
+            assert preview["questions"][0]["kind"] == "same_name_different_type"

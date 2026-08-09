@@ -68,9 +68,9 @@
 
 | 응답 필드 | 타입 | 설명 |
 | --- | --- | --- |
-| `new_entities` | `NewEntityView[]` | `name`, `type`, `aliases` |
+| `new_entities` | `NewEntityView[]` | `id`, `name`, `type`, `aliases` |
 | `merges` | `MergeView[]` | `target_id`, `before_name`, `after_aliases` |
-| `new_relations` | `RelationView[]` | `from_id`, `to_id`, `type` |
+| `new_relations` | `RelationView[]` | `from_id`, `to_id`, `type`, `from_name`, `to_name` |
 | `deletion_count` | `int` | 지워지거나 줄어들 항목 수 |
 | `questions` | `QuestionView[]` | 사람 판단이 필요한 항목 |
 
@@ -82,7 +82,7 @@
 
 <!-- @include: ../reference/_generated/requests/ingest_commit.md -->
 
-사람이 확인한 계획을 그래프에 반영합니다.
+사람이 확인한 계획을 그래프에 반영합니다. 미리 보기를 거치지 않았거나 답하지 않은 질문이 남아 있으면 `unprocessable` 로 거부합니다. 전부 따로 두고 싶다면 `ingest_resolve` 에 `keep` 을 실어 한 번 부르면 됩니다.
 
 | 응답 필드 | 타입 |
 | --- | --- |
@@ -143,7 +143,7 @@
 | `relations` | `SplitRelationView[]` | 관계 전체와 각각의 행선지 |
 | `questions` | `SplitRelationView[]` | `decision` 이 `ask` 인 것만 추린 목록 |
 
-`SplitEntityView` 는 `id`, `name`, `type`, `aliases`, `description`, `source_paths` 를 담습니다. `SplitRelationView` 는 `relation_id`, `type`, `direction`, `other_id`, `other_name`, `source_paths`, `decision`, `reason` 을 담고, `reason` 은 왜 그렇게 갈렸는지 한 줄로 설명합니다.
+`SplitEntityView` 는 `id`, `name`, `type`, `aliases`, `description`, `description_inherited`, `source_paths` 를 담습니다. `description_inherited` 가 `true` 면 그 설명을 원래 노드에서 그대로 물려받았다는 뜻이라, 떼어낸 노드에는 맞지 않을 수 있습니다. `SplitRelationView` 는 `relation_id`, `type`, `direction`, `other_id`, `other_name`, `source_paths`, `decision`, `reason` 을 담고, `reason` 은 왜 그렇게 갈렸는지 한 줄로 설명합니다.
 
 `questions` 가 비어 있지 않으면 확정이 거부됩니다. 결정을 `entity_split_plan` 의 `relation_decisions` 에 담아 다시 계획합니다.
 

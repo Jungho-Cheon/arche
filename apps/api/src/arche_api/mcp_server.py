@@ -156,8 +156,12 @@ _TOOL_DESCRIPTIONS: dict[str, str] = {
     "ingest_commit": (
         "Apply a previously previewed plan (by `plan_id`) to the graph. Do not "
         "call without a prior ingest_preview on this plan_id: commit is "
-        "rejected (unprocessable) unless the plan was previewed, and also "
-        "rejected if the graph drifted and the plan went stale (re-plan)."
+        "rejected (unprocessable) unless the plan was previewed. It is also "
+        "rejected while the plan still has unanswered `questions` — send the "
+        "human's decisions through ingest_resolve first (use \"keep\" for every "
+        "question if they are all genuinely distinct; skipping the questions is "
+        "not the same as answering them). Finally, it is rejected if the graph "
+        "drifted and the plan went stale (re-plan)."
     ),
     # 떼어내기 — 잘못 합친 노드를 되돌리는 유일한 길. 같은 검토 latch 를 쓴다.
     "entity_split_plan": (

@@ -253,6 +253,22 @@ class Neo4jGraphRepository(GraphRepository):
             return rows[0]["id"]
         return None
 
+
+    def find_entities_by_name(
+        self, *, normalized_name: str, namespace_id: str = "default"
+    ) -> list[StoredEntity]:
+        if not normalized_name:
+            return []
+        with self._driver.session() as s:
+            rows = s.run(
+                f"MATCH (e:{ENTITY_LABEL}) "
+                "WHERE coalesce(e.namespace_id, 'default') = $ns "
+                "  AND e.normalized_name = $n "
+                "RETURN e AS e ORDER BY e.id LIMIT 5",
+                n=normalized_name,
+                ns=namespace_id,
+            ).data()
+        return [_node_to_stored(r["e"]) for r in rows]
     def vector_search(
         self,
         *,

@@ -722,10 +722,15 @@ def commit_plan(
 ) -> IngestCommitResponse:
     """미리보기를 거친 계획만 그래프에 적용한다 (안전 latch).
 
-    latch 두 단계:
+    latch 세 단계:
       1. previewed=False → 422 unprocessable. 사용자가 변경을 눈으로 확인하기 전에
          그래프를 건드리는 사고를 막는다.
-      2. depends_on_entity_ids 중 *지금은 사라진* 노드가 있으면 → 422. 계획을 세운
+      2. 답하지 않은 질문이 남아 있으면 → 422. 도구 설명이 "질문에 답한 뒤 확정하라"
+         고 못박는데 서버가 안 막으면, 그 약속은 지키는 사람만 지키는 것이 된다.
+         실제로 질문을 지나친 확정이 갈라 놓은 노드를 조용히 다시 만들었다. 떼어내기가
+         같은 자리에서 거부하는 것과도 맞춘다. 전부 따로 두고 싶으면 resolve 에
+         keep 을 실어 한 번 부르면 된다 — 결정을 명시하게 하는 것이 요점이다.
+      3. depends_on_entity_ids 중 *지금은 사라진* 노드가 있으면 → 422. 계획을 세운
          시점과 적용 시점 사이에 그래프가 바뀌어 병합 대상이 없어진 경우, 재생이
          어긋난 결과를 만든다. "stale; re-plan" 으로 명시 거부해 다시 계획하도록.
     """
@@ -733,6 +738,15 @@ def commit_plan(
     if not plan.previewed:
         raise UnprocessableError(
             "call ingest_preview before commit", details={"plan_id": plan.plan_id}
+        )
+    if plan.open_questions:
+        raise UnprocessableError(
+            "answer the open questions with ingest_resolve before commit",
+            details={
+                "plan_id": plan.plan_id,
+                "open_questions": len(plan.open_questions),
+                "question_ids": [q.question_id for q in plan.open_questions],
+            },
         )
     for eid in plan.depends_on_entity_ids:
         # namespace 를 넘겨야 한다. entity_exists 는 namespace 밖 노드를 없는 것으로

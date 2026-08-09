@@ -89,6 +89,10 @@ def test_lookup_by_name_stays_inside_the_namespace(two_namespaces):
     by_id = repo.find_entity_id_by_normalized_name(normalized="환불 정책", namespace_id=THERE)
     assert by_id == made[THERE]["policy"].id
 
+    # 이름이 같은 노드가 양쪽에 하나씩 있다. 격리가 깨지면 둘 다 나온다.
+    by_name = repo.find_entities_by_name(normalized_name="환불 정책", namespace_id=HERE)
+    assert [e.id for e in by_name] == [made[HERE]["policy"].id]
+
 
 def test_entity_exists_does_not_see_across_the_namespace(two_namespaces):
     repo, made = two_namespaces
@@ -207,6 +211,7 @@ def test_every_namespace_aware_method_is_covered_here():
         "find_by_keywords_scored",
         "find_by_normalized_name",
         "find_entities_dense",
+        "find_entities_by_name",
         "find_entity_id_by_normalized_name",
         "find_shortest_paths",
         "get_entity_relations",

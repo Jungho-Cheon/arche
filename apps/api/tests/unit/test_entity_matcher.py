@@ -39,6 +39,10 @@ class FakeRepo:
         hits = [e for (norm, _), e in self.norm_index.items() if norm == normalized]
         return hits[0].id if len(hits) == 1 else None
 
+    # 이름이 그 노드의 이름과 같은 것만. 별칭 일치는 세지 않는다 (진짜 어댑터와 동일).
+    def find_entities_by_name(self, *, normalized_name: str, namespace_id: str = "default"):
+        return [e for (norm, _), e in self.norm_index.items() if norm == normalized_name]
+
     def get_stored_entity(self, *, entity_id: str):
         for entity in self.norm_index.values():
             if entity.id == entity_id:
