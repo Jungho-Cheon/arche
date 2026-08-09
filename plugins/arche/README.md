@@ -18,10 +18,10 @@ uv tool install /path/to/arche/apps/api    # 또는: pip install /path/to/arche/
 arche version                              # 설치 확인
 ```
 
-임베딩용 키를 셸 환경에 둔다(추출은 구독 인증이라 키 불필요):
+임베딩용 키를 넣는다(추출은 구독 인증이라 키 불필요):
 
 ```bash
-export OPENAI_API_KEY=sk-...   # 임베딩 전용, 소액. .mcp.json 의 env 로 전달됨
+arche config set-key           # 임베딩 전용, 소액. ~/.config/arche/config.env 에 저장
 ```
 
 ## 설치

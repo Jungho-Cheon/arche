@@ -31,13 +31,20 @@ arche version
 
 ## 2단계 — 임베딩 키 넣기
 
-셸 환경에 키를 둡니다. 플러그인이 이 값을 서버에 넘깁니다.
-
 ```bash
-export OPENAI_API_KEY=sk-...
+arche config set-key
 ```
 
-터미널을 새로 열 때마다 유지하려면 `~/.zshrc` 나 `~/.bashrc` 에 같은 줄을 적어 둡니다.
+물어보면 키를 붙여 넣습니다. 입력한 글자는 화면에 찍히지 않습니다.
+
+```text
+OPENAI_API_KEY:
+OPENAI_API_KEY 를 /Users/me/.config/arche/config.env 에 저장했습니다.
+```
+
+한 번 넣으면 터미널을 새로 열든 다른 폴더에서 실행하든 그대로 읽힙니다. 파일은 소유자만 열 수 있게 잠깁니다.
+
+**나중에 확인하고 싶으면** `arche config show` 를 실행합니다. 키 값은 보여 주지 않고 설정됐는지만 알려 줍니다.
 
 ## 3단계 — 플러그인 설치
 

@@ -6,8 +6,22 @@
 
 from __future__ import annotations
 
+import os
+from pathlib import Path
+
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+# 실행 폴더와 무관하게 키를 한 자리에 둔다. `arche config set-key` 가 여기에 쓴다.
+GLOBAL_CONFIG_DIRNAME = "arche"
+GLOBAL_CONFIG_FILENAME = "config.env"
+
+
+def global_config_path() -> Path:
+    """전역 설정 파일 경로. XDG_CONFIG_HOME 을 존중하고 없으면 ~/.config 로."""
+    base = os.environ.get("XDG_CONFIG_HOME")
+    root = Path(base) if base else Path.home() / ".config"
+    return root / GLOBAL_CONFIG_DIRNAME / GLOBAL_CONFIG_FILENAME
 
 # 추출 LLM 기본값. eval 의 기본 모델과 같게 맞춘다.
 DEFAULT_LLM_MODEL = "openai/gpt-4.1"
@@ -103,9 +117,23 @@ class Settings(BaseSettings):
 _settings: Settings | None = None
 
 
+def _build_settings() -> Settings:
+    # 뒤 파일이 앞 파일을 덮는다 — 전역 < 실행 폴더 .env. 환경 변수는 pydantic-settings
+    # 의 기본 우선순위상 둘 다 이긴다.
+    return Settings(_env_file=(str(global_config_path()), ".env"))
+
+
 def get_settings() -> Settings:
     """singleton 액세서. 테스트는 monkeypatch 로 _settings 를 갈아끼울 수 있다."""
     global _settings
     if _settings is None:
-        _settings = Settings()
+        _settings = _build_settings()
+    return _settings
+
+
+def reload_settings() -> Settings:
+    """설정을 환경/파일에서 다시 읽어 singleton 을 교체한다. 실행 중에 키가 채워지는
+    경로(`arche config set-key`)를 재시작 없이 반영하려고 둔다."""
+    global _settings
+    _settings = _build_settings()
     return _settings

@@ -1,6 +1,6 @@
 # CLI 명령
 
-`arche` 명령 다섯 개의 인자와 동작을 모은 참조표입니다. 서버를 띄우지 않고 폴더를 적재하거나, 에이전트가 붙을 MCP 서버를 띄울 때 씁니다.
+`arche` 명령의 인자와 동작을 모은 참조표입니다. 서버를 띄우지 않고 폴더를 적재하거나, 에이전트가 붙을 MCP 서버를 띄우거나, API 키를 넣을 때 씁니다.
 
 ## 최소 예시
 
@@ -39,11 +39,14 @@ arche version
 | --- | --- |
 | `arche ingest <경로>` | 폴더나 파일을 그래프에 적재 |
 | `arche mcp serve --stdio` | 에이전트가 붙을 MCP 서버를 stdio 로 띄움 |
+| `arche config set-key` | API 키를 받아 전역 설정 파일에 저장 |
+| `arche config unset-key` | 전역 설정 파일에서 키 삭제 |
+| `arche config show` | 지금 어떤 설정이 어디서 읽히는지 출력 |
 | `arche reindex` | 벡터 색인을 현재 임베딩 차원으로 다시 생성 |
 | `arche docs gen-reference` | 참조표를 코드 스키마에서 생성 |
 | `arche version` | 패키지 버전 출력 |
 
-모든 명령은 실행 자리의 `.env` 를 읽습니다. 어떤 값을 채우는지는 [환경 변수](/reference/configuration)에 있습니다.
+모든 명령이 같은 설정을 읽습니다. 어떤 값을 어디에 두는지는 [환경 변수](/reference/configuration)에 있습니다.
 
 ## arche ingest
 
@@ -106,6 +109,39 @@ MCP 클라이언트에 이렇게 등록합니다.
 ```text
 [warn] ensure_indexes failed: ...
 ```
+
+API 키가 없어도 마찬가지로 뜹니다. 도구 목록까지는 보이고, 키가 필요한 호출에서 무엇을 채워야 하는지 알려 줍니다. [키가 없을 때](/reference/configuration#키가-없을-때)를 보세요.
+
+## arche config
+
+```bash
+arche config set-key [--provider openai|anthropic|voyage]
+arche config unset-key [--provider openai|anthropic|voyage]
+arche config show
+```
+
+`set-key` 는 키를 물어보고 `~/.config/arche/config.env` 에 저장합니다. 입력한 글자는 화면에 찍히지 않고, 파일은 소유자만 읽고 쓸 수 있게 권한을 `600` 으로 잠급니다.
+
+```text
+OPENAI_API_KEY:
+OPENAI_API_KEY 를 /Users/me/.config/arche/config.env 에 저장했습니다.
+```
+
+`--provider` 를 안 주면 `openai` 입니다. 추출을 Claude 로 돌리면서 임베딩만 Voyage 로 쓰는 식이면 각각 넣습니다.
+
+```bash
+arche config set-key --provider voyage
+```
+
+**더 센 자리에 같은 값이 있으면** 저장은 되지만 그 값이 쓰이지 않습니다. 이때는 경고가 함께 나옵니다.
+
+```text
+[warn] 지금은 환경 변수 쪽 값이 우선합니다. 방금 저장한 값은 그쪽을 지워야 쓰입니다.
+```
+
+우선순위는 [환경 변수](/reference/configuration#설정을-두는-자리)에 있습니다.
+
+`show` 는 설정 상태를 요약합니다. **키 값은 출력하지 않고** 설정 여부와 어디서 읽혔는지만 보여 줍니다. 넣은 문서가 안 보일 때 그래프 경로부터 확인하는 용도로도 씁니다.
 
 ## arche reindex
 

@@ -79,7 +79,7 @@ curl -X POST http://localhost:8000/related/find \
   -d '{"seeds": ["01J8XR4K9ZQ2N7M3VB0W4D6TYE"], "top_k": 10}'
 ```
 
-주소와 응답 봉투는 [REST API](/reference/rest-api)에 있습니다.
+주소와 응답 형식은 [REST API](/reference/rest-api)에 있습니다.
 
 ## 다음으로
 

@@ -1,17 +1,47 @@
 # 환경 변수
 
-Arche 가 읽는 환경 변수를 모은 참조표입니다. CLI 와 API 서버 모두 실행 자리의 `.env` 를 읽고, 셸 환경 변수가 있으면 그쪽이 이깁니다.
+Arche 가 읽는 환경 변수를 모은 참조표입니다. CLI 와 API 서버가 같은 값을 읽습니다.
 
 ## 최소 예시
 
 기본 경로는 OpenAI 키 하나로 돕니다. 그래프는 서버 없이 도는 임베디드 Kuzu 라 별도 설정이 필요 없습니다.
 
 ```bash
-# .env
-OPENAI_API_KEY=sk-...
+arche config set-key
 ```
 
-저장소에 `.env.example` 이 함께 들어 있어 복사해서 시작할 수 있습니다.
+입력한 키는 `~/.config/arche/config.env` 에 저장되고 어느 폴더에서 실행하든 읽힙니다. 명령은 [CLI 명령](/reference/cli#arche-config)에 있습니다.
+
+## 설정을 두는 자리
+
+값을 넣을 수 있는 곳이 셋이고, 같은 이름이 여러 곳에 있으면 위쪽이 이깁니다.
+
+| 자리 | 범위 |
+| --- | --- |
+| 셸 환경 변수 | 그 터미널 세션 |
+| 실행한 폴더의 `.env` | 그 폴더에서 실행할 때만 |
+| `~/.config/arche/config.env` | 어느 폴더에서 실행하든 |
+
+`XDG_CONFIG_HOME` 을 설정해 뒀다면 전역 파일 자리가 그 아래로 옮겨집니다.
+
+지금 어느 값이 어디서 읽히는지는 이렇게 확인합니다. 키 값 자체는 출력되지 않습니다.
+
+```bash
+arche config show
+```
+
+```text
+전역 설정 파일: /Users/me/.config/arche/config.env
+그래프 백엔드: embedded
+그래프 경로: /Users/me/work/arche_kuzu_db
+추출 모델: claude-code/sonnet
+임베딩 모델: openai/text-embedding-3-small
+OPENAI_API_KEY: 설정됨 (전역 설정 파일)
+ANTHROPIC_API_KEY: 없음
+VOYAGE_API_KEY: 없음
+```
+
+저장소에 `.env.example` 이 함께 들어 있어, 폴더별로 값을 나누고 싶으면 복사해서 씁니다.
 
 ```bash
 cp .env.example .env
@@ -50,6 +80,16 @@ cp .env.example .env
 ```
 
 `claude-code` 는 기계에 설치된 Claude Code 의 구독 인증을 그대로 써서 별도 키가 필요 없습니다. 다만 텍스트만 다루므로 이미지와 PDF 의 이미지 페이지는 추출되지 않습니다. 임베딩은 따로라 `openai` 나 `voyage` 키가 여전히 필요합니다.
+
+## 키가 없을 때
+
+키가 없어도 서버는 뜨고 도구 목록도 보입니다. 키를 실제로 쓰는 호출에서 그때 막히고, 어느 값을 채워야 하는지 알려 줍니다.
+
+```text
+임베딩에 필요한 API 키가 없습니다. 터미널에서 `arche config set-key` 를 실행하거나 환경 변수 OPENAI_API_KEY 를 설정해 주세요.
+```
+
+키를 채운 뒤 서버를 다시 띄울 필요는 없습니다. 다음 호출에서 새로 읽습니다.
 
 모델을 바꾸는 절차와 주의점은 [모델 갈아끼우기](/operate/models)에 있습니다.
 

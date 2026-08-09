@@ -32,7 +32,7 @@ Arche 그래프를 읽는 도구 7개의 요청 필드와 응답 필드를 모�
 
 ## 공통 규약
 
-**응답 봉투.** REST 는 성공 결과를 `{ "data": payload }` 로 감싸고, MCP 는 payload 를 그대로 돌려줍니다. 실패는 양쪽 다 `{ "error": { "code", "message", "details" } }` 모양이고, MCP 응답에는 `isError: true` 가 함께 섭니다. 코드 목록은 [에러 코드](/reference/errors)에 있습니다.
+**응답 형식.** REST 는 성공 결과를 `{ "data": payload }` 로 감싸고, MCP 는 payload 를 그대로 돌려줍니다. 실패는 양쪽 다 `{ "error": { "code", "message", "details" } }` 모양이고, MCP 응답에는 `isError: true` 가 함께 실립니다. 코드 목록은 [에러 코드](/reference/errors)에 있습니다.
 
 **namespace 지정.** MCP 호출에는 HTTP 헤더가 없어서 7개 모두 `namespace_id` 를 도구 인자로 받습니다. REST 는 `Authorization` 헤더를 먼저 보고, 없으면 본문이나 쿼리의 `namespace_id`, 그것도 없으면 `default` 를 씁니다. 자세한 규칙은 [namespace 로 나눠 담기](/operate/namespace)에 있습니다.
 

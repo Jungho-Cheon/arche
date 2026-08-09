@@ -46,7 +46,7 @@ curl -X POST http://localhost:8000/entities/find \
 
 OpenAPI 스펙은 `/openapi.json` 에, 눌러 볼 수 있는 화면은 `/docs` 에 있습니다.
 
-## 응답 봉투
+## 응답 형식
 
 성공 응답은 payload 를 `data` 로 감쌉니다.
 
@@ -96,7 +96,7 @@ curl http://localhost:8000/healthz
 | `status` | `string` | API 자신이 응답하는지 |
 | `graph` | `string` | 그래프 백엔드와 통하는지 |
 
-이 응답에는 `data` 봉투가 없습니다. `graph` 가 `"down"` 이면 그래프 백엔드에 닿지 못한 상태입니다. Neo4j 를 갓 띄웠다면 부팅 중일 수 있으니 몇 초 뒤 다시 부릅니다.
+이 응답은 `data` 로 감싸지 않습니다. `graph` 가 `"down"` 이면 그래프 백엔드에 닿지 못한 상태입니다. Neo4j 를 갓 띄웠다면 부팅 중일 수 있으니 몇 초 뒤 다시 부릅니다.
 
 ## 조회 엔드포인트 7개
 

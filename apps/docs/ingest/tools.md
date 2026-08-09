@@ -32,7 +32,7 @@
 
 ## 공통 규약
 
-**응답 봉투.** MCP 는 payload 를 그대로 돌려줍니다. 실패는 `isError: true` 와 함께 `{ "error": { "code", "message", "details" } }` 로 옵니다. 코드 목록은 [에러 코드](/reference/errors)에 있습니다.
+**응답 형식.** MCP 는 payload 를 그대로 돌려줍니다. 실패는 `isError: true` 와 함께 `{ "error": { "code", "message", "details" } }` 로 옵니다. 코드 목록은 [에러 코드](/reference/errors)에 있습니다.
 
 **출처 라벨.** 같은 출처를 다시 넣을 때는 같은 `source_id`(또는 같은 `path`)를 써야 바뀐 부분만 갱신됩니다. 매번 다른 값을 주면 같은 내용이 중복으로 쌓입니다.
 
@@ -51,16 +51,16 @@
 | `entities_created` | `int` | 새로 만들 노드 수 |
 | `entities_merged` | `int` | 기존 노드에 병합할 수 |
 | `relations_created` | `int` | 새로 만들 관계 수 |
-| `deletion_count` | `int` | 차분으로 지워지거나 잘릴 수 |
+| `deletion_count` | `int` | 바뀐 부분을 반영하며 지워지거나 잘릴 수 |
 | `open_questions` | `int` | 사람 판단이 필요한 질문 수 |
 
 `path` 는 절대 경로여야 하고, 폴더가 아니라 파일 하나를 가리켜야 합니다. 폴더를 통째로 넣는 건 [CLI 명령](/reference/cli)의 `arche ingest` 나 `POST /admin/ingest` 쪽입니다.
 
 <!-- @include: ../reference/_generated/requests/ingest_content.md -->
 
-파일 대신 넘긴 텍스트로 계획을 세웁니다. 다른 도구로 읽어온 페이지를 임시 파일로 떨구지 않고 바로 넣을 때 씁니다. 응답은 `ingest_plan` 과 같은 `PlanSummary` 입니다.
+파일 대신 넘긴 텍스트로 계획을 세웁니다. 다른 도구로 읽어온 페이지를 임시 파일로 저장하지 않고 바로 넣을 때 씁니다. 응답은 `ingest_plan` 과 같은 `PlanSummary` 입니다.
 
-`source_id` 는 파일 경로를 대신하는 차분 기준입니다. `confluence:PAGE-123` 이나 문서 URL 처럼 그 출처를 계속 가리킬 값을 씁니다.
+`source_id` 는 파일 경로를 대신해 같은 출처임을 알아보는 값입니다. `confluence:PAGE-123` 이나 문서 URL 처럼 그 출처를 계속 가리킬 값을 씁니다.
 
 <!-- @include: ../reference/_generated/requests/ingest_preview.md -->
 

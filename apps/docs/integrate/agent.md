@@ -21,11 +21,11 @@
 
 설치하면 `/arche-ingest` 와 `/arche-query` 두 명령이 생기고, 맥락에 맞으면 Claude 가 알아서도 부릅니다.
 
-전제조건은 `arche` 명령이 PATH 에 있어야 하고, 셸에 임베딩 키가 있어야 한다는 것입니다.
+전제조건은 `arche` 명령이 PATH 에 있어야 하고, 임베딩 키가 채워져 있어야 한다는 것입니다.
 
 ```bash
 uv tool install ./apps/api
-export OPENAI_API_KEY=sk-...
+arche config set-key
 ```
 
 플러그인 기본 설정은 추출을 Claude Code 구독 인증으로 돌려서 추출용 API 키가 필요 없습니다. 대신 이미지와 PDF 이미지 페이지가 빠집니다. 바꾸려면 [모델 갈아끼우기](/operate/models)를 보세요.
@@ -133,9 +133,9 @@ uvicorn arche_api.main:app
 
 ## 붙은 뒤 알아 둘 것
 
-**응답에 봉투가 없습니다.** MCP 는 payload 를 그대로 돌려줍니다. REST 처럼 `{ "data": ... }` 로 감싸지 않습니다. 실패는 `isError: true` 와 함께 `{ "error": { ... } }` 로 옵니다.
+**응답을 감싸지 않습니다.** MCP 는 payload 를 그대로 돌려줍니다. REST 처럼 `{ "data": ... }` 로 감싸지 않습니다. 실패는 `isError: true` 와 함께 `{ "error": { ... } }` 로 옵니다.
 
-**namespace 는 도구 인자로 넘깁니다.** MCP 호출에는 HTTP 헤더가 없어서 도구마다 `namespace_id` 를 받습니다. 미지정이면 `default` 입니다. HTTP 전송에서는 클라이언트 설정의 `Authorization` 헤더로 못 박을 수도 있습니다.
+**namespace 는 도구 인자로 넘깁니다.** MCP 호출에는 HTTP 헤더가 없어서 도구마다 `namespace_id` 를 받습니다. 미지정이면 `default` 입니다. HTTP 전송에서는 클라이언트 설정의 `Authorization` 헤더로 고정할 수도 있습니다.
 
 **쓰기 도구는 없습니다.** 노드를 만들거나 관계를 지우는 도구는 노출되지 않습니다. 그래프를 바꾸는 길은 사람 확인을 거치는 검토형 적재뿐입니다. 서버는 기동 직전에 쓰기 도구가 섞였는지 검사하고, 섞여 있으면 등록을 거부합니다.
 

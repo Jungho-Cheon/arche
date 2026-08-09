@@ -189,3 +189,50 @@ async def test_invalid_input_schema_rejected_by_sdk():
             )
             # SDK 의 inputSchema validation 실패 — isError=True 단계에서 차단.
             assert result.isError is True
+
+
+def _keyless_server_params() -> StdioServerParameters:
+    """키 없이 진짜 부팅 경로로 서버를 띄운다 (fake graph 우회 없이).
+
+    OPENAI_API_KEY 를 빈 문자열로 둔다 — 지우기만 하면 저장소의 .env 를 dotenv 가
+    찾아 채워 넣어 "키 없음" 상황이 재현되지 않는다.
+    """
+    env = {k: v for k, v in os.environ.items() if k != "ARCHE_TEST_FAKE_GRAPH"}
+    env.update(
+        {
+            "OPENAI_API_KEY": "",
+            "ARCHE_API_GRAPH_BACKEND": "embedded",
+            "ARCHE_API_KUZU_DB_PATH": ":memory:",
+            "ARCHE_API_LLM_MODEL": "openai/gpt-4.1",
+        }
+    )
+    return StdioServerParameters(
+        command=sys.executable,
+        args=["-m", "arche_api.cli", "mcp", "serve", "--stdio"],
+        env=env,
+    )
+
+
+async def test_server_boots_without_api_key():
+    """키가 없어도 부팅과 tool 목록 조회가 된다 (#160)."""
+    async with stdio_client(_keyless_server_params()) as (read, write):
+        async with ClientSession(read, write) as session:
+            await session.initialize()
+            result = await session.list_tools()
+            names = [t.name for t in result.tools]
+            assert "find_entities" in names
+            assert "ingest_plan" in names
+
+
+async def test_missing_key_surfaces_actionable_error():
+    """키 없이 임베딩이 필요한 조회를 부르면 traceback 이 아니라 안내가 돌아온다."""
+    async with stdio_client(_keyless_server_params()) as (read, write):
+        async with ClientSession(read, write) as session:
+            await session.initialize()
+            result = await session.call_tool(
+                "find_entities", arguments={"keywords": ["환불"], "limit": 5}
+            )
+            assert result.isError is True
+            body = json.loads(result.content[0].text)
+            assert body["error"]["code"] == "dependency_unavailable"
+            assert "arche config set-key" in body["error"]["message"]
