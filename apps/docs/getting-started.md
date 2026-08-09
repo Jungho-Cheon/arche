@@ -33,7 +33,7 @@ Claude Code 를 열고 두 줄을 실행합니다.
 도구는 이미 붙었지만 문서를 넣으려면 임베딩 키가 있어야 합니다. 터미널에서 한 번 넣습니다.
 
 ```bash
-uvx --from "arche-api @ git+https://github.com/Jungho-Cheon/arche.git@v0.1.0#subdirectory=apps/api" \
+uvx --from "arche-api @ git+https://github.com/Jungho-Cheon/arche.git@v0.1.1#subdirectory=apps/api" \
   arche config set-key
 ```
 
@@ -49,7 +49,7 @@ OPENAI_API_KEY 를 /Users/me/.config/arche/config.env 에 저장했습니다.
 **명령이 길어서 거슬리면** 같은 것을 도구로 설치해 두면 `arche` 로 짧게 부를 수 있습니다. 나중에 터미널에서 `arche ingest` 를 직접 쓸 생각이라면 어차피 이쪽이 편합니다.
 
 ```bash
-uv tool install "arche-api @ git+https://github.com/Jungho-Cheon/arche.git@v0.1.0#subdirectory=apps/api"
+uv tool install "arche-api @ git+https://github.com/Jungho-Cheon/arche.git@v0.1.1#subdirectory=apps/api"
 arche config set-key
 ```
 
