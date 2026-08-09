@@ -3,6 +3,8 @@
 Status: accepted
 Date: 2026-06-15
 
+> **Amendment (#170/#171, 2026-08-09)**: 조회 표면에 8번째 read primitive `graph_health` 를 더한다. 그래프에 잘못 저장된 노드 — 이름이 겹쳐 한 대상이 나뉜 것, 두 대상이 한 노드에 든 것, 관계가 하나도 없는 것 — 을 세어 돌려준다. 판단이 아니라 세기라 본 ADR 의 "자연어 미수용" 원칙에 부합한다. 같은 변경에서 `find_entities` 는 `keywords` 를 선택으로 바꿔, 생략하면 조건에 맞는 노드를 id 순으로 전량 열거한다. 도구를 새로 세우지 않고 기존 도구가 두 몫을 하게 한 것은 고르는 기준만 다를 뿐 하는 일이 같기 때문이다. 적재 표면에는 `ingest_delete` 가 더해져 검토형 적재 도구가 6개가 됐다 (#159).
+>
 > **Amendment (#140, 2026-07-19)**: 조회 표면에 7번째 read primitive `find_related` 를 더한다. 시드 노드 집합에서 구조적으로 가까운 관련 노드를 근접 순위로 한 번에 회수하는 원자적 순회다 (HippoRAG 의 Personalized PageRank 착상). 답변 생성이 아니라 구조 순회이므로 본 ADR 의 "원자적 graph primitive 만 노출, 자연어 미수용" 원칙에 부합한다. 구현은 기존 get_subgraph 순회 위에 근접 점수를 얹어 저장소 백엔드(Neo4j/Kuzu)와 무관하게 동작하며 새 저장소 기능을 요구하지 않는다. 요약/답변은 여전히 caller(외부 LLM)의 몫이다.
 >
 > **Amendment (#155, 2026-07-19)**: 검토형 적재 표면에 `ingest_content` 를 더한다. 기존 적재 도구 `ingest_plan` 은 파일 경로만 받았는데, 에이전트가 외부 소스(Jira/Confluence 등)를 자기 MCP 로 읽어와 그 텍스트를 파일 없이 곧장 적재하려면 콘텐츠를 직접 받는 입력이 필요하다. `ingest_content` 는 `{content, source_id}` 를 받아 기존 청크→추출→병합 코어와 plan/preview/commit 사람 검토 게이트를 그대로 재사용한다. 직접 그래프 쓰기를 막는 ADR-0006 D3 는 유지된다 — 콘텐츠 입력도 사람 확인 후에만 커밋되므로 정책 변경이 아니라 입력 모양의 확장(파일과 텍스트)이다. `source_id` 는 파일 경로 자리를 대신하는 논리적 출처 라벨로 idempotent 재적재/차분의 기준이 된다.
