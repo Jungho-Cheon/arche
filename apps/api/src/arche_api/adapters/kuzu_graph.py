@@ -49,9 +49,11 @@ from .graph import (
     _node_to_response,
     _node_to_stored,
     _order_rows_by_degree,
+    _plan_endpoint_move,
     _record_to_edge,
     _source_ref_arrays,
     _to_run_record,
+    _union,
 )
 
 logger = logging.getLogger(__name__)
@@ -123,7 +125,7 @@ class KuzuGraphRepository(GraphRepository):
             f"""CREATE NODE TABLE IF NOT EXISTS {ENTITY_LABEL}(
                 id STRING, name STRING, normalized_name STRING, search_text STRING,
                 type STRING, description STRING,
-                aliases STRING[], normalized_aliases STRING[],
+                aliases STRING[], normalized_aliases STRING[], blocked_aliases STRING[],
                 embedding FLOAT[{dim}], namespace_id STRING,
                 source_paths STRING[], source_chunk_indexes INT64[],
                 source_total_chunks INT64[],
@@ -147,6 +149,12 @@ class KuzuGraphRepository(GraphRepository):
         self._exec(
             f"CREATE REL TABLE IF NOT EXISTS EMITTED_IN(FROM {ENTITY_LABEL} TO IngestionRun)"
         )
+        # 이미 만들어진 DB 는 CREATE ... IF NOT EXISTS 가 컬럼을 더해 주지 않아, 나중에
+        # 생긴 컬럼은 따로 붙인다. 이미 있으면 Kuzu 가 거부하므로 실패를 삼킨다.
+        try:
+            self._exec(f"ALTER TABLE {ENTITY_LABEL} ADD blocked_aliases STRING[]")
+        except Exception:  # noqa: BLE001
+            pass
         self._indexes_dirty = True
 
     def _entity_count(self) -> int:
@@ -347,6 +355,7 @@ class KuzuGraphRepository(GraphRepository):
                 id: $id, name: $name, normalized_name: $normalized_name,
                 search_text: $search_text, type: $type, description: $description,
                 aliases: $aliases, normalized_aliases: $normalized_aliases,
+                blocked_aliases: $blocked_aliases,
                 embedding: $embedding, namespace_id: $namespace_id,
                 source_paths: $source_paths, source_chunk_indexes: $source_chunk_indexes,
                 source_total_chunks: $source_total_chunks,
@@ -359,6 +368,7 @@ class KuzuGraphRepository(GraphRepository):
             description=entity.description or "",
             aliases=list(entity.aliases or []),
             normalized_aliases=list(entity.normalized_aliases or []),
+            blocked_aliases=list(entity.blocked_aliases or []),
             embedding=self._emb_param(entity.embedding),
             namespace_id=entity.namespace_id or "default",
             source_paths=source_paths,
@@ -397,6 +407,12 @@ class KuzuGraphRepository(GraphRepository):
             source_total_chunks=source_totals,
             updated_at=mutation.updated_at,
         )
+        if mutation.blocked_aliases is not None:
+            self._exec(
+                f"MATCH (e:{ENTITY_LABEL} {{id: $id}}) SET e.blocked_aliases = $blocked",
+                id=mutation.id,
+                blocked=list(mutation.blocked_aliases),
+            )
         self._mark_dirty()
 
     def upsert_relation(
@@ -435,6 +451,100 @@ class KuzuGraphRepository(GraphRepository):
             return "", False
         self._mark_dirty()
         return rows[0]["id"], bool(rows[0]["created"])
+
+    def get_entity_relations(
+        self, *, entity_id: str, namespace_id: str = "default"
+    ) -> list[Edge]:
+        rows = self._fetch(
+            f"""MATCH (a:{ENTITY_LABEL})-[r:{RELATION_TYPE_LABEL_DEFAULT}]->(b:{ENTITY_LABEL})
+                WHERE (a.id = $id OR b.id = $id)
+                  AND a.namespace_id = $ns AND b.namespace_id = $ns
+                RETURN r.id AS rel_id, r.type AS rel_type,
+                       r.created_at AS rel_created_at, r.updated_at AS rel_updated_at,
+                       r.source_paths AS rel_source_paths,
+                       a.id AS from_id, b.id AS to_id""",
+            id=entity_id,
+            ns=namespace_id,
+        )
+        return [
+            _record_to_edge(
+                rel_id=r["rel_id"],
+                rel_type=r["rel_type"],
+                rel_created_at=r["rel_created_at"],
+                rel_updated_at=r["rel_updated_at"],
+                rel_source_paths=list(r["rel_source_paths"] or []),
+                from_id=r["from_id"],
+                to_id=r["to_id"],
+            )
+            for r in rows
+        ]
+
+    def move_relation_endpoint(
+        self, *, relation_id: str, old_entity_id: str, new_entity_id: str
+    ) -> None:
+        rows = self._fetch(
+            f"""MATCH (a:{ENTITY_LABEL})-[r:{RELATION_TYPE_LABEL_DEFAULT} {{id: $rid}}]->(b:{ENTITY_LABEL})
+                RETURN a.id AS from_id, b.id AS to_id, r.type AS type,
+                       r.source_paths AS source_paths, r.created_at AS created_at,
+                       r.emitted_in_run_ids AS runs""",
+            rid=relation_id,
+        )
+        if not rows:
+            return
+        rec = rows[0]
+        plan = _plan_endpoint_move(
+            from_id=rec["from_id"],
+            to_id=rec["to_id"],
+            old_entity_id=old_entity_id,
+            new_entity_id=new_entity_id,
+        )
+        if plan is None:
+            return
+        from_id, to_id = plan
+        source_paths = list(rec["source_paths"] or [])
+        runs = list(rec["runs"] or [])
+        existing = self._fetch(
+            f"""MATCH (a:{ENTITY_LABEL} {{id: $from_id}})-[r:{RELATION_TYPE_LABEL_DEFAULT} {{type: $type}}]->(b:{ENTITY_LABEL} {{id: $to_id}})
+                RETURN r.id AS id, r.source_paths AS source_paths,
+                       r.emitted_in_run_ids AS runs""",
+            from_id=from_id,
+            to_id=to_id,
+            type=rec["type"],
+        )
+        self._exec(
+            f"MATCH ()-[r:{RELATION_TYPE_LABEL_DEFAULT} {{id: $rid}}]->() DELETE r",
+            rid=relation_id,
+        )
+        now = now_rfc3339()
+        if existing:
+            # 옮긴 자리에 같은 (from, type, to) 관계가 이미 있으면 출처와 회차를 합친다.
+            keep = existing[0]
+            self._exec(
+                f"""MATCH ()-[r:{RELATION_TYPE_LABEL_DEFAULT} {{id: $rid}}]->()
+                    SET r.source_paths = $source_paths,
+                        r.emitted_in_run_ids = $runs, r.updated_at = $now""",
+                rid=keep["id"],
+                source_paths=_union(list(keep["source_paths"] or []), source_paths),
+                runs=_union(list(keep["runs"] or []), runs),
+                now=now,
+            )
+        else:
+            self._exec(
+                f"""MATCH (a:{ENTITY_LABEL} {{id: $from_id}}), (b:{ENTITY_LABEL} {{id: $to_id}})
+                    CREATE (a)-[r:{RELATION_TYPE_LABEL_DEFAULT} {{
+                        id: $rid, type: $type, source_paths: $source_paths,
+                        created_at: $created_at, updated_at: $now,
+                        emitted_in_run_ids: $runs, _just_created: false }}]->(b)""",
+                from_id=from_id,
+                to_id=to_id,
+                rid=relation_id,
+                type=rec["type"],
+                source_paths=source_paths,
+                created_at=rec["created_at"],
+                now=now,
+                runs=runs,
+            )
+        self._mark_dirty()
 
     # ---------- IngestionRun + 차분 ----------
 

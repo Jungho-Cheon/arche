@@ -293,3 +293,59 @@ def test_merge_mutation_updates_aliases_and_fts(repo):
     # 새 alias 가 FTS 재빌드 후 검색돼야 함
     hits = repo.find_by_keywords_scored(keywords=["반품"], limit_per_keyword=5)
     assert any(h.node.id == policy.id for h in hits)
+
+
+# ---------- 떼어내기 지원 (#B-1) ----------
+
+
+def test_get_entity_relations_returns_both_directions(repo):
+    policy, category, product, _, _ = _seed(repo)
+
+    edges = repo.get_entity_relations(entity_id=category.id)
+
+    assert {(e.from_, e.to) for e in edges} == {
+        (policy.id, category.id),
+        (category.id, product.id),
+    }
+    assert all(e.source_refs for e in edges)
+
+
+def test_move_relation_endpoint_carries_the_relation_over(repo):
+    policy, category, product, _, _ = _seed(repo)
+    spun_off = _entity("clothing archive", "Category", [0.0, 0.9, 0.0, 0.0])
+    repo.create_entity(entity=spun_off)
+    before = {e.id: e for e in repo.get_entity_relations(entity_id=category.id)}
+    rel_id = next(rid for rid, e in before.items() if e.to == product.id)
+
+    repo.move_relation_endpoint(
+        relation_id=rel_id, old_entity_id=category.id, new_entity_id=spun_off.id
+    )
+
+    moved = repo.get_entity_relations(entity_id=spun_off.id)
+    assert [(e.id, e.from_, e.to) for e in moved] == [(rel_id, spun_off.id, product.id)]
+    # 출처와 타입을 그대로 들고 간다 — 옮긴 관계가 원래 그 자리에 있던 것과 같아 보이게.
+    assert moved[0].type == before[rel_id].type
+    assert [sr.source_path for sr in moved[0].source_refs] == [
+        sr.source_path for sr in before[rel_id].source_refs
+    ]
+    assert [e.to for e in repo.get_entity_relations(entity_id=category.id)] == [category.id]
+
+
+def test_blocked_aliases_survive_a_round_trip(repo):
+    entity = _entity("summer program", "Program", [1.0, 0.0, 0.0, 0.0], aliases=["여름"])
+    repo.create_entity(entity=entity)
+
+    repo.apply_merge_mutation(
+        mutation=MergeMutation(
+            id=entity.id,
+            aliases=[],
+            description="",
+            properties={},
+            source_refs=list(entity.source_refs),
+            updated_at=now_rfc3339(),
+            normalized_aliases=[],
+            blocked_aliases=["여름"],
+        )
+    )
+
+    assert repo.get_stored_entity(entity_id=entity.id).blocked_aliases == ["여름"]

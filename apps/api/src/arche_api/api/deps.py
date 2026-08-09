@@ -13,6 +13,7 @@ from ..adapters.extract_cache import DEFAULT_CACHE_DIR, ExtractionCache
 from ..adapters.graph import Neo4jGraphRepository
 from ..adapters.providers import LazyEmbeddingProvider, LazyLLMProvider
 from ..config import Settings, get_settings
+from ..domain.entity_split import SplitService
 from ..domain.ingest import IngestService
 from ..domain.main_entity import MainEntityExtractor
 from .admin_tasks import IngestTaskRegistry
@@ -68,6 +69,19 @@ def ingest_service_dep(
     return build_ingest_service(
         get_settings(), llm=llm, embedder=embedder, graph=graph
     )
+
+
+def split_service_dep(
+    embedder: EmbeddingProvider = Depends(embedding_provider_dep),
+    graph: GraphRepository = Depends(graph_repo_dep),
+) -> SplitService:
+    return SplitService(graph=graph, embedder=embedder)
+
+
+def split_registry_dep(request: Request) -> PlanRegistry:
+    """떼어내기 계획 보관소. 적재 계획과 따로 둬서 plan_id 를 엉뚱한 연산에 넘기면
+    바로 걸린다."""
+    return request.app.state.split_registry
 
 
 def plan_registry_dep(request: Request) -> PlanRegistry:

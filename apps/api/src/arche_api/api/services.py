@@ -15,6 +15,7 @@ from typing import TYPE_CHECKING
 from arche_api.domain.ports import DenseHit, EmbeddingProvider, GraphRepository, KeywordHit
 
 from ..config import Settings
+from ..domain.entity_split import source_ref_paths as split_source_ref_paths
 from ..domain.errors import (
     DependencyUnavailableError,
     EntityNotFoundError,
@@ -37,8 +38,19 @@ from .plan_schemas import (
     ResolveRequest,
 )
 from .security import ensure_entity_id, ensure_namespace_id
+from .split_schemas import (
+    SplitCommitRequest,
+    SplitCommitResponse,
+    SplitEntityView,
+    SplitPlanRequest,
+    SplitPreview,
+    SplitPreviewRequest,
+    SplitRelationView,
+    SplitSummary,
+)
 
 if TYPE_CHECKING:
+    from ..domain.entity_split import SplitPlan, SplitService
     from ..domain.ingest import IngestService
     from ..domain.ingest_plan import IngestPlan
     from .plan_registry import PlanRegistry
@@ -725,4 +737,128 @@ def commit_plan(
         entities_updated=result.entities_updated,
         relations_created=result.relations_created,
         deletions=result.relations_deleted,
+    )
+
+
+# ---------- 떼어내기: plan → preview → commit ----------
+# 잘못 합친 노드를 둘로 가른다. 적재와 같은 안전 latch 를 쓰되 resolve 단계가 없다 —
+# 계획에 LLM 호출이 없어, 사람이 정한 관계 배정을 실어 다시 계획하는 편이 싸다.
+
+
+def _require_split_plan(plan_id: str, registry: PlanRegistry) -> SplitPlan:
+    plan = registry.get(plan_id)
+    if plan is None:
+        raise InvalidInputError(
+            "unknown or expired plan_id",
+            details={"plan_id": plan_id, "plan_ttl_seconds": registry.ttl_seconds},
+        )
+    return plan
+
+
+def _split_summary(plan: SplitPlan) -> SplitSummary:
+    moved = [a for a in plan.assignments if a.decision == "move"]
+    kept = [a for a in plan.assignments if a.decision == "keep"]
+    return SplitSummary(
+        plan_id=plan.plan_id,
+        origin_id=plan.origin_id,
+        origin_name=plan.origin_name,
+        new_name=plan.new_entity.name,
+        aliases_moved=len(plan.new_entity.aliases),
+        aliases_kept=len(plan.origin_mutation.aliases),
+        source_refs_moved=len(plan.new_entity.source_refs),
+        source_refs_kept=len(plan.origin_mutation.source_refs),
+        relations_moved=len(moved),
+        relations_kept=len(kept),
+        open_questions=len(plan.open_questions),
+    )
+
+
+def _relation_view(assignment) -> SplitRelationView:  # noqa: ANN001
+    return SplitRelationView(
+        relation_id=assignment.relation_id,
+        type=assignment.rel_type,
+        direction=assignment.direction,
+        other_id=assignment.other_id,
+        other_name=assignment.other_name,
+        source_paths=list(assignment.source_paths),
+        decision=assignment.decision,
+        reason=assignment.reason,
+    )
+
+
+def plan_entity_split(
+    body: SplitPlanRequest,
+    *,
+    service: SplitService,
+    registry: PlanRegistry,
+) -> SplitSummary:
+    """그래프를 건드리지 않고 떼어내기 계획을 세워 보관한다."""
+    from ulid import ULID
+
+    plan = service.plan_split(
+        plan_id=f"spl_{ULID()}",
+        entity_id=ensure_entity_id(body.entity_id),
+        new_name=body.new_name,
+        move_aliases=body.move_aliases,
+        move_source_paths=body.move_source_paths,
+        relation_decisions=dict(body.relation_decisions),
+        new_description=body.new_description,
+        namespace_id=ensure_namespace_id(body.namespace_id),
+    )
+    registry.create(plan)
+    return _split_summary(plan)
+
+
+def preview_entity_split(
+    body: SplitPreviewRequest,
+    *,
+    registry: PlanRegistry,
+) -> SplitPreview:
+    """두 노드가 어떤 모습이 되고 관계가 어디로 가는지 펼치고, 확정 latch 를 건다."""
+    plan = _require_split_plan(body.plan_id, registry)
+    registry.mark_previewed(plan.plan_id)
+    relations = [_relation_view(a) for a in plan.assignments]
+    return SplitPreview(
+        plan_id=plan.plan_id,
+        origin=SplitEntityView(
+            id=plan.origin_id,
+            name=plan.origin_name,
+            type=plan.new_entity.type,
+            aliases=list(plan.origin_mutation.aliases),
+            description=plan.origin_mutation.description or None,
+            source_paths=split_source_ref_paths(plan.origin_mutation.source_refs),
+        ),
+        new_entity=SplitEntityView(
+            id=plan.new_entity.id,
+            name=plan.new_entity.name,
+            type=plan.new_entity.type,
+            aliases=list(plan.new_entity.aliases),
+            description=plan.new_entity.description,
+            source_paths=split_source_ref_paths(plan.new_entity.source_refs),
+        ),
+        relations=relations,
+        questions=[r for r in relations if r.decision == "ask"],
+    )
+
+
+def commit_entity_split(
+    body: SplitCommitRequest,
+    *,
+    service: SplitService,
+    registry: PlanRegistry,
+) -> SplitCommitResponse:
+    """미리 보기를 거치고 사람 판단이 모두 끝난 계획만 그래프에 반영한다."""
+    plan = _require_split_plan(body.plan_id, registry)
+    if not plan.previewed:
+        raise UnprocessableError(
+            "call entity_split_preview before commit", details={"plan_id": plan.plan_id}
+        )
+    result = service.commit_split(plan)
+    return SplitCommitResponse(
+        origin_id=result.origin_id,
+        new_entity_id=result.new_entity_id,
+        aliases_moved=result.aliases_moved,
+        source_refs_moved=result.source_refs_moved,
+        relations_moved=result.relations_moved,
+        relations_kept=result.relations_kept,
     )

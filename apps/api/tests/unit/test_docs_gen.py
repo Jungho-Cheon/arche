@@ -78,18 +78,25 @@ def test_error_catalog_guard_raises_when_gloss_misses_a_code(monkeypatch):
 
 
 def test_tool_catalog_counts_derive_from_code():
-    """조회/적재 도구 표가 코드의 도구 집합에서 개수까지 파생된다."""
-    from arche_api.mcp_server import _TOOL_DESCRIPTIONS, INGEST_TOOL_NAMES
+    """조회/적재/떼어내기 도구 표가 코드의 도구 집합에서 개수까지 파생된다."""
+    from arche_api.mcp_server import (
+        _TOOL_DESCRIPTIONS,
+        INGEST_TOOL_NAMES,
+        SPLIT_TOOL_NAMES,
+    )
 
-    query_count = len([n for n in _TOOL_DESCRIPTIONS if n not in set(INGEST_TOOL_NAMES)])
-    ingest_count = len(INGEST_TOOL_NAMES)
+    write_names = set(INGEST_TOOL_NAMES) | set(SPLIT_TOOL_NAMES)
+    query_count = len([n for n in _TOOL_DESCRIPTIONS if n not in write_names])
 
     query_md = docs_gen.generate_query_tool_catalog()
     ingest_md = docs_gen.generate_ingest_tool_catalog()
+    split_md = docs_gen.generate_split_tool_catalog()
     assert f"조회 도구 {query_count}개입니다." in query_md
-    assert f"검토형 적재 도구 {ingest_count}개입니다." in ingest_md
+    assert f"검토형 적재 도구 {len(INGEST_TOOL_NAMES)}개입니다." in ingest_md
+    assert f"떼어내기 도구 {len(SPLIT_TOOL_NAMES)}개입니다." in split_md
     assert "| `find_entities` |" in query_md
     assert "| `ingest_commit` |" in ingest_md
+    assert "| `entity_split_commit` |" in split_md
 
 
 def test_request_table_carries_defaults_ranges_and_descriptions():

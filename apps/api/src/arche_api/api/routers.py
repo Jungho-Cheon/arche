@@ -13,6 +13,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query, Response
 
 from arche_api.domain.ports import EmbeddingProvider, GraphRepository
 
+from ..domain.entity_split import SplitService
 from ..domain.errors import InvalidInputError
 from ..domain.ingest import IngestService
 from . import services
@@ -28,6 +29,8 @@ from .deps import (
     ingest_service_dep,
     plan_registry_dep,
     settings_dep,
+    split_registry_dep,
+    split_service_dep,
     task_registry_dep,
 )
 from .plan_registry import PlanRegistry
@@ -69,6 +72,14 @@ from .schemas import (
     HealthzResponse,
     NamespaceSummary,
 )
+from .split_schemas import (
+    SplitCommitRequest,
+    SplitCommitResponse,
+    SplitPlanRequest,
+    SplitPreview,
+    SplitPreviewRequest,
+    SplitSummary,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -80,6 +91,9 @@ paths_router = APIRouter(prefix="/paths", tags=["paths"])
 subgraph_router = APIRouter(prefix="/subgraph", tags=["subgraph"])
 related_router = APIRouter(prefix="/related", tags=["related"])
 ingest_router = APIRouter(prefix="/ingest", tags=["ingest"])
+# 떼어내기는 노드를 다루는 연산이라 /entities 아래 둔다. /admin 아래가 아닌 이유는
+# 검토가 관리자 기능이 아니라 일상 작업이기 때문이다.
+split_router = APIRouter(prefix="/entities/split", tags=["split"])
 
 
 @health_router.get("/healthz", response_model=HealthzResponse)
@@ -257,6 +271,58 @@ def find_related(
     """
     namespace_id = body.namespace_id or auth.namespace_id
     payload = services.find_related(body, graph=graph, namespace_id=namespace_id)
+    return DataEnvelope(data=payload)
+
+
+# ---------- 떼어내기: plan → preview → commit ----------
+# 잘못 합친 노드를 둘로 가른다. 적재와 같은 안전 latch 를 쓰되 resolve 단계가 없다 —
+# 계획에 LLM 호출이 없어, 사람이 정한 관계 배정을 실어 다시 계획하는 편이 싸다.
+
+
+@split_router.post(
+    "/plan",
+    response_model=DataEnvelope[SplitSummary],
+    response_model_exclude_none=True,
+)
+def entity_split_plan(
+    body: SplitPlanRequest,
+    service: SplitService = Depends(split_service_dep),
+    registry: PlanRegistry = Depends(split_registry_dep),
+    auth: AuthContext = Depends(auth_context_dep),
+) -> DataEnvelope[SplitSummary]:
+    """떼어내기 계획 — services.plan_entity_split 위임. 그래프는 읽기만 한다."""
+    if "namespace_id" not in body.model_fields_set:
+        body = body.model_copy(update={"namespace_id": auth.namespace_id})
+    payload = services.plan_entity_split(body, service=service, registry=registry)
+    return DataEnvelope(data=payload)
+
+
+@split_router.post(
+    "/preview",
+    response_model=DataEnvelope[SplitPreview],
+    response_model_exclude_none=True,
+)
+def entity_split_preview(
+    body: SplitPreviewRequest,
+    registry: PlanRegistry = Depends(split_registry_dep),
+) -> DataEnvelope[SplitPreview]:
+    """두 노드의 최종 모습과 관계별 행선지 — services.preview_entity_split 위임."""
+    payload = services.preview_entity_split(body, registry=registry)
+    return DataEnvelope(data=payload)
+
+
+@split_router.post(
+    "/commit",
+    response_model=DataEnvelope[SplitCommitResponse],
+    response_model_exclude_none=True,
+)
+def entity_split_commit(
+    body: SplitCommitRequest,
+    service: SplitService = Depends(split_service_dep),
+    registry: PlanRegistry = Depends(split_registry_dep),
+) -> DataEnvelope[SplitCommitResponse]:
+    """미리 보기를 거치고 판단이 끝난 계획만 반영 — services.commit_entity_split 위임."""
+    payload = services.commit_entity_split(body, service=service, registry=registry)
     return DataEnvelope(data=payload)
 
 

@@ -26,6 +26,7 @@ from .api.routers import (
     paths_router,
     related_router,
     schema_router,
+    split_router,
     subgraph_router,
 )
 from .api.schemas import ErrorBody, ErrorEnvelope
@@ -50,6 +51,7 @@ async def lifespan(app: FastAPI):
     # 검토형 적재의 계획 보관소. REST 의 /ingest/* 와 MCP HTTP 가 같은 인스턴스를
     # 공유해, 한 통로에서 세운 계획을 다른 통로에서 확정할 수 있다.
     app.state.plan_registry = PlanRegistry(ttl_seconds=settings.plan_ttl_seconds)
+    app.state.split_registry = PlanRegistry(ttl_seconds=settings.plan_ttl_seconds)
 
     # 인덱스 마이그레이션 — idempotent.
     try:
@@ -78,6 +80,7 @@ async def lifespan(app: FastAPI):
             settings=settings,
             ingest_service=ingest_service,
             plan_registry=app.state.plan_registry,
+            split_registry=app.state.split_registry,
         )
         logger.info("MCP HTTP routes mounted at /mcp/v1")
     except Exception as e:  # noqa: BLE001
@@ -108,6 +111,7 @@ def create_app() -> FastAPI:
     app.include_router(subgraph_router)
     app.include_router(related_router)
     app.include_router(ingest_router)
+    app.include_router(split_router)
     app.include_router(admin_router)
     # /v1/ versioning alias — 기존 path 유지 + /v1/ prefix 동시 노출.
     app.include_router(health_router, prefix="/v1")
@@ -117,6 +121,7 @@ def create_app() -> FastAPI:
     app.include_router(subgraph_router, prefix="/v1")
     app.include_router(related_router, prefix="/v1")
     app.include_router(ingest_router, prefix="/v1")
+    app.include_router(split_router, prefix="/v1")
     app.include_router(admin_router, prefix="/v1")
 
     @app.exception_handler(ArcheError)

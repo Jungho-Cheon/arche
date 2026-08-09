@@ -264,6 +264,26 @@ class GraphStore(ABC):
         source_ref: SourceRef,
     ) -> tuple[str, bool]: ...
 
+    # ----- 떼어내기 (선택적 확장점) -----
+    # 두 메서드는 노드를 둘로 가르는 연산에만 쓰인다. 기본 구현이 NotImplementedError
+    # 를 던지는 건 조용한 오작동을 막기 위해서다 — 관계를 못 읽는 store 에서 가르면
+    # 관계가 통째로 한쪽에 남는데, 그게 성공처럼 보이면 안 된다.
+
+    def get_entity_relations(
+        self, *, entity_id: str, namespace_id: str = "default"
+    ) -> list[Edge]:
+        """이 노드에 붙은 관계 전부 (양방향, source_refs 포함). 노드를 둘로 가를 때
+        각 관계를 어느 쪽에 붙일지 출처로 판단하려고 쓴다."""
+        raise NotImplementedError("이 store 는 떼어내기를 지원하지 않습니다")
+
+    def move_relation_endpoint(
+        self, *, relation_id: str, old_entity_id: str, new_entity_id: str
+    ) -> None:
+        """관계의 끝점 하나를 옮긴다 — old_entity_id 자리를 new_entity_id 로 바꾼다.
+        방향과 type, 출처, 만든 시각, 적재 회차는 그대로 들고 간다. 옮긴 자리에 같은
+        관계가 이미 있으면 출처와 회차를 합친다. 관계가 없으면 조용히 넘어간다."""
+        raise NotImplementedError("이 store 는 떼어내기를 지원하지 않습니다")
+
     # ----- IngestionRun + 차분 -----
 
     @abstractmethod

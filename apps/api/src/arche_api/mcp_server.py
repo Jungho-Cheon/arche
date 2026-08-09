@@ -38,6 +38,11 @@ from .api.responses import (
     GetSubgraphRequest,
 )
 from .api.schemas import FindEntitiesRequest
+from .api.split_schemas import (
+    SplitCommitRequest,
+    SplitPlanRequest,
+    SplitPreviewRequest,
+)
 from .config import Settings
 from .domain.errors import ArcheError
 
@@ -153,6 +158,34 @@ _TOOL_DESCRIPTIONS: dict[str, str] = {
         "rejected (unprocessable) unless the plan was previewed, and also "
         "rejected if the graph drifted and the plan went stale (re-plan)."
     ),
+    # 떼어내기 — 잘못 합친 노드를 되돌리는 유일한 길. 같은 검토 latch 를 쓴다.
+    "entity_split_plan": (
+        "Plan splitting ONE node that wrongly merged two different real-world "
+        "things back into two nodes, WITHOUT writing to the graph. Give "
+        "`entity_id`, the `new_name` for the split-off node (usually one of the "
+        "node's own aliases), and what moves with it: `move_aliases` and "
+        "`move_source_paths`. Relations are assigned automatically by the source "
+        "document they came from; any relation whose sources fall on both sides "
+        "(or that has no source left) is surfaced as a question you MUST ask the "
+        "human about. Feed their answers back as `relation_decisions` and plan "
+        "again — planning is cheap here because no extraction runs. Then call "
+        "entity_split_preview, show the human both resulting nodes, and only "
+        "call entity_split_commit after they confirm."
+    ),
+    "entity_split_preview": (
+        "Expand a split plan (by `plan_id`): what each of the two nodes will "
+        "look like afterwards, and where every relation goes with a one-line "
+        "reason. This arms the safety latch that entity_split_commit requires. "
+        "If `questions` is non-empty the split cannot be committed — ask the "
+        "human about each and re-plan with `relation_decisions`."
+    ),
+    "entity_split_commit": (
+        "Apply a previously previewed split (by `plan_id`). Rejected "
+        "(unprocessable) without a prior entity_split_preview, while any "
+        "relation is still undecided, or if the origin node disappeared. After "
+        "the split the two nodes refuse to re-absorb each other's aliases, so "
+        "re-ingesting the same documents will not merge them back."
+    ),
 }
 
 
@@ -164,6 +197,13 @@ INGEST_TOOL_NAMES: tuple[str, ...] = (
     "ingest_preview",
     "ingest_resolve",
     "ingest_commit",
+)
+
+# 떼어내기 tool — 적재와 같이 사람 검토 latch 를 통과한 변경만 반영한다.
+SPLIT_TOOL_NAMES: tuple[str, ...] = (
+    "entity_split_plan",
+    "entity_split_preview",
+    "entity_split_commit",
 )
 
 
@@ -317,6 +357,29 @@ def _build_ingest_tools() -> list[mcp_types.Tool]:
     ]
 
 
+def _build_split_tools() -> list[mcp_types.Tool]:
+    """떼어내기의 3 tool — 적재와 마찬가지로 registry 가 주입된 서버에서만 등록.
+    입력 스키마는 split_schemas 의 Pydantic 모델에서 그대로 끌어와 REST 와 같은
+    출처를 공유한다."""
+    return [
+        mcp_types.Tool(
+            name="entity_split_plan",
+            description=_TOOL_DESCRIPTIONS["entity_split_plan"],
+            inputSchema=_build_input_schema(SplitPlanRequest),
+        ),
+        mcp_types.Tool(
+            name="entity_split_preview",
+            description=_TOOL_DESCRIPTIONS["entity_split_preview"],
+            inputSchema=_build_input_schema(SplitPreviewRequest),
+        ),
+        mcp_types.Tool(
+            name="entity_split_commit",
+            description=_TOOL_DESCRIPTIONS["entity_split_commit"],
+            inputSchema=_build_input_schema(SplitCommitRequest),
+        ),
+    ]
+
+
 def _merge_id_into_schema(schema: dict[str, Any]) -> dict[str, Any]:
     """get_neighbors 입력 — REST 의 URL path id 를 MCP body 의 properties 에 끼워 넣어
     한 객체로 만든다."""
@@ -342,6 +405,7 @@ def _dispatch_tool(
     settings: Settings,
     ingest_service: IngestService | None = None,
     plan_registry: PlanRegistry | None = None,
+    split_registry: PlanRegistry | None = None,
 ) -> BaseModel:
     """단일 tool 호출을 services 로 위임. 입력 검증 실패는 ValidationError 로 전파.
 
@@ -413,6 +477,27 @@ def _dispatch_tool(
         # ingest_commit
         commit_body = CommitRequest.model_validate(arguments)
         return services.commit_plan(commit_body, service=ingest_service, registry=plan_registry)
+    if name in SPLIT_TOOL_NAMES:
+        if split_registry is None:
+            raise ValueError(f"tool `{name}` requires a split registry")
+        from .domain.entity_split import SplitService
+
+        split_service = SplitService(graph=graph, embedder=embedder)
+        if name == "entity_split_plan":
+            return services.plan_entity_split(
+                SplitPlanRequest.model_validate(arguments),
+                service=split_service,
+                registry=split_registry,
+            )
+        if name == "entity_split_preview":
+            return services.preview_entity_split(
+                SplitPreviewRequest.model_validate(arguments), registry=split_registry
+            )
+        return services.commit_entity_split(
+            SplitCommitRequest.model_validate(arguments),
+            service=split_service,
+            registry=split_registry,
+        )
     # 등록되지 않은 이름 — MCP 클라이언트의 잘못된 호출.
     raise ValueError(f"unknown tool: {name}")
 
@@ -480,6 +565,7 @@ def build_mcp_server(
     *,
     ingest_service: IngestService | None = None,
     plan_registry: PlanRegistry | None = None,
+    split_registry: PlanRegistry | None = None,
 ) -> Server:
     """MCP Server 객체 생성 + tool 등록.
 
@@ -499,6 +585,12 @@ def build_mcp_server(
         "`find_related` instead of walking neighbors hop by hop."
     )
     register_ingest = ingest_service is not None and plan_registry is not None
+    if register_ingest and split_registry is None:
+        # 쓰기를 여는 서버면 떼어내기도 함께 연다. 계획 보관소를 안 넘겼으면 이
+        # 서버 수명만큼 사는 것을 하나 만든다.
+        from .api.plan_registry import PlanRegistry as _PlanRegistry
+
+        split_registry = _PlanRegistry()
     if register_ingest:
         # reviewable ingest 의식: 계획 -> 미리보기 -> 질문 해소 -> 사람 확인 ->
         # 반영. LLM 이 사람의 검토를 건너뛰고 그래프를 바꾸지 못하도록 순서를
@@ -512,7 +604,10 @@ def build_mcp_server(
             "ones), ask the human about each and feed their answers to "
             "`ingest_resolve`, then `ingest_preview` again. Only after the human "
             "explicitly confirms call `ingest_commit`. Never skip the preview, "
-            "resolve, or commit on the human's behalf."
+            "resolve, or commit on the human's behalf. If you find one node that "
+            "wrongly holds two different real-world things, split it back apart "
+            "with the same ritual: `entity_split_plan` -> `entity_split_preview` "
+            "-> human confirms -> `entity_split_commit`."
         )
     else:
         # 쓰기 tool 이 없는 read-only 부팅 경로 (ARCHE_TEST_FAKE_GRAPH 등) — 원래의
@@ -528,7 +623,7 @@ def build_mcp_server(
 
     tools = _build_tools()
     if register_ingest:
-        tools = tools + _build_ingest_tools()
+        tools = tools + _build_ingest_tools() + _build_split_tools()
     _assert_no_write_tools(tools)
 
     @server.list_tools()
@@ -553,6 +648,7 @@ def build_mcp_server(
                 settings=settings,
                 ingest_service=ingest_service,
                 plan_registry=plan_registry,
+                split_registry=split_registry,
             )
         except BaseException as exc:  # noqa: BLE001
             err = _to_mcp_error(exc)
@@ -600,6 +696,7 @@ async def run_stdio_server(
     *,
     ingest_service: IngestService | None = None,
     plan_registry: PlanRegistry | None = None,
+    split_registry: PlanRegistry | None = None,
 ) -> None:
     """stdio transport 로 서버를 띄운다(server.run 이 async 라 asyncio.run 으로 호출).
     ingest_service + plan_registry 를 함께 넘기면 reviewable ingest tool 까지 노출한다."""
@@ -611,6 +708,7 @@ async def run_stdio_server(
         settings,
         ingest_service=ingest_service,
         plan_registry=plan_registry,
+        split_registry=split_registry,
     )
     async with stdio_server() as (read_stream, write_stream):
         await server.run(

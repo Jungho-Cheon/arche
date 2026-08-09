@@ -242,6 +242,11 @@ def _request_specs() -> list[tuple[str, str, type[BaseModel]]]:
         GetSubgraphRequest,
     )
     from .api.schemas import AdminIngestRequest, FindEntitiesRequest
+    from .api.split_schemas import (
+        SplitCommitRequest,
+        SplitPlanRequest,
+        SplitPreviewRequest,
+    )
 
     return [
         ("find_entities", "find_entities", FindEntitiesRequest),
@@ -254,6 +259,9 @@ def _request_specs() -> list[tuple[str, str, type[BaseModel]]]:
         ("ingest_preview", "ingest_preview", PreviewRequest),
         ("ingest_resolve", "ingest_resolve", ResolveRequest),
         ("ingest_commit", "ingest_commit", CommitRequest),
+        ("entity_split_plan", "entity_split_plan", SplitPlanRequest),
+        ("entity_split_preview", "entity_split_preview", SplitPreviewRequest),
+        ("entity_split_commit", "entity_split_commit", SplitCommitRequest),
         ("admin/ingest", "admin-ingest", AdminIngestRequest),
     ]
 
@@ -285,12 +293,15 @@ _TOOL_GLOSS_KO: dict[str, str] = {
     "ingest_preview": "계획 번호로 바뀔 내용을 항목별로 펼쳐 사람이 검토하게 한다.",
     "ingest_resolve": "미리 보기가 물은 질문(닮은 점을 합칠지 따로 둘지)에 사람의 결정을 반영한다.",
     "ingest_commit": "사람이 확인한 계획을 그제야 그래프에 반영한다.",
+    "entity_split_plan": "서로 다른 둘이 한 노드로 뭉쳤을 때, 둘로 가를 계획을 세운다. 그래프는 아직 그대로다.",
+    "entity_split_preview": "가른 뒤 두 노드가 어떤 모습이 되고 관계가 어디로 가는지 펼친다.",
+    "entity_split_commit": "사람이 확인한 대로 노드를 둘로 가른다.",
 }
 
 
-def _tool_names() -> tuple[list[str], list[str]]:
-    """코드에서 (조회 도구 이름, 검토형 적재 도구 이름)을 파생. gloss 커버리지 guard."""
-    from .mcp_server import _TOOL_DESCRIPTIONS, INGEST_TOOL_NAMES
+def _tool_names() -> tuple[list[str], list[str], list[str]]:
+    """코드에서 (조회, 검토형 적재, 떼어내기) 도구 이름을 파생. gloss 커버리지 guard."""
+    from .mcp_server import _TOOL_DESCRIPTIONS, INGEST_TOOL_NAMES, SPLIT_TOOL_NAMES
 
     all_names = list(_TOOL_DESCRIPTIONS.keys())
     if set(_TOOL_GLOSS_KO) != set(all_names):
@@ -302,9 +313,11 @@ def _tool_names() -> tuple[list[str], list[str]]:
             "docs_gen.py 의 _TOOL_GLOSS_KO 를 갱신하세요."
         )
     ingest = set(INGEST_TOOL_NAMES)
-    query_names = [n for n in all_names if n not in ingest]
+    split = set(SPLIT_TOOL_NAMES)
+    query_names = [n for n in all_names if n not in ingest and n not in split]
     ingest_names = [n for n in all_names if n in ingest]
-    return query_names, ingest_names
+    split_names = [n for n in all_names if n in split]
+    return query_names, ingest_names, split_names
 
 
 def _render_tool_table(names: list[str]) -> str:
@@ -315,7 +328,7 @@ def _render_tool_table(names: list[str]) -> str:
 
 
 def generate_query_tool_catalog() -> str:
-    query_names, _ = _tool_names()
+    query_names, _, _ = _tool_names()
     return (
         _INCLUDE_MARK
         + f"\n조회 도구 {len(query_names)}개입니다.\n\n"
@@ -324,11 +337,20 @@ def generate_query_tool_catalog() -> str:
 
 
 def generate_ingest_tool_catalog() -> str:
-    _, ingest_names = _tool_names()
+    _, ingest_names, _ = _tool_names()
     return (
         _INCLUDE_MARK
         + f"\n검토형 적재 도구 {len(ingest_names)}개입니다.\n\n"
         + _render_tool_table(ingest_names)
+    )
+
+
+def generate_split_tool_catalog() -> str:
+    _, _, split_names = _tool_names()
+    return (
+        _INCLUDE_MARK
+        + f"\n떼어내기 도구 {len(split_names)}개입니다.\n\n"
+        + _render_tool_table(split_names)
     )
 
 
@@ -429,6 +451,7 @@ def _targets() -> list[tuple[Path, str]]:
         (base / "error-catalog.md", generate_error_catalog()),
         (base / "tool-catalog-query.md", generate_query_tool_catalog()),
         (base / "tool-catalog-ingest.md", generate_ingest_tool_catalog()),
+        (base / "tool-catalog-split.md", generate_split_tool_catalog()),
     ]
     for slug, body in generate_request_tables():
         targets.append((base / "requests" / f"{slug}.md", body))
