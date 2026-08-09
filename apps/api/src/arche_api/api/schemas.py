@@ -50,7 +50,10 @@ class FindEntitiesRequest(BaseModel):
     limit: int = Field(default=10, ge=1, le=50)
     include_scores: bool = Field(
         default=False,
-        description="True 이면 매치별 raw lexical/dense 점수 동봉 (디버깅 / 커스텀 re-rank).",
+        description=(
+            "True 이면 매치마다 lexical/dense 원점수를 응답에 함께 담는다 "
+            "(디버깅, 직접 재정렬용)."
+        ),
     )
     # 질의할 namespace. REST 는 미지정 시 auth 헤더 > "default", MCP 는 "default".
     namespace_id: str | None = Field(

@@ -30,7 +30,7 @@ export default withMermaid(defineConfig({
           { text: "적재", link: "/ingest/" },
           { text: "질의", link: "/query/" },
           { text: "운영", link: "/operate/storage" },
-          { text: "붙이기", link: "/integrate/agent" },
+          { text: "연결", link: "/integrate/agent" },
           { text: "참고", link: "/reference/rest-api" },
         ],
         sidebar: [
@@ -60,7 +60,7 @@ export default withMermaid(defineConfig({
             text: "질의",
             items: [
               { text: "그래프에 묻기", link: "/query/" },
-              { text: "경로 품질과 hub_score", link: "/query/path-quality" },
+              { text: "경로 신뢰도와 hub_score", link: "/query/path-quality" },
               { text: "조회 도구 참조표", link: "/query/tools" },
             ],
           },
@@ -74,10 +74,10 @@ export default withMermaid(defineConfig({
             ],
           },
           {
-            text: "붙이기",
+            text: "연결",
             items: [
-              { text: "에이전트에 붙이기", link: "/integrate/agent" },
-              { text: "REST 로 붙이기", link: "/integrate/rest" },
+              { text: "에이전트와 연결하기", link: "/integrate/agent" },
+              { text: "REST 로 직접 부르기", link: "/integrate/rest" },
             ],
           },
           {

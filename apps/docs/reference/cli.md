@@ -73,7 +73,7 @@ arche ingest <경로> [--dry-run]
 
 **추출 결과는 캐시에 남습니다.** 같은 내용을 같은 모델로 다시 뽑지 않도록 `.arche-cache/extract` 에 쌓입니다. 지워도 안전하고, 지우면 다음 적재에서 다시 뽑습니다.
 
-이 명령은 그래프 저장소에 직접 붙습니다. API 서버가 떠 있을 필요는 없습니다.
+이 명령은 그래프 저장소에 직접 접속합니다. API 서버가 떠 있을 필요는 없습니다.
 
 ## arche mcp serve
 
@@ -102,7 +102,7 @@ MCP 클라이언트에 이렇게 등록합니다.
 [error] `arche mcp serve` 는 stdio 전송 전용입니다. HTTP(SSE) 로 붙이려면 API 서버를 띄우세요: `uvicorn arche_api.main:app` → /mcp/v1.
 ```
 
-네트워크 너머 원격 에이전트를 붙이는 방법은 [에이전트에 붙이기](/integrate/agent)에서 다룹니다.
+네트워크 너머 원격 에이전트를 연결하는 방법은 [에이전트와 연결하기](/integrate/agent)에서 다룹니다.
 
 기동할 때 색인 생성에 실패해도 서버는 뜹니다. 다음 경고만 남기고 넘어가며, 조회 요청이 실제로 막히면 그때 `dependency_unavailable` 로 드러납니다.
 
@@ -180,4 +180,4 @@ arche version
 
 - [환경 변수](/reference/configuration) — `.env` 에 채우는 값
 - [문서를 그래프에 넣기](/ingest/) — 적재 방식 고르기
-- [에이전트에 붙이기](/integrate/agent) — MCP 전송 방식 고르기
+- [에이전트와 연결하기](/integrate/agent) — MCP 전송 방식 고르기

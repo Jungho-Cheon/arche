@@ -51,7 +51,7 @@
 | `entities_created` | `int` | 새로 만들 노드 수 |
 | `entities_merged` | `int` | 기존 노드에 병합할 수 |
 | `relations_created` | `int` | 새로 만들 관계 수 |
-| `deletion_count` | `int` | 바뀐 부분을 반영하며 지워지거나 잘릴 수 |
+| `deletion_count` | `int` | 바뀐 부분을 반영하며 지워지거나 줄어들 항목 수 |
 | `open_questions` | `int` | 사람 판단이 필요한 질문 수 |
 
 `path` 는 절대 경로여야 하고, 폴더가 아니라 파일 하나를 가리켜야 합니다. 폴더를 통째로 넣는 건 [CLI 명령](/reference/cli)의 `arche ingest` 나 `POST /admin/ingest` 쪽입니다.
@@ -71,10 +71,10 @@
 | `new_entities` | `NewEntityView[]` | `name`, `type`, `aliases` |
 | `merges` | `MergeView[]` | `target_id`, `before_name`, `after_aliases` |
 | `new_relations` | `RelationView[]` | `from_id`, `to_id`, `type` |
-| `deletion_count` | `int` | 지워지거나 잘릴 수 |
+| `deletion_count` | `int` | 지워지거나 줄어들 항목 수 |
 | `questions` | `QuestionView[]` | 사람 판단이 필요한 항목 |
 
-`QuestionView` 는 `question_id`, `extracted_name`, `extracted_type`, `candidate_id`, `candidate_name`, `similarity`, `kind` 를 담습니다. 새로 뽑은 노드가 기존 노드와 닮았지만 자동으로 합칠 만큼은 아닐 때 실립니다.
+`QuestionView` 는 `question_id`, `extracted_name`, `extracted_type`, `candidate_id`, `candidate_name`, `similarity`, `kind` 를 담습니다. 새로 뽑은 노드가 기존 노드와 닮았지만 자동으로 합칠 만큼은 아닐 때 나옵니다.
 
 <!-- @include: ../reference/_generated/requests/ingest_resolve.md -->
 

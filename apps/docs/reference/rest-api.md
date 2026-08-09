@@ -2,7 +2,7 @@
 
 Arche API 서버가 받는 HTTP 주소(엔드포인트) 11개를 모은 참조표입니다. 조회 7개는 [조회 도구 참조표](/query/tools)의 MCP 도구와 같은 스키마를 쓰고, 나머지는 상태 확인과 관리 엔드포인트입니다.
 
-REST 는 에이전트를 쓰지 않고 직접 부를 때의 통로입니다. 에이전트로 붙이는 기본 통로는 MCP 이고, [에이전트에 붙이기](/integrate/agent)에서 다룹니다.
+REST 는 에이전트를 쓰지 않고 직접 부를 때의 통로입니다. 에이전트를 연결하는 기본 통로는 MCP 이고, [에이전트와 연결하기](/integrate/agent)에서 다룹니다.
 
 ## 최소 예시
 
@@ -146,7 +146,7 @@ curl http://localhost:8000/healthz
 }
 ```
 
-`state` 는 `running`, `succeeded`, `failed` 중 하나입니다. 실패하면 `error` 에 `code` 와 `message` 가 실립니다.
+`state` 는 `running`, `succeeded`, `failed` 중 하나입니다. 실패하면 `error` 에 `code` 와 `message` 가 담깁니다.
 
 | `progress` 필드 | 뜻 |
 | --- | --- |
@@ -170,6 +170,6 @@ curl http://localhost:8000/healthz
 
 ## 같이 보기
 
-- [REST 로 붙이기](/integrate/rest) — 코드에서 직접 부르는 법
+- [REST 로 직접 부르기](/integrate/rest) — 코드에서 부르는 법
 - [조회 도구 참조표](/query/tools) — 요청과 응답 필드 전체
 - [환경 변수](/reference/configuration) — 서버 설정

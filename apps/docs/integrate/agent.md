@@ -84,7 +84,7 @@ Claude Desktop, Cursor 처럼 MCP 를 받는 클라이언트에 직접 등록합
 
 ## HTTP 전송
 
-네트워크 너머 에이전트를 붙일 때 씁니다. `arche mcp serve` 로는 안 되고 **API 서버가 띄웁니다.** 서버가 기동하면서 `/mcp/v1` 아래에 자동으로 마운트합니다.
+네트워크 너머 에이전트를 연결할 때 씁니다. `arche mcp serve` 로는 안 되고 **API 서버가 띄웁니다.** 서버가 기동하면서 `/mcp/v1` 아래에 자동으로 마운트합니다.
 
 ```bash
 uvicorn arche_api.main:app

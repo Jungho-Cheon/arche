@@ -23,7 +23,7 @@ Arche 는 한 번에 답을 주는 검색창이 아닙니다. 작은 조회 도�
 | "X 자체를 자세히" | `get_entity` |
 | "그래프에 뭐가 들어 있어?" | `get_schema` |
 
-**`find_related` 를 먼저 떠올리세요.** 여러 홉을 한 호출로 접어서 `get_neighbors` 를 홉마다 왕복하는 것보다 빠르고 쌉니다. 시드를 여러 개 주면 여러 시드에 두루 가까운 노드가 위로 올라옵니다.
+**`find_related` 를 먼저 떠올리세요.** 여러 홉을 한 번의 호출로 처리해서, `get_neighbors` 로 홉마다 왕복하는 것보다 빠르고 쌉니다. 시드를 여러 개 주면 여러 시드에 두루 가까운 노드일수록 점수가 높게 나옵니다.
 
 `get_neighbors` 는 한 노드의 바로 옆만 정확히 보고 싶을 때 씁니다.
 
@@ -43,17 +43,17 @@ Arche 는 한 번에 답을 주는 검색창이 아닙니다. 작은 조회 도�
 
 **너무 좁으면** `hops` 나 `max_hops` 를 올립니다. `get_neighbors` 는 5, `find_path` 는 6, `find_related` 와 `get_subgraph` 는 4 까지 갑니다.
 
-**잘렸으면** 응답의 `truncated` 가 `true` 로 옵니다. `max_nodes` 나 `top_k` 를 올리거나 관계 타입으로 좁힙니다.
+**상한에 걸려 일부만 왔으면** 응답의 `truncated` 가 `true` 로 옵니다. `max_nodes` 나 `top_k` 를 올리거나 관계 타입으로 좁힙니다.
 
 ## 경로를 믿어도 되는지
 
 `find_path` 결과에는 `hub_score` 가 함께 옵니다. 값이 크면 아무데나 이어진 노드를 다리로 삼은 경로라, 연결은 됐지만 의미 있는 관계가 아닐 수 있습니다.
 
-높은 `hub_score` 를 만나면 기대하는 관계 타입을 `relation_types` 에 넣고 다시 부릅니다. 판단 기준과 값 읽는 법은 [경로 품질과 hub_score](/query/path-quality)에 있습니다.
+높은 `hub_score` 를 만나면 기대하는 관계 타입을 `relation_types` 에 넣고 다시 부릅니다. 판단 기준과 값 읽는 법은 [경로 신뢰도와 hub_score](/query/path-quality)에 있습니다.
 
-## 답에 근거를 붙이기
+## 답에 출처 달기
 
-노드마다 `source_refs` 가 붙어 있어 어느 문서의 몇 번째 조각에서 왔는지 알 수 있습니다. 답에 출처를 달 때 씁니다.
+노드마다 `source_refs` 가 있어 어느 문서의 몇 번째 조각에서 왔는지 알 수 있습니다. 답에 출처를 달 때 씁니다.
 
 ## 그래프에 없으면 없다고 말하기
 
@@ -84,5 +84,5 @@ curl -X POST http://localhost:8000/related/find \
 ## 다음으로
 
 - 도구별 필드와 제약은 [조회 도구 참조표](/query/tools)
-- 경로 판단은 [경로 품질과 hub_score](/query/path-quality)
+- 경로 판단은 [경로 신뢰도와 hub_score](/query/path-quality)
 - 그래프가 부실하면 [추출이 빈약할 때](/ingest/quality)

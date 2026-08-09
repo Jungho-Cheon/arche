@@ -28,7 +28,7 @@ MCP 는 같은 본문에 `isError: true` 를 함께 세웁니다. 부르는 쪽�
 
 ### invalid_input
 
-필드 형식이 어긋났거나 빠졌습니다. `details.errors[]` 에 어느 필드가 왜 걸렸는지 평탄하게 실립니다.
+필드 형식이 어긋났거나 빠졌습니다. `details.errors[]` 에 어느 필드가 왜 걸렸는지 목록으로 담깁니다.
 
 ```json
 {

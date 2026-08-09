@@ -39,7 +39,7 @@ class PlanIngestRequest(BaseModel):
         default=None,
         max_length=4000,
         description=(
-            "추출 품질을 끌어올리는 선택 입력 — 도메인 용어/약어 풀이, 대상 엔티티 "
+            "추출 품질을 높이는 선택 입력 — 도메인 용어/약어 풀이, 대상 엔티티 "
             "강조 등. max_length 로 프롬프트 예산을 제한한다."
         ),
     )
@@ -57,7 +57,10 @@ class PlanContentRequest(BaseModel):
     # 값을 준다 (예: "confluence:PAGE-123", 문서 URL).
     source_id: str = Field(
         min_length=1,
-        description="출처 라벨 — 파일 경로 대신 idempotent/차분의 기준 (예: confluence:PAGE-123, URL)",
+        description=(
+            "출처 라벨 — 파일 경로를 대신해 같은 출처임을 알아보는 값. "
+            "같은 값으로 다시 넣으면 바뀐 부분만 갱신 (예: confluence:PAGE-123, URL)"
+        ),
     )
     namespace_id: str = Field(
         default="default",
@@ -68,7 +71,7 @@ class PlanContentRequest(BaseModel):
         default=None,
         max_length=4000,
         description=(
-            "추출 품질을 끌어올리는 선택 입력 — 도메인 용어/약어 풀이, 대상 엔티티 "
+            "추출 품질을 높이는 선택 입력 — 도메인 용어/약어 풀이, 대상 엔티티 "
             "강조 등. max_length 로 프롬프트 예산을 제한한다."
         ),
     )
@@ -84,7 +87,9 @@ class PlanSummary(BaseModel):
     entities_created: int = Field(ge=0, description="새로 만들 엔티티 수")
     entities_merged: int = Field(ge=0, description="기존 엔티티에 병합할 수")
     relations_created: int = Field(ge=0, description="새로 만들 관계 수")
-    deletion_count: int = Field(ge=0, description="차분으로 삭제/트림될 엔티티/관계 수")
+    deletion_count: int = Field(
+        ge=0, description="바뀐 부분을 반영하며 삭제/트림될 엔티티/관계 수"
+    )
     open_questions: int = Field(
         default=0,
         ge=0,
