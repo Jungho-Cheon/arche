@@ -703,6 +703,55 @@ class IngestService:
             source_content=content,
         )
 
+    def plan_delete(self, *, source_path: str, namespace_id: str = "default") -> IngestPlan:
+        """한 출처가 넣은 것을 걷어내는 계획. 추출도 LLM 호출도 없다.
+
+        지우기는 그 출처를 *빈 내용으로 다시 넣는 것* 과 같아, 이미 검증된 차분 경로에
+        빈 집합을 넘겨 만든다. 그래서 여러 문서가 함께 만든 노드는 그 출처만 떨어지고
+        살아남고, 그 출처만 가진 노드는 인접 관계와 함께 사라진다."""
+        prior = self._graph.find_latest_succeeded_run(source_path=source_path)
+        if prior is None:
+            raise InvalidInputError(f"No ingested source to delete: {source_path}")
+
+        planning = PlanningGraphRepository(self._graph)
+        real = self._graph
+        self._graph = planning
+        try:
+            metrics = self._apply_diff(
+                prior=prior,
+                new_entity_ids=set(),
+                new_relation_ids=set(),
+                source_path=source_path,
+                run_id=prior.id,
+            )
+        finally:
+            self._graph = real
+
+        result = IngestResult(
+            source_path=source_path,
+            entities_created=0,
+            entities_updated=0,
+            relations_created=0,
+            relations_skipped_dangling=0,
+            entity_ids=[],
+            run_id=prior.id,
+            entities_deleted=metrics["entities_deleted"],
+            entities_trimmed=metrics["entities_trimmed"],
+            relations_deleted=metrics["relations_deleted"],
+            relations_trimmed=metrics["relations_trimmed"],
+        )
+        return IngestPlan(
+            plan_id=f"pln_{ULID()}",
+            source_path=source_path,
+            source_hash="",
+            extractor_version=self._extractor_version,
+            created_at=now_rfc3339(),
+            previewed=False,
+            writes=planning.writes,
+            result=result,
+            namespace_id=namespace_id,
+        )
+
     def resolve_plan(self, plan: IngestPlan, resolutions: dict[str, str]) -> IngestPlan:
         """사람이 답한 모호성(merge/keep)을 적용해 같은 plan_id 로 재계획한다.
 

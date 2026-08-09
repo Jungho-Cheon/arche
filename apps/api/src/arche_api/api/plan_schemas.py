@@ -78,6 +78,25 @@ class PlanContentRequest(BaseModel):
     )
 
 
+class PlanDeleteRequest(BaseModel):
+    """한 출처가 넣은 것을 걷어내는 계획의 입력."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    source_path: str = Field(
+        min_length=1,
+        description=(
+            "지울 출처. 파일로 넣었으면 그 절대 경로, ingest_content 로 넣었으면 "
+            "그때 준 source_id"
+        ),
+    )
+    namespace_id: str = Field(
+        default="default",
+        min_length=1,
+        description="계획이 속한 namespace. 미지정 시 'default'",
+    )
+
+
 class PlanSummary(BaseModel):
     """plan 응답 — 만들 변경의 *개수* 요약. 세부는 preview 가 펼친다."""
 

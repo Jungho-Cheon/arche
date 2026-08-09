@@ -213,6 +213,31 @@ ADR. Whether to write it up is the user's call, not part of this work.
 
 ---
 
+## What the criterion removed, and what it flags
+
+Applying "Arche supplies what the agent needs to manage a graph KB, and only what the
+agent cannot supply itself" to the existing code, measured rather than guessed:
+
+**Removed during this work.** A `list_entities` tool (folded into `find_entities`), the
+config-inspection tool of #163 (`get_schema` already reports the model, and the rest is
+an operator concern the CLI serves), and an `entity_without_relation` plan warning (the
+preview already carries the entities and the relations, so the caller can subtract).
+
+**Flagged, not removed.** `api/routers.py` (544 lines) plus `api/admin_tasks.py` (177)
+serve REST, whose only consumers are the eval harness and the `curl` examples in the
+docs. MCP already mounts over HTTP at `/mcp/v1`, so remote access is no longer REST's
+justification. But the harness measures through REST and ADR-0005 makes those runs
+comparable across sessions; moving the harness to MCP breaks comparison with every prior
+run. That is an ADR decision, not a refactor.
+
+`domain/main_entity.py` (129 lines) runs a second LLM pass to find a document's main
+entity. An agent already knows what the document is about and can pass it as `hints`.
+Same objection as REST: it entered on measured evidence (ADR-0009 D3) and has to leave
+the same way.
+
+`docs_gen.py` (494 lines) is not runtime code, but it keeps the schema tables the agent
+reads from drifting away from the code. It stays.
+
 ## Order
 
 1. C (G1, G2, G3) — prevention first, since it decides what the read side never has to

@@ -38,6 +38,7 @@ from .plan_schemas import (
     MergeView,
     NewEntityView,
     PlanContentRequest,
+    PlanDeleteRequest,
     PlanIngestRequest,
     PlanPreview,
     PlanSummary,
@@ -729,6 +730,20 @@ def plan_ingest_content(
         source_id=body.source_id,
         namespace_id=body.namespace_id,
         hints=body.hints,
+    )
+    registry.create(plan)
+    return _summarize_plan(plan)
+
+
+def plan_delete(
+    body: PlanDeleteRequest,
+    *,
+    service: IngestService,
+    registry: PlanRegistry,
+) -> PlanSummary:
+    """한 출처가 넣은 것을 걷어내는 계획. 이후 preview/commit 은 적재와 같은 흐름이다."""
+    plan = service.plan_delete(
+        source_path=body.source_path, namespace_id=body.namespace_id
     )
     registry.create(plan)
     return _summarize_plan(plan)

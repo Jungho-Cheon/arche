@@ -482,6 +482,72 @@ async def test_a_merge_onto_a_split_node_says_the_name_is_contested(tmp_path):
             assert all(not m["target_blocked_aliases"] for m in plain_preview["merges"])
 
 
+async def test_deleting_one_source_keeps_what_other_sources_also_said(tmp_path):
+    """출처 하나를 지워도 다른 문서가 함께 만든 노드는 살아남아야 한다 (#159).
+
+    지우기는 그 출처를 빈 내용으로 다시 넣는 것과 같아서, 이미 검증된 차분 경로를
+    그대로 탄다. 그래서 노드마다 "이 출처가 유일한가" 를 따로 판단할 필요가 없다.
+    """
+    db_path = tmp_path / "kuzu_db"
+
+    async with stdio_client(_params(db_path)) as (read, write):
+        async with ClientSession(read, write) as session:
+            await session.initialize()
+            await _ingest(session, content=DOC_A, source_id="e2e:del-a")
+            await _ingest(session, content=DOC_B, source_id="e2e:del-b")
+
+            before = _names(
+                _payload(
+                    await session.call_tool("get_schema", arguments={"namespace_id": NAMESPACE})
+                )
+            )
+            assert {"여름 프로모션", "스니커즈", "환불 규정"} <= before
+
+            plan = _payload(
+                await session.call_tool(
+                    "ingest_delete",
+                    arguments={"source_path": "e2e:del-b", "namespace_id": NAMESPACE},
+                )
+            )
+            # 확정 전에는 그래프가 그대로다.
+            assert "환불 규정" in _names(
+                _payload(
+                    await session.call_tool("get_schema", arguments={"namespace_id": NAMESPACE})
+                )
+            )
+
+            _payload(await session.call_tool("ingest_preview", arguments={"plan_id": plan["plan_id"]}))
+            _payload(await session.call_tool("ingest_commit", arguments={"plan_id": plan["plan_id"]}))
+
+            after = _names(
+                _payload(
+                    await session.call_tool("get_schema", arguments={"namespace_id": NAMESPACE})
+                )
+            )
+            # 두 번째 문서에만 있던 노드는 사라진다.
+            assert "환불 규정" not in after
+            # 두 문서가 함께 만든 노드와 첫 문서의 노드는 남는다.
+            assert {"여름 프로모션", "스니커즈"} <= after
+
+
+async def test_deleting_refuses_a_source_that_was_never_ingested(tmp_path):
+    """넣은 적 없는 출처를 지우라고 하면 계획 단계에서 막아야 한다."""
+    db_path = tmp_path / "kuzu_db"
+
+    async with stdio_client(_params(db_path)) as (read, write):
+        async with ClientSession(read, write) as session:
+            await session.initialize()
+            await _ingest(session, content=DOC_A, source_id="e2e:del-a")
+
+            result = await session.call_tool(
+                "ingest_delete",
+                arguments={"source_path": "e2e:없는-출처", "namespace_id": NAMESPACE},
+            )
+            assert result.isError
+            body = json.loads(result.content[0].text)
+            assert body["error"]["code"] == "invalid_input"
+
+
 async def test_split_refuses_a_node_from_another_namespace(tmp_path):
     """남의 namespace 노드를 default 라고 우겨도 계획이 서면 안 된다."""
     db_path = tmp_path / "kuzu_db"

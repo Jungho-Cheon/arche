@@ -111,4 +111,4 @@ def test_http_mount_with_ingest_exposes_all_tools_like_stdio():
         "entity_split_preview",
         "entity_split_commit",
     } <= names
-    assert len(names) == 16  # 8 read (6 primitive + find_related + graph_health) + 5 ingest + 3 split
+    assert len(names) == 17  # 8 read + 6 ingest (plan/content/delete/preview/resolve/commit) + 3 split

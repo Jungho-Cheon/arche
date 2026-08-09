@@ -29,6 +29,7 @@ from .api.health_schemas import GraphHealthRequest
 from .api.plan_schemas import (
     CommitRequest,
     PlanContentRequest,
+    PlanDeleteRequest,
     PlanIngestRequest,
     PreviewRequest,
     ResolveRequest,
@@ -153,6 +154,16 @@ _TOOL_DESCRIPTIONS: dict[str, str] = {
         "ingest_plan whenever the agent fetched the content itself rather than "
         "being handed a file on disk."
     ),
+    "ingest_delete": (
+        "Plan removing everything one source put into the graph, WITHOUT writing. "
+        "Pass the `source_path` you ingested with (the file path, or the "
+        "`source_id` you gave ingest_content). A node cited by other sources "
+        "survives and merely loses this one; a node only this source produced is "
+        "removed along with its relations. Same review flow as the other ingest "
+        "tools: this returns a `plan_id`, you MUST call ingest_preview to show "
+        "the human exactly what disappears, and only then ingest_commit. "
+        "Deletion cannot be undone, so never skip the preview."
+    ),
     "ingest_preview": (
         "Expand a planned change set (by `plan_id`) item by item — the new "
         "entities, merges into existing entities, new relations, and deletion "
@@ -220,6 +231,7 @@ _TOOL_DESCRIPTIONS: dict[str, str] = {
 INGEST_TOOL_NAMES: tuple[str, ...] = (
     "ingest_plan",
     "ingest_content",
+    "ingest_delete",
     "ingest_preview",
     "ingest_resolve",
     "ingest_commit",
@@ -393,6 +405,11 @@ def _build_ingest_tools() -> list[mcp_types.Tool]:
             inputSchema=_build_input_schema(PlanContentRequest),
         ),
         mcp_types.Tool(
+            name="ingest_delete",
+            description=_TOOL_DESCRIPTIONS["ingest_delete"],
+            inputSchema=_build_input_schema(PlanDeleteRequest),
+        ),
+        mcp_types.Tool(
             name="ingest_preview",
             description=_TOOL_DESCRIPTIONS["ingest_preview"],
             inputSchema=_build_input_schema(PreviewRequest),
@@ -538,6 +555,11 @@ def _dispatch_tool(
             content_body = PlanContentRequest.model_validate(arguments)
             return services.plan_ingest_content(
                 content_body, service=ingest_service, registry=plan_registry
+            )
+        if name == "ingest_delete":
+            delete_body = PlanDeleteRequest.model_validate(arguments)
+            return services.plan_delete(
+                delete_body, service=ingest_service, registry=plan_registry
             )
         if name == "ingest_preview":
             preview_body = PreviewRequest.model_validate(arguments)
