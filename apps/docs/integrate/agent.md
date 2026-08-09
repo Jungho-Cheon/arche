@@ -4,7 +4,7 @@
 
 | 방식 | 언제 | 설정 |
 | --- | --- | --- |
-| Claude Code 플러그인 | Claude Code 를 쓸 때 | 명령 두 줄 |
+| Claude Code 플러그인 | Claude Code 를 쓸 때 | 명령 두 줄, 사전 설치 없음 |
 | stdio 전송 | 다른 MCP 클라이언트, 같은 기계 | 설정 다섯 줄 |
 | HTTP 전송 | 네트워크 너머 원격 에이전트 | 주소와 헤더 |
 
@@ -21,12 +21,7 @@
 
 설치하면 `/arche-ingest` 와 `/arche-query` 두 명령이 생기고, 맥락에 맞으면 Claude 가 알아서도 부릅니다.
 
-전제조건은 `arche` 명령이 PATH 에 있어야 하고, 임베딩 키가 채워져 있어야 한다는 것입니다.
-
-```bash
-uv tool install ./apps/api
-arche config set-key
-```
+전제조건은 uv 하나입니다. 실행 파일은 플러그인이 `uv tool run` 으로 직접 받으므로 미리 설치할 게 없습니다. 임베딩 키는 안 넣어도 도구가 붙고, 넣는 방법은 [시작하기](/getting-started)의 2단계에 있습니다.
 
 플러그인 기본 설정은 추출을 Claude Code 구독 인증으로 돌려서 추출용 API 키가 필요 없습니다. 대신 이미지와 PDF 이미지 페이지가 빠집니다. 바꾸려면 [모델 갈아끼우기](/operate/models)를 보세요.
 

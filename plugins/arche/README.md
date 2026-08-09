@@ -4,25 +4,15 @@
 
 담긴 것:
 
-- **MCP 서버 등록** (`.mcp.json`) — `arche mcp serve --stdio` 를 Claude Code 에 연결한다. 저장소 백엔드는 임베디드 Kuzu(서버 불필요), 추출은 구독형 `claude-code`(API 키 불필요), 임베딩은 OpenAI 소액.
+- **MCP 서버 등록** (`.mcp.json`) — `uv tool run` 으로 `arche` 를 받아 stdio MCP 서버로 띄운다. 저장소 백엔드는 임베디드 Kuzu(서버 불필요), 추출은 구독형 `claude-code`(API 키 불필요), 임베딩은 OpenAI 소액.
 - **스킬 `arche-ingest`** — 외부 소스(Confluence/Jira/URL)나 로컬 파일을 사람 검토 게이트(plan/content → preview → resolve → commit)로 적재한다.
 - **스킬 `arche-query`** — 질문을 그래프 프리미티브로 접근해 그래프 근거로만 답한다.
 
 ## 전제조건
 
-이 플러그인은 Arche MCP 서버를 **연결만** 한다. 서버 실행 파일(`arche` CLI)은 따로 설치한다.
+**uv 하나면 된다.** 서버 실행 파일은 플러그인이 `uv tool run` 으로 직접 받는다 — 저장소를 클론하거나 `arche` 를 미리 설치할 필요가 없다. uv 설치는 [docs.astral.sh/uv](https://docs.astral.sh/uv/).
 
-```bash
-# apps/api 를 설치해 `arche` 가 PATH 에 있게 한다 (예: uv tool install 또는 pip)
-uv tool install /path/to/arche/apps/api    # 또는: pip install /path/to/arche/apps/api
-arche version                              # 설치 확인
-```
-
-임베딩용 키를 넣는다(추출은 구독 인증이라 키 불필요):
-
-```bash
-arche config set-key           # 임베딩 전용, 소액. ~/.config/arche/config.env 에 저장
-```
+참조는 태그로 고정해 둔다. 브랜치로 두면 서버를 띄울 때마다 git fetch 가 일어나 네트워크가 없으면 안 뜬다.
 
 ## 설치
 
@@ -31,7 +21,23 @@ arche config set-key           # 임베딩 전용, 소액. ~/.config/arche/confi
 /plugin install arche@arche
 ```
 
-설치하면 두 스킬(`/arche-ingest`, `/arche-query`)이 생기고, Claude 가 맥락에 따라 자동으로도 부른다. Arche MCP 도구(적재/조회)도 함께 붙는다.
+설치하면 두 스킬(`/arche-ingest`, `/arche-query`)이 생기고, Claude 가 맥락에 따라 자동으로도 부른다. Arche MCP 도구(적재/조회)도 함께 붙는다. 첫 실행은 의존성을 받느라 몇 초 걸리고 그다음부터는 1 초 안쪽이다.
+
+## 임베딩 키
+
+추출은 Claude Code 구독 인증을 쓰므로 키가 필요 없다. 임베딩만 키를 쓴다.
+
+키가 없어도 서버는 뜨고 도구 목록도 보인다. 임베딩이 필요한 호출에서 무엇을 채워야 하는지 알려 주고, 그때 아래를 실행하면 된다. 재시작은 필요 없다.
+
+```bash
+arche config set-key    # ~/.config/arche/config.env 에 권한 600 으로 저장
+```
+
+`arche` 를 터미널에서도 쓰려면 그때 따로 설치한다. 플러그인만 쓸 거라면 필요 없다.
+
+```bash
+uv tool install "arche-api @ git+https://github.com/Jungho-Cheon/arche.git@v0.1.0#subdirectory=apps/api"
+```
 
 ## 쓰는 법
 

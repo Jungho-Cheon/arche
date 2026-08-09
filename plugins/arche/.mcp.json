@@ -1,8 +1,17 @@
 {
   "mcpServers": {
     "arche": {
-      "command": "arche",
-      "args": ["mcp", "serve", "--stdio"],
+      "command": "uv",
+      "args": [
+        "tool",
+        "run",
+        "--from",
+        "arche-api @ git+https://github.com/Jungho-Cheon/arche.git@v0.1.0#subdirectory=apps/api",
+        "arche",
+        "mcp",
+        "serve",
+        "--stdio"
+      ],
       "env": {
         "ARCHE_API_GRAPH_BACKEND": "embedded",
         "ARCHE_API_LLM_MODEL": "claude-code/sonnet",

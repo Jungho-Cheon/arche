@@ -6,47 +6,12 @@ Claude Code 플러그인으로 진행합니다. 다른 방식은 이 문서를 �
 
 준비물은 둘입니다.
 
-- **uv** — 파이썬 도구를 설치하고 실행합니다. 설치는 [docs.astral.sh/uv](https://docs.astral.sh/uv/) 를 보세요.
+- **uv** — 파이썬 도구를 받아 실행합니다. 설치는 [docs.astral.sh/uv](https://docs.astral.sh/uv/) 를 보세요. Arche 실행 파일은 플러그인이 uv 로 알아서 받으므로 따로 설치할 게 없습니다.
 - **OpenAI API 키** — 글을 벡터로 바꾸는 데만 씁니다. 문서에서 노드와 관계를 뽑는 일은 이미 쓰고 있는 Claude Code 구독 인증이 맡아서 추가 비용이 거의 없습니다. 키는 [platform.openai.com](https://platform.openai.com/api-keys) 에서 만들고, 결제 수단을 등록해 크레딧이 있어야 실제로 응답합니다.
 
 처음에는 파일 서너 개짜리 작은 폴더로 시작하세요.
 
-## 1단계 — arche 명령 설치
-
-플러그인은 Arche 서버를 연결만 하고, 실행 파일은 따로 설치합니다.
-
-```bash
-git clone https://github.com/Jungho-Cheon/arche.git
-cd arche
-uv tool install ./apps/api
-```
-
-설치가 됐는지 확인합니다.
-
-```bash
-arche version
-```
-
-버전 번호가 한 줄 찍히면 됩니다. `command not found: arche` 가 나오면 uv 가 도구를 설치하는 폴더가 `PATH` 에 없는 것입니다. `uv tool update-shell` 을 실행하고 터미널을 새로 여세요.
-
-## 2단계 — 임베딩 키 넣기
-
-```bash
-arche config set-key
-```
-
-물어보면 키를 붙여 넣습니다. 입력한 글자는 화면에 찍히지 않습니다.
-
-```text
-OPENAI_API_KEY:
-OPENAI_API_KEY 를 /Users/me/.config/arche/config.env 에 저장했습니다.
-```
-
-한 번 넣으면 터미널을 새로 열든 다른 폴더에서 실행하든 그대로 읽힙니다. 파일은 소유자만 열 수 있게 잠깁니다.
-
-**나중에 확인하고 싶으면** `arche config show` 를 실행합니다. 키 값은 보여 주지 않고 설정됐는지만 알려 줍니다.
-
-## 3단계 — 플러그인 설치
+## 1단계 — 플러그인 설치
 
 Claude Code 를 열고 두 줄을 실행합니다.
 
@@ -57,11 +22,40 @@ Claude Code 를 열고 두 줄을 실행합니다.
 
 설치되면 `/arche-ingest` 와 `/arche-query` 두 명령이 생기고, Arche 도구 12개가 함께 올라옵니다. 도구가 보이는지는 대화창에서 확인할 수 있습니다.
 
+**처음 붙을 때 몇 초 걸립니다.** uv 가 Arche 와 의존성을 받는 시간입니다. 그다음부터는 1 초 안쪽으로 뜹니다.
+
 ::: warning 이미지와 PDF 는 이 설정에서 빠집니다
 플러그인 기본값은 Claude Code 구독 인증으로 추출합니다. 이 경로는 글만 다루므로 이미지 파일과 PDF 의 이미지 페이지는 그래프에 들어가지 않습니다. 그래서 이 문서는 글 파일(`.md`, `.txt`)로 진행합니다. 이미지까지 넣으려면 [모델 갈아끼우기](/operate/models)에서 추출 모델을 바꾸세요.
 :::
 
-## 4단계 — 문서 넣기
+## 2단계 — 임베딩 키 넣기
+
+도구는 이미 붙었지만 문서를 넣으려면 임베딩 키가 있어야 합니다. 터미널에서 한 번 넣습니다.
+
+```bash
+uvx --from "arche-api @ git+https://github.com/Jungho-Cheon/arche.git@v0.1.0#subdirectory=apps/api" \
+  arche config set-key
+```
+
+물어보면 키를 붙여 넣습니다. 입력한 글자는 화면에 찍히지 않습니다.
+
+```text
+OPENAI_API_KEY:
+OPENAI_API_KEY 를 /Users/me/.config/arche/config.env 에 저장했습니다.
+```
+
+한 번 넣으면 터미널을 새로 열든 다른 폴더에서 실행하든 그대로 읽힙니다. 파일은 소유자만 열 수 있게 잠깁니다. **Claude Code 를 다시 켤 필요는 없습니다.**
+
+**명령이 길어서 거슬리면** 같은 것을 도구로 설치해 두면 `arche` 로 짧게 부를 수 있습니다. 나중에 터미널에서 `arche ingest` 를 직접 쓸 생각이라면 어차피 이쪽이 편합니다.
+
+```bash
+uv tool install "arche-api @ git+https://github.com/Jungho-Cheon/arche.git@v0.1.0#subdirectory=apps/api"
+arche config set-key
+```
+
+**나중에 확인하고 싶으면** `arche config show` 를 실행합니다. 키 값은 보여 주지 않고 설정됐는지만 알려 줍니다.
+
+## 3단계 — 문서 넣기
 
 Claude Code 에서 폴더를 가리키며 시킵니다.
 
@@ -90,7 +84,7 @@ Claude Code 에서 폴더를 가리키며 시킵니다.
 rm -rf arche_kuzu_db
 ```
 
-## 5단계 — 물어보기
+## 4단계 — 물어보기
 
 같은 대화창에서 방금 넣은 내용을 묻습니다.
 
