@@ -95,6 +95,9 @@ def _e(eid: str, from_id: str, to_id: str, rel_type: str) -> Edge:
     )
 
 
+NS = "default"
+
+
 class FakeGraph(GraphRepository):
     """3 노드: 쿠폰 X → 프로모션 P → 상품 A (multi-hop 시나리오)."""
 
@@ -109,8 +112,8 @@ class FakeGraph(GraphRepository):
 
     def ensure_indexes(self) -> None: ...
     def healthcheck(self) -> bool: return True
-    def find_by_normalized_name(self, *, normalized, type_): return None
-    def vector_search(self, *, embedding, top_k, type_): return []
+    def find_by_normalized_name(self, *, normalized, type_, namespace_id=NS): return None
+    def vector_search(self, *, embedding, top_k, type_, namespace_id=NS): return []
     def create_entity(self, *, entity): ...
     def apply_merge_mutation(self, *, mutation): ...
     def upsert_relation(self, *, from_id, to_id, rel_type, source_ref): return "rel", True
@@ -123,7 +126,18 @@ class FakeGraph(GraphRepository):
     def apply_entity_diff(self, *, entity_id, source_path, run_id): return "missing"
     def apply_relation_diff(self, *, relation_id, source_path): return "missing"
 
-    def find_by_keywords_scored(self, *, keywords, limit_per_keyword):
+    def count_entities_by_namespace(self):
+        # 이 더블은 namespace 를 안 나눈다. 세 노드가 전부 default 에 있다.
+        return {"default": len(self._nodes)}
+
+    def get_stored_entity(self, *, entity_id):
+        # 인자를 존중한다. 무시하고 아무 노드나 돌려주면 매칭 경로의 결함을 가린다.
+        return self._nodes.get(entity_id)
+
+    def find_by_keywords_scored(self, *, keywords, limit_per_keyword, namespace_id=NS):
+        # 이 더블의 노드는 전부 default 에 있다. 다른 namespace 로 물으면 없는 게 맞다.
+        if namespace_id != NS:
+            return []
         # 쿠폰 X 키워드 → A 매치. 그 외는 빈 결과.
         hits: list[KeywordHit] = []
         for kw in keywords:
@@ -131,10 +145,12 @@ class FakeGraph(GraphRepository):
                 hits.append(KeywordHit(node=self.a, raw_score=1.0, matched_keyword=kw))
         return hits
 
-    def find_entities_dense(self, *, query_embedding, matched_keyword, limit):
+    def find_entities_dense(self, *, query_embedding, matched_keyword, limit, namespace_id=NS):
         return []
 
-    def get_schema_summary(self, *, examples_per_type=5):
+    def get_schema_summary(self, *, examples_per_type=5, namespace_id=NS):
+        if namespace_id != NS:
+            return ([], [])
         return (
             [
                 EntityTypeStat(type="coupon", count=1, examples=[(self.a.id, self.a.name)]),
@@ -147,8 +163,8 @@ class FakeGraph(GraphRepository):
             ],
         )
 
-    def get_entity_with_counts(self, *, entity_id):
-        node = self._nodes.get(entity_id)
+    def get_entity_with_counts(self, *, entity_id, namespace_id=NS):
+        node = self._nodes.get(entity_id) if namespace_id == NS else None
         if node is None:
             return None
         outgoing: dict[str, int] = {}
@@ -160,8 +176,8 @@ class FakeGraph(GraphRepository):
                 incoming[e.type] = incoming.get(e.type, 0) + 1
         return EntityWithCounts(node=node, outgoing=outgoing, incoming=incoming)
 
-    def expand_neighbors(self, *, entry_id, relation_types, direction, hops, max_nodes):
-        if entry_id not in self._nodes:
+    def expand_neighbors(self, *, entry_id, relation_types, direction, hops, max_nodes, namespace_id=NS):
+        if namespace_id != NS or entry_id not in self._nodes:
             return NeighborhoodResult(nodes=[], edges=[], truncated=False)
         seen = {entry_id}
         nodes_list = [self._nodes[entry_id]]
@@ -194,7 +210,9 @@ class FakeGraph(GraphRepository):
             frontier = next_frontier
         return NeighborhoodResult(nodes=nodes_list, edges=kept_edges, truncated=False)
 
-    def expand_subgraph(self, *, entry_ids, relation_types, hops, max_nodes):
+    def expand_subgraph(self, *, entry_ids, relation_types, hops, max_nodes, namespace_id=NS):
+        if namespace_id != NS:
+            return NeighborhoodResult(nodes=[], edges=[], truncated=False)
         nodes: dict[str, Node] = {
             i: self._nodes[i] for i in entry_ids if i in self._nodes
         }
@@ -216,12 +234,16 @@ class FakeGraph(GraphRepository):
                 edges.append(e)
         return NeighborhoodResult(nodes=list(nodes.values()), edges=edges, truncated=False)
 
-    def find_shortest_paths(self, *, from_id, to_id, max_hops, max_paths, relation_types):
+    def find_shortest_paths(self, *, from_id, to_id, max_hops, max_paths, relation_types, namespace_id=NS):
+        if namespace_id != NS:
+            return []
         if from_id == self.a.id and to_id == self.c.id:
             return [PathResult(nodes=[self.a, self.b, self.c], edges=[self.e_ab, self.e_bc], length=2)]
         return []
 
-    def entity_exists(self, *, entity_id) -> bool:
+    def entity_exists(self, *, entity_id, namespace_id=NS) -> bool:
+        if namespace_id != NS:
+            return False
         return entity_id in self._nodes
 
     def close(self) -> None: ...

@@ -30,7 +30,7 @@ import sys
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Callable, Iterable, TextIO
+from typing import Any, Callable, TextIO
 
 from ..questions import Question, QuestionSet, load_questions
 from .correctness import score_correctness

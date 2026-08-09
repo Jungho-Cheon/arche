@@ -37,6 +37,14 @@ jobs:
       - name: 생성된 레퍼런스 표가 코드와 일치하는지
         run: uv run --project apps/api arche docs gen-reference --check
 
+      # eval 은 키가 있어야 도는 live 만 빼고 전부 돌린다. 여기에 없던 동안 판정 매핑이
+      # 컬럼 하나를 빠뜨리는 결함과 포트를 안 따라간 더블 셋이 조용히 쌓여 있었다.
+      - name: eval 린트와 테스트
+        working-directory: eval
+        run: |
+          uv run --extra dev ruff check src/ tests/
+          uv run --extra dev pytest tests/ -q --ignore=tests/live
+
   fresh-install:
     name: 갓 설치한 환경에서 MCP 기동
     runs-on: ubuntu-latest

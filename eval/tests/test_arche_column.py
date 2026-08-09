@@ -11,7 +11,6 @@ from typing import Any
 from unittest.mock import MagicMock
 
 import httpx
-import pytest
 
 from arche_eval.clients import ArcheClient
 from arche_eval.columns.arche import (

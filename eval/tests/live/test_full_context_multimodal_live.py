@@ -5,7 +5,6 @@ RUN_LIVE_TESTS=1 일 때만 실행. 정답 검증보다 *멀티모달 호출 성
 
 from __future__ import annotations
 
-import json
 import os
 from pathlib import Path
 

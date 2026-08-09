@@ -5,7 +5,6 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-import pytest
 
 from arche_eval.scoring.aggregate import (
     aggregate_run,
@@ -238,7 +237,7 @@ def test_aggregate_run_basic_metrics(tmp_path: Path) -> None:
     run_dir = _make_fixture_run(tmp_path)
     agg = aggregate_run(run_dir)
 
-    assert set(agg.columns.keys()) == {"full_context", "chunk_rag", "arche"}
+    assert set(agg.columns.keys()) == {"full_context", "chunk_rag", "arche", "combined"}
     fc = agg.columns["full_context"]
     cr = agg.columns["chunk_rag"]
     op = agg.columns["arche"]

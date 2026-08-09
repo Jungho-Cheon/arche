@@ -20,13 +20,20 @@ from __future__ import annotations
 
 import json
 import random
-import time
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Iterable, Protocol
 
 
+# 채점할 컬럼 수만큼 A, B, C, ... 를 만든다. 상수로 세 개만 두면 컬럼이 늘었을 때
+# zip 이 조용히 잘려, 매 질문마다 무작위로 한 컬럼이 익명 라벨을 못 받는다.
 COLUMN_LABELS = ("A", "B", "C")
+
+
+def _labels_for(count: int) -> list[str]:
+    if count > 26:
+        raise ValueError(f"컬럼이 26 개를 넘으면 한 글자 라벨로 부족합니다: {count}")
+    return [chr(ord("A") + i) for i in range(count)]
 DEFAULT_JUDGE_MODEL = "anthropic/claude-sonnet-4-6"
 
 
@@ -136,7 +143,7 @@ def build_mapping(
     for qid in question_ids:
         order = list(columns)
         rng.shuffle(order)
-        mapping[qid] = {label: actual for label, actual in zip(COLUMN_LABELS, order)}
+        mapping[qid] = dict(zip(_labels_for(len(order)), order, strict=True))
     return mapping
 
 
@@ -384,4 +391,3 @@ class JudgeRecord:
 
 # jsonl read/write 헬퍼는 `scoring.io` 의 단일 정의를 사용.
 # (judge_runner 가 io.append_jsonl 을 직접 import — 본 모듈에는 re-export 만 둔다.)
-from .io import append_jsonl, read_jsonl  # noqa: E402  (의존성 정렬상 끝에 둠)
