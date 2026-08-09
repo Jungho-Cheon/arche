@@ -1008,7 +1008,7 @@ class IngestService:
         now = now_rfc3339()
 
         for e_new in extracted.entities:
-            # 이름에서 구조적 식별자를 뽑아 alias 로 보강한다. 식별자로도 검색·병합.
+            # 이름에서 구조적 식별자를 뽑아 alias 로 보강한다. 식별자로도 검색과 병합이 된다.
             id_aliases = extract_identifier_aliases(e_new.name)
             if id_aliases:
                 merged_aliases = list(e_new.aliases or [])

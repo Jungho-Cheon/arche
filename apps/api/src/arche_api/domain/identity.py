@@ -307,7 +307,7 @@ class EntityMatcher:
             if hit is not None:
                 return MatchResult(existing=hit, step=2)
 
-        # Step 3 — 임베딩 유사도. Step 1·2 가 모두 miss 일 때만 embedder 를 부른다(비용).
+        # Step 3 — 임베딩 유사도. Step 1 과 2 가 모두 miss 일 때만 embedder 를 부른다(비용).
         embedding = self._embedder.embed([e_new.name])
         if not embedding or not embedding[0]:
             return MatchResult(existing=None, step=4)

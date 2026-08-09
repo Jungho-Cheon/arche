@@ -72,7 +72,7 @@ class IngestPlan:
     writes: list[RecordedWrite]
     result: IngestResult
     depends_on_entity_ids: list[str] = field(default_factory=list)
-    # 놓친 병합 후보 질문. plan_file 이 정렬·cap·번호 부여 후 채운다.
+    # 놓친 병합 후보 질문. plan_file 이 정렬하고 개수를 자르고 번호를 붙인 뒤 채운다.
     open_questions: list[AmbiguousMatch] = field(default_factory=list)
     # 사람이 답한 강제 매칭 힌트 맵. 값은 "merge:<id>" 또는 "keep". resolve 가 누적한다.
     resolved: dict[str, str] = field(default_factory=dict)
