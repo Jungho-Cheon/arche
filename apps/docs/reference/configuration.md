@@ -63,6 +63,7 @@ cp .env.example .env
 | `NEO4J_USER` | `neo4j` | Neo4j 계정 |
 | `NEO4J_PASSWORD` | `arche` | Neo4j 비밀번호 |
 | `ARCHE_API_LLM_MODEL_CONTEXT_TOKENS` | `128000` | 청크 분할을 시작하는 문서 크기 |
+| `ARCHE_API_PLAN_TTL_SECONDS` | `3600` | 확인을 기다리는 계획을 붙들어 두는 시간 |
 
 ## 모델 선택
 
@@ -128,6 +129,14 @@ unknown ARCHE_API_GRAPH_BACKEND: 'sqlite' (expected 'embedded'/'kuzu' or 'neo4j'
 ## 청크 분할
 
 `ARCHE_API_LLM_MODEL_CONTEXT_TOKENS` 는 문서를 여러 조각으로 나눠 추출하기 시작하는 크기입니다. 기본값 128000 은 실제 모델 한도보다 보수적으로 잡은 값이라, 큰 문서를 한 번에 넘겨 시간과 비용이 튀는 걸 막습니다.
+
+## 계획의 수명
+
+`ARCHE_API_PLAN_TTL_SECONDS` 는 검토형 적재와 노드 떼어내기가 만든 계획을 메모리에 붙들어 두는 시간입니다. 사람이 미리 보기를 읽고 판단하는 데 걸리는 시간보다 넉넉하되, 확인 없이 방치된 계획이 프로세스 수명 내내 쌓이지 않도록 기본 3600초를 둡니다.
+
+미리 보기나 `resolve` 로 계획을 건드리면 시계가 다시 시작합니다. 검토 중인 계획이 사람 손에서 만료되지는 않습니다.
+
+0 이하를 주면 만료가 없습니다. 계획은 어차피 서버 프로세스 안에만 살아서 재시작하면 사라집니다. 배치 제약은 [REST API](/reference/rest-api#검토형-적재-5개와-떼어내기-3개)에 있습니다.
 
 ## 파일이 아닌 곳에서 넘기기
 

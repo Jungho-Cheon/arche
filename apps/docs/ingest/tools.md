@@ -1,8 +1,8 @@
 # 적재 도구 참조표
 
-문서를 그래프에 넣는 MCP 도구 5개의 요청 필드와 응답 필드를 모은 참조표입니다. 다섯 도구는 계획, 미리 보기, 질문 해소, 확정 순서로 이어지고, 확정 전까지 그래프에는 아무것도 쓰지 않습니다. 실제 진행 순서는 [문서를 그래프에 넣기](/ingest/)에서 다룹니다.
+그래프를 바꾸는 도구 8개의 요청 필드와 응답 필드를 모은 참조표입니다. 문서를 넣는 5개와 잘못 합친 노드를 가르는 3개이고, 둘 다 계획, 미리 보기, 확정 순서로 이어져 확정 전까지 그래프에는 아무것도 쓰지 않습니다. 실제 진행 순서는 [문서를 그래프에 넣기](/ingest/)와 [잘못 합친 노드 떼어내기](/ingest/split)에서 다룹니다.
 
-이 5개는 MCP 에만 있습니다. 대응하는 REST 주소는 없고, REST 로 문서를 넣는 길은 검토 단계가 없는 `POST /admin/ingest` 라는 별도 경로입니다.
+여덟 도구 모두 MCP 와 REST 양쪽에 같은 스키마로 올라옵니다. REST 주소는 [REST API](/reference/rest-api)에 있습니다. 검토 단계가 없는 `POST /admin/ingest` 는 폴더를 통째로 넣는 별도 경로입니다.
 
 ## 최소 예시
 
@@ -93,8 +93,70 @@
 
 같은 `plan_id` 로 `ingest_preview` 를 먼저 부르지 않았으면 `unprocessable` 로 거부합니다. 계획을 세운 뒤 그래프가 바뀌어 계획이 어긋난 경우에도 같은 코드로 거부하므로, 그때는 `ingest_plan` 이나 `ingest_content` 부터 다시 부릅니다.
 
+## 잘못 합친 노드 떼어내기
+
+<!-- @include: ../reference/_generated/tool-catalog-split.md -->
+
+서로 다른 둘이 한 노드로 뭉쳤을 때 두 노드로 가릅니다. 언제 왜 쓰는지는 [잘못 합친 노드 떼어내기](/ingest/split)에 있습니다.
+
+<!-- @include: ../reference/_generated/requests/entity_split_plan.md -->
+
+`move_aliases` 와 `move_source_paths` 중 적어도 하나는 있어야 합니다. `new_name` 이 원래 노드의 별칭이면 `move_aliases` 에 적지 않아도 함께 옮겨집니다.
+
+관계는 `move_source_paths` 를 기준으로 자동 배분됩니다. 출처가 떼어내는 쪽에만 있으면 `move`, 남는 쪽에만 있으면 `keep`, 양쪽에 걸치거나 출처가 없으면 `ask` 입니다. `move_source_paths` 가 비면 판단 근거가 없어 모든 관계가 `ask` 가 됩니다.
+
+| 응답 필드 | 타입 | 설명 |
+| --- | --- | --- |
+| `plan_id` | `string` | 이후 preview/commit 에 쓰는 계획 식별자 |
+| `origin_id` | `string` | 남는 쪽 노드 id |
+| `origin_name` | `string` | 남는 쪽 노드 이름 |
+| `new_name` | `string` | 떼어낸 노드 이름 |
+| `aliases_moved` | `int` | 떼어낸 노드로 갈 별칭 수 |
+| `aliases_kept` | `int` | 남을 별칭 수 |
+| `source_refs_moved` | `int` | 떼어낸 노드로 갈 출처 수 |
+| `source_refs_kept` | `int` | 남을 출처 수 |
+| `relations_moved` | `int` | 떼어낸 노드로 갈 관계 수 |
+| `relations_kept` | `int` | 남을 관계 수 |
+| `open_questions` | `int` | 사람이 정해야 하는 관계 수 |
+
+거절되는 입력은 넷입니다. `new_name` 이 원래 노드 이름과 같을 때, 그 이름의 노드가 같은 타입에 이미 있을 때, 원래 노드에 없는 별칭이나 출처를 지목했을 때, 출처를 전부 옮겨 원래 노드가 빈 껍데기로 남을 때입니다. 모두 `invalid_input` 입니다.
+
+<!-- @include: ../reference/_generated/requests/entity_split_preview.md -->
+
+가른 뒤 두 노드의 모습과 관계별 행선지를 펼칩니다. 이 호출이 확정의 안전 장치를 겁니다.
+
+| 응답 필드 | 타입 | 설명 |
+| --- | --- | --- |
+| `plan_id` | `string` | 계획 식별자 |
+| `origin` | `SplitEntityView` | 남는 쪽의 최종 모습 |
+| `new_entity` | `SplitEntityView` | 떼어낸 쪽의 최종 모습 |
+| `relations` | `SplitRelationView[]` | 관계 전체와 각각의 행선지 |
+| `questions` | `SplitRelationView[]` | `decision` 이 `ask` 인 것만 추린 목록 |
+
+`SplitEntityView` 는 `id`, `name`, `type`, `aliases`, `description`, `source_paths` 를 담습니다. `SplitRelationView` 는 `relation_id`, `type`, `direction`, `other_id`, `other_name`, `source_paths`, `decision`, `reason` 을 담고, `reason` 은 왜 그렇게 갈렸는지 한 줄로 설명합니다.
+
+`questions` 가 비어 있지 않으면 확정이 거부됩니다. 결정을 `entity_split_plan` 의 `relation_decisions` 에 담아 다시 계획합니다.
+
+<!-- @include: ../reference/_generated/requests/entity_split_commit.md -->
+
+미리 보기를 거치고 판단이 끝난 계획을 그래프에 반영합니다.
+
+| 응답 필드 | 타입 |
+| --- | --- |
+| `origin_id` | `string` |
+| `new_entity_id` | `string` |
+| `aliases_moved` | `int` |
+| `source_refs_moved` | `int` |
+| `relations_moved` | `int` |
+| `relations_kept` | `int` |
+
+`unprocessable` 로 거부되는 경우가 셋입니다. 같은 `plan_id` 로 `entity_split_preview` 를 먼저 부르지 않았을 때, 정하지 않은 관계가 남아 있을 때, 계획을 세운 뒤 원래 노드가 사라졌을 때입니다.
+
+확정 뒤 두 노드는 서로의 이름을 다시 흡수하지 않습니다. 같은 문서를 다시 적재해도 합쳐지지 않습니다.
+
 ## 같이 보기
 
-- [문서를 그래프에 넣기](/ingest/) — 다섯 도구를 순서대로 쓰는 법
+- [문서를 그래프에 넣기](/ingest/) — 적재 다섯 도구를 순서대로 쓰는 법
+- [잘못 합친 노드 떼어내기](/ingest/split) — 떼어내기 세 도구를 쓰는 법
 - [추출이 빈약할 때](/ingest/quality) — `hints` 로 추출을 보강하는 법
 - [조회 도구 참조표](/query/tools) — 넣은 그래프를 읽는 도구 7개

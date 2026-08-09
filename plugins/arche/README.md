@@ -9,7 +9,7 @@
 /plugin install arche@arche
 ```
 
-설치하면 `/arche-ingest` 와 `/arche-query` 두 명령이 생기고, Arche 도구 12개(조회 7 + 검토형 적재 5)가 함께 붙어요. 맥락에 맞으면 Claude 가 알아서도 불러요.
+설치하면 `/arche-ingest` 와 `/arche-query` 두 명령이 생기고, Arche 도구 15개(조회 7 + 검토형 적재 5 + 노드 떼어내기 3)가 함께 붙어요. 맥락에 맞으면 Claude 가 알아서도 불러요.
 
 첫 실행은 의존성을 받느라 몇 초 걸리고 그다음부터는 1 초 안쪽이에요.
 

@@ -1,6 +1,6 @@
 # REST API
 
-Arche API 서버가 받는 HTTP 주소(엔드포인트) 11개를 모은 참조표입니다. 조회 7개는 [조회 도구 참조표](/query/tools)의 MCP 도구와 같은 스키마를 쓰고, 나머지는 상태 확인과 관리 엔드포인트입니다.
+Arche API 서버가 받는 HTTP 주소(엔드포인트) 19개를 모은 참조표입니다. 조회 7개와 그래프를 바꾸는 8개는 [조회 도구 참조표](/query/tools), [적재 도구 참조표](/ingest/tools)의 MCP 도구와 같은 스키마를 쓰고, 나머지는 상태 확인과 관리 엔드포인트입니다.
 
 REST 는 에이전트를 쓰지 않고 직접 부를 때의 통로입니다. 에이전트를 연결하는 기본 통로는 MCP 이고, [에이전트와 연결하기](/integrate/agent)에서 다룹니다.
 
@@ -38,6 +38,14 @@ curl -X POST http://localhost:8000/entities/find \
 | `POST` | `/paths/find` | 두 노드를 잇는 경로 찾기 |
 | `POST` | `/subgraph` | 여러 출발점 주변을 한꺼번에 펼치기 |
 | `POST` | `/related/find` | 시드와 구조적으로 가까운 노드 회수 |
+| `POST` | `/ingest/plan` | 파일 하나의 적재를 계획만 하기 |
+| `POST` | `/ingest/content` | 넘겨받은 텍스트로 계획하기 |
+| `POST` | `/ingest/preview` | 계획을 항목 단위로 펼치기 |
+| `POST` | `/ingest/resolve` | 미리 보기가 물은 질문에 답하기 |
+| `POST` | `/ingest/commit` | 확인한 계획을 그래프에 반영 |
+| `POST` | `/entities/split/plan` | 잘못 합친 노드를 가를 계획 세우기 |
+| `POST` | `/entities/split/preview` | 갈랐을 때의 두 노드와 관계 행선지 |
+| `POST` | `/entities/split/commit` | 확인한 대로 노드 가르기 |
 | `POST` | `/admin/ingest` | 폴더를 비동기로 적재 |
 | `GET` | `/admin/ingest/{task_id}/status` | 적재 작업 진행 상태 |
 | `GET` | `/admin/namespaces` | namespace 별 노드 수 |
@@ -106,6 +114,24 @@ curl http://localhost:8000/healthz
 - `GET /schema` 와 `GET /entities/{entity_id}` 는 `namespace_id` 를 쿼리 문자열로 받습니다.
 - `POST /entities/{entity_id}/neighbors` 는 경로의 `entity_id` 를 진입점으로 씁니다. 본문에도 `id` 를 넣으면 값이 같은지 검사합니다.
 
+## 검토형 적재 5개와 떼어내기 3개
+
+요청 필드와 응답 필드는 [적재 도구 참조표](/ingest/tools)에 있습니다. MCP 도구와 스키마가 같고, REST 만의 차이는 셋입니다.
+
+- 성공 응답을 `{ "data": ... }` 로 한 번 더 감쌉니다.
+- `namespace_id` 를 본문에 넣지 않으면 `Authorization` 헤더의 namespace 를 씁니다. 조회 엔드포인트와 같은 우선순위입니다.
+- `POST /ingest/plan` 의 `path` 는 **API 서버가 보는 경로**입니다. 서버가 읽을 수 없는 자리의 문서라면 본문을 직접 넘기는 `POST /ingest/content` 를 쓰는 편이 확실합니다.
+
+::: warning 계획은 서버 프로세스 안에만 삽니다
+계획을 세운 요청과 확정하는 요청이 **같은 프로세스에 닿아야** 합니다. 워커를 여럿 띄우면 계획을 못 찾는 요청이 생기므로, 지금 버전은 단일 프로세스 배치를 전제로 합니다.
+
+서버를 재시작하면 진행 중이던 계획이 사라집니다. 확인 없이 방치된 계획도 기본 3600초가 지나면 버려집니다(`ARCHE_API_PLAN_TTL_SECONDS`). 미리 보기나 `resolve` 로 계획을 건드리면 이 시계는 다시 시작하므로, 사람이 검토하는 동안 만료되지는 않습니다.
+
+사라진 계획으로 부르면 `invalid_input` 이고 `details.plan_ttl_seconds` 에 수명이 실려 옵니다. 그때는 계획부터 다시 세웁니다.
+:::
+
+미리 보기를 거치지 않은 `POST /ingest/commit` 과 `POST /entities/split/commit` 은 `unprocessable` 로 거부됩니다. MCP 에만 있던 안전 장치가 REST 에서도 똑같이 걸립니다.
+
 ## POST /admin/ingest
 
 폴더를 재귀로 훑어 적재합니다. 검증만 동기로 하고 실제 적재는 뒤에서 도는 작업으로 띄운 뒤 `202` 와 작업 번호를 바로 돌려줍니다.
@@ -119,7 +145,7 @@ curl http://localhost:8000/healthz
 
 `directory_path` 는 **API 서버가 보는 경로**입니다. 서버를 컨테이너로 띄웠다면 호스트 경로가 아니라 컨테이너 안에서 보이는 경로를 넣어야 합니다. 없는 경로를 주면 `directory_not_found` 로 422 이고, `details.hint` 에 원인을 함께 돌려줍니다.
 
-검토 단계가 없어서 이 경로는 사람 확인 없이 바로 그래프에 씁니다. 확인 뒤 확정하고 싶다면 [적재 도구 참조표](/ingest/tools)의 검토형 적재를 씁니다.
+검토 단계가 없어서 이 경로는 사람 확인 없이 바로 그래프에 씁니다. 확인 뒤 확정하고 싶다면 `POST /ingest/plan` 부터 시작하는 검토형 적재를 씁니다. 대신 그쪽은 파일 하나씩만 다룹니다.
 
 ## GET /admin/ingest/{task_id}/status
 

@@ -30,6 +30,9 @@ EXPECTED_TOOLS = {
     "ingest_preview",
     "ingest_resolve",
     "ingest_commit",
+    "entity_split_plan",
+    "entity_split_preview",
+    "entity_split_commit",
 }
 
 HANDSHAKE = [

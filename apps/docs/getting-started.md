@@ -20,7 +20,7 @@ Claude Code 를 열고 두 줄을 실행해요.
 /plugin install arche@arche
 ```
 
-설치되면 `/arche-ingest` 와 `/arche-query` 두 명령이 생기고, Arche 도구 12개가 함께 올라와요. 도구가 보이는지는 대화창에서 확인할 수 있어요.
+설치되면 `/arche-ingest` 와 `/arche-query` 두 명령이 생기고, Arche 도구 15개가 함께 올라와요. 도구가 보이는지는 대화창에서 확인할 수 있어요.
 
 **처음 연결할 때 몇 초 걸려요.** uv 가 Arche 와 의존성을 받는 시간이에요. 그다음부터는 1 초 안쪽으로 떠요.
 
