@@ -12,6 +12,8 @@ from pathlib import Path
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+from .api.plan_registry import DEFAULT_PLAN_TTL_SECONDS
+
 # 실행 폴더와 무관하게 키를 한 자리에 둔다. `arche config set-key` 가 여기에 쓴다.
 GLOBAL_CONFIG_DIRNAME = "arche"
 GLOBAL_CONFIG_FILENAME = "config.env"
@@ -80,6 +82,11 @@ class Settings(BaseSettings):
     llm_model_context_tokens: int = Field(
         default=DEFAULT_LLM_MODEL_CONTEXT_TOKENS,
         alias="ARCHE_API_LLM_MODEL_CONTEXT_TOKENS",
+    )
+
+    # 검토형 적재 계획을 프로세스 메모리에 붙들어 두는 시간(초). 0 이하면 만료 없음.
+    plan_ttl_seconds: float = Field(
+        default=DEFAULT_PLAN_TTL_SECONDS, alias="ARCHE_API_PLAN_TTL_SECONDS"
     )
 
     @property

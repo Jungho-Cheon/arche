@@ -176,6 +176,11 @@ class FakeGraph(GraphRepository):
             embedding=e.embedding,
             normalized_name=e.normalized_name,
             normalized_aliases=list(mutation.normalized_aliases or []),
+            blocked_aliases=(
+                list(mutation.blocked_aliases)
+                if mutation.blocked_aliases is not None
+                else list(e.blocked_aliases or [])
+            ),
         )
 
     def upsert_relation(
@@ -187,10 +192,46 @@ class FakeGraph(GraphRepository):
                 if source_ref.source_path not in paths:
                     paths.append(source_ref.source_path)
                 return rid, False
-        rid = f"rel_{len(self._relations)+1:04d}"
+        rid = f"REL{len(self._relations) + 1:023d}"
         self._relations[rid] = (from_id, rel_type, to_id)
         self._rel_paths[rid] = [source_ref.source_path]
         return rid, True
+
+    # -- 떼어내기 (#B-1) --
+    def get_entity_relations(self, *, entity_id: str, namespace_id: str = "default"):
+        from arche_api.domain.models import Edge, SourceRef
+
+        out = []
+        for rid, (from_id, rel_type, to_id) in self._relations.items():
+            if entity_id not in (from_id, to_id):
+                continue
+            out.append(
+                Edge(
+                    id=rid,
+                    **{"from": from_id},
+                    to=to_id,
+                    type=rel_type,
+                    source_refs=[
+                        SourceRef(source_path=p) for p in self._rel_paths.get(rid, [])
+                    ],
+                    created_at="2026-08-09T00:00:00Z",
+                    updated_at="2026-08-09T00:00:00Z",
+                )
+            )
+        return out
+
+    def move_relation_endpoint(
+        self, *, relation_id: str, old_entity_id: str, new_entity_id: str
+    ) -> None:
+        key = self._relations.get(relation_id)
+        if key is None:
+            return
+        from_id, rel_type, to_id = key
+        new_from = new_entity_id if from_id == old_entity_id else from_id
+        new_to = new_entity_id if to_id == old_entity_id else to_id
+        if (new_from, new_to) == (from_id, to_id):
+            return
+        self._relations[relation_id] = (new_from, rel_type, new_to)
 
     # -- IngestionRun --
     def find_succeeded_run_by_hash(

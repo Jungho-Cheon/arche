@@ -36,6 +36,7 @@ def mount_mcp_routes(
     settings: Settings,
     ingest_service: IngestService | None = None,
     plan_registry: PlanRegistry | None = None,
+    split_registry: PlanRegistry | None = None,
     prefix: str = "/mcp/v1",
 ) -> None:
     """기존 FastAPI app 에 MCP transport(Streamable HTTP + SSE)를 마운트한다. handlers
@@ -48,6 +49,7 @@ def mount_mcp_routes(
         settings,
         ingest_service=ingest_service,
         plan_registry=plan_registry,
+        split_registry=split_registry,
     )
     # 마운트한 MCP 서버를 app.state 에 얹어 둔다 — 도구 목록 검사/조회의 진입점.
     app.state.mcp_server = server

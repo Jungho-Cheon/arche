@@ -320,6 +320,10 @@ class EntityMatcher:
         )
         best_near: tuple[StoredEntity, float] | None = None
         for cand in candidates:
+            # 떼어낼 때 "이 이름은 저 노드 것"이라고 갈라 놓았으면 유사도가 아무리
+            # 높아도 후보에서 뺀다. 사람이 내린 결정이 임계값보다 세다.
+            if normalized_name and normalized_name in set(cand.blocked_aliases or []):
+                continue
             # 벡터 인덱스 score 는 버전마다 매핑이 달라, 임계값 의미를 고정하려고
             # cosine 을 여기서 다시 계산한다.
             sim = _cosine(query_vec, cand.embedding)
@@ -352,6 +356,11 @@ class EntityMerger:
         merged_aliases = _union_dedupe_preserve_order(
             existing.aliases or [], e_new.aliases or []
         )
+        # 떼어내기로 갈라 놓은 별칭은 도로 들이지 않는다. 이게 없으면 재적재의 union 이
+        # 갈라 둔 결정을 되돌려 두 노드가 다시 한 덩어리가 된다.
+        blocked = set(existing.blocked_aliases or [])
+        if blocked:
+            merged_aliases = [a for a in merged_aliases if normalize(a) not in blocked]
         # 검색용 정규화 alias 인덱스. 자기지칭 stoplist alias 는 여기서만 뺀다(over-merge 방지).
         merged_normalized_aliases = [
             normalize(a)
@@ -384,6 +393,7 @@ class EntityMerger:
             source_refs=merged_refs,
             updated_at=now,
             normalized_aliases=merged_normalized_aliases,
+            blocked_aliases=list(existing.blocked_aliases or []) or None,
         )
 
 

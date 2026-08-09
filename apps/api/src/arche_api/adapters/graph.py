@@ -295,6 +295,7 @@ class Neo4jGraphRepository(GraphRepository):
                 CREATE (e:{ENTITY_LABEL} {{
                     id: $id, name: $name, normalized_name: $normalized_name,
                     normalized_aliases: $normalized_aliases,
+                    blocked_aliases: $blocked_aliases,
                     type: $type, aliases: $aliases, description: $description,
                     embedding: $embedding,
                     namespace_id: $namespace_id,
@@ -308,6 +309,7 @@ class Neo4jGraphRepository(GraphRepository):
                 name=entity.name,
                 normalized_name=entity.normalized_name,
                 normalized_aliases=list(entity.normalized_aliases or []),
+                blocked_aliases=list(entity.blocked_aliases or []),
                 type=entity.type,
                 aliases=entity.aliases,
                 description=entity.description or "",
@@ -345,6 +347,12 @@ class Neo4jGraphRepository(GraphRepository):
                 source_total_chunks=source_totals,
                 updated_at=mutation.updated_at,
             ).consume()
+            if mutation.blocked_aliases is not None:
+                s.run(
+                    f"MATCH (e:{ENTITY_LABEL} {{id: $id}}) SET e.blocked_aliases = $blocked",
+                    id=mutation.id,
+                    blocked=list(mutation.blocked_aliases),
+                ).consume()
 
     def upsert_relation(
         self,
@@ -394,6 +402,116 @@ class Neo4jGraphRepository(GraphRepository):
             # dangling — from 또는 to 가 그래프에 없음
             return "", False
         return result["id"], bool(result["created"])
+
+    def get_entity_relations(
+        self, *, entity_id: str, namespace_id: str = "default"
+    ) -> list[Edge]:
+        with self._driver.session() as s:
+            rows = list(
+                s.run(
+                    f"""
+                    MATCH (n:{ENTITY_LABEL} {{id: $id}})-[r:{RELATION_TYPE_LABEL_DEFAULT}]-(m:{ENTITY_LABEL})
+                    WHERE n.namespace_id = $ns AND m.namespace_id = $ns
+                    RETURN r.id AS rel_id, r.type AS rel_type,
+                           r.created_at AS rel_created_at, r.updated_at AS rel_updated_at,
+                           r.source_paths AS rel_source_paths,
+                           startNode(r).id AS from_id, endNode(r).id AS to_id
+                    """,
+                    id=entity_id,
+                    ns=namespace_id,
+                )
+            )
+        return [
+            _record_to_edge(
+                rel_id=r["rel_id"],
+                rel_type=r["rel_type"],
+                rel_created_at=r["rel_created_at"],
+                rel_updated_at=r["rel_updated_at"],
+                rel_source_paths=list(r["rel_source_paths"] or []),
+                from_id=r["from_id"],
+                to_id=r["to_id"],
+            )
+            for r in rows
+        ]
+
+    def move_relation_endpoint(
+        self, *, relation_id: str, old_entity_id: str, new_entity_id: str
+    ) -> None:
+        """Neo4j 는 엣지의 끝점을 바꾸는 문법이 없어, 옮길 자리에 같은 관계를 새로 만들고
+        옛 엣지를 지운다. id 와 출처, 만든 시각, 적재 회차를 그대로 들고 가 옮긴 관계가
+        원래부터 그 자리에 있던 관계와 똑같아 보이게 한다."""
+        with self._driver.session() as s:
+            rec = s.run(
+                f"""
+                MATCH (a:{ENTITY_LABEL})-[r:{RELATION_TYPE_LABEL_DEFAULT} {{id: $rid}}]->(b:{ENTITY_LABEL})
+                RETURN a.id AS from_id, b.id AS to_id, r.type AS type,
+                       coalesce(r.source_paths, []) AS source_paths,
+                       r.created_at AS created_at,
+                       coalesce(r.emitted_in_run_ids, []) AS runs
+                """,
+                rid=relation_id,
+            ).single()
+            if rec is None:
+                return
+            plan = _plan_endpoint_move(
+                from_id=rec["from_id"],
+                to_id=rec["to_id"],
+                old_entity_id=old_entity_id,
+                new_entity_id=new_entity_id,
+            )
+            if plan is None:
+                return
+            from_id, to_id = plan
+            source_paths = list(rec["source_paths"] or [])
+            runs = list(rec["runs"] or [])
+            existing = s.run(
+                f"""
+                MATCH (a:{ENTITY_LABEL} {{id: $from_id}})-[r:{RELATION_TYPE_LABEL_DEFAULT} {{type: $type}}]->(b:{ENTITY_LABEL} {{id: $to_id}})
+                RETURN r.id AS id, coalesce(r.source_paths, []) AS source_paths,
+                       coalesce(r.emitted_in_run_ids, []) AS runs
+                """,
+                from_id=from_id,
+                to_id=to_id,
+                type=rec["type"],
+            ).single()
+            s.run(
+                f"MATCH ()-[r:{RELATION_TYPE_LABEL_DEFAULT} {{id: $rid}}]-() DELETE r",
+                rid=relation_id,
+            ).consume()
+            now = now_rfc3339()
+            if existing is not None:
+                # 옮긴 자리에 같은 (from, type, to) 관계가 이미 있으면 출처와 회차를 합친다.
+                s.run(
+                    f"""
+                    MATCH ()-[r:{RELATION_TYPE_LABEL_DEFAULT} {{id: $rid}}]-()
+                    SET r.source_paths = $source_paths,
+                        r.emitted_in_run_ids = $runs, r.updated_at = $now
+                    """,
+                    rid=existing["id"],
+                    source_paths=_union(list(existing["source_paths"] or []), source_paths),
+                    runs=_union(list(existing["runs"] or []), runs),
+                    now=now,
+                ).consume()
+                return
+            s.run(
+                f"""
+                MATCH (a:{ENTITY_LABEL} {{id: $from_id}})
+                MATCH (b:{ENTITY_LABEL} {{id: $to_id}})
+                CREATE (a)-[r:{RELATION_TYPE_LABEL_DEFAULT} {{
+                    id: $rid, type: $type, source_paths: $source_paths,
+                    created_at: $created_at, updated_at: $now,
+                    emitted_in_run_ids: $runs, _just_created: false
+                }}]->(b)
+                """,
+                from_id=from_id,
+                to_id=to_id,
+                rid=relation_id,
+                type=rec["type"],
+                source_paths=source_paths,
+                created_at=rec["created_at"],
+                now=now,
+                runs=runs,
+            ).consume()
 
     # ---------- IngestionRun + 차분 ----------
 
@@ -1150,6 +1268,7 @@ def _node_to_stored(node: Any) -> StoredEntity:
         embedding=list(node.get("embedding") or []),
         normalized_name=node.get("normalized_name") or "",
         normalized_aliases=list(node.get("normalized_aliases") or []),
+        blocked_aliases=list(node.get("blocked_aliases") or []),
     )
 
 
@@ -1193,6 +1312,28 @@ def _node_to_response(node: Any) -> Node:
         created_at=node["created_at"],
         updated_at=node["updated_at"],
     )
+
+
+def _union(a: list[str], b: list[str]) -> list[str]:
+    """순서를 지키며 합친다. 관계를 옮길 때 출처와 회차 목록이 한쪽만 남지 않게."""
+    out = list(a)
+    seen = set(a)
+    for item in b:
+        if item not in seen:
+            seen.add(item)
+            out.append(item)
+    return out
+
+
+def _plan_endpoint_move(
+    *, from_id: str, to_id: str, old_entity_id: str, new_entity_id: str
+) -> tuple[str, str] | None:
+    """관계의 끝점을 옮긴 뒤의 (from, to). 옮길 자리가 없으면 None."""
+    new_from = new_entity_id if from_id == old_entity_id else from_id
+    new_to = new_entity_id if to_id == old_entity_id else to_id
+    if (new_from, new_to) == (from_id, to_id):
+        return None
+    return new_from, new_to
 
 
 def _source_ref_arrays(source_refs: list[SourceRef]) -> tuple[list[str], list[int], list[int]]:

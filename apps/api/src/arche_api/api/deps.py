@@ -13,9 +13,11 @@ from ..adapters.extract_cache import DEFAULT_CACHE_DIR, ExtractionCache
 from ..adapters.graph import Neo4jGraphRepository
 from ..adapters.providers import LazyEmbeddingProvider, LazyLLMProvider
 from ..config import Settings, get_settings
+from ..domain.entity_split import SplitService
 from ..domain.ingest import IngestService
 from ..domain.main_entity import MainEntityExtractor
 from .admin_tasks import IngestTaskRegistry
+from .plan_registry import PlanRegistry
 
 
 def settings_dep() -> Settings:
@@ -67,6 +69,25 @@ def ingest_service_dep(
     return build_ingest_service(
         get_settings(), llm=llm, embedder=embedder, graph=graph
     )
+
+
+def split_service_dep(
+    embedder: EmbeddingProvider = Depends(embedding_provider_dep),
+    graph: GraphRepository = Depends(graph_repo_dep),
+) -> SplitService:
+    return SplitService(graph=graph, embedder=embedder)
+
+
+def split_registry_dep(request: Request) -> PlanRegistry:
+    """떼어내기 계획 보관소. 적재 계획과 따로 둬서 plan_id 를 엉뚱한 연산에 넘기면
+    바로 걸린다."""
+    return request.app.state.split_registry
+
+
+def plan_registry_dep(request: Request) -> PlanRegistry:
+    """검토형 적재의 계획 보관소. lifespan 에서 하나만 만들어 REST 와 MCP HTTP 가
+    같은 인스턴스를 보므로, 한쪽에서 세운 계획을 다른 쪽에서 확정할 수 있다."""
+    return request.app.state.plan_registry
 
 
 def task_registry_dep(request: Request) -> IngestTaskRegistry:

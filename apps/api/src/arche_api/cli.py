@@ -229,7 +229,8 @@ def mcp_serve(
             extract_batch_size=8,
             llm_model_id=settings.llm_model_id,
         )
-        registry = PlanRegistry()
+        registry = PlanRegistry(ttl_seconds=settings.plan_ttl_seconds)
+        split_registry = PlanRegistry(ttl_seconds=settings.plan_ttl_seconds)
 
         asyncio.run(
             run_stdio_server(
@@ -238,6 +239,7 @@ def mcp_serve(
                 settings,
                 ingest_service=service,
                 plan_registry=registry,
+                split_registry=split_registry,
             )
         )
     finally:

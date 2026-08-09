@@ -17,13 +17,16 @@ from .api.error_codes import (
     ErrorCode,
     flatten_validation_errors,
 )
+from .api.plan_registry import PlanRegistry
 from .api.routers import (
     admin_router,
     entities_router,
     health_router,
+    ingest_router,
     paths_router,
     related_router,
     schema_router,
+    split_router,
     subgraph_router,
 )
 from .api.schemas import ErrorBody, ErrorEnvelope
@@ -45,6 +48,10 @@ async def lifespan(app: FastAPI):
     # POST /admin/ingest 가 만든 task_id 를 GET /status 가 같은 dict 에서 조회하도록
     # lifespan 에서 registry 를 한 번만 만든다.
     app.state.ingest_task_registry = IngestTaskRegistry()
+    # 검토형 적재의 계획 보관소. REST 의 /ingest/* 와 MCP HTTP 가 같은 인스턴스를
+    # 공유해, 한 통로에서 세운 계획을 다른 통로에서 확정할 수 있다.
+    app.state.plan_registry = PlanRegistry(ttl_seconds=settings.plan_ttl_seconds)
+    app.state.split_registry = PlanRegistry(ttl_seconds=settings.plan_ttl_seconds)
 
     # 인덱스 마이그레이션 — idempotent.
     try:
@@ -55,10 +62,9 @@ async def lifespan(app: FastAPI):
 
     # MCP HTTP transports 를 lazy import 로 마운트한다(stdio-only 환경의 SDK 부담 회피).
     # 검토형 적재 도구까지 HTTP 로 노출하려고 REST 와 같은 조립(build_ingest_service)을
-    # 쓰고, plan_registry 는 앱 수명 동안 하나만 두어 plan→resolve→commit 을 잇는다.
+    # 쓴다.
     try:
         from .api.deps import build_ingest_service
-        from .api.plan_registry import PlanRegistry
         from .mcp_http import mount_mcp_routes
 
         ingest_service = build_ingest_service(
@@ -67,14 +73,14 @@ async def lifespan(app: FastAPI):
             embedder=components["embedding_provider"],
             graph=components["graph_repo"],
         )
-        app.state.mcp_plan_registry = PlanRegistry()
         mount_mcp_routes(
             app,
             graph=components["graph_repo"],
             embedder=components["embedding_provider"],
             settings=settings,
             ingest_service=ingest_service,
-            plan_registry=app.state.mcp_plan_registry,
+            plan_registry=app.state.plan_registry,
+            split_registry=app.state.split_registry,
         )
         logger.info("MCP HTTP routes mounted at /mcp/v1")
     except Exception as e:  # noqa: BLE001
@@ -92,7 +98,8 @@ def create_app() -> FastAPI:
         version="0.1.0",
         description=(
             "Graph primitives — get_schema / find_entities (hybrid + RRF) / "
-            "get_entity / get_neighbors / find_path / get_subgraph + admin ingest."
+            "get_entity / get_neighbors / find_path / get_subgraph / find_related, "
+            "reviewable ingest (plan → preview → resolve → commit) + admin ingest."
         ),
         lifespan=lifespan,
     )
@@ -103,6 +110,8 @@ def create_app() -> FastAPI:
     app.include_router(paths_router)
     app.include_router(subgraph_router)
     app.include_router(related_router)
+    app.include_router(ingest_router)
+    app.include_router(split_router)
     app.include_router(admin_router)
     # /v1/ versioning alias — 기존 path 유지 + /v1/ prefix 동시 노출.
     app.include_router(health_router, prefix="/v1")
@@ -111,6 +120,8 @@ def create_app() -> FastAPI:
     app.include_router(paths_router, prefix="/v1")
     app.include_router(subgraph_router, prefix="/v1")
     app.include_router(related_router, prefix="/v1")
+    app.include_router(ingest_router, prefix="/v1")
+    app.include_router(split_router, prefix="/v1")
     app.include_router(admin_router, prefix="/v1")
 
     @app.exception_handler(ArcheError)

@@ -13,6 +13,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query, Response
 
 from arche_api.domain.ports import EmbeddingProvider, GraphRepository
 
+from ..domain.entity_split import SplitService
 from ..domain.errors import InvalidInputError
 from ..domain.ingest import IngestService
 from . import services
@@ -26,8 +27,22 @@ from .deps import (
     embedding_provider_dep,
     graph_repo_dep,
     ingest_service_dep,
+    plan_registry_dep,
     settings_dep,
+    split_registry_dep,
+    split_service_dep,
     task_registry_dep,
+)
+from .plan_registry import PlanRegistry
+from .plan_schemas import (
+    CommitRequest,
+    IngestCommitResponse,
+    PlanContentRequest,
+    PlanIngestRequest,
+    PlanPreview,
+    PlanSummary,
+    PreviewRequest,
+    ResolveRequest,
 )
 from .responses import (
     FindPathRequest,
@@ -57,6 +72,14 @@ from .schemas import (
     HealthzResponse,
     NamespaceSummary,
 )
+from .split_schemas import (
+    SplitCommitRequest,
+    SplitCommitResponse,
+    SplitPlanRequest,
+    SplitPreview,
+    SplitPreviewRequest,
+    SplitSummary,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -67,6 +90,10 @@ schema_router = APIRouter(tags=["schema"])
 paths_router = APIRouter(prefix="/paths", tags=["paths"])
 subgraph_router = APIRouter(prefix="/subgraph", tags=["subgraph"])
 related_router = APIRouter(prefix="/related", tags=["related"])
+ingest_router = APIRouter(prefix="/ingest", tags=["ingest"])
+# 떼어내기는 노드를 다루는 연산이라 /entities 아래 둔다. /admin 아래가 아닌 이유는
+# 검토가 관리자 기능이 아니라 일상 작업이기 때문이다.
+split_router = APIRouter(prefix="/entities/split", tags=["split"])
 
 
 @health_router.get("/healthz", response_model=HealthzResponse)
@@ -244,6 +271,158 @@ def find_related(
     """
     namespace_id = body.namespace_id or auth.namespace_id
     payload = services.find_related(body, graph=graph, namespace_id=namespace_id)
+    return DataEnvelope(data=payload)
+
+
+# ---------- 떼어내기: plan → preview → commit ----------
+# 잘못 합친 노드를 둘로 가른다. 적재와 같은 안전 latch 를 쓰되 resolve 단계가 없다 —
+# 계획에 LLM 호출이 없어, 사람이 정한 관계 배정을 실어 다시 계획하는 편이 싸다.
+
+
+@split_router.post(
+    "/plan",
+    response_model=DataEnvelope[SplitSummary],
+    response_model_exclude_none=True,
+)
+def entity_split_plan(
+    body: SplitPlanRequest,
+    service: SplitService = Depends(split_service_dep),
+    registry: PlanRegistry = Depends(split_registry_dep),
+    auth: AuthContext = Depends(auth_context_dep),
+) -> DataEnvelope[SplitSummary]:
+    """떼어내기 계획 — services.plan_entity_split 위임. 그래프는 읽기만 한다."""
+    if "namespace_id" not in body.model_fields_set:
+        body = body.model_copy(update={"namespace_id": auth.namespace_id})
+    payload = services.plan_entity_split(body, service=service, registry=registry)
+    return DataEnvelope(data=payload)
+
+
+@split_router.post(
+    "/preview",
+    response_model=DataEnvelope[SplitPreview],
+    response_model_exclude_none=True,
+)
+def entity_split_preview(
+    body: SplitPreviewRequest,
+    registry: PlanRegistry = Depends(split_registry_dep),
+) -> DataEnvelope[SplitPreview]:
+    """두 노드의 최종 모습과 관계별 행선지 — services.preview_entity_split 위임."""
+    payload = services.preview_entity_split(body, registry=registry)
+    return DataEnvelope(data=payload)
+
+
+@split_router.post(
+    "/commit",
+    response_model=DataEnvelope[SplitCommitResponse],
+    response_model_exclude_none=True,
+)
+def entity_split_commit(
+    body: SplitCommitRequest,
+    service: SplitService = Depends(split_service_dep),
+    registry: PlanRegistry = Depends(split_registry_dep),
+) -> DataEnvelope[SplitCommitResponse]:
+    """미리 보기를 거치고 판단이 끝난 계획만 반영 — services.commit_entity_split 위임."""
+    payload = services.commit_entity_split(body, service=service, registry=registry)
+    return DataEnvelope(data=payload)
+
+
+# ---------- 검토형 적재: plan → preview → resolve → commit ----------
+# MCP 의 ingest_* 도구 5 개와 같은 스키마, 같은 서비스 함수를 쓴다. /admin/ingest 는
+# 검토 없이 바로 쓰는 대량 경로라 이 묶음과 별개다.
+
+
+def _plan_namespace(body: PlanIngestRequest | PlanContentRequest, auth: AuthContext) -> str:
+    """계획이 속할 namespace — body 명시 > auth header > "default".
+
+    스키마의 namespace_id 기본값이 "default" 라 값만 봐서는 명시했는지 알 수 없다.
+    pydantic 의 model_fields_set 으로 실제 입력 여부를 갈라 조회 엔드포인트와 같은
+    우선순위를 지킨다."""
+    if "namespace_id" in body.model_fields_set:
+        return body.namespace_id
+    return auth.namespace_id
+
+
+@ingest_router.post(
+    "/plan",
+    response_model=DataEnvelope[PlanSummary],
+    response_model_exclude_none=True,
+)
+def ingest_plan(
+    body: PlanIngestRequest,
+    service: IngestService = Depends(ingest_service_dep),
+    registry: PlanRegistry = Depends(plan_registry_dep),
+    auth: AuthContext = Depends(auth_context_dep),
+) -> DataEnvelope[PlanSummary]:
+    """파일 하나의 변경 묶음을 그래프를 건드리지 않고 만든다 — services.plan_ingest 위임.
+
+    path 는 API 서버가 보는 경로다. 서버가 읽을 수 없는 자리의 문서라면 본문을 직접
+    넘기는 POST /ingest/content 를 쓴다."""
+    resolved = body.model_copy(update={"namespace_id": _plan_namespace(body, auth)})
+    payload = services.plan_ingest(resolved, service=service, registry=registry)
+    return DataEnvelope(data=payload)
+
+
+@ingest_router.post(
+    "/content",
+    response_model=DataEnvelope[PlanSummary],
+    response_model_exclude_none=True,
+)
+def ingest_content(
+    body: PlanContentRequest,
+    service: IngestService = Depends(ingest_service_dep),
+    registry: PlanRegistry = Depends(plan_registry_dep),
+    auth: AuthContext = Depends(auth_context_dep),
+) -> DataEnvelope[PlanSummary]:
+    """넘겨받은 텍스트로 변경 묶음을 만든다 — services.plan_ingest_content 위임.
+    파일을 서버에 떨구지 않아도 되므로 REST 통합의 기본 경로다."""
+    resolved = body.model_copy(update={"namespace_id": _plan_namespace(body, auth)})
+    payload = services.plan_ingest_content(resolved, service=service, registry=registry)
+    return DataEnvelope(data=payload)
+
+
+@ingest_router.post(
+    "/preview",
+    response_model=DataEnvelope[PlanPreview],
+    response_model_exclude_none=True,
+)
+def ingest_preview(
+    body: PreviewRequest,
+    registry: PlanRegistry = Depends(plan_registry_dep),
+) -> DataEnvelope[PlanPreview]:
+    """계획을 항목 단위로 펼치고 commit 의 안전 latch 를 건다 — services.preview_plan 위임."""
+    payload = services.preview_plan(body, registry=registry)
+    return DataEnvelope(data=payload)
+
+
+@ingest_router.post(
+    "/resolve",
+    response_model=DataEnvelope[PlanSummary],
+    response_model_exclude_none=True,
+)
+def ingest_resolve(
+    body: ResolveRequest,
+    service: IngestService = Depends(ingest_service_dep),
+    registry: PlanRegistry = Depends(plan_registry_dep),
+) -> DataEnvelope[PlanSummary]:
+    """미리 보기가 물은 질문에 사람의 결정을 반영해 계획을 다듬는다 —
+    services.resolve_ingest 위임. 계획의 namespace 는 보관된 값을 그대로 쓴다."""
+    payload = services.resolve_ingest(body, service=service, registry=registry)
+    return DataEnvelope(data=payload)
+
+
+@ingest_router.post(
+    "/commit",
+    response_model=DataEnvelope[IngestCommitResponse],
+    response_model_exclude_none=True,
+)
+def ingest_commit(
+    body: CommitRequest,
+    service: IngestService = Depends(ingest_service_dep),
+    registry: PlanRegistry = Depends(plan_registry_dep),
+) -> DataEnvelope[IngestCommitResponse]:
+    """미리 보기를 거친 계획만 그래프에 반영한다 — services.commit_plan 위임.
+    미리 보기 없이 부르면 unprocessable 로 거부된다."""
+    payload = services.commit_plan(body, service=service, registry=registry)
     return DataEnvelope(data=payload)
 
 

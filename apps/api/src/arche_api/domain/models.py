@@ -104,6 +104,9 @@ class StoredEntity:
     normalized_name: str = ""
     # 검색용 정규화 alias 사본. 표기형 aliases 는 그대로 두고 이 사본으로 lookup 한다.
     normalized_aliases: list[str] = field(default_factory=list)
+    # 이 노드가 다시 흡수하면 안 되는 정규화 별칭. 노드를 둘로 가른 뒤 재적재가
+    # 갈라 둔 별칭을 도로 union 해 합치는 걸 막는다.
+    blocked_aliases: list[str] = field(default_factory=list)
 
 
 @dataclass(frozen=True)
@@ -118,6 +121,8 @@ class MergeMutation:
     source_refs: list[SourceRef]
     updated_at: str
     normalized_aliases: list[str] = field(default_factory=list)
+    # None 이면 저장된 값을 그대로 둔다. 리스트를 주면 그 값으로 교체한다.
+    blocked_aliases: list[str] | None = None
 
 
 def now_rfc3339() -> str:

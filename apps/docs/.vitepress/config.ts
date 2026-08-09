@@ -53,6 +53,7 @@ export default withMermaid(defineConfig({
             items: [
               { text: "문서를 그래프에 넣기", link: "/ingest/" },
               { text: "추출이 빈약할 때", link: "/ingest/quality" },
+              { text: "잘못 합친 노드 떼어내기", link: "/ingest/split" },
               { text: "적재 도구 참조표", link: "/ingest/tools" },
             ],
           },
