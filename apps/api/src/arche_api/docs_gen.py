@@ -185,13 +185,15 @@ def _render_description(prop: dict[str, Any]) -> str:
     return _escape_cell(desc) if desc else "—"
 
 
-def render_request_table(op_title: str, model: type[BaseModel]) -> str:
-    """요청 모델 하나를 `#### op` + 필드 표(설명 칸 포함)로 렌더."""
+def render_request_table(
+    op_title: str, model: type[BaseModel], *, level: str = "###"
+) -> str:
+    """요청 모델 하나를 `### op` + 필드 표(설명 칸 포함)로 렌더."""
     schema = model.model_json_schema(by_alias=True)
     props: dict[str, Any] = schema.get("properties", {})
     required: list[str] = schema.get("required", [])
     lines = [
-        f"#### {op_title}",
+        f"{level} {op_title}",
         "",
         "| 요청 필드 | 타입 | 기본값 | 제약 | 설명 |",
         "| --- | --- | --- | --- | --- |",

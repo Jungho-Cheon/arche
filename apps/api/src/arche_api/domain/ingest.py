@@ -173,11 +173,21 @@ class IngestService:
         self._extract_batch_size = max(1, extract_batch_size)
         self._llm_model_id = llm_model_id
         # 파이프라인 버전 + LLM 지문을 묶은 short-circuit 게이트 키 (ADR-0017).
-        self._extractor_version = f"p{INGEST_PIPELINE_VERSION}:{llm.extraction_fingerprint()}"
+        # 지문 계산이 provider 를 실체화하므로 첫 사용까지 미룬다 — 키가 없어도
+        # 서버는 떠야 한다.
+        self._extractor_version_cache: str | None = None
         # 재계획 동안만 켜 두는 transient 상태. plan/resolve 가 set 하고 finally 로
         # 복원한다. 비어 있으면(정상 적재) 동작이 종전과 같다.
         self._active_resolutions: dict[str, str] = {}
         self._active_hints: str | None = None
+
+    @property
+    def _extractor_version(self) -> str:
+        if self._extractor_version_cache is None:
+            self._extractor_version_cache = (
+                f"p{INGEST_PIPELINE_VERSION}:{self._llm.extraction_fingerprint()}"
+            )
+        return self._extractor_version_cache
 
     def ingest_directory(
         self,

@@ -11,7 +11,7 @@ from arche_api.domain.ports import EmbeddingProvider, GraphRepository, LLMProvid
 
 from ..adapters.extract_cache import DEFAULT_CACHE_DIR, ExtractionCache
 from ..adapters.graph import Neo4jGraphRepository
-from ..adapters.providers import build_embedding_provider, build_llm_provider
+from ..adapters.providers import LazyEmbeddingProvider, LazyLLMProvider
 from ..config import Settings, get_settings
 from ..domain.ingest import IngestService
 from ..domain.main_entity import MainEntityExtractor
@@ -79,8 +79,8 @@ def build_default_components(settings: Settings) -> dict:
     """프로덕션 부팅 경로에서 사용한다(테스트는 별도 구성). LLM/임베딩 provider 는
     모델 식별자 접두사로 팩토리가 고르므로 환경 변수만 바꾸면 코드 변경 없이 교체된다."""
     graph = build_graph_repository(settings)
-    llm = build_llm_provider(settings)
-    embedder = build_embedding_provider(settings)
+    llm = LazyLLMProvider()
+    embedder = LazyEmbeddingProvider()
     return {"graph_repo": graph, "llm_provider": llm, "embedding_provider": embedder}
 
 

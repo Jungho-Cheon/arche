@@ -1,42 +1,34 @@
 # 에러 코드
 
-호출이 실패하면 응답은 `error` 봉투에 코드와 메시지를 담아 옵니다. 에러 코드는 정해진 목록으로 고정돼 있어, 프로그램이 코드 값만 보고 분기할 수 있습니다.
+Arche 가 돌려주는 오류 코드와 HTTP 상태 코드를 모은 참조표입니다. REST 와 MCP 가 같은 코드를 씁니다.
 
-## 에러 봉투
+## 응답 모양
+
+REST 는 오류를 이렇게 돌려줍니다.
 
 ```json
 {
   "error": {
     "code": "entity_not_found",
-    "message": "entity not found: 01J8XR4K9ZQ2N7M3VB0W4D6TYE",
+    "message": "entity 01J8XR4K9ZQ2N7M3VB0W4D6TYE not found",
     "details": {}
   }
 }
 ```
 
-| 필드 | 타입 | 설명 |
-| --- | --- | --- |
-| `code` | `string` | 아래 카탈로그의 코드 중 하나 |
-| `message` | `string` | 사람이 읽는 설명 |
-| `details` | `object` | 코드별 부가 정보. 기본은 빈 객체 |
+MCP 는 같은 본문에 `isError: true` 를 함께 세웁니다. 부르는 쪽은 `isError` 로 갈라 본문을 JSON 으로 읽습니다.
 
-## 코드 카탈로그
+`code` 는 프로그램이 갈라 쓰라고 있는 값이고, `message` 는 사람이 읽는 설명입니다. `details` 는 코드마다 다른 부가 정보를 담습니다.
+
+## 코드 목록
 
 <!-- @include: ./_generated/error-catalog.md -->
 
-위 표는 코드의 에러 코드 정의에서 자동 생성됩니다(코드/HTTP/뜻이 언제나 실제 코드와 일치). `unprocessable` 과 `unsupported_file_type` 은 형식 검증(`invalid_input`)을 통과한 뒤 의미 단계에서 걸리는 코드라, 나머지와 같은 `error` 봉투로 똑같이 옵니다. MCP 로 부를 때도 `data.code` 에 같은 값이 실립니다.
+## 자주 만나는 코드
 
-지금 버전에는 자체 인증이 없습니다. 그래서 `not_authorized`(401)와 `permission_denied`(403)는 보통 Arche 자체에서 나오지 않습니다. Arche 를 인증 프록시 뒤에 두거나 나중에 인증 계층을 붙일 때를 위해 코드만 미리 정해 둔 것입니다.
+### invalid_input
 
-## 검증 오류의 details
-
-`invalid_input` 처럼 필드 검증에서 막힌 오류는 위반 내역을 `details.errors[]` 로 평탄하게 펴서 줍니다. 각 항목은 정확히 세 키만 담습니다.
-
-| 키 | 설명 |
-| --- | --- |
-| `loc` | 위반 필드를 점으로 이은 경로 (예: `body.keywords`, `body.from_id`) |
-| `type` | 위반 종류 (예: `too_short`, `less_than_equal`, `string_pattern_mismatch`) |
-| `msg` | 사람이 읽는 설명 |
+필드 형식이 어긋났거나 빠졌습니다. `details.errors[]` 에 어느 필드가 왜 걸렸는지 목록으로 담깁니다.
 
 ```json
 {
@@ -52,6 +44,47 @@
 }
 ```
 
-## 다음으로
+`loc` 은 점으로 이은 필드 위치입니다. ID 를 넘기는 자리에 26자리 ULID 가 아닌 값을 주면 대부분 이 코드가 납니다.
 
-- [그래프에 질의하기](/guide/query) — 연산별 요청 필드와 오류가 발생하는 조건.
+### unprocessable
+
+형식은 맞지만 의미상 처리할 수 없습니다. 세 경우가 흔합니다.
+
+- `find_path` 에 `from_id` 와 `to_id` 를 같게 준 경우
+- `ingest_preview` 를 거치지 않고 `ingest_commit` 을 부른 경우
+- 계획을 세운 뒤 그래프가 바뀌어 계획이 어긋난 경우
+
+마지막 경우는 `ingest_plan` 이나 `ingest_content` 부터 다시 부르면 풀립니다.
+
+### entity_not_found
+
+그 ID 의 노드가 없습니다. namespace 를 잘못 짚었을 때도 이 코드가 나옵니다. 다른 namespace 의 노드는 조회 자체가 안 보이기 때문입니다.
+
+### dependency_unavailable
+
+그래프 백엔드나 AI 공급자에 닿지 못했습니다. Neo4j 를 쓰는데 아직 부팅 중이거나, 접속 정보가 틀렸거나, 네트워크가 막힌 경우입니다.
+
+`GET /healthz` 의 `graph` 값이 `"down"` 인지 먼저 확인하세요.
+
+### unsupported_file_type
+
+받지 않는 확장자의 파일을 넣으려 했습니다. 받는 확장자는 `.txt`, `.md`, `.pdf`, `.jpg`, `.jpeg`, `.png`, `.webp` 입니다.
+
+폴더를 적재할 때는 오류가 아니라 조용히 건너뛰고 `files_unsupported_skipped` 로 셉니다.
+
+### extraction_failed
+
+문서에서 노드와 관계를 뽑는 단계가 실패했습니다. AI 공급자의 응답을 읽지 못했을 때 납니다. 같은 파일이 계속 실패하면 `--dry-run` 으로 추출만 돌려 어디서 걸리는지 좁힙니다.
+
+## 코드가 아닌 실패
+
+키가 없거나 크레딧이 모자라면 AI 공급자 쪽 메시지가 그대로 올라옵니다. 다음 문장이 보이면 OpenAI 계정에 결제 수단과 크레딧이 있는지 확인하세요.
+
+```text
+insufficient_quota
+```
+
+## 같이 보기
+
+- [REST API](/reference/rest-api) — 엔드포인트별 응답 모양
+- [조회 도구 참조표](/query/tools) — 도구별 요청 필드와 제약

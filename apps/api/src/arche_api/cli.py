@@ -11,9 +11,16 @@ from typing import Annotated
 import typer
 from dotenv import load_dotenv
 
-from .adapters.providers import build_embedding_provider, build_llm_provider
+from .adapters.providers import LazyEmbeddingProvider, LazyLLMProvider
 from .api.deps import build_graph_repository
-from .config import get_settings
+from .config import get_settings, global_config_path, reload_settings
+from .config_store import (
+    PROVIDER_ENV_NAMES,
+    SOURCE_GLOBAL,
+    resolve_source,
+    set_value,
+    unset_value,
+)
 from .domain.errors import ArcheError
 from .domain.ingest import FileProgressEvent, IngestService
 
@@ -37,6 +44,13 @@ docs_app = typer.Typer(
 )
 app.add_typer(docs_app, name="docs")
 
+config_app = typer.Typer(
+    no_args_is_help=True,
+    add_completion=False,
+    help="설정 명령 — API 키를 전역 설정 파일에 두고 상태를 확인.",
+)
+app.add_typer(config_app, name="config")
+
 
 @app.command()
 def version() -> None:
@@ -44,6 +58,85 @@ def version() -> None:
     from . import __version__
 
     typer.echo(__version__)
+
+
+def _env_name_or_exit(provider: str) -> str:
+    env_name = PROVIDER_ENV_NAMES.get(provider)
+    if env_name is None:
+        typer.echo(
+            f"[error] 알 수 없는 provider '{provider}'. "
+            f"지원: {sorted(PROVIDER_ENV_NAMES)}",
+            err=True,
+        )
+        raise typer.Exit(code=2)
+    return env_name
+
+
+_PROVIDER_OPTION = typer.Option(
+    "--provider", help="키를 다룰 provider (openai / anthropic / voyage)."
+)
+
+
+@config_app.command("set-key")
+def config_set_key(
+    provider: Annotated[str, _PROVIDER_OPTION] = "openai",
+) -> None:
+    """API 키를 입력받아 전역 설정 파일에 저장한다. 입력은 화면에 찍히지 않는다."""
+    env_name = _env_name_or_exit(provider)
+    value = typer.prompt(env_name, hide_input=True).strip()
+    if not value:
+        typer.echo("[error] 빈 값은 저장하지 않습니다.", err=True)
+        raise typer.Exit(code=2)
+
+    path = set_value(env_name, value)
+    typer.echo(f"{env_name} 를 {path} 에 저장했습니다.")
+
+    # 더 센 출처가 이미 있으면 방금 저장한 값이 쓰이지 않는다 — 조용히 넘기면
+    # "저장했는데 왜 그대로냐" 가 된다.
+    source = resolve_source(env_name)
+    if source is not None and source != SOURCE_GLOBAL:
+        typer.echo(
+            f"[warn] 지금은 {source} 쪽 값이 우선합니다. "
+            "방금 저장한 값은 그쪽을 지워야 쓰입니다.",
+            err=True,
+        )
+
+
+@config_app.command("unset-key")
+def config_unset_key(
+    provider: Annotated[str, _PROVIDER_OPTION] = "openai",
+) -> None:
+    """전역 설정 파일에서 API 키를 지운다."""
+    env_name = _env_name_or_exit(provider)
+    if unset_value(env_name):
+        typer.echo(f"{env_name} 를 지웠습니다.")
+    else:
+        typer.echo(f"{env_name} 는 전역 설정 파일에 없습니다.")
+
+
+@config_app.command("show")
+def config_show() -> None:
+    """설정 상태를 요약한다. 키 값 자체는 출력하지 않는다."""
+    # 출처 판정을 먼저 한다. load_dotenv 가 os.environ 을 채우고 나면 .env 에서 온
+    # 값도 환경 변수로 보여 출처가 뭉개진다.
+    sources = {
+        env_name: resolve_source(env_name)
+        for env_name in PROVIDER_ENV_NAMES.values()
+    }
+
+    load_dotenv()
+    settings = reload_settings()
+
+    typer.echo(f"전역 설정 파일: {global_config_path()}")
+    typer.echo(f"그래프 백엔드: {settings.graph_backend}")
+    if settings.graph_backend.lower() in ("embedded", "kuzu"):
+        db_path = settings.kuzu_db_path
+        shown = db_path if db_path == ":memory:" else str(Path(db_path).resolve())
+        typer.echo(f"그래프 경로: {shown}")
+    typer.echo(f"추출 모델: {settings.llm_model}")
+    typer.echo(f"임베딩 모델: {settings.embedding_model}")
+    for env_name, source in sources.items():
+        typer.echo(f"{env_name}: {f'설정됨 ({source})' if source else '없음'}")
 
 
 @mcp_app.command("serve")
@@ -106,7 +199,7 @@ def mcp_serve(
     # 저장소 백엔드는 설정이 고른다(REST deps 와 같은 팩토리). 기본값 embedded(Kuzu)면
     # 서버 없이 stdio serve 가 뜬다.
     graph = build_graph_repository(settings)
-    embedder = build_embedding_provider(settings)
+    embedder = LazyEmbeddingProvider()
     try:
         # 인덱스 idempotent 보장 — REST 의 lifespan 과 같은 책임.
         try:
@@ -125,7 +218,7 @@ def mcp_serve(
         from .domain.main_entity import MainEntityExtractor
         from .mcp_server import run_stdio_server
 
-        llm = build_llm_provider(settings)
+        llm = LazyLLMProvider()
         service = IngestService(
             llm=llm,
             embedder=embedder,
@@ -246,8 +339,8 @@ def ingest(
     try:
         graph.ensure_indexes()
         # LLM/임베딩 provider 는 모델 식별자 접두사로 팩토리가 고른다.
-        llm = build_llm_provider(settings)
-        embedder = build_embedding_provider(settings)
+        llm = LazyLLMProvider()
+        embedder = LazyEmbeddingProvider()
         service = IngestService(
             llm=llm,
             embedder=embedder,
