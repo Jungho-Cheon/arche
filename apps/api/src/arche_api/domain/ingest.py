@@ -23,7 +23,13 @@ from ..adapters.pdf import PdfPage, extract_pdf
 from .chunking import chunk_text
 from .crawl import crawl
 from .errors import InvalidInputError, UnsupportedFileTypeError
-from .extract_context import ExtractContext, ExtractContextBuilder, render_context_block
+from .extract_context import (
+    DEFAULT_KEYWORDS_PER_CHUNK,
+    DEFAULT_KNOWN_ENTITIES_TOP_K,
+    ExtractContext,
+    ExtractContextBuilder,
+    render_context_block,
+)
 from .extraction_contract import EXTRACTION_SYSTEM_PROMPT as SYSTEM_PROMPT
 from .identity import (
     NON_IDENTIFYING_ALIAS_STOPLIST,
@@ -170,6 +176,9 @@ class IngestService:
         extract_batch_size: int = 8,
         llm_model_id: str = "openai/gpt-4.1",
         extraction_chunk_tokens: int | None = 4_000,
+        extract_context_use_dense: bool = False,
+        extract_context_top_k: int = DEFAULT_KNOWN_ENTITIES_TOP_K,
+        extract_context_keywords_per_chunk: int = DEFAULT_KEYWORDS_PER_CHUNK,
     ) -> None:
         self._llm = llm
         self._embedder = embedder
@@ -178,9 +187,21 @@ class IngestService:
         self._extraction_chunk_tokens = extraction_chunk_tokens
         self._enable_context_aware_extraction = enable_context_aware_extraction
         self._extract_context_builder: ExtractContextBuilder | None = (
-            ExtractContextBuilder(graph=graph, embedder=embedder)
+            ExtractContextBuilder(
+                graph=graph,
+                embedder=embedder,
+                top_k=extract_context_top_k,
+                keywords_per_chunk=extract_context_keywords_per_chunk,
+                use_dense=extract_context_use_dense,
+            )
             if enable_context_aware_extraction
             else None
+        )
+        # 이 셋은 프롬프트에 들어가는 KNOWN_ENTITIES 를 바꾸므로 추출 결과를 좌우한다.
+        # SYSTEM_PROMPT 문자열엔 안 잡혀 LLM 지문이 못 보므로 여기서 지문에 더한다.
+        self._context_fingerprint = (
+            f"ctx{int(extract_context_use_dense)}"
+            f":{extract_context_top_k}:{extract_context_keywords_per_chunk}"
         )
         self._main_entity_extractor = main_entity_extractor
         self._extraction_cache = extraction_cache
@@ -199,7 +220,8 @@ class IngestService:
     def _extractor_version(self) -> str:
         if self._extractor_version_cache is None:
             self._extractor_version_cache = (
-                f"p{INGEST_PIPELINE_VERSION}:{self._llm.extraction_fingerprint()}"
+                f"p{INGEST_PIPELINE_VERSION}:{self._context_fingerprint}"
+                f":{self._llm.extraction_fingerprint()}"
             )
         return self._extractor_version_cache
 

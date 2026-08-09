@@ -13,6 +13,10 @@ from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from .api.plan_registry import DEFAULT_PLAN_TTL_SECONDS
+from .domain.extract_context import (
+    DEFAULT_KEYWORDS_PER_CHUNK,
+    DEFAULT_KNOWN_ENTITIES_TOP_K,
+)
 
 # 실행 폴더와 무관하게 키를 한 자리에 둔다. `arche config set-key` 가 여기에 쓴다.
 GLOBAL_CONFIG_DIRNAME = "arche"
@@ -87,6 +91,20 @@ class Settings(BaseSettings):
     # 검토형 적재 계획을 프로세스 메모리에 붙들어 두는 시간(초). 0 이하면 만료 없음.
     plan_ttl_seconds: float = Field(
         default=DEFAULT_PLAN_TTL_SECONDS, alias="ARCHE_API_PLAN_TTL_SECONDS"
+    )
+
+    # 추출 프롬프트에 동봉하는 KNOWN_ENTITIES 후보를 어떻게 고르는지 (ADR-0009).
+    # 셋 다 측정 통제 변수라 extractor_version 에 들어간다 — 값을 바꾸면 같은 파일도
+    # 다시 추출된다. 안 그러면 한 그래프에 두 설정의 결과가 섞인다 (#82).
+    extract_context_use_dense: bool = Field(
+        default=False, alias="ARCHE_API_EXTRACT_CONTEXT_USE_DENSE"
+    )
+    extract_context_top_k: int = Field(
+        default=DEFAULT_KNOWN_ENTITIES_TOP_K, alias="ARCHE_API_EXTRACT_CONTEXT_TOP_K"
+    )
+    extract_context_keywords_per_chunk: int = Field(
+        default=DEFAULT_KEYWORDS_PER_CHUNK,
+        alias="ARCHE_API_EXTRACT_CONTEXT_KEYWORDS_PER_CHUNK",
     )
 
     @property

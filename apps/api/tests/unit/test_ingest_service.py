@@ -867,3 +867,39 @@ def test_cross_chunk_forward_relation_resolves(
 def test_normalize_smoke():
     """normalize 가 ingest 흐름 안에서 호출되는지 확인 (스모크)."""
     assert normalize("  쿠폰 X  ") == "쿠폰 x"
+
+
+def test_extract_context_settings_change_the_extractor_version():
+    """KNOWN_ENTITIES 후보 선정 설정이 지문에 들어가야 한다 (#82).
+
+    이 셋은 추출 프롬프트에 실리는 후보 목록을 바꾸므로 추출 결과를 좌우한다. 그런데
+    SYSTEM_PROMPT 문자열에는 안 잡혀 LLM 지문이 못 본다. 지문에 안 넣으면 값을 바꿔도
+    같은 파일이 short-circuit 으로 건너뛰어져, 한 그래프에 두 설정의 결과가 섞인다.
+    """
+    from arche_api.domain.extract_context import (
+        DEFAULT_KEYWORDS_PER_CHUNK,
+        DEFAULT_KNOWN_ENTITIES_TOP_K,
+    )
+
+    def _service(**overrides):
+        return IngestService(
+            llm=FakeLLM(ExtractedGraph(entities=[], relations=[])),
+            embedder=FakeEmbedder(),
+            graph=FakeGraph(),
+            **overrides,
+        )
+
+    base = _service()._extractor_version
+    assert _service()._extractor_version == base
+
+    assert _service(extract_context_use_dense=True)._extractor_version != base
+    assert (
+        _service(extract_context_top_k=DEFAULT_KNOWN_ENTITIES_TOP_K + 5)._extractor_version
+        != base
+    )
+    assert (
+        _service(
+            extract_context_keywords_per_chunk=DEFAULT_KEYWORDS_PER_CHUNK + 1
+        )._extractor_version
+        != base
+    )
