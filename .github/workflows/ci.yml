@@ -18,15 +18,15 @@ jobs:
 
       - name: 린트
         working-directory: apps/api
-        run: uv run ruff check src/ tests/
+        run: uv run --extra dev ruff check src/ tests/
 
       - name: 단위 테스트
         working-directory: apps/api
-        run: uv run pytest tests/unit -q
+        run: uv run --extra dev pytest tests/unit -q
 
       - name: MCP stdio e2e
         working-directory: apps/api
-        run: uv run pytest tests/integration/test_mcp_stdio_e2e.py -q
+        run: uv run --extra dev pytest tests/integration/test_mcp_stdio_e2e.py -q
 
       - name: 생성된 레퍼런스 표가 코드와 일치하는지
         run: uv run --project apps/api arche docs gen-reference --check
