@@ -726,7 +726,12 @@ def commit_plan(
             "call ingest_preview before commit", details={"plan_id": plan.plan_id}
         )
     for eid in plan.depends_on_entity_ids:
-        if not service._graph.entity_exists(entity_id=eid):
+        # namespace 를 넘겨야 한다. entity_exists 는 namespace 밖 노드를 없는 것으로
+        # 보므로, 기본값 "default" 로 물으면 다른 namespace 의 병합 대상이 늘 사라진
+        # 것으로 잡혀 계획이 전부 stale 로 거부된다 (issue #92 와 같은 결).
+        if not service._graph.entity_exists(
+            entity_id=eid, namespace_id=plan.namespace_id
+        ):
             raise UnprocessableError(
                 "plan is stale; re-plan",
                 details={"plan_id": plan.plan_id, "missing_entity_id": eid},

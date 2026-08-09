@@ -34,6 +34,17 @@ class FakeRepo:
     def vector_search(self, *, embedding, top_k, type_, namespace_id: str = "default"):
         return [c for c in self.vector_pool if c.type == type_][:top_k]
 
+    # 타입 무관 lookup — 진짜 어댑터처럼 같은 정규명이 여럿이면 모호하다고 보고 None.
+    def find_entity_id_by_normalized_name(self, *, normalized: str, namespace_id: str = "default"):
+        hits = [e for (norm, _), e in self.norm_index.items() if norm == normalized]
+        return hits[0].id if len(hits) == 1 else None
+
+    def get_stored_entity(self, *, entity_id: str):
+        for entity in self.norm_index.values():
+            if entity.id == entity_id:
+                return entity
+        return None
+
 
 class FakeEmbedder:
     def __init__(self, vec: list[float] | None = None) -> None:

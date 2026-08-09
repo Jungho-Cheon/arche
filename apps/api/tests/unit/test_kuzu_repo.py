@@ -349,3 +349,72 @@ def test_blocked_aliases_survive_a_round_trip(repo):
     )
 
     assert repo.get_stored_entity(entity_id=entity.id).blocked_aliases == ["여름"]
+
+
+def test_indexes_survive_reopening_the_database(tmp_path):
+    """저장소를 다시 열어도 검색이 산다.
+
+    인덱스는 디스크에 남는데 "만들었다" 표시는 프로세스 안에만 있다. 앞선 프로세스가
+    만들어 둔 것을 새 프로세스가 없는 줄 알고 다시 만들려 들면 Kuzu 가 거부해, 재기동
+    직후 첫 읽기가 통째로 깨진다.
+    """
+    from arche_api.adapters.kuzu_graph import KuzuGraphRepository
+
+    settings = _settings(tmp_path)
+    first = KuzuGraphRepository(settings)
+    first.ensure_indexes()
+    first.create_entity(entity=_entity("refund policy", "Policy", [1.0, 0.0, 0.0, 0.0]))
+    assert first.find_by_keywords_scored(keywords=["refund"], limit_per_keyword=5)
+    first.close()
+
+    second = KuzuGraphRepository(settings)
+    second.ensure_indexes()
+    try:
+        assert second.find_by_keywords_scored(keywords=["refund"], limit_per_keyword=5)
+        assert second.find_entities_dense(
+            query_embedding=[1.0, 0.0, 0.0, 0.0], matched_keyword="refund", limit=5
+        )
+    finally:
+        second.close()
+
+
+def test_writes_after_reopening_stay_searchable(tmp_path):
+    """재기동 뒤에 쓴 노드도 두 색인에 잡힌다.
+
+    쓰기가 인덱스를 더티로 표시하고 다음 읽기가 이를 맞춘다. 이 경로가 벡터 인덱스를
+    다시 만들려 들면 같은 이름을 되쓰지 못해 거부당한다.
+    """
+    from arche_api.adapters.kuzu_graph import KuzuGraphRepository
+
+    settings = _settings(tmp_path)
+    first = KuzuGraphRepository(settings)
+    first.ensure_indexes()
+    first.create_entity(entity=_entity("refund policy", "Policy", [1.0, 0.0, 0.0, 0.0]))
+    first.find_by_keywords_scored(keywords=["refund"], limit_per_keyword=5)
+    first.close()
+
+    second = KuzuGraphRepository(settings)
+    second.ensure_indexes()
+    try:
+        second.create_entity(entity=_entity("summer dress", "Product", [0.0, 1.0, 0.0, 0.0]))
+        assert second.find_by_keywords_scored(keywords=["summer"], limit_per_keyword=5)
+        assert second.find_entities_dense(
+            query_embedding=[0.0, 1.0, 0.0, 0.0], matched_keyword="summer", limit=5
+        )
+    finally:
+        second.close()
+
+
+def test_reindex_vector_rebuilds_under_a_fresh_name(repo):
+    """reindex 는 새 이름으로 다시 만든다. 지운 이름은 그 DB 에서 되쓸 수 없다."""
+    repo.create_entity(entity=_entity("refund policy", "Policy", [1.0, 0.0, 0.0, 0.0]))
+    repo.find_entities_dense(
+        query_embedding=[1.0, 0.0, 0.0, 0.0], matched_keyword="refund", limit=5
+    )
+
+    result = repo.reindex_vector()
+
+    assert result["index"] != "entity_embedding_idx"
+    assert repo.find_entities_dense(
+        query_embedding=[1.0, 0.0, 0.0, 0.0], matched_keyword="refund", limit=5
+    )

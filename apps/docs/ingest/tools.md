@@ -119,7 +119,17 @@
 | `relations_kept` | `int` | 남을 관계 수 |
 | `open_questions` | `int` | 사람이 정해야 하는 관계 수 |
 
-거절되는 입력은 넷입니다. `new_name` 이 원래 노드 이름과 같을 때, 그 이름의 노드가 같은 타입에 이미 있을 때, 원래 노드에 없는 별칭이나 출처를 지목했을 때, 출처를 전부 옮겨 원래 노드가 빈 껍데기로 남을 때입니다. 모두 `invalid_input` 입니다.
+거절되는 입력은 다음과 같습니다. 모두 `invalid_input` 입니다.
+
+| 입력 | 거절하는 이유 |
+| --- | --- |
+| `move_aliases` 와 `move_source_paths` 가 둘 다 빔 | 무엇을 떼어낼지 알 수 없음 |
+| `new_name` 이 빈 문자열 | 이름 없는 노드는 만들지 않음 |
+| `new_name` 이 원래 노드 이름과 같음 | 가르는 것이 아님 |
+| 그 이름의 노드가 같은 타입에 이미 있음 | 새로 만들 것이 아니라 그쪽으로 옮길 일 |
+| 원래 노드에 없는 별칭이나 출처를 지목 | 없는 것을 옮길 수 없음 |
+| 출처를 전부 옮김 | 원래 노드가 빈 껍데기로 남음 |
+| `relation_decisions` 에 그 노드에 안 붙은 관계 id | 정할 대상이 아님 |
 
 <!-- @include: ../reference/_generated/requests/entity_split_preview.md -->
 

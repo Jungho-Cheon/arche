@@ -20,8 +20,11 @@ def _question(kind: object) -> dict:
 
 
 def test_plan_question_kind_is_closed_set():
-    # #105 — kind 는 닫힌 목록. 현재 유일한 값만 허용된다.
-    assert [k.value for k in PlanQuestionKind] == ["possible_missed_merge"]
+    # #105 — kind 는 닫힌 목록. 값을 더하면 응답 계약이 바뀌므로 여기도 함께 고친다.
+    assert [k.value for k in PlanQuestionKind] == [
+        "possible_missed_merge",
+        "same_name_different_type",
+    ]
 
 
 def test_plan_question_accepts_known_kind():

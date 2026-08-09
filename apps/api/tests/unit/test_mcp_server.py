@@ -153,6 +153,22 @@ def test_get_entity_input_schema_requires_id_with_ulid_pattern():
     assert schema["additionalProperties"] is False
 
 
+def test_namespace_scoped_read_tools_accept_namespace_id():
+    """dispatch 가 읽는 인자는 스키마도 받아야 한다.
+
+    get_schema 와 get_entity 는 REST 처럼 본문에 namespace 를 싣지 않고 인자 dict 에서
+    바로 꺼낸다. 스키마가 그 키를 막아 두면 MCP 로는 default 말고 다른 namespace 를
+    볼 길이 없다.
+    """
+    tools = {t.name: t for t in _build_tools()}
+    for name in ("get_schema", "get_entity"):
+        properties = tools[name].inputSchema["properties"]
+        assert "namespace_id" in properties, name
+        assert properties["namespace_id"]["type"] == "string", name
+    # namespace 는 선택 입력 — 안 주면 default.
+    assert "namespace_id" not in tools["get_entity"].inputSchema["required"]
+
+
 def test_get_neighbors_input_schema_includes_id_field():
     """PRD 3 §5.3 — MCP body 에 id 가 끼어 있어야 함 (REST path 와 다름)."""
     tools = {t.name: t for t in _build_tools()}

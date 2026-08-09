@@ -336,7 +336,29 @@ class EntityMatcher:
                 best_near = (cand, sim)
 
         # Step 4 — miss. 밴드 내 근접 후보가 있으면 near_miss 로 surface.
+        if best_near is None and normalized_name:
+            same_name = self._same_name_under_another_type(normalized_name)
+            if same_name is not None:
+                best_near = (same_name, 1.0)
         return MatchResult(existing=None, step=4, near_miss=best_near)
+
+    def _same_name_under_another_type(self, normalized_name: str) -> StoredEntity | None:
+        """이름은 같은데 타입만 다른 기존 노드.
+
+        앞의 세 단계는 모두 타입까지 같아야 맞춘다. 그런데 타입 라벨은 추출 모델이
+        문서마다 새로 짓는 값이라, 이름이 글자 하나 안 틀리고 같아도 타입이 달라 갈라진다.
+        갈라지는 것 자체보다 나쁜 건 질문조차 안 올라온다는 점이다 — 사람이 알아챌
+        기회가 없다.
+
+        그래서 여기서 합치지는 않는다. 이름이 같아도 다른 대상일 수 있어서다. 사람이
+        판단하도록 질문으로 올린다.
+        """
+        entity_id = self._repo.find_entity_id_by_normalized_name(
+            normalized=normalized_name, namespace_id=self._namespace_id
+        )
+        if entity_id is None:
+            return None
+        return self._repo.get_stored_entity(entity_id=entity_id)
 
 
 # ---------- 병합 규칙 ----------

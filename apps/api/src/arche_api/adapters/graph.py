@@ -1269,6 +1269,9 @@ def _node_to_stored(node: Any) -> StoredEntity:
         normalized_name=node.get("normalized_name") or "",
         normalized_aliases=list(node.get("normalized_aliases") or []),
         blocked_aliases=list(node.get("blocked_aliases") or []),
+        # 이걸 빠뜨리면 읽어 온 노드가 전부 자기를 default 소속이라고 말한다. 노드가
+        # 어느 namespace 인지 되묻는 쪽(떼어내기 등)이 늘 default 로 판정해 격리가 뚫린다.
+        namespace_id=node.get("namespace_id") or "default",
     )
 
 

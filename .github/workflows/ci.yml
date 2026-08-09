@@ -24,9 +24,15 @@ jobs:
         working-directory: apps/api
         run: uv run --extra dev pytest tests/unit -q
 
-      - name: MCP stdio e2e
+      # 두 파일을 함께 돌린다. 앞은 fake graph 로 핸드셰이크와 응답 모양만 보고, 뒤는
+      # 배포되는 기본 경로(임베디드 Kuzu + 진짜 적재)를 재기동까지 통과시킨다. 나머지
+      # integration 은 Neo4j 컨테이너가 필요해 여기서 돌리지 않는다.
+      - name: MCP e2e (fake graph + 임베디드 저장소)
         working-directory: apps/api
-        run: uv run --extra dev pytest tests/integration/test_mcp_stdio_e2e.py -q
+        run: >
+          uv run --extra dev pytest -q
+          tests/integration/test_mcp_stdio_e2e.py
+          tests/integration/test_embedded_mcp_e2e.py
 
       - name: 생성된 레퍼런스 표가 코드와 일치하는지
         run: uv run --project apps/api arche docs gen-reference --check

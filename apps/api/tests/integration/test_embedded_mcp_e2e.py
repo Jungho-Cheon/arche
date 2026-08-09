@@ -1,0 +1,415 @@
+"""배포되는 경로 그대로의 e2e — MCP 서버 + 임베디드 Kuzu + 진짜 적재.
+
+이 파일이 있는 이유. 단위 테스트 474 개가 통과하는 동안 기본 사용 흐름이 세 군데서
+깨져 있었다. 셋 다 이음매에 있었고, 셋 다 그 이음매를 흉내낸 더블이 가려 주었다.
+
+- 확정 단계가 의존 노드를 계획의 namespace 가 아니라 늘 "default" 에서 찾았다.
+  단위 테스트의 그래프 더블은 namespace 를 무시하고 늘 True 를 돌려줬다.
+- 임베디드 저장소가 재기동 뒤 첫 읽기에서 깨졌다. 색인은 디스크에 남는데 "만들었다"
+  표시는 프로세스 안에만 있었다. 어댑터 테스트는 저장소를 한 번만 열었다.
+- MCP 의 get_schema 와 get_entity 가 namespace_id 를 코드로는 읽으면서 입력 스키마
+  로는 거부했다. 스키마 검사와 dispatch 검사가 따로 있어 둘의 어긋남은 아무도 안 봤다.
+
+그래서 여기서는 아무것도 흉내내지 않는다. 진짜 서버를 subprocess 로 띄우고, 진짜
+Kuzu 파일에 쓰고, 진짜 동일성 해소를 태운다. 네트워크만 걷어낸다
+(ARCHE_TEST_FAKE_PROVIDERS=1 — 추출은 본문에 적힌 대로, 임베딩은 글자 해시로).
+
+문서 두 개를 쓰는 것도 의도다. 한 문서만 넣으면 병합 대상이 없어 첫 번째 결함이
+드러나지 않는다.
+"""
+
+from __future__ import annotations
+
+import json
+import sys
+from pathlib import Path
+
+import pytest
+from mcp import ClientSession, StdioServerParameters
+from mcp.client.stdio import stdio_client
+
+pytestmark = [pytest.mark.integration, pytest.mark.asyncio]
+
+# default 가 아니어야 한다. 여기에 "default" 를 넣으면 이 파일의 존재 이유가 사라진다.
+NAMESPACE = "e2e-ns"
+
+DOC_A = """노드: 여름 프로모션 | 정책
+노드: 스니커즈 | 상품
+관계: 여름 프로모션 | 적용된다 | 스니커즈
+"""
+
+# 여름 프로모션이 겹친다 — 두 번째 적재가 병합 경로를 타게 만든다.
+DOC_B = """노드: 여름 프로모션 | 정책
+노드: 환불 규정 | 정책
+관계: 여름 프로모션 | 따른다 | 환불 규정
+"""
+
+
+def _params(db_path: Path) -> StdioServerParameters:
+    return StdioServerParameters(
+        command=sys.executable,
+        args=["-m", "arche_api.cli", "mcp", "serve", "--stdio"],
+        env={
+            "PATH": "/usr/bin:/bin",
+            "ARCHE_TEST_FAKE_PROVIDERS": "1",
+            "ARCHE_API_GRAPH_BACKEND": "embedded",
+            "ARCHE_API_KUZU_DB_PATH": str(db_path),
+            "ARCHE_API_EMBEDDING_DIMENSION": "64",
+            # 키를 빈 값으로 둬야 저장소 루트의 .env 가 끼어들지 않는다.
+            "OPENAI_API_KEY": "",
+        },
+    )
+
+
+def _payload(result) -> dict:
+    """도구 응답의 JSON 본문. 오류면 그대로 드러내 원인을 읽게 한다."""
+    text = result.content[0].text
+    assert not result.isError, text
+    return json.loads(text)
+
+
+async def _ingest(session, *, content: str, source_id: str) -> dict:
+    """계획 → 미리 보기 → 확정. 검토형 적재가 실제로 도는 순서 그대로."""
+    plan = _payload(
+        await session.call_tool(
+            "ingest_content",
+            arguments={
+                "content": content,
+                "source_id": source_id,
+                "namespace_id": NAMESPACE,
+            },
+        )
+    )
+    _payload(await session.call_tool("ingest_preview", arguments={"plan_id": plan["plan_id"]}))
+    committed = _payload(
+        await session.call_tool("ingest_commit", arguments={"plan_id": plan["plan_id"]})
+    )
+    return {"plan": plan, "committed": committed}
+
+
+def _names(schema: dict) -> set[str]:
+    return {ex["name"] for t in schema["entity_types"] for ex in t["examples"]}
+
+
+async def test_ingest_and_query_in_a_non_default_namespace(tmp_path):
+    """문서 둘을 넣고 다시 띄운 뒤에도 조회가 산다.
+
+    한 테스트에 붙여 둔 이유는 이게 사용자가 실제로 밟는 한 줄기이기 때문이다. 쪼개면
+    각 조각은 통과하면서 이어 붙인 흐름만 깨지는, 지금까지 있었던 그 상태로 돌아간다.
+    """
+    db_path = tmp_path / "kuzu_db"
+
+    async with stdio_client(_params(db_path)) as (read, write):
+        async with ClientSession(read, write) as session:
+            await session.initialize()
+
+            first = await _ingest(session, content=DOC_A, source_id="e2e:doc-a")
+            assert first["committed"]["entities_created"] == 2
+            assert first["committed"]["relations_created"] == 1
+
+            # 두 번째 문서는 "여름 프로모션" 을 기존 노드에 병합해야 한다. 확정 단계가
+            # namespace 를 흘리지 않으면 여기서 plan is stale 로 거부된다.
+            second = await _ingest(session, content=DOC_B, source_id="e2e:doc-b")
+            assert second["plan"]["entities_merged"] == 1
+            assert second["committed"]["entities_created"] == 1
+
+            schema = _payload(
+                await session.call_tool("get_schema", arguments={"namespace_id": NAMESPACE})
+            )
+            assert _names(schema) == {"여름 프로모션", "스니커즈", "환불 규정"}
+
+    # 여기서 프로세스가 죽는다. 아래는 완전히 새 프로세스가 같은 DB 를 다시 여는 경로다.
+    async with stdio_client(_params(db_path)) as (read, write):
+        async with ClientSession(read, write) as session:
+            await session.initialize()
+
+            reopened = _payload(
+                await session.call_tool("get_schema", arguments={"namespace_id": NAMESPACE})
+            )
+            assert _names(reopened) == {"여름 프로모션", "스니커즈", "환불 규정"}
+
+            found = _payload(
+                await session.call_tool(
+                    "find_entities",
+                    arguments={"keywords": ["환불 규정"], "namespace_id": NAMESPACE},
+                )
+            )
+            assert any(m["node"]["name"] == "환불 규정" for m in found["matches"])
+
+            # 재기동 뒤의 쓰기도 살아 있어야 한다 — 색인을 다시 맞추는 경로가 여기서 돈다.
+            third = await _ingest(
+                session,
+                content="노드: 겨울 프로모션 | 정책\n관계: 겨울 프로모션 | 따른다 | 환불 규정\n",
+                source_id="e2e:doc-c",
+            )
+            assert third["committed"]["entities_created"] == 1
+
+            after_write = _payload(
+                await session.call_tool(
+                    "find_entities",
+                    arguments={"keywords": ["겨울 프로모션"], "namespace_id": NAMESPACE},
+                )
+            )
+            assert any(m["node"]["name"] == "겨울 프로모션" for m in after_write["matches"])
+
+
+async def test_namespaces_do_not_leak_into_each_other(tmp_path):
+    """다른 namespace 에 넣은 것이 서로 보이면 안 된다.
+
+    격리가 깨지면 조회는 성공하는데 답만 틀린다. 사용자가 알아채기 가장 어려운 실패다.
+    """
+    db_path = tmp_path / "kuzu_db"
+
+    async with stdio_client(_params(db_path)) as (read, write):
+        async with ClientSession(read, write) as session:
+            await session.initialize()
+            await _ingest(session, content=DOC_A, source_id="e2e:doc-a")
+
+            plan = _payload(
+                await session.call_tool(
+                    "ingest_content",
+                    arguments={
+                        "content": "노드: 다른 쪽 노드 | 정책\n",
+                        "source_id": "e2e:other",
+                        "namespace_id": "other-ns",
+                    },
+                )
+            )
+            _payload(
+                await session.call_tool("ingest_preview", arguments={"plan_id": plan["plan_id"]})
+            )
+            _payload(
+                await session.call_tool("ingest_commit", arguments={"plan_id": plan["plan_id"]})
+            )
+
+            here = _payload(
+                await session.call_tool("get_schema", arguments={"namespace_id": NAMESPACE})
+            )
+            there = _payload(
+                await session.call_tool("get_schema", arguments={"namespace_id": "other-ns"})
+            )
+
+            assert "다른 쪽 노드" not in _names(here)
+            assert _names(there) == {"다른 쪽 노드"}
+
+
+async def test_commit_without_preview_is_refused(tmp_path):
+    """미리 보기를 건너뛴 확정은 거부된다 — 검토형 적재의 안전 장치."""
+    db_path = tmp_path / "kuzu_db"
+
+    async with stdio_client(_params(db_path)) as (read, write):
+        async with ClientSession(read, write) as session:
+            await session.initialize()
+            plan = _payload(
+                await session.call_tool(
+                    "ingest_content",
+                    arguments={
+                        "content": DOC_A,
+                        "source_id": "e2e:doc-a",
+                        "namespace_id": NAMESPACE,
+                    },
+                )
+            )
+
+            result = await session.call_tool(
+                "ingest_commit", arguments={"plan_id": plan["plan_id"]}
+            )
+
+            assert result.isError is True
+            body = json.loads(result.content[0].text)
+            assert body["error"]["code"] == "unprocessable"
+
+            # 거부됐으면 그래프는 그대로여야 한다.
+            schema = _payload(
+                await session.call_tool("get_schema", arguments={"namespace_id": NAMESPACE})
+            )
+            assert schema["entity_types"] == []
+
+
+async def test_bad_input_always_uses_the_documented_error_envelope(tmp_path):
+    """입력이 틀렸을 때의 응답 모양이 하나여야 한다.
+
+    스키마 검사를 MCP SDK 에 맡기면 그 실패만 맨 문자열로 나가, 같은 "입력이 틀렸다" 인데
+    응답이 두 모양이 된다. error.code 로 분기하는 클라이언트가 한쪽에서 깨진다.
+    문서(apps/docs/query/tools.md)는 양쪽 다 봉투로 온다고 약속한다.
+    """
+    db_path = tmp_path / "kuzu_db"
+
+    async with stdio_client(_params(db_path)) as (read, write):
+        async with ClientSession(read, write) as session:
+            await session.initialize()
+
+            cases = [
+                # 선언한 입력 스키마의 pattern 위반 — SDK 가 먼저 걸러 내던 자리.
+                ("get_entity", {"id": "not-a-ulid"}),
+                # pydantic 제약이 스키마로 새어 나간 자리.
+                ("find_entities", {"keywords": []}),
+                # 스키마는 통과하고 도메인에서 걸리는 자리.
+                ("ingest_preview", {"plan_id": "pln_없는계획"}),
+            ]
+
+            for tool, arguments in cases:
+                result = await session.call_tool(tool, arguments=arguments)
+                assert result.isError is True, tool
+                body = json.loads(result.content[0].text)
+                assert set(body["error"]) == {"code", "message", "details"}, tool
+                assert body["error"]["code"], tool
+
+            # 틀린 인자가 무엇인지 응답만 보고 짚을 수 있어야 한다.
+            result = await session.call_tool("get_entity", arguments={"id": "not-a-ulid"})
+            body = json.loads(result.content[0].text)
+            assert body["error"]["code"] == "invalid_input"
+            assert body["error"]["details"]["field"] == "id"
+
+
+async def test_same_name_under_a_different_type_raises_a_question(tmp_path):
+    """이름이 같은데 타입만 다르면 사람에게 묻는다.
+
+    매칭은 타입까지 같아야 맞추는데 타입 라벨은 문서마다 추출 모델이 새로 짓는다. 묻지
+    않으면 이름이 글자 하나 안 틀리고 같아도 조용히 두 노드로 갈라지고, 그 뒤로는 어느
+    쪽을 잡느냐에 따라 답이 반쪽이 된다.
+    """
+    db_path = tmp_path / "kuzu_db"
+
+    async with stdio_client(_params(db_path)) as (read, write):
+        async with ClientSession(read, write) as session:
+            await session.initialize()
+            await _ingest(session, content="노드: INFJ | 성격유형\n", source_id="e2e:type-a")
+
+            plan = _payload(
+                await session.call_tool(
+                    "ingest_content",
+                    arguments={
+                        # 같은 이름, 다른 타입 라벨.
+                        "content": "노드: INFJ | MBTI유형\n",
+                        "source_id": "e2e:type-b",
+                        "namespace_id": NAMESPACE,
+                    },
+                )
+            )
+            assert plan["open_questions"] == 1
+
+            preview = _payload(
+                await session.call_tool("ingest_preview", arguments={"plan_id": plan["plan_id"]})
+            )
+            question = preview["questions"][0]
+            assert question["kind"] == "same_name_different_type"
+            assert question["extracted_name"] == "INFJ"
+            assert question["candidate_name"] == "INFJ"
+
+            # 사람이 "같은 대상" 이라고 답하면 갈라지지 않는다.
+            _payload(
+                await session.call_tool(
+                    "ingest_resolve",
+                    arguments={
+                        "plan_id": plan["plan_id"],
+                        "resolutions": [
+                            {"question_id": question["question_id"], "decision": "merge"}
+                        ],
+                    },
+                )
+            )
+            _payload(
+                await session.call_tool("ingest_preview", arguments={"plan_id": plan["plan_id"]})
+            )
+            _payload(
+                await session.call_tool("ingest_commit", arguments={"plan_id": plan["plan_id"]})
+            )
+
+            schema = _payload(
+                await session.call_tool("get_schema", arguments={"namespace_id": NAMESPACE})
+            )
+            assert sum(t["count"] for t in schema["entity_types"]) == 1
+
+
+async def test_split_works_outside_the_default_namespace(tmp_path):
+    """떼어내기가 default 밖에서도 돌아야 한다.
+
+    노드를 읽을 때 namespace 를 안 채우면 모든 노드가 자기를 default 소속이라고 말한다.
+    그러면 제 namespace 를 넣은 사람은 "노드가 없다" 는 답을 받고, "default" 를 넣은
+    사람은 남의 namespace 노드로 계획이 서다가 확정에서 "사라졌다" 로 막힌다. 둘 다
+    원인을 짐작할 수 없는 실패다.
+    """
+    db_path = tmp_path / "kuzu_db"
+
+    async with stdio_client(_params(db_path)) as (read, write):
+        async with ClientSession(read, write) as session:
+            await session.initialize()
+            # 두 문서가 같은 노드를 만든다 — 출처가 둘이라야 한쪽만 떼어낼 수 있다.
+            await _ingest(
+                session,
+                content="노드: 여름 기획 | 정책\n노드: 스니커즈 | 상품\n관계: 여름 기획 | 적용된다 | 스니커즈\n",
+                source_id="e2e:merged-a",
+            )
+            await _ingest(
+                session,
+                content="노드: 여름 기획 | 정책\n노드: 환불 규정 | 정책\n관계: 여름 기획 | 따른다 | 환불 규정\n",
+                source_id="e2e:merged-b",
+            )
+            found = _payload(
+                await session.call_tool(
+                    "find_entities",
+                    arguments={"keywords": ["여름 기획"], "namespace_id": NAMESPACE},
+                )
+            )
+            origin_id = next(
+                m["node"]["id"] for m in found["matches"] if m["node"]["name"] == "여름 기획"
+            )
+
+            plan = _payload(
+                await session.call_tool(
+                    "entity_split_plan",
+                    arguments={
+                        "entity_id": origin_id,
+                        "new_name": "여름 정산",
+                        "move_source_paths": ["e2e:merged-b"],
+                        "namespace_id": NAMESPACE,
+                    },
+                )
+            )
+            _payload(
+                await session.call_tool(
+                    "entity_split_preview", arguments={"plan_id": plan["plan_id"]}
+                )
+            )
+            _payload(
+                await session.call_tool(
+                    "entity_split_commit", arguments={"plan_id": plan["plan_id"]}
+                )
+            )
+
+            schema = _payload(
+                await session.call_tool("get_schema", arguments={"namespace_id": NAMESPACE})
+            )
+            assert "여름 정산" in _names(schema)
+
+
+async def test_split_refuses_a_node_from_another_namespace(tmp_path):
+    """남의 namespace 노드를 default 라고 우겨도 계획이 서면 안 된다."""
+    db_path = tmp_path / "kuzu_db"
+
+    async with stdio_client(_params(db_path)) as (read, write):
+        async with ClientSession(read, write) as session:
+            await session.initialize()
+            await _ingest(session, content=DOC_A, source_id="e2e:doc-a")
+            found = _payload(
+                await session.call_tool(
+                    "find_entities",
+                    arguments={"keywords": ["여름 프로모션"], "namespace_id": NAMESPACE},
+                )
+            )
+            foreign_id = found["matches"][0]["node"]["id"]
+
+            result = await session.call_tool(
+                "entity_split_plan",
+                arguments={
+                    "entity_id": foreign_id,
+                    "new_name": "다른 이름",
+                    "move_aliases": ["다른 이름"],
+                    "namespace_id": "default",
+                },
+            )
+
+            assert result.isError is True
+            body = json.loads(result.content[0].text)
+            assert body["error"]["code"] == "entity_not_found"

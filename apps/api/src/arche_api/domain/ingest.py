@@ -32,7 +32,7 @@ from .identity import (
     extract_identifier_aliases,
     normalize,
 )
-from .ingest_plan import AmbiguousMatch, IngestPlan
+from .ingest_plan import AmbiguousMatch, IngestPlan, PlanQuestionKind
 from .main_entity import MainEntity, MainEntityExtractor
 from .models import (
     ExtractedGraph,
@@ -682,6 +682,7 @@ class IngestService:
             open_questions=open_questions,
             hints=hints,
             namespace_id=namespace_id,
+            source_content=content,
         )
 
     def resolve_plan(self, plan: IngestPlan, resolutions: dict[str, str]) -> IngestPlan:
@@ -715,11 +716,21 @@ class IngestService:
         try:
             # 원 계획의 hints 와 namespace 를 그대로 넘겨 재계획이 같은 컨텍스트와
             # namespace 에서 돌게 한다.
-            refined = self.plan_file(
-                Path(plan.source_path),
-                namespace_id=plan.namespace_id,
-                hints=plan.hints,
-            )
+            # 본문으로 세운 계획은 본문으로 다시 세운다. 파일로 세운 계획만 경로를
+            # 다시 읽는다 — source_path 가 본문 계획에서는 파일이 아니라 출처 라벨이다.
+            if plan.source_content is not None:
+                refined = self.plan_content(
+                    content=plan.source_content,
+                    source_id=plan.source_path,
+                    namespace_id=plan.namespace_id,
+                    hints=plan.hints,
+                )
+            else:
+                refined = self.plan_file(
+                    Path(plan.source_path),
+                    namespace_id=plan.namespace_id,
+                    hints=plan.hints,
+                )
         finally:
             self._active_resolutions = prior
 
@@ -1108,6 +1119,7 @@ class IngestService:
             # 생성 이후라 쓰기엔 영향 없다. 사람 확인용 신호.
             if not force_keep and result.near_miss is not None:
                 cand, sim = result.near_miss
+                same_name = normalize(cand.name) == normalize(e_new.name)
                 ambiguities.append(
                     AmbiguousMatch(
                         question_id="",
@@ -1116,6 +1128,11 @@ class IngestService:
                         candidate_id=cand.id,
                         candidate_name=cand.name,
                         similarity=sim,
+                        kind=(
+                            PlanQuestionKind.SAME_NAME_DIFFERENT_TYPE
+                            if same_name and cand.type != e_new.type
+                            else PlanQuestionKind.POSSIBLE_MISSED_MERGE
+                        ),
                     )
                 )
 

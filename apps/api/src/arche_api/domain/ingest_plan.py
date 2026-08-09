@@ -19,9 +19,12 @@ class PlanQuestionKind(str, Enum):
 
     - POSSIBLE_MISSED_MERGE: 새 항목이 기존 노드와 임계 바로 아래 유사도라 자동
       병합되지 않고 새 점으로 떨어졌다 — 같은 대상인지 사람에게 묻는다.
+    - SAME_NAME_DIFFERENT_TYPE: 이름은 같은데 타입이 달라 갈라졌다. 매칭이 타입까지
+      보는데 타입 라벨은 문서마다 추출 모델이 새로 지어서 생긴다.
     """
 
     POSSIBLE_MISSED_MERGE = "possible_missed_merge"
+    SAME_NAME_DIFFERENT_TYPE = "same_name_different_type"
 
 
 @dataclass(frozen=True)
@@ -78,3 +81,6 @@ class IngestPlan:
     # 이 계획이 속한 namespace. resolve 재계획이 같은 namespace 를 유지하도록 보존한다
     # (안 그러면 default 로 되돌아가 격리가 깨진다, issue #92).
     namespace_id: str = "default"
+    # 본문으로 세운 계획이면 그 본문. resolve 는 재계획을 하는데, 이게 없으면 source_path
+    # (본문 계획에서는 파일 경로가 아니라 출처 라벨) 를 파일로 열려다 실패한다.
+    source_content: str | None = None

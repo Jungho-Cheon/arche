@@ -20,13 +20,18 @@ class _FakeGraph:
     """서비스 latch 검증용 그래프 더블 — entity_exists 만 노출.
 
     `exists` 로 stale 시나리오를 토글한다 (True = 의존 노드가 살아 있음).
+    `exists_in` 은 그 노드가 사는 namespace 다. 실제 어댑터처럼 다른 namespace 로
+    물으면 없는 것으로 답해, 확정 단계가 namespace 를 흘리지 않는 실수를 잡는다.
     """
 
-    def __init__(self, *, exists: bool = True) -> None:
+    def __init__(self, *, exists: bool = True, exists_in: str = "default") -> None:
         self._exists = exists
+        self._exists_in = exists_in
+        self.asked_namespaces: list[str] = []
 
     def entity_exists(self, *, entity_id: str, namespace_id: str = "default") -> bool:
-        return self._exists
+        self.asked_namespaces.append(namespace_id)
+        return self._exists and namespace_id == self._exists_in
 
 
 class _FakeService:
@@ -132,6 +137,7 @@ def make_plan():
         writes: list[RecordedWrite] | None = None,
         depends_on_entity_ids: list[str] | None = None,
         open_questions: list[AmbiguousMatch] | None = None,
+        namespace_id: str = "default",
     ) -> IngestPlan:
         return IngestPlan(
             plan_id="pln_1",
@@ -151,6 +157,7 @@ def make_plan():
             ),
             depends_on_entity_ids=depends_on_entity_ids or [],
             open_questions=open_questions or [],
+            namespace_id=namespace_id,
         )
 
     return _make

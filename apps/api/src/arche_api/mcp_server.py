@@ -16,6 +16,7 @@ import json
 import logging
 from typing import TYPE_CHECKING, Any
 
+import jsonschema
 import mcp.types as mcp_types
 from mcp.server.lowlevel import Server
 from pydantic import BaseModel, ValidationError
@@ -44,7 +45,7 @@ from .api.split_schemas import (
     SplitPreviewRequest,
 )
 from .config import Settings
-from .domain.errors import ArcheError
+from .domain.errors import ArcheError, InvalidInputError
 
 if TYPE_CHECKING:
     from .api.plan_registry import PlanRegistry
@@ -270,13 +271,34 @@ def _inline_defs(schema: dict[str, Any]) -> dict[str, Any]:
     return walked
 
 
+_NAMESPACE_PROPERTY: dict[str, Any] = {
+    "type": "string",
+    "minLength": 1,
+    "description": "조회할 namespace. 미지정 시 'default'",
+}
+
+
+def _namespace_only_schema() -> dict[str, Any]:
+    """입력이 namespace 뿐인 도구의 스키마.
+
+    get_schema 는 본문이 없지만 namespace 는 받아야 한다. 이걸 빼면 dispatch 가 읽는
+    namespace_id 를 스키마가 거부해, MCP 로는 default 말고 다른 namespace 를 볼 길이
+    없어진다.
+    """
+    return {
+        "type": "object",
+        "additionalProperties": False,
+        "properties": {"namespace_id": _NAMESPACE_PROPERTY},
+    }
+
+
 def _build_tools() -> list[mcp_types.Tool]:
     """read tool 의 등록 manifest."""
     return [
         mcp_types.Tool(
             name="get_schema",
             description=_TOOL_DESCRIPTIONS["get_schema"],
-            inputSchema=_build_input_schema(None),
+            inputSchema=_namespace_only_schema(),
         ),
         mcp_types.Tool(
             name="find_entities",
@@ -293,6 +315,7 @@ def _build_tools() -> list[mcp_types.Tool]:
                 "required": ["id"],
                 "properties": {
                     "id": {"type": "string", "pattern": "^[0-9A-Z]{26}$"},
+                    "namespace_id": _NAMESPACE_PROPERTY,
                 },
             },
         ),
@@ -394,6 +417,21 @@ def _merge_id_into_schema(schema: dict[str, Any]) -> dict[str, Any]:
 
 
 # ---------- tool 실행 디스패치 ----------
+
+
+def _validate_arguments(
+    name: str, arguments: dict[str, Any], schemas_by_name: dict[str, dict[str, Any]]
+) -> None:
+    """선언한 입력 스키마로 인자를 검사한다. 어긋나면 invalid_input 으로 올린다."""
+    schema = schemas_by_name.get(name)
+    if schema is None:
+        return
+    try:
+        jsonschema.validate(instance=arguments, schema=schema)
+    except jsonschema.ValidationError as e:
+        raise InvalidInputError(
+            e.message, details={"tool": name, "field": ".".join(str(p) for p in e.absolute_path)}
+        ) from None
 
 
 def _dispatch_tool(
@@ -630,7 +668,13 @@ def build_mcp_server(
     async def _list_tools() -> list[mcp_types.Tool]:
         return tools
 
-    @server.call_tool()
+    schemas_by_name = {t.name: t.inputSchema for t in tools}
+
+    # validate_input=False 로 두고 스키마 검사를 직접 한다. SDK 에 맡기면 검사가 이
+    # 핸들러 *앞* 에서 끝나 맨 문자열("Input validation error: ...")을 돌려주는데,
+    # 그러면 같은 "입력이 틀렸다" 인데 응답 모양이 둘이 된다. error.code 로 분기하는
+    # 클라이언트가 한쪽에서 깨진다.
+    @server.call_tool(validate_input=False)
     async def _call_tool(name: str, arguments: dict[str, Any]) -> mcp_types.CallToolResult:
         """MCP tool 호출 — payload (PRD 3 §0.4: envelope 없음) 를 JSON text 로 반환.
 
@@ -640,6 +684,7 @@ def build_mcp_server(
         는 모든 클라이언트가 보장하는 TextContent 를 쓴다.
         """
         try:
+            _validate_arguments(name, arguments, schemas_by_name)
             result = _dispatch_tool(
                 name,
                 arguments,
