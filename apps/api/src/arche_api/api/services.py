@@ -545,6 +545,18 @@ def _bfs_distances(start: str, adjacency: dict[str, set[str]]) -> dict[str, int]
 # "지금 적용해도 안전한가" 판단(미리보기 전제 + stale 검출)은 도메인이 아니라 이 서비스에 둔다.
 
 
+def _require_plan(plan_id: str, registry: PlanRegistry) -> IngestPlan:
+    """plan_id 로 계획을 찾고, 없으면 거부한다. 계획은 수명이 지나도 사라지므로 두
+    경우를 한 메시지로 묶고 details 에 수명을 실어 다시 계획하면 된다고 알린다."""
+    plan = registry.get(plan_id)
+    if plan is None:
+        raise InvalidInputError(
+            "unknown or expired plan_id",
+            details={"plan_id": plan_id, "plan_ttl_seconds": registry.ttl_seconds},
+        )
+    return plan
+
+
 def _summarize_plan(plan: IngestPlan) -> PlanSummary:
     """IngestPlan 의 writes 종류별 개수 + 미해소 질문 수를 PlanSummary 로 집계한다."""
     n_new = sum(1 for w in plan.writes if w.method == "create_entity")
@@ -599,9 +611,7 @@ def preview_plan(
 ) -> PlanPreview:
     """변경 묶음을 항목 단위로 펼치고 계획을 "미리보기 완료" 로 표시한다. 미리보기를
     실제로 받아 본 호출만 플래그를 세워야 commit latch 가 의미를 가지므로 여기서 표시한다."""
-    plan = registry.get(body.plan_id)
-    if plan is None:
-        raise InvalidInputError("unknown plan_id", details={"plan_id": body.plan_id})
+    plan = _require_plan(body.plan_id, registry)
     registry.mark_previewed(plan.plan_id)
     new_entities = [
         NewEntityView(
@@ -670,9 +680,7 @@ def resolve_ingest(
          resolve_plan 이 False 로 초기화 — 다시 미리보기를 거쳐야 commit 가능).
       5. 정제 계획의 요약(남은 질문 수 포함)을 돌려준다.
     """
-    plan = registry.get(body.plan_id)
-    if plan is None:
-        raise InvalidInputError("unknown plan_id", details={"plan_id": body.plan_id})
+    plan = _require_plan(body.plan_id, registry)
     known_ids = {q.question_id for q in plan.open_questions}
     unknown = [r.question_id for r in body.resolutions if r.question_id not in known_ids]
     if unknown:
@@ -700,9 +708,7 @@ def commit_plan(
          시점과 적용 시점 사이에 그래프가 바뀌어 병합 대상이 없어진 경우, 재생이
          어긋난 결과를 만든다. "stale; re-plan" 으로 명시 거부해 다시 계획하도록.
     """
-    plan = registry.get(body.plan_id)
-    if plan is None:
-        raise InvalidInputError("unknown plan_id", details={"plan_id": body.plan_id})
+    plan = _require_plan(body.plan_id, registry)
     if not plan.previewed:
         raise UnprocessableError(
             "call ingest_preview before commit", details={"plan_id": plan.plan_id}

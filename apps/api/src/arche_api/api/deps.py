@@ -16,6 +16,7 @@ from ..config import Settings, get_settings
 from ..domain.ingest import IngestService
 from ..domain.main_entity import MainEntityExtractor
 from .admin_tasks import IngestTaskRegistry
+from .plan_registry import PlanRegistry
 
 
 def settings_dep() -> Settings:
@@ -67,6 +68,12 @@ def ingest_service_dep(
     return build_ingest_service(
         get_settings(), llm=llm, embedder=embedder, graph=graph
     )
+
+
+def plan_registry_dep(request: Request) -> PlanRegistry:
+    """검토형 적재의 계획 보관소. lifespan 에서 하나만 만들어 REST 와 MCP HTTP 가
+    같은 인스턴스를 보므로, 한쪽에서 세운 계획을 다른 쪽에서 확정할 수 있다."""
+    return request.app.state.plan_registry
 
 
 def task_registry_dep(request: Request) -> IngestTaskRegistry:
