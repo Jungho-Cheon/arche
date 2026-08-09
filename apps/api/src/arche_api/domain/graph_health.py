@@ -1,9 +1,4 @@
-"""쌓인 그래프가 병들었는지 결정적으로 판정한다.
-
-저장소는 노드 표면(`EntitySurface`)만 내주고 판정은 전부 여기서 한다. 그래야 Neo4j 든
-임베디드든 같은 그래프에 같은 답이 나온다. LLM 은 쓰지 않는다 — 판단이 아니라 세기다.
-배경은 domain/README.md.
-"""
+"""그래프에 잘못 들어간 노드가 있는지 센다. 배경은 domain/README.md."""
 
 from __future__ import annotations
 
@@ -56,14 +51,9 @@ def assess_graph_health(
     max_aliases: int = 30,
     max_distinct_ids: int = 2,
 ) -> GraphHealth:
-    """노드 표면들을 훑어 갈라짐, 뭉침, 고립 세 신호를 센다.
+    """정규명이 겹치는 노드, 별칭이 과한 노드, 관계가 없는 노드를 센다.
 
-    세 신호가 뜻하는 바가 다르다. 갈라짐(정규명 중복)은 답을 *못 찾게* 하고, 뭉침은
-    그 노드를 지나는 경로를 전부 거짓으로 만들어 *틀린 답* 을 낳는다. 고립(관계 0)은
-    적재가 관계를 못 뽑았다는 신호다.
-
-    표본 목록은 max_samples 에서 자르되 카운트는 늘 전량이다. 잘랐다는 사실은
-    truncated 로 알린다 — 조용히 자르면 "다 봤다" 로 읽힌다.
+    목록은 max_samples 에서 자르되 개수는 늘 전량이다. 잘랐으면 truncated 로 알린다.
     """
     rows = list(surfaces)
 

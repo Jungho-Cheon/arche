@@ -43,8 +43,8 @@ class FindEntitiesRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     # 빈 리스트는 계속 거부한다. 앵커 추출에 실패한 호출자가 [] 를 보내는 일이 있는데,
-    # 그걸 열거로 받으면 검색이 빗나간 자리에서 조용히 전량이 돌아간다. 열거는 필드를
-    # *생략* 했을 때만 — 뜻이 분명한 쪽만 연다.
+    # 그걸 열거로 받으면 검색에 실패한 호출이 조용히 전량을 돌려받는다. 열거는 필드를
+    # *생략* 했을 때만 한다.
     keywords: list[str] | None = Field(
         default=None,
         min_length=1,
@@ -124,7 +124,7 @@ class FindEntitiesResponse(BaseModel):
         ge=0,
         description=(
             "이 조건에 해당하는 노드의 전체 수. matches 는 offset/limit 로 잘린 한 쪽이라, "
-            "받은 개수를 전부로 읽지 않게 하려고 늘 함께 싣는다."
+            "받은 개수를 전부로 읽지 않게 하려고 늘 함께 돌려준다."
         ),
     )
     offset: int = Field(default=0, ge=0)

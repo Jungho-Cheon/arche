@@ -151,11 +151,7 @@ def graph_health(
     graph: GraphRepository,
     namespace_id: str = "default",
 ) -> GraphHealthResponse:
-    """쌓인 그래프가 병들었는지 세어 본다.
-
-    판정은 domain/graph_health.py 가 하고 저장소는 노드 표면만 내준다. 그래서 Neo4j 든
-    임베디드든 같은 그래프에 같은 답이 나온다.
-    """
+    """그래프에 잘못 들어간 노드가 있는지 센다. 배경은 domain/README.md."""
     namespace_id = ensure_namespace_id(namespace_id)
     report = assess_graph_health(
         graph.iter_entity_surfaces(namespace_id=namespace_id),
@@ -199,15 +195,11 @@ def find_entities(
 ) -> FindEntitiesResponse:
     """노드를 고른다 — keywords 가 있으면 유사도 상위, 없으면 조건에 맞는 전량.
 
-    두 방식이 한 도구인 이유. 검색이 노드를 보는 *유일한* 길이면 "이 타입에 무엇이
-    있는지 빠짐없이" 를 물을 수 없고, 실제로 16 개짜리 타입에서 14 개만 나왔다. 고르는
-    기준만 다를 뿐 하는 일은 같아서 도구를 따로 세울 이유가 없다.
-
     keywords 가 있으면 keyword 별 fulltext top-k(lexical) + ANN top-k(dense)를 노드 ID
-    단위로 union 해 RRF 로 결합하고, types 필터 → 점수 내림차순 → limit slice. 임베딩이
-    죽으면 503 을 그대로 raise 한다(lexical-only silent fallback 은 측정 무결성을 해친다).
+    단위로 union 해 RRF 로 결합한다. 임베딩이 실패하면 503 을 그대로 raise 한다 —
+    lexical 만으로 조용히 되돌아가면 측정 결과를 믿을 수 없게 된다.
 
-    total 은 어느 쪽이든 채운다. 받은 개수만 보이면 "이게 전부" 로 읽히기 때문이다."""
+    두 방식을 한 함수에 둔 이유는 domain/README.md 참조."""
     # 요청 모델 밖 namespace 형식 검증 (#142).
     namespace_id = ensure_namespace_id(namespace_id)
 
@@ -267,7 +259,7 @@ def _list_entities(
     graph: GraphRepository,
     namespace_id: str,
 ) -> FindEntitiesResponse:
-    """keywords 없이 부른 find_entities — 조건에 맞는 노드를 id 순으로 전량 훑는다."""
+    """keywords 없이 부른 find_entities — 조건에 맞는 노드를 id 순으로 전량 돌려준다."""
     total, entities = graph.list_entities(
         namespace_id=namespace_id,
         types=body.types,

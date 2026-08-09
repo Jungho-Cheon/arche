@@ -17,7 +17,7 @@ class GraphHealthRequest(BaseModel):
         default=20,
         ge=1,
         le=200,
-        description="신호마다 실어 보낼 예시 최대 개수. 개수 집계는 늘 전량이다.",
+        description="신호마다 돌려줄 예시 최대 개수. 개수 집계는 늘 전량이다.",
     )
 
     _ns_check = field_validator("namespace_id")(validate_optional_namespace_id)
@@ -45,7 +45,7 @@ class OverMergeView(BaseModel):
     entity_id: str
     name: str
     reasons: list[str] = Field(
-        description="왜 뭉침으로 의심하는지. 예: alias_count=41>30, distinct_identifiers=3"
+        description="의심하는 근거. 예: alias_count=41>30, distinct_identifiers=3"
     )
 
 
@@ -66,11 +66,11 @@ class GraphHealthResponse(BaseModel):
         description="타입별 노드 수. get_schema 와 달리 자르지 않고 전량을 담는다."
     )
     duplicate_names: list[DuplicateNameView] = Field(
-        description="정규명이 같은 노드 묶음. 같은 대상이 갈라졌다는 신호."
+        description="정규명이 같은 노드 묶음. 한 대상이 여러 노드로 나뉘어 저장됐다는 뜻."
     )
     duplicate_name_total: int
     overmerged: list[OverMergeView] = Field(
-        description="서로 다른 둘이 한 노드로 뭉쳤다고 의심되는 노드."
+        description="서로 다른 두 대상이 한 노드에 함께 저장된 것으로 의심되는 노드."
     )
     overmerged_total: int
     isolated: list[IsolatedView] = Field(description="관계가 하나도 없는 노드.")
