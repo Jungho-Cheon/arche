@@ -11,7 +11,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - uses: astral-sh/setup-uv@v9
+      # setup-uv 는 부동 major 태그(v9)를 내지 않는다. 전체 버전으로 고정한다.
+      - uses: astral-sh/setup-uv@v9.0.0
         with:
           enable-cache: true
 
@@ -35,7 +36,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - uses: astral-sh/setup-uv@v9
+      # setup-uv 는 부동 major 태그(v9)를 내지 않는다. 전체 버전으로 고정한다.
+      - uses: astral-sh/setup-uv@v9.0.0
 
       # uv.lock 을 쓰지 않는 경로다. 사용자가 uvx 로 받는 의존성 조합을 그대로 재현해,
       # 상한 없는 의존성이 새 major 를 물어와 서버가 죽는 일을 막는다.
