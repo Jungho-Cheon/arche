@@ -151,7 +151,9 @@ _TOOL_DESCRIPTIONS: dict[str, str] = {
         '"keep" means it is genuinely new and distinct. This refines the same '
         "plan_id in place and clears the safety latch, so you MUST call "
         "ingest_preview again afterwards (and review any remaining questions) "
-        "before ingest_commit."
+        "before ingest_commit. Do not read `open_questions: 0` in this response "
+        "as \"ready to commit\" — check `previewed`, which this call resets to "
+        "false."
     ),
     "ingest_commit": (
         "Apply a previously previewed plan (by `plan_id`) to the graph. Do not "

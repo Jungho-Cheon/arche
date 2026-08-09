@@ -520,3 +520,54 @@ async def test_a_name_that_is_also_someone_elses_alias_still_asks(tmp_path):
                 await session.call_tool("ingest_preview", arguments={"plan_id": plan["plan_id"]})
             )
             assert preview["questions"][0]["kind"] == "same_name_different_type"
+
+
+async def test_plan_summary_says_it_has_not_been_previewed(tmp_path):
+    """계획 요약만 보고 다음 동작을 정하는 호출부가 스스로 걸러낼 수 있어야 한다.
+
+    질문을 해소하면 계획이 다시 세워지면서 미리 보기 표시가 지워진다. 그런데 해소 응답이
+    계획 응답과 같은 모양이고 질문 수도 0 이라 "다 됐다" 로 읽힌다. 실제로 그렇게 읽고
+    확정을 부르다 막혀 문서 하나를 통째로 잃었다.
+    """
+    db_path = tmp_path / "kuzu_db"
+
+    async with stdio_client(_params(db_path)) as (read, write):
+        async with ClientSession(read, write) as session:
+            await session.initialize()
+            await _ingest(session, content="노드: INFJ | 성격유형\n", source_id="e2e:type-a")
+
+            plan = _payload(
+                await session.call_tool(
+                    "ingest_content",
+                    arguments={
+                        "content": "노드: INFJ | MBTI유형\n",
+                        "source_id": "e2e:type-b",
+                        "namespace_id": NAMESPACE,
+                    },
+                )
+            )
+            assert plan["previewed"] is False
+
+            preview = _payload(
+                await session.call_tool("ingest_preview", arguments={"plan_id": plan["plan_id"]})
+            )
+            resolved = _payload(
+                await session.call_tool(
+                    "ingest_resolve",
+                    arguments={
+                        "plan_id": plan["plan_id"],
+                        "resolutions": [
+                            {"question_id": preview["questions"][0]["question_id"],
+                             "decision": "merge"}
+                        ],
+                    },
+                )
+            )
+            # 질문은 0 이지만 아직 확정할 수 없다. 그 차이가 응답에 드러나야 한다.
+            assert resolved["open_questions"] == 0
+            assert resolved["previewed"] is False
+
+            refused = await session.call_tool(
+                "ingest_commit", arguments={"plan_id": plan["plan_id"]}
+            )
+            assert refused.isError is True

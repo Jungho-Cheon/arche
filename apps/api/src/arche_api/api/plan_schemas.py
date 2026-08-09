@@ -95,6 +95,16 @@ class PlanSummary(BaseModel):
         ge=0,
         description="사람 판단을 기다리는 '놓친 병합 후보' 질문 수 (near-miss)",
     )
+    # 계획을 세우거나 다시 세운 직후라 늘 False 다. 그래도 응답에 싣는 이유는, 이 요약만
+    # 보고 다음 동작을 정하는 호출부가 "질문 0 개니까 다 됐다" 로 읽고 확정을 부르다
+    # 막히기 때문이다. 실제로 그렇게 문서 하나를 잃었다.
+    previewed: bool = Field(
+        default=False,
+        description=(
+            "이 계획이 미리 보기를 거쳤는지. 확정은 True 일 때만 받는다. "
+            "계획과 질문 해소는 이 값을 False 로 되돌리므로 그다음엔 다시 미리 봐야 한다"
+        ),
+    )
 
 
 # ---------- preview ----------

@@ -78,7 +78,11 @@
 
 <!-- @include: ../reference/_generated/requests/ingest_resolve.md -->
 
-미리 보기가 물은 질문에 사람의 결정을 반영합니다. `resolutions` 의 각 항목은 `question_id` 와 `decision` 을 담고, `decision` 은 `merge`(같은 대상) 또는 `keep`(다른 대상)입니다. 응답은 갱신된 미리 보기라 남은 질문을 이어서 확인합니다.
+미리 보기가 물은 질문에 사람의 결정을 반영합니다. `resolutions` 의 각 항목은 `question_id` 와 `decision` 을 담고, `decision` 은 `merge`(같은 대상) 또는 `keep`(다른 대상)입니다. 응답은 갱신된 계획 요약이라 남은 질문을 이어서 확인합니다.
+
+::: warning `open_questions: 0` 은 확정해도 된다는 뜻이 아닙니다
+이 호출은 계획을 다시 세우면서 미리 보기 표시를 지웁니다. 응답이 계획을 처음 세웠을 때와 같은 모양이라 "질문도 없고 다 됐다" 로 읽히기 쉽습니다. `previewed` 를 보십시오. 이 호출 뒤에는 `false` 이고, `ingest_preview` 를 다시 부르기 전까지 확정은 거부됩니다.
+:::
 
 <!-- @include: ../reference/_generated/requests/ingest_commit.md -->
 

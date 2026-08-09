@@ -583,6 +583,7 @@ def _summarize_plan(plan: IngestPlan) -> PlanSummary:
         relations_created=n_rel,
         deletion_count=n_del,
         open_questions=len(plan.open_questions),
+        previewed=plan.previewed,
     )
 
 
